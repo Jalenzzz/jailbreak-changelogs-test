@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return `<img src="${imageUrl}" alt="Image" style="max-width: 100%; max-height: 500px;">`;
         } else if (line.startsWith("(video)")) {
           const videoUrl = line.substring(7).trim();
-          return `<video controls style="max-width: 100%; max-height: 500px;"><source src="${videoUrl}" type="video/mp4"></video>`;
+          return `<video controls style="max-width: 80%; max-height: 500px;"><source src="${videoUrl}" type="video/mp4"></video>`;
         } else {
           return `<p>${wrapMentions(line)}</p>`;
         }

@@ -112,18 +112,26 @@ body {
   position: relative;
   padding-top: 44px; /* Height of the news ticker */
 }
+/* Styling for audio and video embeds */
 audio,
-video,
-img {
-  display: block;
+video {
+  width: 100%;
+  max-width: 500px;
   margin: 10px 0;
-  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-video,
-img {
-  max-height: 500px;
-  object-fit: contain;
+/* Audio specific styling */
+audio {
+  height: 54px;
+  background-color: #f1f3f4;
+}
+
+/* Video specific styling */
+video {
+  max-height: 300px;
+  background-color: #000;
 }
 
 #news-ticker {
