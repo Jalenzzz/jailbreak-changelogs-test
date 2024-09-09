@@ -39,6 +39,23 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/\(video\) /g, "\n(video) ")
       .replace(/\(image\) /g, "\n(image) ");
 
+  function cleanContentForSearch(content) {
+    return content
+      .replace(/- /g, " ") // Replace " - " with a space
+      .replace(/- - /g, " ") // Replace " - - " with a space
+      .replace(/## /g, " ") // Replace "## " with a space
+      .replace(/### /g, " ") // Replace "### " with a space
+      .replace(/\(audio\) /g, " ") // Replace "(audio) " with a space
+      .replace(/\(video\) /g, " ") // Replace "(video) " with a space
+      .replace(/\(image\) /g, " ") // Replace "(image) " with a space
+      .replace(/\(audio\)\s*\S+/g, "[Audio]") // Replace audio links with [Audio]
+      .replace(/\(video\)\s*\S+/g, "[Video]") // Replace video links with [Video]
+      .replace(/\(image\)\s*\S+/g, "[Image]") // Replace image links with [Image]
+      .replace(/@(\w+)/g, "@$1") // Keep mentions as is
+      .replace(/\s+/g, " ") // Replace multiple spaces with a single space
+      .trim(); // Remove leading and trailing whitespace
+  }
+
   const convertMarkdownToHtml = (markdown) => {
     return markdown
       .split("\n")
@@ -298,10 +315,28 @@ document.addEventListener("DOMContentLoaded", () => {
       let resultsHtml = '<div class="search-results-content">';
       results.forEach((changelog, index) => {
         const titleHighlight = highlightMatch(changelog.title, query);
-        const contentPreview = getContentPreview(changelog.sections, query);
+        const cleanedContent = cleanContentForSearch(changelog.sections);
+        const contentPreview = getContentPreview(cleanedContent, query);
+
+        // Check for media types
+        const hasAudio = cleanedContent.includes("[Audio]");
+        const hasVideo = cleanedContent.includes("[Video]");
+        const hasImage = cleanedContent.includes("[Image]");
+
+        // Create tags
+        const audioTag = hasAudio
+          ? '<span class="media-tag audio-tag">Audio</span>'
+          : "";
+        const videoTag = hasVideo
+          ? '<span class="media-tag video-tag">Video</span>'
+          : "";
+        const imageTag = hasImage
+          ? '<span class="media-tag image-tag">Image</span>'
+          : "";
+
         resultsHtml += `
           <div class="search-result-item" data-index="${index}">
-            <strong>${titleHighlight}</strong>
+            <strong>${titleHighlight}${audioTag}${videoTag}${imageTag}</strong>
             <p>${contentPreview}</p>
           </div>
         `;
@@ -322,14 +357,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getContentPreview(content, query) {
-    const index = content.toLowerCase().indexOf(query.toLowerCase());
-    if (index === -1) return content.slice(0, 100) + "...";
+    const cleanedContent = cleanContentForSearch(content);
+    const index = cleanedContent.toLowerCase().indexOf(query.toLowerCase());
+    if (index === -1) return cleanedContent.slice(0, 100) + "...";
 
     const start = Math.max(0, index - 50);
-    const end = Math.min(content.length, index + 50);
-    let preview = content.slice(start, end);
+    const end = Math.min(cleanedContent.length, index + 50);
+    let preview = cleanedContent.slice(start, end);
     if (start > 0) preview = "..." + preview;
-    if (end < content.length) preview += "...";
+    if (end < cleanedContent.length) preview += "...";
     return highlightMatch(preview, query);
   }
 
