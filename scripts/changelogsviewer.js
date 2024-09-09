@@ -34,12 +34,16 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/ - /g, "\n- ")
       .replace(/ - - /g, "\n- - ")
       .replace(/## /g, "\n## ")
-      .replace(/### /g, "\n### ");
+      .replace(/### /g, "\n### ")
+      .replace(/\(audio\) /g, "\n(audio) ")
+      .replace(/\(video\) /g, "\n(video) ")
+      .replace(/\(image\) /g, "\n(image) ");
 
   const convertMarkdownToHtml = (markdown) => {
     return markdown
       .split("\n")
       .map((line) => {
+        line = line.trim();
         if (line.startsWith("# ")) {
           return `<h1>${wrapMentions(line.substring(2))}</h1>`;
         } else if (line.startsWith("## ")) {
@@ -56,6 +60,18 @@ document.addEventListener("DOMContentLoaded", () => {
           return `<p><span class="bullet">•</span> ${wrapMentions(
             line.substring(2)
           )}</p>`;
+        } else if (line.startsWith("(audio)")) {
+          const audioUrl = line.substring(7).trim();
+          const audioType = audioUrl.endsWith(".wav")
+            ? "audio/wav"
+            : "audio/mpeg";
+          return `<audio controls><source src="${audioUrl}" type="${audioType}"></audio>`;
+        } else if (line.startsWith("(image)")) {
+          const imageUrl = line.substring(7).trim();
+          return `<img src="${imageUrl}" alt="Image" style="max-width: 100%; max-height: 500px;">`;
+        } else if (line.startsWith("(video)")) {
+          const videoUrl = line.substring(7).trim();
+          return `<video controls style="max-width: 100%; max-height: 500px;"><source src="${videoUrl}" type="video/mp4"></video>`;
         } else {
           return `<p>${wrapMentions(line)}</p>`;
         }
@@ -112,7 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let contentHtml = `<h1>${changelog.title}</h1>`;
 
     if (changelog.sections) {
-      // console.log("Setting sections content.");
       const processedMarkdown = preprocessMarkdown(changelog.sections);
       const processedSections = convertMarkdownToHtml(processedMarkdown);
       contentHtml += processedSections;

@@ -112,6 +112,19 @@ body {
   position: relative;
   padding-top: 44px; /* Height of the news ticker */
 }
+audio,
+video,
+img {
+  display: block;
+  margin: 10px 0;
+  max-width: 100%;
+}
+
+video,
+img {
+  max-height: 500px;
+  object-fit: contain;
+}
 
 #news-ticker {
   width: 100%;
