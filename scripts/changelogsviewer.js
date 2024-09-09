@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const apiUrl = "https://api.jailbreakchangelogs.xyz/get_changelogs";
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
-  const pageSelect = document.getElementById("pageSelect");
   const titleElement = document.getElementById("changelogTitle");
   const themeToggleButton = document.getElementById("theme-toggle");
   const lightIcon = document.querySelector(".light-icon");
@@ -12,6 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchResultsElement = document.getElementById("searchResults");
   let changelogsData = [];
   let currentFocusedIndex = -1;
+  const searchDropdownButton = document.getElementById("searchDropdownButton");
+  const searchDropdown = document.getElementById("searchDropdown");
+  let isDropdownOpen = false;
+  let lastScrollTop = 0;
 
   const updateThemeIcons = () => {
     const isDarkTheme = document.body.classList.contains("dark-theme");
@@ -65,23 +68,18 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch(apiUrl)
     .then((response) => response.json())
     .then((data) => {
-      // console.log("Changelogs data:", data);
       changelogsData = data;
 
       if (Array.isArray(data) && data.length > 0) {
-        data.reverse().forEach((changelog) => {
-          const option = document.createElement("option");
-          option.value = changelog.id;
-          option.textContent = changelog.title;
-          pageSelect.appendChild(option);
-        });
-
         const savedId = localStorage.getItem("selectedChangelogId");
         const idFromUrl = new URLSearchParams(window.location.search).get("id");
-        const initialId = idFromUrl || savedId || data[0].id;
+        const initialChangelog =
+          changelogsData.find((cl) => cl.id == (idFromUrl || savedId)) ||
+          changelogsData[0];
+        displayChangelog(initialChangelog);
 
-        pageSelect.value = initialId;
-        displayChangelog(data.find((cl) => cl.id == initialId));
+        // Create dropdown content after loading data
+        createDropdownContent();
       } else {
         console.error("No changelogs found.");
       }
@@ -126,17 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
     sectionsElement.innerHTML = contentHtml;
   };
 
-  pageSelect.addEventListener("change", function () {
-    const selectedId = this.value;
-    // console.log("Changelog selected:", selectedId);
-    const selectedChangelog = changelogsData.find((cl) => cl.id == selectedId);
-    if (selectedChangelog) {
-      displayChangelog(selectedChangelog);
-    } else {
-      console.error("Selected changelog not found in data.");
-    }
-  });
-
   // Theme toggle logic
   themeToggleButton.addEventListener("click", () => {
     document.body.classList.toggle("dark-theme");
@@ -154,6 +141,22 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   updateThemeIcons();
 
+  function createDropdownContent() {
+    searchDropdown.innerHTML = "";
+    changelogsData.forEach((changelog) => {
+      const item = document.createElement("div");
+      item.classList.add("search-dropdown-item");
+      item.textContent = changelog.title;
+      item.addEventListener("click", () => {
+        displayChangelog(changelog);
+        searchDropdown.classList.remove("show");
+        searchDropdownButton.querySelector("svg").style.transform = "rotate(0)";
+      });
+      // Insert the new item at the beginning of the dropdown
+      searchDropdown.insertBefore(item, searchDropdown.firstChild);
+    });
+  }
+
   // Function to expand the search
   function expandSearch() {
     document.body.classList.add("search-expanded");
@@ -170,14 +173,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Search functionality
   function performSearch(query) {
-    const filteredChangelogs = changelogsData.filter(
-      (changelog) =>
+    const filteredChangelogs = changelogsData.filter((changelog) => {
+      return (
         changelog.title.toLowerCase().includes(query) ||
         changelog.sections.toLowerCase().includes(query)
-    );
+      );
+    });
 
     displaySearchResults(filteredChangelogs, query);
   }
+
   // Add this new event listener for the search input
   searchInput.addEventListener("blur", () => {
     if (searchInput.value.trim() === "") {
@@ -195,6 +200,50 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       searchResultsElement.style.display = "none";
       contractSearch();
+    }
+  });
+  searchDropdownButton.addEventListener("click", function (e) {
+    e.stopPropagation(); // Prevent this click from closing the dropdown immediately
+    searchDropdown.classList.toggle("show");
+    isDropdownOpen = searchDropdown.classList.contains("show");
+    this.querySelector("svg").style.transform = isDropdownOpen
+      ? "rotate(180deg)"
+      : "rotate(0)";
+  });
+
+  document.addEventListener("click", function (event) {
+    if (
+      !searchDropdownButton.contains(event.target) &&
+      !searchDropdown.contains(event.target)
+    ) {
+      closeDropdown();
+    }
+  });
+  // Add scroll event listener
+  window.addEventListener("scroll", handleScroll);
+
+  function handleScroll() {
+    if (isDropdownOpen) {
+      closeDropdown();
+    }
+  }
+
+  function closeDropdown() {
+    if (isDropdownOpen) {
+      isDropdownOpen = false;
+      searchDropdown.classList.remove("show");
+      searchDropdownButton.querySelector("svg").style.transform = "rotate(0)";
+    }
+  }
+
+  // Close the dropdown when clicking outside
+  document.addEventListener("click", function (event) {
+    if (
+      !searchDropdownButton.contains(event.target) &&
+      !searchDropdown.contains(event.target)
+    ) {
+      searchDropdown.classList.remove("show");
+      searchDropdownButton.querySelector("svg").style.transform = "rotate(0)";
     }
   });
 
@@ -362,4 +411,5 @@ document.addEventListener("DOMContentLoaded", () => {
       contractSearch();
     }
   });
+  createDropdownContent();
 });

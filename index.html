@@ -91,11 +91,20 @@
               <button id="searchButton" aria-label="Search" title="Search">
                 <i data-lucide="search"></i>
               </button>
+              <button
+                id="searchDropdownButton"
+                type="button"
+                aria-label="Show search options"
+              >
+                <i data-lucide="chevron-down"></i>
+              </button>
             </div>
           </form>
           <div id="searchResults"></div>
+          <div id="searchDropdown" class="hidden">
+            <!-- Dropdown content will be populated by JavaScript -->
+          </div>
         </div>
-        <select id="pageSelect"></select>
       </div>
 
       <section id="content"></section>
