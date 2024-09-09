@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const lightIcon = document.querySelector(".light-icon");
   const darkIcon = document.querySelector(".dark-icon");
   const searchInput = document.getElementById("searchInput");
-  const clearSearchButton = document.getElementById("clearSearch");
+  const searchButton = document.getElementById("searchButton");
   const searchResultsElement = document.getElementById("searchResults");
   let changelogsData = [];
   let currentFocusedIndex = -1;
@@ -164,14 +164,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     displaySearchResults(filteredChangelogs, query);
   }
+  // Add this new event listener for the search input
+  searchInput.addEventListener("blur", () => {
+    if (searchInput.value.trim() === "") {
+      updateSearchButtonState("");
+    }
+  });
 
   // Add event listener for 'Enter' key in search input
   searchInput.addEventListener("input", () => {
     const query = searchInput.value.trim().toLowerCase();
-    if (query.length >= 3) {
+    updateSearchButtonState(query);
+    if (query.length > 0) {
       performSearch(query);
     } else {
       searchResultsElement.style.display = "none";
+    }
+  });
+
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent form submission
+      const query = searchInput.value.trim().toLowerCase();
+      if (query.length >= 3) {
+        performSearch(query);
+      }
+    }
+  });
+
+  // Update search button click handler
+  searchButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    const query = searchInput.value.trim().toLowerCase();
+    if (searchButton.getAttribute("data-lucide") === "x") {
+      // Clear search
+      searchInput.value = "";
+      searchResultsElement.style.display = "none";
+      updateSearchButtonState("");
+    } else {
+      // Perform search
+      if (query.length > 0) {
+        performSearch(query);
+      }
     }
   });
 
@@ -215,6 +249,18 @@ document.addEventListener("DOMContentLoaded", () => {
     return highlightMatch(preview, query);
   }
 
+  // Function to update search button state
+  function updateSearchButtonState(query) {
+    if (query.length > 0) {
+      searchButton.setAttribute("data-lucide", "x");
+      searchButton.setAttribute("title", "Clear search");
+    } else {
+      searchButton.setAttribute("data-lucide", "search");
+      searchButton.setAttribute("title", "Search");
+    }
+    lucide.createIcons(); // Refresh icons
+  }
+
   function addSearchResultListeners(results) {
     const items = searchResultsElement.querySelectorAll(".search-result-item");
     items.forEach((item) => {
@@ -222,6 +268,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const index = parseInt(item.dataset.index);
         displayChangelog(results[index]);
         searchResultsElement.style.display = "none";
+
+        // Clear the search input
+        searchInput.value = "";
+
+        // Reset the search button state
+        updateSearchButtonState("");
       });
     });
 
@@ -259,13 +311,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Clear search functionality
-  clearSearchButton.addEventListener("click", () => {
-    event.preventDefault();
-    searchInput.value = "";
-    searchResultsElement.innerHTML = "";
-    searchResultsElement.style.display = "none";
-  });
   // Close search results when clicking outside
   document.addEventListener("click", (e) => {
     if (
@@ -275,6 +320,10 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
       searchResultsElement.style.display = "none";
       document.removeEventListener("keydown", handleKeyNavigation);
+
+      // Add these lines to update the search button state
+      searchInput.value = "";
+      updateSearchButtonState("");
     }
   });
 });

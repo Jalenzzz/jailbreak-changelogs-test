@@ -10,11 +10,12 @@
     />
     <meta
       property="og:description"
-      content="Stay ahead of the game! Get updates on Jailbreak's latest features, bug fixes, and balance changes. Never miss a crucial update that could change the way you play the game."
+      content="Get updates on Jailbreak's latest
+    features, bug fixes, and balance changes."
     />
     <meta
       property="og:image"
-      content="https://res.cloudinary.com/dt6ym6zrw/image/upload/v1723381289/Screen_Shot_2022-11-05_at_10.24.50_PM_wphqbc.png"
+      content="https://cdn.jailbreakchangelogs.xyz/meta/thumbnail.png"
     />
     <meta property="og:image:width" content="2328" />
     <meta property="og:image:height" content="1054" />
@@ -39,7 +40,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://res.cloudinary.com/dt6ym6zrw/image/upload/v1723380961/Screen_Shot_2022-11-07_at_10.25.04_PM_sznatb.png"
+      content="https://cdn.jailbreakchangelogs.xyz/meta/thumbnail.png"
     />
 
     <title>Jailbreak | Changelogs</title>
@@ -84,24 +85,20 @@
         </button>
       </header>
       <div id="navigation-container">
-        <form id="search-form">
-          <div id="search-container">
-            <input type="text" id="searchInput" placeholder="Search..." />
-            <div
-              style="display: flex; justify-content: space-between; width: 100%"
-            >
-              <button id="clearSearch" style="width: calc(50% - 5px)">
-                Clear
+        <div id="search-wrapper">
+          <form id="search-form" autocomplete="off">
+            <div id="search-container">
+              <input type="text" id="searchInput" placeholder="Search..." />
+              <button id="searchButton" aria-label="Search">
+                <i data-lucide="search"></i>
               </button>
             </div>
-          </div>
-        </form>
+          </form>
+          <div id="searchResults"></div>
+        </div>
         <select id="pageSelect"></select>
       </div>
-      <!-- <div id="pageInfoContainer">
-        <span id="pageInfo">1/X</span>
-      </div> -->
-      <div id="searchResults"></div>
+
       <section id="content"></section>
       <footer>
         <h3 class="dev-message">
@@ -178,6 +175,7 @@
     </div>
     <script src="scripts/changelogsviewer.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
     <script>
       lucide.createIcons();
     </script>
