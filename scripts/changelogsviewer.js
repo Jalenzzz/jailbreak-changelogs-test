@@ -183,7 +183,6 @@ document.addEventListener("DOMContentLoaded", () => {
     displaySearchResults(filteredChangelogs, query);
   }
 
-  // Add this new event listener for the search input
   searchInput.addEventListener("blur", () => {
     if (searchInput.value.trim() === "") {
       updateSearchButtonState("");
@@ -255,7 +254,6 @@ document.addEventListener("DOMContentLoaded", () => {
         performSearch(query);
         expandSearch();
         updateSearchButtonState(query);
-        // On mobile, you might want to blur the input to hide the keyboard
         searchInput.blur();
       }
     }
