@@ -211,14 +211,13 @@ header {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-#searchButton,
 #clearSearch {
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 8px 16px;
-  height: 40px; /* Set a fixed height */
+  padding: 8px 20px; /* Increased horizontal padding */
+  height: 40px;
   font-size: 16px;
   background-color: var(--blue-button-bg);
   color: var(--blue-button-text);
@@ -226,9 +225,12 @@ header {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
+  box-sizing: border-box;
+  line-height: 1;
+  white-space: nowrap; /* Prevent text from wrapping */
+  min-width: 100px; /* Set a minimum width to ensure enough space */
 }
 
-#searchButton:hover,
 #clearSearch:hover {
   background-color: var(--blue-button-hover-bg);
   color: var(--blue-button-hover-text);
@@ -642,7 +644,6 @@ footer {
     width: 100%;
   }
 
-  #searchButton,
   #clearSearch {
     width: calc(50% - 5px);
   }

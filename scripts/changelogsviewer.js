@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const lightIcon = document.querySelector(".light-icon");
   const darkIcon = document.querySelector(".dark-icon");
   const searchInput = document.getElementById("searchInput");
-  const searchButton = document.getElementById("searchButton");
   const clearSearchButton = document.getElementById("clearSearch");
   const searchResultsElement = document.getElementById("searchResults");
   let changelogsData = [];
