@@ -154,6 +154,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   updateThemeIcons();
 
+  // Function to expand the search
+  function expandSearch() {
+    document.body.classList.add("search-expanded");
+  }
+  // Function to contract the search
+  function contractSearch() {
+    if (searchInput.value.trim() === "") {
+      document.body.classList.remove("search-expanded");
+    }
+  }
+  // Add event listeners for expanding and contracting
+  searchInput.addEventListener("focus", expandSearch);
+  searchInput.addEventListener("blur", contractSearch);
+
   // Search functionality
   function performSearch(query) {
     const filteredChangelogs = changelogsData.filter(
@@ -177,8 +191,10 @@ document.addEventListener("DOMContentLoaded", () => {
     updateSearchButtonState(query);
     if (query.length > 0) {
       performSearch(query);
+      expandSearch();
     } else {
       searchResultsElement.style.display = "none";
+      contractSearch();
     }
   });
 
@@ -196,15 +212,17 @@ document.addEventListener("DOMContentLoaded", () => {
   searchButton.addEventListener("click", (e) => {
     e.preventDefault();
     const query = searchInput.value.trim().toLowerCase();
-    if (searchButton.getAttribute("data-lucide") === "x") {
+    if (searchButton.getAttribute("title") === "Clear search") {
       // Clear search
       searchInput.value = "";
       searchResultsElement.style.display = "none";
       updateSearchButtonState("");
+      contractSearch();
     } else {
       // Perform search
       if (query.length > 0) {
         performSearch(query);
+        expandSearch();
       }
     }
   });
@@ -251,14 +269,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Function to update search button state
   function updateSearchButtonState(query) {
+    const searchButtonIcon = searchButton.querySelector("svg");
     if (query.length > 0) {
-      searchButton.setAttribute("data-lucide", "x");
+      searchButtonIcon.innerHTML =
+        '<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>';
       searchButton.setAttribute("title", "Clear search");
     } else {
-      searchButton.setAttribute("data-lucide", "search");
+      searchButtonIcon.innerHTML =
+        '<circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>';
       searchButton.setAttribute("title", "Search");
     }
-    lucide.createIcons(); // Refresh icons
+
+    // Update the stroke color based on the current theme
+    const isDarkTheme = document.body.classList.contains("dark-theme");
+    const strokeColor = isDarkTheme
+      ? getComputedStyle(document.body).getPropertyValue("--footer-link-color")
+      : getComputedStyle(document.body).getPropertyValue("--text-color");
+
+    searchButtonIcon.style.stroke = strokeColor;
   }
 
   function addSearchResultListeners(results) {
@@ -274,6 +302,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Reset the search button state
         updateSearchButtonState("");
+
+        // Contract the search bar
+        contractSearch();
       });
     });
 
@@ -321,9 +352,10 @@ document.addEventListener("DOMContentLoaded", () => {
       searchResultsElement.style.display = "none";
       document.removeEventListener("keydown", handleKeyNavigation);
 
-      // Add these lines to update the search button state
+      // Update these lines
       searchInput.value = "";
       updateSearchButtonState("");
+      contractSearch();
     }
   });
 });
