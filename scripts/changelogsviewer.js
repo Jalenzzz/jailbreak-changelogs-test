@@ -204,6 +204,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const query = searchInput.value.trim().toLowerCase();
       if (query.length >= 3) {
         performSearch(query);
+        expandSearch();
+        updateSearchButtonState(query);
+        // On mobile, you might want to blur the input to hide the keyboard
+        searchInput.blur();
       }
     }
   });
