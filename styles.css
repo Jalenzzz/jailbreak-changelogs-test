@@ -1,40 +1,122 @@
 :root {
-  --bg-color: #dbdbdb;
+  /* Existing colors */
+  --bg-color: #f0f4f8; /* Softer background color for light mode */
   --text-color: #333333;
-  --blue-button-bg: #005994;
+  --blue-button-bg: #3498db;
   --blue-button-text: #ffffff;
-  --blue-button-hover-bg: #003a61;
-  --blue-button-hover-text: #ffffff;
-  --orange-button-bg: #ff5f29;
-  --orange-button-hover-bg: #b44019;
-  --selection-bg: #478ccf;
-  --selection-text: #ffffff;
-  --footer-text-color: #333333;
-  --footer-link-color: #005994;
-  --footer-link-hover-color: #003a61;
-  --header-bg: #003a61;
-  --header-text: #dbdbdb;
-  --glow-color-light: 0, 89, 148; /* Blue glow for light mode */
-  --glow-color-dark: 255, 255, 255; /* White glow for dark mode */
-}
-.dark-theme {
-  --bg-color: #222222;
-  --text-color: #e0e0e0;
-  --blue-button-bg: #005fa3;
-  --blue-button-text: #ffffff;
-  --blue-button-hover-bg: #003458;
-  --blue-button-hover-text: #ffffff;
-  --orange-button-bg: #d64f25;
-  --orange-button-hover-bg: #ff3d00;
-  --selection-bg: #3a5f8a;
-  --selection-text: #ffffff;
-  --footer-text-color: #cccccc;
-  --footer-link-color: #4db8ff;
-  --footer-link-hover-color: #80ccff;
-  --header-bg: #424242;
+  --orange-button-bg: #e67e22;
+  --orange-button-hover-bg: #d35400;
+  --footer-link-color: #3498db;
+
+  /* New colors for timeline */
+  --timeline-line-color: var(--blue-button-bg);
+  --timeline-title-color: var(--footer-link-color);
+  --timeline-dot-color: var(--blue-button-bg);
+  --timeline-item-bg: var(--bg-color);
+  --timeline-item-shadow: rgba(0, 0, 0, 0.1);
+  --timeline-item-hover-bg: var(--blue-button-bg);
+  --timeline-item-hover-text: var(--blue-button-text);
+  --timeline-view-btn-bg: var(--orange-button-bg);
+  --timeline-view-btn-text: var(--blue-button-text);
+  --timeline-view-btn-hover-bg: var(--orange-button-hover-bg);
+
+  /* New colors for header, footer, buttons, and news ticker */
+  --header-bg: #3498db;
   --header-text: #ffffff;
+  --footer-bg: rgba(0, 0, 0, 0.1);
+  --footer-text: #333333;
+  --footer-link-color: #3498db;
+  --footer-link-hover-color: #2980b9;
+  --button-primary-bg: #3498db;
+  --button-primary-text: #ffffff;
+  --button-primary-hover-bg: #2980b9;
+  --button-secondary-bg: #e67e22;
+  --button-secondary-hover-bg: #d35400;
+  --news-ticker-bg: #ff5f29;
+  --news-ticker-text: #ffffff;
+
+  --search-result-bg: #ffffff;
+  --search-result-text: #333333;
+  --search-result-hover-bg: #81dbda;
+  --search-result-hover-text: #333333;
+  --search-result-focused-bg: #e6f2ff;
+  --search-result-focused-outline: #478ccf;
+
+  --glow-color-light: 0, 89, 148; /* Blue glow for light mode */
+  --glow-color: var(--glow-color-light);
+}
+
+.dark-theme {
+  /* Existing colors */
+  --bg-color: #1a1a1a;
+  --text-color: #ffffff;
+  --blue-button-bg: #2980b9;
+  --blue-button-text: #ffffff;
+  --orange-button-bg: #d35400;
+  --orange-button-hover-bg: #e67e22;
+  --footer-link-color: #3498db;
+
+  /* New colors for timeline in dark theme */
+  --timeline-line-color: var(--blue-button-bg);
+  --timeline-title-color: var(--footer-link-color);
+  --timeline-dot-color: var(--blue-button-bg);
+  --timeline-item-bg: #2c2c2c;
+  --timeline-item-shadow: rgba(255, 255, 255, 0.1);
+  --timeline-item-hover-bg: var(--blue-button-bg);
+  --timeline-item-hover-text: var(--blue-button-text);
+  --timeline-view-btn-bg: var(--orange-button-bg);
+  --timeline-view-btn-text: var(--blue-button-text);
+  --timeline-view-btn-hover-bg: var(--orange-button-hover-bg);
+
+  /* New colors for header, footer, buttons, and news ticker in dark theme */
+  --header-bg: #2c3e50;
+  --header-text: #ffffff;
+  --footer-bg: rgba(255, 255, 255, 0.1);
+  --footer-text: #ffffff;
+  --footer-link-color: #3498db;
+  --footer-link-hover-color: #5dade2;
+  --button-primary-bg: #2980b9;
+  --button-primary-text: #ffffff;
+  --button-primary-hover-bg: #3498db;
+  --button-secondary-bg: #d35400;
+  --button-secondary-hover-bg: #e67e22;
+  --news-ticker-bg: #d35400;
+  --news-ticker-text: #ffffff;
+
+  --search-result-bg: #333333;
+  --search-result-text: #e0e0e0;
+  --search-result-hover-bg: #444444;
+  --search-result-hover-text: #ffffff;
+  --search-result-focused-bg: #2c5680;
+  --search-result-focused-outline: #7cb9e8;
+
+  --glow-color-dark: 255, 255, 255; /* White glow for dark mode */
   --glow-color: var(--glow-color-dark);
 }
+
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-text);
+}
+.glow-effect {
+  box-shadow: 0 0 10px rgba(var(--glow-color), 0.5);
+}
+.gradient-bg {
+  background: linear-gradient(
+    to right,
+    var(--button-primary-bg),
+    var(--button-secondary-bg)
+  );
+}
+.svg-icon {
+  fill: var(--text-color);
+  stroke: var(--button-primary-bg);
+}
+
+.semi-transparent-bg {
+  background-color: rgba(var(--glow-color), 0.5);
+}
+
 #loading-overlay {
   position: fixed;
   top: 0;
@@ -81,10 +163,9 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
-  color: var(--text-color);
   background-color: var(--bg-color);
+  color: var(--text-color);
   transition: background-color 0.3s, color 0.3s;
-  --glow-color: var(--glow-color-light);
 }
 #content-wrapper {
   display: flex;
@@ -200,32 +281,10 @@ body {
   gap: 6px;
 }
 
-/* Styling for audio and video embeds */
-audio,
-video {
-  width: 100%;
-  max-width: 500px;
-  margin: 10px 0;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Audio specific styling */
-audio {
-  height: 54px;
-  background-color: #f1f3f4;
-}
-
-/* Video specific styling */
-video {
-  max-height: 300px;
-  background-color: #000;
-}
-
 #news-ticker {
   width: 100%;
-  background-color: #ff5f29;
-  color: #ffffff;
+  background-color: var(--news-ticker-bg);
+  color: var(--news-ticker-text);
   overflow: hidden;
   white-space: nowrap;
   box-sizing: border-box;
@@ -245,6 +304,7 @@ video {
   animation: scroll-left 15s linear infinite;
   margin: 0;
   padding-left: 100%;
+  color: var(--news-ticker-text);
 }
 
 @keyframes scroll-left {
@@ -254,6 +314,29 @@ video {
   100% {
     transform: translateX(-100%);
   }
+}
+body,
+p,
+span {
+  color: var(--text-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--header-text);
+}
+body,
+.search-dropdown-item {
+  background-color: var(--bg-color);
+}
+
+header,
+.timeline-view-btn {
+  background-color: var(--blue-button-bg);
 }
 
 body {
@@ -389,54 +472,58 @@ header {
   max-height: 300px;
   overflow-y: auto;
   display: none;
-  /* transition: all 0.3s ease; */
 }
 
 #searchDropdown.show {
   display: block;
 }
+
 .search-dropdown-item {
   padding: 12px 16px;
   cursor: pointer;
-  /* transition: background-color 0.3s ease, color 0.3s ease; */
   font-size: 16px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
 .search-dropdown-item:last-child {
   border-bottom: none;
 }
 
 .search-dropdown-item:hover {
-  background-color: var(--selection-bg);
-  color: var(--selection-text);
+  background-color: var(--search-result-hover-bg);
+  color: var(--search-result-hover-text);
 }
+
 .search-dropdown-item.selected {
   background-color: var(--blue-button-bg);
   color: var(--blue-button-text);
   font-weight: bold;
 }
+
+/* Dark theme adjustments */
 .dark-theme #searchDropdown {
   background-color: var(--bg-color);
   border-color: var(--text-color);
   box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
 }
+
 .dark-theme .search-dropdown-item {
   border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
 .dark-theme .search-dropdown-item:hover {
-  background-color: var(--selection-bg);
-  color: var(--selection-text);
+  background-color: var(--search-result-hover-bg);
+  color: var(--search-result-hover-text);
 }
 
 .dark-theme .search-dropdown-item.selected {
   background-color: var(--blue-button-bg);
   color: var(--blue-button-text);
 }
-.dark-theme #searchButton svg,
-.dark-theme #searchDropdownButton svg {
-  stroke: var(--footer-link-color);
-}
+
 /* Scrollbar styling */
 #searchDropdown::-webkit-scrollbar {
   width: 8px;
@@ -549,8 +636,8 @@ select:focus-visible {
   transition: all 0.3s ease-out;
   overflow: hidden;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 6px var(--timeline-item-shadow);
+  margin-bottom: 20px;
 }
 .timeline-item,
 .timeline-content,
@@ -572,8 +659,7 @@ select:focus-visible {
 #timeline-scroll-container {
   overflow-x: auto;
   padding: 20px 0;
-
-  transition: stroke 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 #timeline {
@@ -591,8 +677,9 @@ select:focus-visible {
   left: 0;
   right: 0;
   height: 4px;
-  background-color: var(--blue-button-bg);
+  background-color: var(--timeline-line-color);
   transform: translateY(-50%);
+  z-index: 0; /* Ensure the line is behind the timeline items */
 }
 
 .timeline-title {
@@ -600,7 +687,7 @@ select:focus-visible {
   margin: 0;
   padding: 0;
   font-family: "Bangers", Arial, Helvetica, sans-serif; /* Matching the style of other headings */
-  color: var(--footer-link-color); /* Matching the color of other headings */
+  color: var(--timeline-title-color); /* Matching the color of other headings */
 }
 
 #timeline-header {
@@ -616,7 +703,7 @@ select:focus-visible {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-color);
+  color: var(--timeline-title-color);
   transition: transform 0.3s ease;
   width: 24px;
   height: 24px;
@@ -640,6 +727,9 @@ select:focus-visible {
   position: relative;
   z-index: 1;
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .timeline-item::before {
@@ -649,10 +739,19 @@ select:focus-visible {
   left: 50%;
   width: 20px;
   height: 20px;
-  background-color: var(--blue-button-bg);
+  background-color: var(--timeline-dot-color);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
+}
+.dark-theme #timeline::before {
+  background-color: var(
+    --footer-link-color
+  ); /* Use a visible color for dark theme */
+}
+.dark-theme .timeline-item .timeline-content {
+  background-color: var(--bg-color);
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
 }
 
 .timeline-item:hover {
@@ -660,36 +759,56 @@ select:focus-visible {
 }
 
 .timeline-content {
-  background-color: var(--bg-color);
+  background-color: var(--timeline-item-bg);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px var(--timeline-item-shadow);
+  color: var(--text-color);
   text-align: center;
   position: relative;
   z-index: 2;
   transition: all 0.3s ease;
 }
+/* Add styles for the timeline text */
+.timeline-item .timeline-content {
+  text-align: center;
+  padding: 10px;
+  background-color: var(--timeline-item-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  color: var(--timeline-content-color);
+  z-index: 2;
+}
+/* Style for the date/title of each timeline item */
+.timeline-item .timeline-date {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: var(--timeline-content-color); /* Use a color that stands out */
+}
 
 .timeline-item:hover .timeline-content {
-  background-color: var(--blue-button-bg);
-  color: var(--blue-button-text);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  background-color: var(--timeline-item-hover-bg);
+  color: var(--timeline-item-hover-text);
+  box-shadow: 0 6px 12px var(--timeline-item-shadow);
 }
 
 .timeline-content h3 {
   margin-top: 0;
   font-size: 18px;
   font-weight: bold;
+  color: var(--timeline-content-color);
 }
 
 .timeline-content p {
   margin-bottom: 10px;
   font-size: 14px;
+  color: var(--timeline-content-color);
 }
 
 .timeline-view-btn {
-  background-color: var(--orange-button-bg);
-  color: var(--blue-button-text);
+  background-color: var(--timeline-view-btn-bg);
+  color: var(--timeline-view-btn-text);
   border: none;
   padding: 8px 16px;
   border-radius: 4px;
@@ -699,12 +818,12 @@ select:focus-visible {
 }
 
 .timeline-item:hover .timeline-view-btn {
-  background-color: var(--blue-button-text);
-  color: var(--blue-button-bg);
+  background-color: var(--timeline-item-hover-text);
+  color: var(--timeline-item-hover-bg);
 }
 
 .timeline-view-btn:hover {
-  background-color: var(--orange-button-hover-bg);
+  background-color: var(--timeline-view-btn-hover-bg);
   transform: scale(1.05);
 }
 
@@ -772,8 +891,8 @@ select:focus-visible {
   top: 100%;
   left: 0;
   width: 100%;
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
+  background-color: var(--bg-color);
+  border-color: var(--text-color);
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   max-height: 60vh;
@@ -784,8 +903,8 @@ arch-results-content {
   padding: 10px;
 }
 .search-result-item {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
+  background-color: var(--search-result-bg);
+  border-color: var(--text-color);
   border-radius: 4px;
   margin-bottom: 10px;
   padding: 5px 10px; /* Add some padding to each item */
@@ -794,20 +913,21 @@ arch-results-content {
   cursor: pointer;
 }
 .search-result-item:hover {
-  background-color: #e6f2ff;
+  background-color: var(--search-result-hover-bg);
+  color: var(--search-result-hover-text);
 }
 .search-result-item strong {
   display: block;
   margin-bottom: 5px;
-  color: #333;
+  color: var(--text-color);
 }
 .search-result-item p {
-  color: #666;
+  color: var(--text-color);
   margin: 0;
 }
 .search-result-item.focused {
-  background-color: #e6f2ff;
-  outline: 2px solid #478ccf;
+  background-color: var(--search-result-focused-bg);
+  outline: 2px solid var(--search-result-focused-outline);
 }
 .dark-theme .search-result-item.focused {
   background-color: #2c5680;
@@ -917,7 +1037,7 @@ footer {
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
 }
 #footer-text strong {
-  color: #ff5f29;
+  color: var(--color-orange);
   font-weight: bold;
 }
 #footer-text a {
@@ -973,6 +1093,24 @@ footer {
   margin: 0;
   line-height: 1.5;
 }
+a,
+.footer-link {
+  color: var(--footer-link-color);
+}
+
+a:hover,
+.footer-link:hover {
+  color: var(--footer-link-hover-color);
+}
+
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-text);
+}
+.glow-effect {
+  box-shadow: 0 0 10px rgba(var(--glow-color), 0.5);
+}
+
 .dark-theme .dev-message,
 .dark-theme .release-dates-info {
   background-color: rgba(255, 255, 255, 0.05);
@@ -1009,21 +1147,6 @@ footer {
   font-size: 0.9em;
 }
 
-.changelog-link {
-  text-align: right;
-}
-
-.changelog-link a {
-  color: var(--footer-link-color);
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.changelog-link a:hover {
-  text-decoration: underline;
-  color: var(--footer-link-hover-color);
-}
-
 /* Dark theme adjustments */
 .dark-theme #version-info {
   background-color: rgba(255, 255, 255, 0.05);
@@ -1038,7 +1161,6 @@ footer {
 .blue-button,
 .orange-button {
   padding: 12px 24px;
-  color: #ffffff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -1050,20 +1172,35 @@ footer {
   display: inline-block;
   text-align: center;
 }
-.blue-button {
-  background-color: var(--blue-button-bg);
-  color: var(--blue-button-text);
+.blue-button,
+.github-button {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
 }
-.blue-button:hover {
-  background-color: var(--blue-button-hover-bg);
-  color: var(--blue-button-hover-text);
+
+.blue-button:hover,
+.github-button:hover {
+  background-color: var(--button-primary-hover-bg);
 }
+
 .orange-button {
-  background-color: var(--orange-button-bg);
+  background-color: var(--button-secondary-bg);
+  color: var(--button-primary-text);
 }
+
 .orange-button:hover {
-  background-color: var(--orange-button-hover-bg);
+  background-color: var(--button-secondary-hover-bg);
 }
+a,
+.footer-link {
+  color: var(--footer-link-color);
+}
+
+a:hover,
+.footer-link:hover {
+  color: var(--footer-link-hover-color);
+}
+
 /* TODO: remplacer avec 1280px */
 
 /* Mobile-specific styles */
@@ -1202,11 +1339,6 @@ footer {
 
   .version-details {
     flex-direction: column;
-  }
-
-  .changelog-link {
-    text-align: left;
-    margin-top: 10px;
   }
 }
 
