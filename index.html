@@ -49,21 +49,23 @@
       href="https://fonts.googleapis.com/css2?family=Bangers&display=swap"
       rel="stylesheet"
     />
+    <script>
+      (function () {
+        var savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "dark") {
+          document.documentElement.classList.add("dark-theme");
+        }
+      })();
+    </script>
   </head>
+
   <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <div id="news-ticker">
       <p>JAILBREAK HITS 7 BILLION VISITS!! 🎉🎉🎉</p>
     </div>
 
     <div id="main-container" class="container">
-      <div class="sidebar-image-wrapper">
-        <img
-          id="sidebarImage"
-          class="sidebar-image"
-          data-src=""
-          alt="Sidebar Image"
-        />
-      </div>
       <header>
         <a href="https://www.roblox.com/games/606849621/Jailbreak">
           <img
@@ -79,23 +81,48 @@
           class="theme-toggle"
           aria-label="Toggle theme"
         >
-          <i data-lucide="sun" class="light-icon"></i>
-          <i data-lucide="moon" class="dark-icon"></i>
+          <i data-lucide="sun" class="light-icon" aria-hidden="true"></i>
+          <i data-lucide="moon" class="dark-icon" aria-hidden="true"></i>
         </button>
       </header>
+      <div id="loading-overlay">
+        <div class="spinner"></div>
+      </div>
+
+      <div id="timeline-container">
+        <div id="timeline-header">
+          <h3 class="timeline-title">Jailbreak Time Line</h3>
+          <button id="timeline-toggle" aria-label="Toggle timeline">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+        </div>
+        <div id="timeline-scroll-container">
+          <div id="timeline"></div>
+        </div>
+      </div>
+
       <div id="navigation-container">
         <div id="search-wrapper">
           <form id="search-form" autocomplete="off">
-            <div id="search-container">
+            <div id="search-container" role="search">
               <input
                 type="text"
                 id="searchInput"
                 placeholder="Search changelogs..."
-                inputmode="search"
-                enterkeyhint="search"
+                aria-label="Search changelogs"
               />
-              <button id="searchButton" aria-label="Search" title="Search">
-                <i data-lucide="search"></i>
+              <button id="searchButton" aria-label="Search">
+                <i data-lucide="search" aria-hidden="true"></i>
               </button>
               <button
                 id="searchDropdownButton"
@@ -113,7 +140,18 @@
         </div>
       </div>
 
-      <section id="content"></section>
+      <div id="content-wrapper">
+        <section id="content"></section>
+        <div id="sidebar-image-wrapper">
+          <img
+            id="sidebarImage"
+            class="sidebar-image"
+            src=""
+            alt="Changelog Image"
+          />
+        </div>
+      </div>
+
       <footer>
         <h3 class="dev-message">
           <p>From badimo:</p>
@@ -143,6 +181,16 @@
             >
           </p>
         </div>
+        <div id="version-info">
+          <h4>Website Information</h4>
+          <div class="version-details">
+            <p><strong>Version:</strong> <span id="version-number">1.0.0</span></p>
+            <p><strong>Last Updated:</strong> <span id="last-updated">September 10th 2024</span></p>
+            <p><strong>Build:</strong> <span id="build-number">#1</span></p>
+          </div>
+      
+        </div>
+      </footer>
 
         <div class="button-container">
           <a href="https://www.reddit.com/r/robloxjailbreak/" target="_blank">

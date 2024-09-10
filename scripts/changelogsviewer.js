@@ -9,18 +9,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("searchInput");
   const searchButton = document.getElementById("searchButton");
   const searchResultsElement = document.getElementById("searchResults");
+  const timelineContainer = document.getElementById("timeline-container");
+  const timelineToggle = document.getElementById("timeline-toggle");
+  const timelineScrollContainer = document.getElementById(
+    "timeline-scroll-container"
+  );
+
   let changelogsData = [];
   let currentFocusedIndex = -1;
   const searchDropdownButton = document.getElementById("searchDropdownButton");
   const searchDropdown = document.getElementById("searchDropdown");
   let isDropdownOpen = false;
   let lastScrollTop = 0;
-
   const updateThemeIcons = () => {
-    const isDarkTheme = document.body.classList.contains("dark-theme");
+    const isDarkTheme =
+      document.documentElement.classList.contains("dark-theme");
     lightIcon.style.display = isDarkTheme ? "none" : "inline";
     darkIcon.style.display = isDarkTheme ? "inline" : "none";
   };
+
+  // Initialize theme on page load
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    document.documentElement.classList.add("dark-theme");
+  }
+  updateThemeIcons();
 
   const wrapMentions = (text) =>
     text.replace(
@@ -43,7 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return content
       .replace(/- /g, " ") // Replace " - " with a space
       .replace(/- - /g, " ") // Replace " - - " with a space
-      .replace(/## /g, " ") // Replace "## " with a space
       .replace(/### /g, " ") // Replace "### " with a space
       .replace(/\(audio\) /g, " ") // Replace "(audio) " with a space
       .replace(/\(video\) /g, " ") // Replace "(video) " with a space
@@ -54,6 +66,92 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/@(\w+)/g, "@$1") // Keep mentions as is
       .replace(/\s+/g, " ") // Replace multiple spaces with a single space
       .trim(); // Remove leading and trailing whitespace
+  }
+  function createTimeline(changelogs) {
+    const timeline = document.getElementById("timeline");
+    timeline.innerHTML = ""; // Clear existing content
+
+    const totalWidth = changelogs.length * 290; // 250px for item width + 40px for margin
+    timeline.style.width = `${totalWidth}px`; // Set the total width of the timeline
+
+    changelogs.forEach((changelog, index) => {
+      const timelineItem = document.createElement("div");
+      timelineItem.classList.add("timeline-item");
+
+      const content = document.createElement("div");
+      content.classList.add("timeline-content");
+
+      content.innerHTML = `
+        <div class="timeline-point"></div>
+        <h3>${changelog.title}</h3>
+        <button class="timeline-view-btn">View Details</button>
+      `;
+
+      timelineItem.appendChild(content);
+      timeline.appendChild(timelineItem);
+
+      const viewBtn = content.querySelector(".timeline-view-btn");
+      viewBtn.addEventListener("click", () => displayChangelog(changelog));
+    });
+  }
+
+  function initializeTimelineCollapse() {
+    const timelineToggle = document.getElementById("timeline-toggle");
+    const timelineContainer = document.getElementById("timeline-container");
+    const timelineScrollContainer = document.getElementById(
+      "timeline-scroll-container"
+    );
+
+    if (timelineToggle && timelineContainer && timelineScrollContainer) {
+      timelineToggle.addEventListener("click", function () {
+        timelineContainer.classList.toggle("collapsed");
+
+        if (timelineContainer.classList.contains("collapsed")) {
+          timelineScrollContainer.style.display = "none";
+        } else {
+          timelineScrollContainer.style.display = "block";
+        }
+      });
+    } else {
+      console.warn(
+        "Timeline elements not found. Make sure the IDs are correct."
+      );
+    }
+  }
+
+  function improveKeyboardNavigation() {
+    const focusableElements =
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const focusableContent = document.querySelectorAll(focusableElements);
+    const firstFocusableElement = focusableContent[0];
+    const lastFocusableElement = focusableContent[focusableContent.length - 1];
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Tab") {
+        if (e.shiftKey) {
+          if (document.activeElement === firstFocusableElement) {
+            lastFocusableElement.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastFocusableElement) {
+            firstFocusableElement.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    });
+  }
+
+  function toggleTheme() {
+    document.documentElement.classList.toggle("dark-theme");
+    localStorage.setItem(
+      "theme",
+      document.documentElement.classList.contains("dark-theme")
+        ? "dark"
+        : "light"
+    );
+    updateThemeIcons();
   }
 
   const convertMarkdownToHtml = (markdown) => {
@@ -111,13 +209,29 @@ document.addEventListener("DOMContentLoaded", () => {
           changelogsData[0];
         displayChangelog(initialChangelog);
 
+        createTimeline(changelogsData);
+
+        improveKeyboardNavigation();
+
         // Create dropdown content after loading data
         createDropdownContent();
+
+        // Hide the loading overlay after content is displayed
+        const loadingOverlay = document.getElementById("loading-overlay");
+        loadingOverlay.style.display = "none";
       } else {
         console.error("No changelogs found.");
+        // Hide the loading overlay even if no changelogs are found
+        const loadingOverlay = document.getElementById("loading-overlay");
+        loadingOverlay.style.display = "none";
       }
     })
-    .catch((error) => console.error("Error fetching changelogs:", error));
+    .catch((error) => {
+      console.error("Error fetching changelogs:", error);
+      // Hide the loading overlay even if there's an error
+      const loadingOverlay = document.getElementById("loading-overlay");
+      loadingOverlay.style.display = "none";
+    });
 
   const displayChangelog = (changelog) => {
     // console.log("Displaying changelog:", changelog);
@@ -130,13 +244,16 @@ document.addEventListener("DOMContentLoaded", () => {
       titleElement.textContent = changelog.title;
     }
 
+    const sidebarImageWrapper = document.getElementById(
+      "sidebar-image-wrapper"
+    );
+    const sidebarImage = document.getElementById("sidebarImage");
+
     if (changelog.image_url) {
-      // console.log("Setting image src to:", changelog.image_url);
       imageElement.src = changelog.image_url;
       imageElement.alt = `Image for ${changelog.title}`;
       imageElement.style.display = "block";
     } else {
-      console.warn("No image URL found for changelog.");
       imageElement.src = "";
       imageElement.alt = "No image available";
       imageElement.style.display = "none";
@@ -157,21 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Theme toggle logic
-  themeToggleButton.addEventListener("click", () => {
-    document.body.classList.toggle("dark-theme");
-    localStorage.setItem(
-      "theme",
-      document.body.classList.contains("dark-theme") ? "dark" : "light"
-    );
-    updateThemeIcons();
-  });
-
-  // Initialize theme on page load
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "dark") {
-    document.body.classList.add("dark-theme");
-  }
-  updateThemeIcons();
+  themeToggleButton.addEventListener("click", toggleTheme);
 
   function createDropdownContent() {
     searchDropdown.innerHTML = "";
@@ -453,12 +556,10 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
       searchResultsElement.style.display = "none";
       document.removeEventListener("keydown", handleKeyNavigation);
-
-      // Update these lines
-      searchInput.value = "";
-      updateSearchButtonState("");
-      contractSearch();
     }
   });
-  createDropdownContent();
+  searchInput.value = "";
+  updateSearchButtonState("");
+  contractSearch();
+  initializeTimelineCollapse();
 });
