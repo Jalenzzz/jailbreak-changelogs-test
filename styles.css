@@ -11,6 +11,10 @@
   --button-primary-hover-bg: #2980b9;
   --button-secondary-bg: #e67e22;
   --button-secondary-hover-bg: #d35400;
+  --mention-bg: #cce7fb;
+  --mention-at-color: #657786;
+  --mention-username-color: #1da1f2;
+  --mention-hover-bg: #b1defc;
 
   /* News ticker colors */
   --news-ticker-bg: #ff5f29;
@@ -48,6 +52,10 @@
   --button-primary-hover-bg: #3498db;
   --button-secondary-bg: #d35400;
   --button-secondary-hover-bg: #e67e22;
+  --mention-bg: #1e3a5f;
+  --mention-at-color: #8899a6;
+  --mention-username-color: #4a9cea;
+  --mention-hover-bg: #2a4a6a;
 
   /* News ticker colors */
   --news-ticker-bg: #d35400;
@@ -206,19 +214,20 @@
 }
 
 .mention {
-  background-color: #cce7fb;
-
-  /* font-weight: bold; */
+  background-color: var(--mention-bg, #cce7fb);
   transition: background-color 0.3s ease;
 }
+
 .mention .at {
-  color: #657786;
+  color: var(--mention-at-color, #657786);
 }
+
 .mention .username {
-  color: #1da1f2;
+  color: var(--mention-username-color, #1da1f2);
 }
+
 .mention:hover {
-  background-color: #b1defc;
+  background-color: var(--mention-hover-bg, #b1defc);
   cursor: pointer;
 }
 
@@ -534,18 +543,16 @@ button {
 }
 
 .quick-links .btn-link {
-  color: #6c757d;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
-  border: 2px solid #6c757d;
+  border: 2px solid;
   border-radius: 20px;
   padding: 8px 16px;
+  margin: 5px;
 }
 
 .quick-links .btn-link:hover {
-  background-color: #6c757d;
-  color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -554,7 +561,47 @@ button {
   font-size: 1.1rem;
 }
 
-/* Adjust colors for dark mode */
+/* Reddit button */
+.quick-links .btn-link[href*="reddit"] {
+  color: #ff4500;
+  border-color: #ff4500;
+}
+.quick-links .btn-link[href*="reddit"]:hover {
+  background-color: #ff4500;
+  color: white;
+}
+
+/* Discord buttons */
+.quick-links .btn-link[href*="discord"] {
+  color: #7289da;
+  border-color: #7289da;
+}
+.quick-links .btn-link[href*="discord"]:hover {
+  background-color: #7289da;
+  color: white;
+}
+
+/* Wiki button */
+.quick-links .btn-link[href*="fandom"] {
+  color: #00d6d6;
+  border-color: #00d6d6;
+}
+.quick-links .btn-link[href*="fandom"]:hover {
+  background-color: #00d6d6;
+  color: white;
+}
+
+/* GitHub button */
+.quick-links .btn-link[href*="github"] {
+  color: #333;
+  border-color: #333;
+}
+.quick-links .btn-link[href*="github"]:hover {
+  background-color: #333;
+  color: white;
+}
+
+/* Dark mode adjustments */
 [data-bs-theme="dark"] .quick-links {
   background-color: rgba(108, 117, 125, 0.1);
 }
@@ -563,15 +610,16 @@ button {
   background-color: #495057;
 }
 
-[data-bs-theme="dark"] .quick-links .btn-link {
-  color: #adb5bd;
-  border-color: #adb5bd;
+[data-bs-theme="dark"] .quick-links .btn-link[href*="github"] {
+  color: #f0f6fc;
+  border-color: #f0f6fc;
 }
 
-[data-bs-theme="dark"] .quick-links .btn-link:hover {
-  background-color: #adb5bd;
-  color: #212529;
+[data-bs-theme="dark"] .quick-links .btn-link[href*="github"]:hover {
+  background-color: #f0f6fc;
+  color: #333;
 }
+
 .contribute-section {
   border: none;
   border-radius: 10px;
@@ -632,6 +680,55 @@ button {
 [data-bs-theme="dark"] .contribute-section .btn-contribute:hover {
   background-color: #2eca55;
 }
+/* Discord button */
+.btn-link[href*="discord"] {
+  color: #7289da; /* Discord's brand color */
+  border-color: #7289da;
+}
+.btn-link[href*="discord"]:hover {
+  background-color: #7289da;
+  color: white;
+}
+
+/* Reddit button */
+.btn-link[href*="reddit"] {
+  color: #ff4500; /* Reddit's brand color */
+  border-color: #ff4500;
+}
+.btn-link[href*="reddit"]:hover {
+  background-color: #ff4500;
+  color: white;
+}
+/* Jailbreak Wiki button */
+.btn-link[href*="jailbreak.fandom.com"] {
+  color: #00d6d6; /* Fandom wiki color */
+  border-color: #00d6d6;
+}
+.btn-link[href*="jailbreak.fandom.com"]:hover {
+  background-color: #00d6d6;
+  color: white;
+}
+
+/* GitHub button */
+.btn-link[href*="github.com"] {
+  color: #333; /* GitHub's dark gray */
+  border-color: #333;
+}
+.btn-link[href*="github.com"]:hover {
+  background-color: #333;
+  color: white;
+}
+
+/* For dark mode, you might want to adjust the GitHub button colors */
+[data-bs-theme="dark"] .btn-link[href*="github.com"] {
+  color: #f0f6fc; /* GitHub's light text color in dark mode */
+  border-color: #f0f6fc;
+}
+[data-bs-theme="dark"] .btn-link[href*="github.com"]:hover {
+  background-color: #f0f6fc;
+  color: #333;
+}
+
 .accordion-button:not(.collapsed) {
   background-color: rgba(0, 0, 0, 0.03);
   color: #0c63e4;

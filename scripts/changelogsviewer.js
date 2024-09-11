@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+$(document).ready(function () {
   const loadingOverlay = document.getElementById("loading-overlay");
   const apiUrl = "https://api.jailbreakchangelogs.xyz/get_changelogs";
   const imageElement = document.getElementById("sidebarImage");
@@ -7,17 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let changelogsData = [];
 
-  // Function to show loading overlay
   function showLoadingOverlay() {
     loadingOverlay.classList.add("show");
   }
 
-  // Function to hide loading overlay
   function hideLoadingOverlay() {
     loadingOverlay.classList.remove("show");
   }
 
-  // Show loading overlay immediately when the script starts
   showLoadingOverlay();
 
   const preprocessMarkdown = (markdown) =>
@@ -36,71 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function improveKeyboardNavigation() {
-    const focusableElements =
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-    const focusableContent = document.querySelectorAll(focusableElements);
-    const firstFocusableElement = focusableContent[0];
-    const lastFocusableElement = focusableContent[focusableContent.length - 1];
+  const $searchInput = $('input[aria-label="Search changelogs"]');
+  const $searchButton = $("#button-addon2");
+  const $clearButton = $("#clear-search-button");
 
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Tab") {
-        if (e.shiftKey) {
-          if (document.activeElement === firstFocusableElement) {
-            lastFocusableElement.focus();
-            e.preventDefault();
-          }
-        } else {
-          if (document.activeElement === lastFocusableElement) {
-            firstFocusableElement.focus();
-            e.preventDefault();
-          }
-        }
-      }
-    });
-  }
-  function handleSearchResultsKeyboard(event) {
-    const searchResults = document.querySelectorAll(".custom-search-item");
-    const currentIndex = Array.from(searchResults).indexOf(
-      document.activeElement
-    );
-
-    switch (event.key) {
-      case "ArrowDown":
-        event.preventDefault();
-        if (currentIndex < searchResults.length - 1) {
-          searchResults[currentIndex + 1].focus();
-        }
-        break;
-      case "ArrowUp":
-        event.preventDefault();
-        if (currentIndex > 0) {
-          searchResults[currentIndex - 1].focus();
-        } else {
-          searchInput.focus();
-        }
-        break;
-      case "Enter":
-        if (document.activeElement.classList.contains("custom-search-item")) {
-          event.preventDefault();
-          document.activeElement.click(); // This will trigger the click event, which now uses clearSearch
-        }
-        break;
-      case "Escape":
-        event.preventDefault();
-        clearSearch(); // Use clearSearch instead of just hideSearchResults
-        break;
-    }
-  }
-
-  const searchInput = document.querySelector(
-    'input[aria-label="Search changelogs"]'
-  );
-  const searchButton = document.querySelector("#button-addon2");
-  const clearButton = document.querySelector("#clear-search-button");
-
-  searchButton.addEventListener("click", performSearch);
-  searchInput.addEventListener("keyup", (e) => {
+  $searchButton.on("click", performSearch);
+  $searchInput.on("keyup", (e) => {
     if (e.key === "Enter") {
       performSearch();
       dismissKeyboard();
@@ -108,34 +46,19 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleClearButton();
   });
 
-  searchInput.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      const firstResult = document.querySelector(".custom-search-item");
-      if (firstResult) {
-        firstResult.focus();
-      }
-    }
-  });
-
-  clearButton.addEventListener("click", clearSearch);
-  searchInput.addEventListener("keydown", handleSearchResultsKeyboard);
+  $clearButton.on("click", clearSearch);
 
   function toggleClearButton() {
-    if (searchInput.value.length > 0) {
-      clearButton.style.display = "block";
-    } else {
-      clearButton.style.display = "none";
-    }
+    $clearButton.toggle($searchInput.val().length > 0);
   }
+
   function hideSearchResults() {
-    const searchResultsContainer = document.getElementById("search-results");
-    searchResultsContainer.style.display = "none";
-    searchInput.focus(); // Return focus to the search input
+    $("#search-results").hide();
+    $searchInput.focus();
   }
 
   function clearSearch() {
-    searchInput.value = "";
+    $searchInput.val("");
     toggleClearButton();
     hideSearchResults();
     dismissKeyboard();
@@ -196,7 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
   };
 
-  // Update the wrapMentions function to make mentioned text bold
   const wrapMentions = (text) => {
     return text.replace(
       /@(\w+)/g,
@@ -204,14 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   };
 
-  fetch(apiUrl)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
+  $.getJSON(apiUrl)
+    .done((data) => {
       console.log("Data received:", data);
       changelogsData = data;
 
@@ -222,26 +138,22 @@ document.addEventListener("DOMContentLoaded", () => {
           changelogsData.find((cl) => cl.id == (idFromUrl || savedId)) ||
           changelogsData[0];
         displayChangelog(initialChangelog);
-
-        improveKeyboardNavigation();
       } else {
         console.error("No changelogs found.");
       }
 
-      // Hide loading overlay when data is loaded and processed
       hideLoadingOverlay();
     })
-    .catch((error) => {
-      console.error("Error fetching changelogs:", error);
-      document.getElementById("content").innerHTML =
-        "<p>Error loading changelogs. Please try again later.</p>";
-
-      // Hide loading overlay even if there's an error
+    .fail((jqXHR, textStatus, errorThrown) => {
+      console.error("Error fetching changelogs:", errorThrown);
+      $("#content").html(
+        "<p>Error loading changelogs. Please try again later.</p>"
+      );
       hideLoadingOverlay();
     });
 
   function performSearch() {
-    const query = searchInput.value.trim().toLowerCase();
+    const query = $searchInput.val().trim().toLowerCase();
     if (query) {
       const searchResults = changelogsData.filter((changelog) => {
         const titleMatch = changelog.title.toLowerCase().includes(query);
@@ -260,25 +172,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function displaySearchResults(results) {
-    const searchResultsContainer = document.getElementById("search-results");
-    searchResultsContainer.innerHTML = "";
+    const $searchResultsContainer = $("#search-results");
+    $searchResultsContainer.empty();
+
     if (results.length === 0) {
-      searchResultsContainer.innerHTML = '<p class="p-3">No results found.</p>';
+      $searchResultsContainer.html('<p class="p-3">No results found.</p>');
     } else {
-      const resultsList = document.createElement("ul");
-      resultsList.className = "list-group list-group-flush";
+      const $resultsList = $("<ul>").addClass("list-group list-group-flush");
       results.forEach((changelog) => {
-        const listItem = document.createElement("li");
-        listItem.className =
-          "list-group-item search-result-item custom-search-item";
-        listItem.tabIndex = 0; // Make the item focusable
+        const $listItem = $("<li>").addClass(
+          "list-group-item search-result-item custom-search-item"
+        );
 
         const cleanedSections = cleanContentForSearch(changelog.sections);
         const previewText =
           cleanedSections.substring(0, 100) +
           (cleanedSections.length > 100 ? "..." : "");
 
-        // Check for media tags
         const hasVideo = changelog.sections.includes("(video)");
         const hasImage = changelog.sections.includes("(image)");
         const hasAudio = changelog.sections.includes("(audio)");
@@ -291,22 +201,22 @@ document.addEventListener("DOMContentLoaded", () => {
         if (hasAudio)
           mediaTags.push('<span class="media-tag audio-tag">Audio</span>');
 
-        listItem.innerHTML = `
+        $listItem.html(`
           <h5 class="mb-1">${changelog.title} ${mediaTags.join(" ")}</h5>
           <p class="mb-1 small">${previewText}</p>
-        `;
+        `);
 
-        listItem.addEventListener("click", () => {
+        $listItem.on("click", () => {
           displayChangelog(changelog);
           clearSearch();
           dismissKeyboard();
         });
-        listItem.addEventListener("keydown", handleSearchResultsKeyboard);
-        resultsList.appendChild(listItem);
+
+        $resultsList.append($listItem);
       });
-      searchResultsContainer.appendChild(resultsList);
+      $searchResultsContainer.append($resultsList);
     }
-    searchResultsContainer.style.display = "block";
+    $searchResultsContainer.show();
   }
 
   function cleanContentForSearch(content) {
@@ -324,7 +234,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/\s+/g, " ") // Replace multiple spaces with a single space
       .trim(); // Remove leading and trailing whitespace
   }
-
   const displayChangelog = (changelog) => {
     history.pushState(null, "", `?id=${changelog.id}`);
     localStorage.setItem("selectedChangelogId", changelog.id);
