@@ -1,39 +1,63 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const searchButton = document.getElementById("searchButton");
+  const loadingOverlay = document.getElementById("loading-overlay");
+  const searchInput = document.getElementById("searchInput");
+  const searchDropdownButton = document.getElementById("searchDropdownButton");
+  const searchDropdown = document.getElementById("searchDropdown");
+  const searchResultsElement = document.getElementById("searchResults");
+
+  const dropdownButtonIcon = searchDropdownButton
+    ? searchDropdownButton.querySelector("i")
+    : null;
+
+  if (searchDropdownButton && searchDropdown) {
+    const dropdown = new bootstrap.Dropdown(searchDropdownButton);
+
+    searchDropdownButton.addEventListener("click", function (e) {
+      e.stopPropagation();
+      dropdown.toggle();
+    });
+
+    document.addEventListener("click", function (event) {
+      if (
+        !searchDropdownButton.contains(event.target) &&
+        !searchDropdown.contains(event.target)
+      ) {
+        dropdown.hide();
+      }
+    });
+  }
+
+  // Function to show loading overlay
+  function showLoadingOverlay() {
+    loadingOverlay.classList.add("show");
+  }
+
+  // Function to hide loading overlay
+  function hideLoadingOverlay() {
+    loadingOverlay.classList.remove("show");
+  }
+
+  // Show loading overlay immediately when the script starts
+  showLoadingOverlay();
   const apiUrl = "https://api.jailbreakchangelogs.xyz/get_changelogs";
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
   const titleElement = document.getElementById("changelogTitle");
   const themeToggleButton = document.getElementById("theme-toggle");
-  const lightIcon = document.querySelector(".light-icon");
   const darkIcon = document.querySelector(".dark-icon");
-  const searchInput = document.getElementById("searchInput");
-  const searchButton = document.getElementById("searchButton");
-  const searchResultsElement = document.getElementById("searchResults");
-  const timelineContainer = document.getElementById("timeline-container");
+  const timelineCollapse = document.getElementById("timelineCollapse");
+
   const timelineToggle = document.getElementById("timeline-toggle");
-  const timelineScrollContainer = document.getElementById(
-    "timeline-scroll-container"
-  );
 
   let changelogsData = [];
   let currentFocusedIndex = -1;
-  const searchDropdownButton = document.getElementById("searchDropdownButton");
-  const searchDropdown = document.getElementById("searchDropdown");
+
+  // Initialize Bootstrap dropdown
+  const dropdownInstance = new bootstrap.Dropdown(searchDropdownButton);
+
   let isDropdownOpen = false;
   let lastScrollTop = 0;
-  const updateThemeIcons = () => {
-    const isDarkTheme =
-      document.documentElement.classList.contains("dark-theme");
-    lightIcon.style.display = isDarkTheme ? "none" : "inline";
-    darkIcon.style.display = isDarkTheme ? "inline" : "none";
-  };
-
-  // Initialize theme on page load
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "dark") {
-    document.documentElement.classList.add("dark-theme");
-  }
-  updateThemeIcons();
 
   const wrapMentions = (text) =>
     text.replace(
@@ -71,45 +95,68 @@ document.addEventListener("DOMContentLoaded", () => {
     const timeline = document.getElementById("timeline");
     timeline.innerHTML = ""; // Clear existing content
 
-    const totalWidth = changelogs.length * 290; // 250px for item width + 40px for margin
-    timeline.style.width = `${totalWidth}px`; // Set the total width of the timeline
-
     changelogs.forEach((changelog, index) => {
       const timelineItem = document.createElement("div");
-      timelineItem.classList.add("timeline-item");
+      timelineItem.classList.add("timeline-item", "me-3");
 
-      const content = document.createElement("div");
-      content.classList.add("timeline-content");
-
-      content.innerHTML = `
-        <div class="timeline-point"></div>
-        <h3>${changelog.title}</h3>
-        <button class="timeline-view-btn">View Details</button>
+      timelineItem.innerHTML = `
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title h5 mb-3">${changelog.title}</h3>
+            <button class="btn btn-primary btn-sm timeline-view-btn">View Details</button>
+          </div>
+        </div>
       `;
 
-      timelineItem.appendChild(content);
       timeline.appendChild(timelineItem);
 
-      const viewBtn = content.querySelector(".timeline-view-btn");
+      const viewBtn = timelineItem.querySelector(".timeline-view-btn");
       viewBtn.addEventListener("click", () => displayChangelog(changelog));
     });
   }
+  function debounce(func, delay) {
+    let debounceTimer;
+    return function () {
+      const context = this;
+      const args = arguments;
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => func.apply(context, args), delay);
+    };
+  }
+  // Add this new function
+  const debouncedSearch = debounce((query) => {
+    if (query.length > 0) {
+      performSearch(query);
+      expandSearch();
+    } else {
+      searchResultsElement.style.display = "none";
+      contractSearch();
+    }
+  }, 300); // 300ms delay
 
   function initializeTimelineCollapse() {
     const timelineToggle = document.getElementById("timeline-toggle");
-    const timelineContainer = document.getElementById("timeline-container");
-    const timelineScrollContainer = document.getElementById(
-      "timeline-scroll-container"
-    );
+    const timelineCollapse = document.getElementById("timelineCollapse");
+    const timelineToggleIcon = timelineToggle
+      ? timelineToggle.querySelector("i")
+      : null;
 
-    if (timelineToggle && timelineContainer && timelineScrollContainer) {
+    if (timelineToggle && timelineCollapse && timelineToggleIcon) {
       timelineToggle.addEventListener("click", function () {
-        timelineContainer.classList.toggle("collapsed");
+        const isCollapsed = timelineCollapse.classList.contains("show");
 
-        if (timelineContainer.classList.contains("collapsed")) {
-          timelineScrollContainer.style.display = "none";
+        if (isCollapsed) {
+          timelineCollapse.classList.remove("show");
+          timelineToggleIcon.classList.replace(
+            "bi-chevron-down",
+            "bi-chevron-up"
+          );
         } else {
-          timelineScrollContainer.style.display = "block";
+          timelineCollapse.classList.add("show");
+          timelineToggleIcon.classList.replace(
+            "bi-chevron-up",
+            "bi-chevron-down"
+          );
         }
       });
     } else {
@@ -141,17 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     });
-  }
-
-  function toggleTheme() {
-    document.documentElement.classList.toggle("dark-theme");
-    localStorage.setItem(
-      "theme",
-      document.documentElement.classList.contains("dark-theme")
-        ? "dark"
-        : "light"
-    );
-    updateThemeIcons();
   }
 
   const convertMarkdownToHtml = (markdown) => {
@@ -197,8 +233,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // console.log("Fetching list of changelogs from:", apiUrl);
 
   fetch(apiUrl)
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
     .then((data) => {
+      console.log("Data received:", data);
       changelogsData = data;
 
       if (Array.isArray(data) && data.length > 0) {
@@ -213,24 +255,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
         improveKeyboardNavigation();
 
-        // Create dropdown content after loading data
         createDropdownContent();
-
-        // Hide the loading overlay after content is displayed
-        const loadingOverlay = document.getElementById("loading-overlay");
-        loadingOverlay.style.display = "none";
       } else {
         console.error("No changelogs found.");
-        // Hide the loading overlay even if no changelogs are found
-        const loadingOverlay = document.getElementById("loading-overlay");
-        loadingOverlay.style.display = "none";
       }
+
+      // Hide loading overlay when data is loaded and processed
+      hideLoadingOverlay();
     })
     .catch((error) => {
       console.error("Error fetching changelogs:", error);
-      // Hide the loading overlay even if there's an error
-      const loadingOverlay = document.getElementById("loading-overlay");
-      loadingOverlay.style.display = "none";
+      document.getElementById("content").innerHTML =
+        "<p>Error loading changelogs. Please try again later.</p>";
+
+      // Hide loading overlay even if there's an error
+      hideLoadingOverlay();
     });
 
   const displayChangelog = (changelog) => {
@@ -273,24 +312,47 @@ document.addEventListener("DOMContentLoaded", () => {
     sectionsElement.innerHTML = contentHtml;
   };
 
-  // Theme toggle logic
-  themeToggleButton.addEventListener("click", toggleTheme);
-
   function createDropdownContent() {
+    const searchDropdown = document.getElementById("searchDropdown");
+    if (!searchDropdown) {
+      console.error("Search dropdown element not found");
+      return;
+    }
+
     searchDropdown.innerHTML = "";
     changelogsData.forEach((changelog) => {
-      const item = document.createElement("div");
-      item.classList.add("search-dropdown-item");
+      const item = document.createElement("a");
+      item.classList.add("dropdown-item");
+      item.href = "#";
       item.textContent = changelog.title;
-      item.addEventListener("click", () => {
+      item.addEventListener("click", (e) => {
+        e.preventDefault();
         displayChangelog(changelog);
-        searchDropdown.classList.remove("show");
-        searchDropdownButton.querySelector("svg").style.transform = "rotate(0)";
+        const dropdown = bootstrap.Dropdown.getInstance(searchDropdownButton);
+        if (dropdown) {
+          dropdown.hide();
+        }
       });
-      // Insert the new item at the beginning of the dropdown
-      searchDropdown.insertBefore(item, searchDropdown.firstChild);
+      searchDropdown.appendChild(item);
     });
   }
+
+  //   searchDropdown.innerHTML = "";
+  //   changelogsData.forEach((changelog) => {
+  //     const item = document.createElement("div");
+  //     item.classList.add("search-dropdown-item");
+  //     item.textContent = changelog.title;
+  //     item.addEventListener("click", () => {
+  //       displayChangelog(changelog);
+  //       searchDropdown.classList.remove("show");
+  //       if (searchDropdownButton && dropdownButtonIcon) {
+  //         dropdownButtonIcon.classList.remove("bi-chevron-up");
+  //         dropdownButtonIcon.classList.add("bi-chevron-down");
+  //       }
+  //     });
+  //     searchDropdown.insertBefore(item, searchDropdown.firstChild);
+  //   });
+  // }
 
   // Function to expand the search
   function expandSearch() {
@@ -308,78 +370,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Search functionality
   function performSearch(query) {
-    const filteredChangelogs = changelogsData.filter((changelog) => {
-      return (
+    const filteredChangelogs = changelogsData.filter(
+      (changelog) =>
         changelog.title.toLowerCase().includes(query) ||
         changelog.sections.toLowerCase().includes(query)
-      );
-    });
-
+    );
     displaySearchResults(filteredChangelogs, query);
   }
 
-  searchInput.addEventListener("blur", () => {
-    if (searchInput.value.trim() === "") {
-      updateSearchButtonState("");
-    }
-  });
-
   // Add event listener for 'Enter' key in search input
+  // searchInput.addEventListener("input", () => {
+  //   const query = searchInput.value.trim().toLowerCase();
+  //   updateSearchButtonState(query);
+  //   if (query.length > 0) {
+  //     performSearch(query);
+  //     expandSearch();
+  //   } else {
+  //     searchResultsElement.style.display = "none";
+  //     contractSearch();
+  //   }
+  // });
+
+  // With debounce
   searchInput.addEventListener("input", () => {
-    const query = searchInput.value.trim().toLowerCase();
-    updateSearchButtonState(query);
-    if (query.length > 0) {
-      performSearch(query);
-      expandSearch();
-    } else {
-      searchResultsElement.style.display = "none";
-      contractSearch();
-    }
-  });
-  searchDropdownButton.addEventListener("click", function (e) {
-    e.stopPropagation(); // Prevent this click from closing the dropdown immediately
-    searchDropdown.classList.toggle("show");
-    isDropdownOpen = searchDropdown.classList.contains("show");
-    this.querySelector("svg").style.transform = isDropdownOpen
-      ? "rotate(180deg)"
-      : "rotate(0)";
+    debouncedSearch(searchInput.value);
   });
 
-  document.addEventListener("click", function (event) {
-    if (
-      !searchDropdownButton.contains(event.target) &&
-      !searchDropdown.contains(event.target)
-    ) {
-      closeDropdown();
-    }
-  });
-  // Add scroll event listener
-  window.addEventListener("scroll", handleScroll);
+  if (searchDropdownButton) {
+    const dropdown = new bootstrap.Dropdown(searchDropdownButton);
 
-  function handleScroll() {
-    if (isDropdownOpen) {
-      closeDropdown();
-    }
+    searchDropdownButton.addEventListener("click", function (e) {
+      e.stopPropagation();
+      dropdown.toggle();
+    });
+
+    document.addEventListener("click", function (event) {
+      if (
+        !searchDropdownButton.contains(event.target) &&
+        !searchDropdown.contains(event.target)
+      ) {
+        dropdown.hide();
+      }
+    });
+  } else {
+    console.error("Search dropdown button not found");
   }
-
-  function closeDropdown() {
-    if (isDropdownOpen) {
-      isDropdownOpen = false;
-      searchDropdown.classList.remove("show");
-      searchDropdownButton.querySelector("svg").style.transform = "rotate(0)";
-    }
-  }
-
-  // Close the dropdown when clicking outside
-  document.addEventListener("click", function (event) {
-    if (
-      !searchDropdownButton.contains(event.target) &&
-      !searchDropdown.contains(event.target)
-    ) {
-      searchDropdown.classList.remove("show");
-      searchDropdownButton.querySelector("svg").style.transform = "rotate(0)";
-    }
-  });
 
   searchInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
@@ -388,30 +423,30 @@ document.addEventListener("DOMContentLoaded", () => {
       if (query.length >= 3) {
         performSearch(query);
         expandSearch();
-        updateSearchButtonState(query);
+
         searchInput.blur();
       }
     }
   });
 
   // Update search button click handler
-  searchButton.addEventListener("click", (e) => {
-    e.preventDefault();
-    const query = searchInput.value.trim().toLowerCase();
-    if (searchButton.getAttribute("title") === "Clear search") {
-      // Clear search
-      searchInput.value = "";
-      searchResultsElement.style.display = "none";
-      updateSearchButtonState("");
-      contractSearch();
-    } else {
-      // Perform search
-      if (query.length > 0) {
-        performSearch(query);
-        expandSearch();
-      }
-    }
-  });
+  // searchButton.addEventListener("click", (e) => {
+  //   e.preventDefault();
+  //   const query = searchInput.value.trim().toLowerCase();
+  //   if (searchButton.getAttribute("title") === "Clear search") {
+  //     // Clear search
+  //     searchInput.value = "";
+  //     searchResultsElement.style.display = "none";
+  //     updateSearchButtonState("");
+  //     contractSearch();
+  //   } else {
+  //     // Perform search
+  //     if (query.length > 0) {
+  //       performSearch(query);
+  //       expandSearch();
+  //     }
+  //   }
+  // });
 
   function displaySearchResults(results, query) {
     if (results.length > 0) {
@@ -472,28 +507,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return highlightMatch(preview, query);
   }
 
-  // Function to update search button state
-  function updateSearchButtonState(query) {
-    const searchButtonIcon = searchButton.querySelector("svg");
-    if (query.length > 0) {
-      searchButtonIcon.innerHTML =
-        '<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>';
-      searchButton.setAttribute("title", "Clear search");
-    } else {
-      searchButtonIcon.innerHTML =
-        '<circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>';
-      searchButton.setAttribute("title", "Search");
-    }
-
-    // Update the stroke color based on the current theme
-    const isDarkTheme = document.body.classList.contains("dark-theme");
-    const strokeColor = isDarkTheme
-      ? getComputedStyle(document.body).getPropertyValue("--footer-link-color")
-      : getComputedStyle(document.body).getPropertyValue("--text-color");
-
-    searchButtonIcon.style.stroke = strokeColor;
-  }
-
   function addSearchResultListeners(results) {
     const items = searchResultsElement.querySelectorAll(".search-result-item");
     items.forEach((item) => {
@@ -501,14 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const index = parseInt(item.dataset.index);
         displayChangelog(results[index]);
         searchResultsElement.style.display = "none";
-
-        // Clear the search input
         searchInput.value = "";
-
-        // Reset the search button state
-        updateSearchButtonState("");
-
-        // Contract the search bar
         contractSearch();
       });
     });
@@ -559,7 +565,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   searchInput.value = "";
-  updateSearchButtonState("");
+
   contractSearch();
   initializeTimelineCollapse();
 });
