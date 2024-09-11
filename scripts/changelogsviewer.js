@@ -30,6 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/\(video\) /g, "\n(video) ")
       .replace(/\(image\) /g, "\n(image) ");
 
+  function dismissKeyboard() {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }
+
   function improveKeyboardNavigation() {
     const focusableElements =
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -53,6 +59,39 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+  function handleSearchResultsKeyboard(event) {
+    const searchResults = document.querySelectorAll(".custom-search-item");
+    const currentIndex = Array.from(searchResults).indexOf(
+      document.activeElement
+    );
+
+    switch (event.key) {
+      case "ArrowDown":
+        event.preventDefault();
+        if (currentIndex < searchResults.length - 1) {
+          searchResults[currentIndex + 1].focus();
+        }
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+        if (currentIndex > 0) {
+          searchResults[currentIndex - 1].focus();
+        } else {
+          searchInput.focus();
+        }
+        break;
+      case "Enter":
+        if (document.activeElement.classList.contains("custom-search-item")) {
+          event.preventDefault();
+          document.activeElement.click(); // This will trigger the click event, which now uses clearSearch
+        }
+        break;
+      case "Escape":
+        event.preventDefault();
+        clearSearch(); // Use clearSearch instead of just hideSearchResults
+        break;
+    }
+  }
 
   const searchInput = document.querySelector(
     'input[aria-label="Search changelogs"]'
@@ -64,11 +103,23 @@ document.addEventListener("DOMContentLoaded", () => {
   searchInput.addEventListener("keyup", (e) => {
     if (e.key === "Enter") {
       performSearch();
+      dismissKeyboard();
     }
     toggleClearButton();
   });
 
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      const firstResult = document.querySelector(".custom-search-item");
+      if (firstResult) {
+        firstResult.focus();
+      }
+    }
+  });
+
   clearButton.addEventListener("click", clearSearch);
+  searchInput.addEventListener("keydown", handleSearchResultsKeyboard);
 
   function toggleClearButton() {
     if (searchInput.value.length > 0) {
@@ -80,15 +131,14 @@ document.addEventListener("DOMContentLoaded", () => {
   function hideSearchResults() {
     const searchResultsContainer = document.getElementById("search-results");
     searchResultsContainer.style.display = "none";
+    searchInput.focus(); // Return focus to the search input
   }
 
   function clearSearch() {
     searchInput.value = "";
     toggleClearButton();
     hideSearchResults();
-  }
-  function clearSearchResults() {
-    sectionsElement.innerHTML = ""; // Clear the search results
+    dismissKeyboard();
   }
 
   const convertMarkdownToHtml = (markdown) => {
@@ -117,9 +167,12 @@ document.addEventListener("DOMContentLoaded", () => {
             line.substring(4)
           )}</p>`;
         } else if (line.startsWith("- ")) {
-          return `<p class="mb-2 lead ps-4 position-relative"><span class="position-absolute start-0 text-primary">•</span> ${wrapMentions(
-            line.substring(2)
-          )}</p>`;
+          return `
+  <div class="d-flex align-items-start mb-2">
+    <span class="text-primary me-2">•</span>
+    <p class="lead mb-0">${wrapMentions(line.substring(2))}</p>
+  </div>
+`;
         } else if (line.startsWith("(audio)")) {
           const audioUrl = line.substring(7).trim();
           const audioType = audioUrl.endsWith(".wav")
@@ -133,7 +186,11 @@ document.addEventListener("DOMContentLoaded", () => {
           const videoUrl = line.substring(7).trim();
           return `<video class="w-100 mt-2 mb-2" style="max-height: 500px;" controls><source src="${videoUrl}" type="video/mp4"></video>`;
         } else {
-          return `<p class="mb-2 lead">${wrapMentions(line)}</p>`;
+          return `
+  <div class="d-flex align-items-start mb-2">
+    <p class="lead mb-0">${wrapMentions(line.substring(2))}</p>
+  </div>
+`;
         }
       })
       .join("");
@@ -199,6 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       hideSearchResults();
     }
+    dismissKeyboard();
   }
 
   function displaySearchResults(results) {
@@ -211,21 +269,39 @@ document.addEventListener("DOMContentLoaded", () => {
       resultsList.className = "list-group list-group-flush";
       results.forEach((changelog) => {
         const listItem = document.createElement("li");
-        listItem.className = "list-group-item search-result-item";
+        listItem.className =
+          "list-group-item search-result-item custom-search-item";
+        listItem.tabIndex = 0; // Make the item focusable
 
         const cleanedSections = cleanContentForSearch(changelog.sections);
         const previewText =
           cleanedSections.substring(0, 100) +
           (cleanedSections.length > 100 ? "..." : "");
 
+        // Check for media tags
+        const hasVideo = changelog.sections.includes("(video)");
+        const hasImage = changelog.sections.includes("(image)");
+        const hasAudio = changelog.sections.includes("(audio)");
+
+        const mediaTags = [];
+        if (hasVideo)
+          mediaTags.push('<span class="media-tag video-tag">Video</span>');
+        if (hasImage)
+          mediaTags.push('<span class="media-tag image-tag">Image</span>');
+        if (hasAudio)
+          mediaTags.push('<span class="media-tag audio-tag">Audio</span>');
+
         listItem.innerHTML = `
-            <h5 class="mb-1">${changelog.title}</h5>
-            <p class="mb-1 small">${previewText}</p>
-          `;
+          <h5 class="mb-1">${changelog.title} ${mediaTags.join(" ")}</h5>
+          <p class="mb-1 small">${previewText}</p>
+        `;
+
         listItem.addEventListener("click", () => {
           displayChangelog(changelog);
-          hideSearchResults();
+          clearSearch();
+          dismissKeyboard();
         });
+        listItem.addEventListener("keydown", handleSearchResultsKeyboard);
         resultsList.appendChild(listItem);
       });
       searchResultsContainer.appendChild(resultsList);
@@ -247,38 +323,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/@(\w+)/g, "@$1") // Keep mentions as is
       .replace(/\s+/g, " ") // Replace multiple spaces with a single space
       .trim(); // Remove leading and trailing whitespace
-  }
-
-  function displaySearchResults(results) {
-    const searchResultsContainer = document.getElementById("search-results");
-    searchResultsContainer.innerHTML = "";
-    if (results.length === 0) {
-      searchResultsContainer.innerHTML = '<p class="p-3">No results found.</p>';
-    } else {
-      const resultsList = document.createElement("ul");
-      resultsList.className = "list-group list-group-flush";
-      results.forEach((changelog) => {
-        const listItem = document.createElement("li");
-        listItem.className = "list-group-item search-result-item";
-
-        const cleanedSections = cleanContentForSearch(changelog.sections);
-        const previewText =
-          cleanedSections.substring(0, 100) +
-          (cleanedSections.length > 100 ? "..." : "");
-
-        listItem.innerHTML = `
-          <h5 class="mb-1">${changelog.title}</h5>
-          <p class="mb-1 small">${previewText}</p>
-        `;
-        listItem.addEventListener("click", () => {
-          displayChangelog(changelog);
-          hideSearchResults();
-        });
-        resultsList.appendChild(listItem);
-      });
-      searchResultsContainer.appendChild(resultsList);
-    }
-    searchResultsContainer.style.display = "block";
   }
 
   const displayChangelog = (changelog) => {

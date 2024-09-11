@@ -71,13 +71,29 @@
 
   /* ... other dark theme colors ... */
 }
-.search-result-item {
+.video-card {
+  max-width: 70%; /* Adjust this to match your sidebar image card width */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.custom-search-item {
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.search-result-item:hover {
+.custom-search-item:hover {
   background-color: var(--hover-bg-color, #f8f9fa);
+}
+
+/* Light theme styles */
+[data-bs-theme="light"] .custom-search-item:hover {
+  background-color: var(--gray-200);
+}
+
+/* Dark theme styles */
+[data-bs-theme="dark"] .custom-search-item:hover {
+  background-color: var(--gray-200);
 }
 
 ::selection {
@@ -102,10 +118,6 @@
 .semi-transparent-bg {
   background-color: rgba(var(--glow-color), 0.5);
 }
-#virtualScrollContainer {
-  max-height: 400px;
-  overflow-y: auto;
-}
 
 #loading-overlay {
   position: fixed;
@@ -114,7 +126,6 @@
   width: 100%;
   height: 100%;
   display: none;
-
   justify-content: center;
   align-items: center;
   z-index: 9999;
@@ -272,14 +283,13 @@ header {
 
 #main-title {
   font-family: "Bangers", Arial, Helvetica, sans-serif;
-  font-weight: 300;
   letter-spacing: 1px;
 }
 #theme-toggle {
   border: none;
   cursor: pointer;
   color: var(--header-text);
-  font-size: 24px;
+  font-size: 30px;
   margin-left: auto;
 }
 
@@ -324,10 +334,6 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
-}
-#content {
-  flex: 1;
-  width: 100vw;
 }
 
 -message p {
@@ -662,6 +668,9 @@ button {
 
 /* Small to medium devices (phones to tablets, 768px and down) */
 @media (max-width: 768px) {
+  #theme-toggle {
+    font-size: 20px;
+  }
   .responsive-heading {
     font-size: 3rem;
   }
@@ -691,10 +700,6 @@ button {
 @media (min-width: 769px) and (max-width: 1024px) {
   #main-container {
     padding: 15px;
-  }
-
-  #content {
-    width: 100%;
   }
 }
 
