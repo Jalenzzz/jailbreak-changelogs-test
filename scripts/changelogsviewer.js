@@ -1,38 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const searchButton = document.getElementById("searchButton");
   const loadingOverlay = document.getElementById("loading-overlay");
-  const searchInput = document.getElementById("searchInput");
-  searchInput.setAttribute("autocomplete", "off");
-  const searchDropdownButton = document.getElementById("searchDropdownButton");
-  const searchDropdown = document.getElementById("searchDropdown");
-  const searchResultsElement = document.getElementById("searchResults");
-  const ITEMS_PER_PAGE = 10;
-  let currentPage = 0;
-  let totalResults = [];
+  const apiUrl = "https://api.jailbreakchangelogs.xyz/get_changelogs";
+  const imageElement = document.getElementById("sidebarImage");
+  const sectionsElement = document.getElementById("content");
+  const titleElement = document.getElementById("changelogTitle");
 
-  let debounceTimer;
-
-  const dropdownButtonIcon = searchDropdownButton
-    ? searchDropdownButton.querySelector("i")
-    : null;
-
-  if (searchDropdownButton && searchDropdown) {
-    const dropdown = new bootstrap.Dropdown(searchDropdownButton);
-
-    searchDropdownButton.addEventListener("click", function (e) {
-      e.stopPropagation();
-      dropdown.toggle();
-    });
-
-    document.addEventListener("click", function (event) {
-      if (
-        !searchDropdownButton.contains(event.target) &&
-        !searchDropdown.contains(event.target)
-      ) {
-        dropdown.hide();
-      }
-    });
-  }
+  let changelogsData = [];
 
   // Function to show loading overlay
   function showLoadingOverlay() {
@@ -46,24 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Show loading overlay immediately when the script starts
   showLoadingOverlay();
-  const apiUrl = "https://api.jailbreakchangelogs.xyz/get_changelogs";
-  const imageElement = document.getElementById("sidebarImage");
-  const sectionsElement = document.getElementById("content");
-  const titleElement = document.getElementById("changelogTitle");
-  const themeToggleButton = document.getElementById("theme-toggle");
-  const darkIcon = document.querySelector(".dark-icon");
-  const timelineCollapse = document.getElementById("timelineCollapse");
-
-  const timelineToggle = document.getElementById("timeline-toggle");
-
-  let changelogsData = [];
-  let currentFocusedIndex = -1;
-
-  // Initialize Bootstrap dropdown
-  const dropdownInstance = new bootstrap.Dropdown(searchDropdownButton);
-
-  let isDropdownOpen = false;
-  let lastScrollTop = 0;
 
   const preprocessMarkdown = (markdown) =>
     markdown
@@ -74,85 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/\(audio\) /g, "\n(audio) ")
       .replace(/\(video\) /g, "\n(video) ")
       .replace(/\(image\) /g, "\n(image) ");
-
-  function cleanContentForSearch(content) {
-    return content
-      .replace(/- /g, " ") // Replace " - " with a space
-      .replace(/- - /g, " ") // Replace " - - " with a space
-      .replace(/### /g, " ") // Replace "### " with a space
-      .replace(/\(audio\) /g, " ") // Replace "(audio) " with a space
-      .replace(/\(video\) /g, " ") // Replace "(video) " with a space
-      .replace(/\(image\) /g, " ") // Replace "(image) " with a space
-      .replace(/\(audio\)\s*\S+/g, "[Audio]") // Replace audio links with [Audio]
-      .replace(/\(video\)\s*\S+/g, "[Video]") // Replace video links with [Video]
-      .replace(/\(image\)\s*\S+/g, "[Image]") // Replace image links with [Image]
-      .replace(/@(\w+)/g, "@$1") // Keep mentions as is
-      .replace(/\s+/g, " ") // Replace multiple spaces with a single space
-      .trim(); // Remove leading and trailing whitespace
-  }
-  function createTimeline(changelogs) {
-    const timeline = document.getElementById("timeline");
-    timeline.innerHTML = ""; // Clear existing content
-
-    changelogs.forEach((changelog, index) => {
-      const timelineItem = document.createElement("div");
-      timelineItem.classList.add("timeline-item", "me-3");
-
-      timelineItem.innerHTML = `
-        <div class="card">
-          <div class="card-body">
-            <h3 class="card-title h5 mb-3">${changelog.title}</h3>
-            <button class="btn btn-primary btn-sm timeline-view-btn">View Details</button>
-          </div>
-        </div>
-      `;
-
-      timeline.appendChild(timelineItem);
-
-      const viewBtn = timelineItem.querySelector(".timeline-view-btn");
-      viewBtn.addEventListener("click", () => displayChangelog(changelog));
-    });
-  }
-  function debounce(func, delay) {
-    return function () {
-      const context = this;
-      const args = arguments;
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => func.apply(context, args), delay);
-    };
-  }
-
-  function initializeTimelineCollapse() {
-    const timelineToggle = document.getElementById("timeline-toggle");
-    const timelineCollapse = document.getElementById("timelineCollapse");
-    const timelineToggleIcon = timelineToggle
-      ? timelineToggle.querySelector("i")
-      : null;
-
-    if (timelineToggle && timelineCollapse && timelineToggleIcon) {
-      timelineToggle.addEventListener("click", function () {
-        const isCollapsed = timelineCollapse.classList.contains("show");
-
-        if (isCollapsed) {
-          timelineCollapse.classList.remove("show");
-          timelineToggleIcon.classList.replace(
-            "bi-chevron-down",
-            "bi-chevron-up"
-          );
-        } else {
-          timelineCollapse.classList.add("show");
-          timelineToggleIcon.classList.replace(
-            "bi-chevron-up",
-            "bi-chevron-down"
-          );
-        }
-      });
-    } else {
-      console.warn(
-        "Timeline elements not found. Make sure the IDs are correct."
-      );
-    }
-  }
 
   function improveKeyboardNavigation() {
     const focusableElements =
@@ -176,6 +52,43 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     });
+  }
+
+  const searchInput = document.querySelector(
+    'input[aria-label="Search changelogs"]'
+  );
+  const searchButton = document.querySelector("#button-addon2");
+  const clearButton = document.querySelector("#clear-search-button");
+
+  searchButton.addEventListener("click", performSearch);
+  searchInput.addEventListener("keyup", (e) => {
+    if (e.key === "Enter") {
+      performSearch();
+    }
+    toggleClearButton();
+  });
+
+  clearButton.addEventListener("click", clearSearch);
+
+  function toggleClearButton() {
+    if (searchInput.value.length > 0) {
+      clearButton.style.display = "block";
+    } else {
+      clearButton.style.display = "none";
+    }
+  }
+  function hideSearchResults() {
+    const searchResultsContainer = document.getElementById("search-results");
+    searchResultsContainer.style.display = "none";
+  }
+
+  function clearSearch() {
+    searchInput.value = "";
+    toggleClearButton();
+    hideSearchResults();
+  }
+  function clearSearchResults() {
+    sectionsElement.innerHTML = ""; // Clear the search results
   }
 
   const convertMarkdownToHtml = (markdown) => {
@@ -233,7 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
       '<span class="mention fw-bold"><span class="at">@</span><span class="username">$1</span></span>'
     );
   };
-  // console.log("Fetching list of changelogs from:", apiUrl);
 
   fetch(apiUrl)
     .then((response) => {
@@ -254,11 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
           changelogsData[0];
         displayChangelog(initialChangelog);
 
-        createTimeline(changelogsData);
-
         improveKeyboardNavigation();
-
-        createDropdownContent();
       } else {
         console.error("No changelogs found.");
       }
@@ -275,9 +183,105 @@ document.addEventListener("DOMContentLoaded", () => {
       hideLoadingOverlay();
     });
 
-  const displayChangelog = (changelog) => {
-    // console.log("Displaying changelog:", changelog);
+  function performSearch() {
+    const query = searchInput.value.trim().toLowerCase();
+    if (query) {
+      const searchResults = changelogsData.filter((changelog) => {
+        const titleMatch = changelog.title.toLowerCase().includes(query);
+        const contentMatch =
+          changelog.sections &&
+          typeof changelog.sections === "string" &&
+          changelog.sections.toLowerCase().includes(query);
+        return titleMatch || contentMatch;
+      });
 
+      displaySearchResults(searchResults);
+    } else {
+      hideSearchResults();
+    }
+  }
+
+  function displaySearchResults(results) {
+    const searchResultsContainer = document.getElementById("search-results");
+    searchResultsContainer.innerHTML = "";
+    if (results.length === 0) {
+      searchResultsContainer.innerHTML = '<p class="p-3">No results found.</p>';
+    } else {
+      const resultsList = document.createElement("ul");
+      resultsList.className = "list-group list-group-flush";
+      results.forEach((changelog) => {
+        const listItem = document.createElement("li");
+        listItem.className = "list-group-item search-result-item";
+
+        const cleanedSections = cleanContentForSearch(changelog.sections);
+        const previewText =
+          cleanedSections.substring(0, 100) +
+          (cleanedSections.length > 100 ? "..." : "");
+
+        listItem.innerHTML = `
+            <h5 class="mb-1">${changelog.title}</h5>
+            <p class="mb-1 small">${previewText}</p>
+          `;
+        listItem.addEventListener("click", () => {
+          displayChangelog(changelog);
+          hideSearchResults();
+        });
+        resultsList.appendChild(listItem);
+      });
+      searchResultsContainer.appendChild(resultsList);
+    }
+    searchResultsContainer.style.display = "block";
+  }
+
+  function cleanContentForSearch(content) {
+    return content
+      .replace(/- /g, " ") // Replace " - " with a space
+      .replace(/- - /g, " ") // Replace " - - " with a space
+      .replace(/### /g, " ") // Replace "### " with a space
+      .replace(/\(audio\) /g, " ") // Replace "(audio) " with a space
+      .replace(/\(video\) /g, " ") // Replace "(video) " with a space
+      .replace(/\(image\) /g, " ") // Replace "(image) " with a space
+      .replace(/\(audio\)\s*\S+/g, "[Audio]") // Replace audio links with [Audio]
+      .replace(/\(video\)\s*\S+/g, "[Video]") // Replace video links with [Video]
+      .replace(/\(image\)\s*\S+/g, "[Image]") // Replace image links with [Image]
+      .replace(/@(\w+)/g, "@$1") // Keep mentions as is
+      .replace(/\s+/g, " ") // Replace multiple spaces with a single space
+      .trim(); // Remove leading and trailing whitespace
+  }
+
+  function displaySearchResults(results) {
+    const searchResultsContainer = document.getElementById("search-results");
+    searchResultsContainer.innerHTML = "";
+    if (results.length === 0) {
+      searchResultsContainer.innerHTML = '<p class="p-3">No results found.</p>';
+    } else {
+      const resultsList = document.createElement("ul");
+      resultsList.className = "list-group list-group-flush";
+      results.forEach((changelog) => {
+        const listItem = document.createElement("li");
+        listItem.className = "list-group-item search-result-item";
+
+        const cleanedSections = cleanContentForSearch(changelog.sections);
+        const previewText =
+          cleanedSections.substring(0, 100) +
+          (cleanedSections.length > 100 ? "..." : "");
+
+        listItem.innerHTML = `
+          <h5 class="mb-1">${changelog.title}</h5>
+          <p class="mb-1 small">${previewText}</p>
+        `;
+        listItem.addEventListener("click", () => {
+          displayChangelog(changelog);
+          hideSearchResults();
+        });
+        resultsList.appendChild(listItem);
+      });
+      searchResultsContainer.appendChild(resultsList);
+    }
+    searchResultsContainer.style.display = "block";
+  }
+
+  const displayChangelog = (changelog) => {
     history.pushState(null, "", `?id=${changelog.id}`);
     localStorage.setItem("selectedChangelogId", changelog.id);
 
@@ -285,11 +289,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (titleElement) {
       titleElement.textContent = changelog.title;
     }
-
-    const sidebarImageWrapper = document.getElementById(
-      "sidebar-image-wrapper"
-    );
-    const sidebarImage = document.getElementById("sidebarImage");
 
     if (changelog.image_url) {
       imageElement.src = changelog.image_url;
@@ -314,318 +313,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     sectionsElement.innerHTML = contentHtml;
   };
-
-  function createDropdownContent() {
-    const searchDropdown = document.getElementById("searchDropdown");
-    if (!searchDropdown) {
-      console.error("Search dropdown element not found");
-      return;
-    }
-
-    searchDropdown.innerHTML = "";
-    changelogsData.forEach((changelog) => {
-      const item = document.createElement("a");
-      item.classList.add("dropdown-item");
-      item.href = "#";
-      item.textContent = changelog.title;
-      item.addEventListener("click", (e) => {
-        e.preventDefault();
-        displayChangelog(changelog);
-        const dropdown = bootstrap.Dropdown.getInstance(searchDropdownButton);
-        if (dropdown) {
-          dropdown.hide();
-        }
-      });
-      searchDropdown.appendChild(item);
-    });
-  }
-
-  //   searchDropdown.innerHTML = "";
-  //   changelogsData.forEach((changelog) => {
-  //     const item = document.createElement("div");
-  //     item.classList.add("search-dropdown-item");
-  //     item.textContent = changelog.title;
-  //     item.addEventListener("click", () => {
-  //       displayChangelog(changelog);
-  //       searchDropdown.classList.remove("show");
-  //       if (searchDropdownButton && dropdownButtonIcon) {
-  //         dropdownButtonIcon.classList.remove("bi-chevron-up");
-  //         dropdownButtonIcon.classList.add("bi-chevron-down");
-  //       }
-  //     });
-  //     searchDropdown.insertBefore(item, searchDropdown.firstChild);
-  //   });
-  // }
-
-  // Function to expand the search
-  function expandSearch() {
-    document.body.classList.add("search-expanded");
-  }
-  // Function to contract the search
-  function contractSearch() {
-    if (searchInput.value.trim() === "") {
-      document.body.classList.remove("search-expanded");
-      searchResultsElement.style.display = "none";
-      // Remove the event listener when closing the search results
-      document.removeEventListener("keydown", handleKeyNavigation);
-    }
-  }
-
-  // Add event listeners for expanding and contracting
-  searchInput.addEventListener("focus", expandSearch);
-  searchInput.addEventListener("blur", contractSearch);
-
-  // Search functionality
-  const performSearch = debounce((query) => {
-    if (query.length > 0) {
-      const filteredChangelogs = changelogsData.filter(
-        (changelog) =>
-          changelog.title.toLowerCase().includes(query) ||
-          changelog.sections.toLowerCase().includes(query)
-      );
-      displaySearchResults(filteredChangelogs, query);
-      expandSearch();
-    } else {
-      searchResultsElement.style.display = "none";
-      contractSearch();
-    }
-  }, 300); // 300ms delay
-
-  // With debounce
-  searchInput.addEventListener("input", () => {
-    const query = searchInput.value.trim().toLowerCase();
-    performSearch(query);
-    toggleClearButton();
-  });
-
-  if (searchDropdownButton) {
-    const dropdown = new bootstrap.Dropdown(searchDropdownButton);
-
-    searchDropdownButton.addEventListener("click", function (e) {
-      e.stopPropagation();
-      dropdown.toggle();
-    });
-
-    document.addEventListener("click", function (event) {
-      if (
-        !searchDropdownButton.contains(event.target) &&
-        !searchDropdown.contains(event.target)
-      ) {
-        dropdown.hide();
-      }
-    });
-  } else {
-    console.error("Search dropdown button not found");
-  }
-  searchInput.addEventListener("keyup", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const query = searchInput.value.trim().toLowerCase();
-      performSearch(query);
-    }
-  });
-
-  searchInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault(); // Prevent form submission
-      const query = searchInput.value.trim().toLowerCase();
-      if (query.length >= 3) {
-        performSearch(query);
-        expandSearch();
-
-        searchInput.blur();
-      }
-    }
-  });
-  // Add a clear button to the search input
-  // Modify the part where we create the clear button
-  const clearButton = document.createElement("button");
-  clearButton.innerHTML = '<i class="bi bi-x"></i>';
-  clearButton.className = "btn btn-outline-secondary clear-search";
-  clearButton.type = "button";
-  clearButton.style.display = "none";
-  clearButton.setAttribute("aria-label", "Clear search"); // Add this line
-  searchInput.parentNode.appendChild(clearButton);
-
-  clearButton.addEventListener("click", () => {
-    searchInput.value = "";
-    toggleClearButton();
-    searchResultsElement.style.display = "none";
-    contractSearch();
-  });
-  function toggleClearButton() {
-    clearButton.style.display = searchInput.value ? "block" : "none";
-  }
-  function displaySearchResults(results, query) {
-    totalResults = results;
-    currentPage = 0;
-    currentFocusedIndex = -1; // Reset the focused index
-
-    if (results.length > 0) {
-      searchResultsElement.innerHTML =
-        '<div id="virtualScrollContainer"></div>';
-      const virtualScrollContainer = document.getElementById(
-        "virtualScrollContainer"
-      );
-      virtualScrollContainer.addEventListener("scroll", handleVirtualScroll);
-      loadMoreResults();
-
-      // Add this line to set up keyboard navigation
-      document.addEventListener("keydown", handleKeyNavigation);
-    } else {
-      searchResultsElement.innerHTML = "<p>No results found.</p>";
-    }
-    searchResultsElement.style.display = "block";
-  }
-
-  function loadMoreResults() {
-    const virtualScrollContainer = document.getElementById(
-      "virtualScrollContainer"
-    );
-    const startIndex = currentPage * ITEMS_PER_PAGE;
-    const endIndex = Math.min(
-      (currentPage + 1) * ITEMS_PER_PAGE,
-      totalResults.length
-    );
-
-    for (let i = startIndex; i < endIndex; i++) {
-      const changelog = totalResults[i];
-      const resultItem = createSearchResultItem(changelog, i);
-      virtualScrollContainer.appendChild(resultItem);
-    }
-
-    currentPage++;
-  }
-  function createSearchResultItem(changelog, index) {
-    const item = document.createElement("div");
-    item.className = "search-result-item";
-    item.dataset.index = index;
-
-    const titleHighlight = highlightMatch(changelog.title, searchInput.value);
-    const cleanedContent = cleanContentForSearch(changelog.sections);
-    const contentPreview = getContentPreview(cleanedContent, searchInput.value);
-
-    const hasAudio = cleanedContent.includes("[Audio]");
-    const hasVideo = cleanedContent.includes("[Video]");
-    const hasImage = cleanedContent.includes("[Image]");
-
-    const audioTag = hasAudio
-      ? '<span class="media-tag audio-tag">Audio</span>'
-      : "";
-    const videoTag = hasVideo
-      ? '<span class="media-tag video-tag">Video</span>'
-      : "";
-    const imageTag = hasImage
-      ? '<span class="media-tag image-tag">Image</span>'
-      : "";
-
-    item.innerHTML = `
-      <strong>${titleHighlight}${audioTag}${videoTag}${imageTag}</strong>
-      <p>${contentPreview}</p>
-    `;
-
-    item.addEventListener("click", () => {
-      displayChangelog(changelog);
-      searchResultsElement.style.display = "none";
-      searchInput.value = "";
-      contractSearch();
-    });
-
-    return item;
-  }
-
-  function handleVirtualScroll() {
-    const virtualScrollContainer = document.getElementById(
-      "virtualScrollContainer"
-    );
-    if (
-      virtualScrollContainer.scrollTop + virtualScrollContainer.clientHeight >=
-      virtualScrollContainer.scrollHeight - 100
-    ) {
-      if (currentPage * ITEMS_PER_PAGE < totalResults.length) {
-        loadMoreResults();
-      }
-    }
-  }
-
-  function highlightMatch(text, query) {
-    const regex = new RegExp(`(${query})`, "gi");
-    return text.replace(regex, "<mark>$1</mark>");
-  }
-
-  function getContentPreview(content, query) {
-    const cleanedContent = cleanContentForSearch(content);
-    const index = cleanedContent.toLowerCase().indexOf(query.toLowerCase());
-    if (index === -1) return cleanedContent.slice(0, 100) + "...";
-
-    const start = Math.max(0, index - 50);
-    const end = Math.min(cleanedContent.length, index + 50);
-    let preview = cleanedContent.slice(start, end);
-    if (start > 0) preview = "..." + preview;
-    if (end < cleanedContent.length) preview += "...";
-    return highlightMatch(preview, query);
-  }
-
-  function addSearchResultListeners(results) {
-    const items = searchResultsElement.querySelectorAll(".search-result-item");
-    items.forEach((item) => {
-      item.addEventListener("click", () => {
-        const index = parseInt(item.dataset.index);
-        displayChangelog(results[index]);
-        searchResultsElement.style.display = "none";
-        searchInput.value = "";
-        contractSearch();
-      });
-    });
-
-    // Add keyboard navigation
-    document.addEventListener("keydown", handleKeyNavigation);
-  }
-
-  function handleKeyNavigation(e) {
-    const items = document.querySelectorAll(".search-result-item");
-    if (items.length === 0) return;
-
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      currentFocusedIndex = (currentFocusedIndex + 1) % items.length;
-      updateFocus(items);
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      currentFocusedIndex =
-        (currentFocusedIndex - 1 + items.length) % items.length;
-      updateFocus(items);
-    } else if (e.key === "Enter" && currentFocusedIndex !== -1) {
-      e.preventDefault();
-      items[currentFocusedIndex].click();
-    }
-  }
-
-  function updateFocus(items) {
-    items.forEach((item, index) => {
-      if (index === currentFocusedIndex) {
-        item.classList.add("focused");
-        item.scrollIntoView({ block: "nearest", behavior: "smooth" });
-      } else {
-        item.classList.remove("focused");
-      }
-    });
-  }
-
-  // Close search results when clicking outside
-  document.addEventListener("click", (e) => {
-    if (
-      !searchResultsElement.contains(e.target) &&
-      e.target !== searchButton &&
-      e.target !== searchInput
-    ) {
-      searchResultsElement.style.display = "none";
-      document.removeEventListener("keydown", handleKeyNavigation);
-    }
-  });
-  searchInput.value = "";
-
-  contractSearch();
-  initializeTimelineCollapse();
-  toggleClearButton();
 });

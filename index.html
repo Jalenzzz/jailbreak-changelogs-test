@@ -157,74 +157,24 @@
         </div>
       </header>
     </div>
-
-    <div class="accordion" id="timelineAccordion">
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="timelineHeading">
-          <button
-            class="accordion-button"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#timelineCollapse"
-            aria-expanded="true"
-            aria-controls="timelineCollapse"
-          >
-            <i class="bi bi-clock-history me-2"></i> Jailbreak Timeline
-          </button>
-        </h2>
-        <div
-          id="timelineCollapse"
-          class="accordion-collapse collapse show"
-          aria-labelledby="timelineHeading"
-          data-bs-parent="#timelineAccordion"
-        >
-          <div class="accordion-body p-0">
-            <div id="timeline-scroll-container" class="overflow-auto py-3">
-              <div id="timeline" class="d-flex px-3">
-                <!-- Timeline items will be dynamically added here -->
-              </div>
+    <div class="container mt-3">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Search changelogs" aria-label="Search changelogs" aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="button" id="clear-search-button" style="display: none;">
+              <i class="bi bi-x"></i>
+            </button>
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+          </div>
+          <div id="search-results-container" class="position-relative">
+            <div id="search-results" class="position-absolute w-100 bg-light border rounded shadow-sm" style="display: none; z-index: 1000; max-height: 300px; overflow-y: auto;">
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div id="navigation-container" class="row mt-3">
-      <div class="col-12 col-md-10 col-lg-8 mx-auto">
-        <div id="search-wrapper">
-          <div class="input-group">
-            <span class="input-group-text">
-              <i class="bi bi-search"></i>
-            </span>
-            <input
-              type="text"
-              id="searchInput"
-              class="form-control"
-              placeholder="Search..."
-              aria-label="Search changelogs"
-            />
-            <button
-              class="btn btn-outline-secondary dropdown-toggle"
-              type="button"
-              id="searchDropdownButton"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Select Changelog
-            </button>
-            <ul
-              class="dropdown-menu dropdown-menu-end"
-              id="searchDropdown"
-              aria-labelledby="searchDropdownButton"
-            >
-              <!-- Dropdown items will be dynamically added here -->
-            </ul>
-          </div>
-          <div id="searchResults" class="mt-2"></div>
-        </div>
-      </div>
-    </div>
-
+    
     <div id="content-wrapper" class="row mt-3">
       <div class="col-12 col-sm-8 col-md-8">
         <section id="content"></section>
@@ -236,100 +186,125 @@
           </div>
         </div>
       </div>
-
-      <footer class="row mt-5">
-        <div class="col-12">
-          <h3 class="dev-message">
-            <p>From badimo:</p>
-            <p>
-              To all of our players over all of these years, we love this game.
-            </p>
-            <p>Keep up the fight for Jailbreak forever! It'll never go away.</p>
-            <p>Thank you for playing!</p>
-          </h3>
-
-          <h4 class="release-dates-info mt-4">
-            <p>
-              Release dates are recorded in the U.S. (EST/EDT) time zone. Some
-              dates may be inaccurate due to differing time zones like (CST/CDT)
-              which is one hour behind eastern.
-            </p>
-          </h4>
-
-          <div id="footer-text" class="mt-4">
-            <p>This website is <strong>NOT affiliated with Badimo.</strong></p>
-            <p>
-              This is ran separately by
-              <a href="https://www.roblox.com/users/435983066/profile">v3kmw</a>
-              and
-              <a href="https://www.roblox.com/users/1910948809/profile"
-                >Jalenzz16</a
-              >
-            </p>
-          </div>
-
-          <div id="version-info" class="mt-4">
-            <h4>Website Information</h4>
-            <div class="version-details">
-              <p>
-                <strong>Version:</strong>
-                <span id="version-number">55fb939</span>
-              </p>
-              <p>
-                <strong>Last Updated:</strong>
-                <span id="last-updated">September 10th 2024</span>
-              </p>
-              <p><strong>Build:</strong> <span id="build-number">#2</span></p>
-            </div>
-          </div>
-
-          <div class="button-container mt-4">
-            <a
-              href="https://www.reddit.com/r/robloxjailbreak/"
-              target="_blank"
-              class="btn btn-primary me-2 mb-2"
-              >r/RobloxJailbreak</a
-            >
-            <a
-              href="https://discord.com/invite/tWbDg7MbUU"
-              target="_blank"
-              class="btn btn-warning me-2 mb-2"
-              >r/RobloxJailbreak Discord Server</a
-            >
-            <a
-              href="https://discord.gg/jailbreak"
-              target="_blank"
-              class="btn btn-primary me-2 mb-2"
-              >Official Jailbreak Discord Server</a
-            >
-            <a
-              href="https://jailbreak.fandom.com/wiki/Jailbreak_Wiki:Home"
-              target="_blank"
-              class="btn btn-warning me-2 mb-2"
-              >Jailbreak Wiki Page</a
-            >
-            <a
-              href="https://github.com/JBChangelogs/JailbreakChangelogs"
-              target="_blank"
-              class="btn btn-dark mb-2"
-            >
-              <i class="bi bi-github"></i> View on GitHub
+      <div class="container mt-4">
+        <div class="row justify-content-center">
+          <div class="col-auto">
+            <a href="timeline.html" class="btn btn-outline-primary">
+              <i class="bi bi-clock-history me-2"></i>Jailbreak Timeline
             </a>
           </div>
+        </div>
+      </div>
+      
+      
 
-          <div id="github-info" class="mt-4">
-            <p>
-              This website is open source. Feel free to
-              <a
-                href="https://github.com/JBChangelogs/JailbreakChangelogs/issues/new"
-                target="_blank"
-                >report any issues</a
-              >.
-            </p>
+      <footer class="mt-5">
+        <div class="container">
+          <!-- Badimo message -->
+          <div class="card badimo-message mb-3">
+            <div class="card-header bg-info text-white">
+              <h5 class="mb-0 text-center">From badimo</h5>
+            </div>
+            <div class="card-body">
+              <p class="lead text-center mb-2">To all of our players over all of these years, we love this game.</p>
+              <p class="font-italic text-center mb-2">Keep up the fight for Jailbreak forever! It'll never go away.</p>
+              <p class="font-weight-bold text-center mb-0">Thank you for playing!</p>
+            </div>
+          </div>
+          
+      
+          <!-- Accordion for additional information -->
+          <div class="accordion" id="footerAccordion">
+            <!-- Release Dates Info -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="releaseDatesHeader">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#releaseDatesCollapse" aria-expanded="false" aria-controls="releaseDatesCollapse">
+                  <i class="bi bi-calendar-event me-2"></i>Release Dates Information
+                </button>
+              </h2>
+              <div id="releaseDatesCollapse" class="accordion-collapse collapse" aria-labelledby="releaseDatesHeader" data-bs-parent="#footerAccordion">
+                <div class="accordion-body">
+                  <p class="mb-0">Release dates are recorded in the U.S. (EST/EDT) time zone. Some dates may be inaccurate due to differing time zones like (CST/CDT) which is one hour behind eastern.</p>
+                </div>
+              </div>
+            </div>
+      
+            <!-- Website Info -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="websiteInfoHeader">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#websiteInfoCollapse" aria-expanded="false" aria-controls="websiteInfoCollapse">
+                  <i class="bi bi-info-circle me-2"></i>Website Information
+                </button>
+              </h2>
+              <div id="websiteInfoCollapse" class="accordion-collapse collapse" aria-labelledby="websiteInfoHeader" data-bs-parent="#footerAccordion">
+                <div class="accordion-body">
+                  <p class="text-center mb-2">This website is <strong>NOT affiliated with Badimo.</strong></p>
+                  <p class="text-center mb-3">
+                    This is ran separately by
+                    <a href="https://www.roblox.com/users/435983066/profile" class="admin-link">v3kmw</a>
+                    and
+                    <a href="https://www.roblox.com/users/1910948809/profile" class="admin-link">Jalenzz16</a>
+                  </p>
+                  <div class="row text-center">
+                    <div class="col-sm-4">
+                      <p class="mb-0"><strong>Version:</strong> <span id="version-number">55fb939</span></p>
+                    </div>
+                    <div class="col-sm-4">
+                      <p class="mb-0"><strong>Last Updated:</strong> <span id="last-updated">September 10th 2024</span></p>
+                    </div>
+                    <div class="col-sm-4">
+                      <p class="mb-0"><strong>Build:</strong> <span id="build-number">#2</span></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Quick Links -->
+          <div class="card mt-3">
+            <div class="card-header bg-secondary text-white">
+              <h5 class="mb-0 text-center"><i class="bi bi-link-45deg me-2"></i>Quick Links</h5>
+            </div>
+            <div class="card-body">
+              <div class="d-flex flex-wrap justify-content-center">
+                <a href="https://www.reddit.com/r/robloxjailbreak/" target="_blank" class="btn btn-outline-secondary m-1">
+                  <i class="bi bi-reddit"></i> r/RobloxJailbreak
+                </a>
+                <a href="https://discord.com/invite/tWbDg7MbUU" target="_blank" class="btn btn-outline-secondary m-1">
+                  <i class="bi bi-discord"></i> r/RobloxJailbreak Discord
+                </a>
+                <a href="https://discord.gg/jailbreak" target="_blank" class="btn btn-outline-secondary m-1">
+                  <i class="bi bi-discord"></i> Official Jailbreak Discord
+                </a>
+                <a href="https://jailbreak.fandom.com/wiki/Jailbreak_Wiki:Home" target="_blank" class="btn btn-outline-secondary m-1">
+                  <i class="bi bi-book"></i> Jailbreak Wiki
+                </a>
+                <a href="https://github.com/JBChangelogs/JailbreakChangelogs" target="_blank" class="btn btn-outline-secondary m-1">
+                  <i class="bi bi-github"></i> GitHub
+                </a>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Contribute -->
+          <div class="card mt-3">
+            <div class="card-header bg-success text-white">
+              <h5 class="mb-0 text-center"><i class="bi bi-code-square me-2"></i>Contribute</h5>
+            </div>
+            <div class="card-body text-center">
+              <p class="mb-3">This website is open source. We welcome your contributions!</p>
+              <a href="https://github.com/JBChangelogs/JailbreakChangelogs/issues/new" target="_blank" class="btn btn-success m-1">
+                <i class="bi bi-bug me-2"></i>Report an Issue
+              </a>
+              <a href="https://github.com/JBChangelogs/JailbreakChangelogs" target="_blank" class="btn btn-success m-1">
+                <i class="bi bi-github me-2"></i>View on GitHub
+              </a>
+            </div>
           </div>
         </div>
       </footer>
-    </div>
+      
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="scripts/changelogsviewer.js"></script>
