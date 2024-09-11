@@ -74,6 +74,21 @@
           } else {
             iconElement.classList.replace("bi-sun-fill", "bi-moon-stars-fill");
           }
+
+          // Update search result item styles
+          updateSearchResultStyles(theme);
+        }
+        function updateSearchResultStyles(theme) {
+          const searchResultItems = document.querySelectorAll(
+            ".search-result-item"
+          );
+          searchResultItems.forEach((item) => {
+            if (theme === "dark") {
+              item.style.setProperty("--hover-bg-color", "var(--gray-700)");
+            } else {
+              item.style.setProperty("--hover-bg-color", "var(--gray-200)");
+            }
+          });
         }
 
         // Check for saved theme preference or use device preference
@@ -86,6 +101,8 @@
           setTheme(savedTheme);
         } else if (prefersDarkMode) {
           setTheme("dark");
+        } else {
+          setTheme("light");
         }
 
         // Theme toggle button event listener
@@ -108,33 +125,35 @@
     </div>
 
     <div id="main-container" class="container-fluid">
-      <header class="row py-3">
-        <div
-          class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-center"
-        >
-          <div class="d-flex align-items-center mb-3 mb-md-0">
-            <a
-              href="https://www.roblox.com/games/606849621/Jailbreak"
-              class="me-3"
-            >
-              <img
-                src="https://cdn.jailbreakchangelogs.xyz/logo/logo_animated.gif"
-                alt="Logo"
-                id="logo"
-                class="header-logo"
-              />
-            </a>
-            <h1 id="main-title" class="mb-0 display-4">ChangeLogs</h1>
-          </div>
-          <button
-            id="theme-toggle"
-            class="btn btn-outline-primary"
-            data-bs-toggle="tooltip"
-            data-bs-placement="bottom"
-            title="Toggle theme"
+      <header class="row py-3 bg-primary text-white">
+        <div class="col-12">
+          <div
+            class="d-flex justify-content-between align-items-center flex-wrap"
           >
-            <i class="bi bi-moon-stars-fill"></i>
-          </button>
+            <div class="d-flex align-items-center flex-grow-1">
+              <a
+                href="https://www.roblox.com/games/606849621/Jailbreak"
+                class="me-3"
+              >
+                <img
+                  src="https://cdn.jailbreakchangelogs.xyz/logo/logo_animated.gif"
+                  alt="Logo"
+                  id="logo"
+                  class="header-logo"
+                />
+              </a>
+              <h1 id="main-title" class="mb-0 text-white">ChangeLogs</h1>
+            </div>
+            <button
+              id="theme-toggle"
+              class="btn btn-outline-dark mt-2 mt-sm-0"
+              data-bs-toggle="tooltip"
+              data-bs-placement="bottom"
+              title="Toggle theme"
+            >
+              <i class="bi bi-moon-stars-fill"></i>
+            </button>
+          </div>
         </div>
       </header>
     </div>
@@ -181,7 +200,7 @@
               type="text"
               id="searchInput"
               class="form-control"
-              placeholder="Search changelogs..."
+              placeholder="Search..."
               aria-label="Search changelogs"
             />
             <button

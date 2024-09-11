@@ -2,9 +2,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchButton = document.getElementById("searchButton");
   const loadingOverlay = document.getElementById("loading-overlay");
   const searchInput = document.getElementById("searchInput");
+  searchInput.setAttribute("autocomplete", "off");
   const searchDropdownButton = document.getElementById("searchDropdownButton");
   const searchDropdown = document.getElementById("searchDropdown");
   const searchResultsElement = document.getElementById("searchResults");
+  const ITEMS_PER_PAGE = 10;
+  let currentPage = 0;
+  let totalResults = [];
+
+  let debounceTimer;
 
   const dropdownButtonIcon = searchDropdownButton
     ? searchDropdownButton.querySelector("i")
@@ -59,13 +65,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let isDropdownOpen = false;
   let lastScrollTop = 0;
 
-  const wrapMentions = (text) =>
-    text.replace(
-      /@(\w+)/g,
-      (_, username) =>
-        `<span class="mention"><span class="at">@</span><span class="username">${username}</span></span>`
-    );
-
   const preprocessMarkdown = (markdown) =>
     markdown
       .replace(/ - /g, "\n- ")
@@ -115,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
   function debounce(func, delay) {
-    let debounceTimer;
     return function () {
       const context = this;
       const args = arguments;
@@ -123,16 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
       debounceTimer = setTimeout(() => func.apply(context, args), delay);
     };
   }
-  // Add this new function
-  const debouncedSearch = debounce((query) => {
-    if (query.length > 0) {
-      performSearch(query);
-      expandSearch();
-    } else {
-      searchResultsElement.style.display = "none";
-      contractSearch();
-    }
-  }, 300); // 300ms delay
 
   function initializeTimelineCollapse() {
     const timelineToggle = document.getElementById("timeline-toggle");
@@ -196,19 +184,27 @@ document.addEventListener("DOMContentLoaded", () => {
       .map((line) => {
         line = line.trim();
         if (line.startsWith("# ")) {
-          return `<h1>${wrapMentions(line.substring(2))}</h1>`;
+          return `<h1 class="display-4 mb-4 text-primary border-bottom border-primary pb-2">${wrapMentions(
+            line.substring(2)
+          )}</h1>`;
         } else if (line.startsWith("## ")) {
-          return `<h2>${wrapMentions(line.substring(3))}</h2>`;
+          return `<h2 class="display-5 mt-5 mb-3 text-warning">${wrapMentions(
+            line.substring(3)
+          )}</h2>`;
+        } else if (line.startsWith("### ")) {
+          return `<h3 class="display-6 mt-4 mb-3">${wrapMentions(
+            line.substring(4)
+          )}</h3>`;
         } else if (line.startsWith("- - - ")) {
-          return `<p><span class="bullet">•</span> <span class="sub-bullet">•</span> ${wrapMentions(
+          return `<p class="mb-2 lead ps-5 position-relative"><span class="position-absolute start-0 ps-4 text-primary">•</span> ${wrapMentions(
             line.substring(6)
           )}</p>`;
         } else if (line.startsWith("- - ")) {
-          return `<p><span class="bullet">•</span> <span class="sub-bullet">•</span> ${wrapMentions(
+          return `<p class="mb-2 lead ps-5 position-relative"><span class="position-absolute start-0 ps-4 text-primary">•</span> ${wrapMentions(
             line.substring(4)
           )}</p>`;
         } else if (line.startsWith("- ")) {
-          return `<p><span class="bullet">•</span> ${wrapMentions(
+          return `<p class="mb-2 lead ps-4 position-relative"><span class="position-absolute start-0 text-primary">•</span> ${wrapMentions(
             line.substring(2)
           )}</p>`;
         } else if (line.startsWith("(audio)")) {
@@ -216,20 +212,27 @@ document.addEventListener("DOMContentLoaded", () => {
           const audioType = audioUrl.endsWith(".wav")
             ? "audio/wav"
             : "audio/mpeg";
-          return `<audio controls><source src="${audioUrl}" type="${audioType}"></audio>`;
+          return `<audio class="w-100 mt-2 mb-2" controls><source src="${audioUrl}" type="${audioType}"></audio>`;
         } else if (line.startsWith("(image)")) {
           const imageUrl = line.substring(7).trim();
-          return `<img src="${imageUrl}" alt="Image" style="max-width: 100%; max-height: 500px;">`;
+          return `<img src="${imageUrl}" alt="Image" class="img-fluid mt-2 mb-2" style="max-height: 500px;">`;
         } else if (line.startsWith("(video)")) {
           const videoUrl = line.substring(7).trim();
-          return `<video controls style="max-width: 80%; max-height: 500px;"><source src="${videoUrl}" type="video/mp4"></video>`;
+          return `<video class="w-100 mt-2 mb-2" style="max-height: 500px;" controls><source src="${videoUrl}" type="video/mp4"></video>`;
         } else {
-          return `<p>${wrapMentions(line)}</p>`;
+          return `<p class="mb-2 lead">${wrapMentions(line)}</p>`;
         }
       })
       .join("");
   };
 
+  // Update the wrapMentions function to make mentioned text bold
+  const wrapMentions = (text) => {
+    return text.replace(
+      /@(\w+)/g,
+      '<span class="mention fw-bold"><span class="at">@</span><span class="username">$1</span></span>'
+    );
+  };
   // console.log("Fetching list of changelogs from:", apiUrl);
 
   fetch(apiUrl)
@@ -298,7 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
       imageElement.style.display = "none";
     }
 
-    let contentHtml = `<h1>${changelog.title}</h1>`;
+    let contentHtml = `<h1 class="display-4 mb-4">${changelog.title}</h1>`;
 
     if (changelog.sections) {
       const processedMarkdown = preprocessMarkdown(changelog.sections);
@@ -306,7 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
       contentHtml += processedSections;
     } else {
       console.warn("No sections available for changelog.");
-      contentHtml += "<p>No sections available.</p>";
+      contentHtml += '<p class="lead">No sections available.</p>';
     }
 
     sectionsElement.innerHTML = contentHtml;
@@ -362,38 +365,37 @@ document.addEventListener("DOMContentLoaded", () => {
   function contractSearch() {
     if (searchInput.value.trim() === "") {
       document.body.classList.remove("search-expanded");
+      searchResultsElement.style.display = "none";
+      // Remove the event listener when closing the search results
+      document.removeEventListener("keydown", handleKeyNavigation);
     }
   }
+
   // Add event listeners for expanding and contracting
   searchInput.addEventListener("focus", expandSearch);
   searchInput.addEventListener("blur", contractSearch);
 
   // Search functionality
-  function performSearch(query) {
-    const filteredChangelogs = changelogsData.filter(
-      (changelog) =>
-        changelog.title.toLowerCase().includes(query) ||
-        changelog.sections.toLowerCase().includes(query)
-    );
-    displaySearchResults(filteredChangelogs, query);
-  }
-
-  // Add event listener for 'Enter' key in search input
-  // searchInput.addEventListener("input", () => {
-  //   const query = searchInput.value.trim().toLowerCase();
-  //   updateSearchButtonState(query);
-  //   if (query.length > 0) {
-  //     performSearch(query);
-  //     expandSearch();
-  //   } else {
-  //     searchResultsElement.style.display = "none";
-  //     contractSearch();
-  //   }
-  // });
+  const performSearch = debounce((query) => {
+    if (query.length > 0) {
+      const filteredChangelogs = changelogsData.filter(
+        (changelog) =>
+          changelog.title.toLowerCase().includes(query) ||
+          changelog.sections.toLowerCase().includes(query)
+      );
+      displaySearchResults(filteredChangelogs, query);
+      expandSearch();
+    } else {
+      searchResultsElement.style.display = "none";
+      contractSearch();
+    }
+  }, 300); // 300ms delay
 
   // With debounce
   searchInput.addEventListener("input", () => {
-    debouncedSearch(searchInput.value);
+    const query = searchInput.value.trim().toLowerCase();
+    performSearch(query);
+    toggleClearButton();
   });
 
   if (searchDropdownButton) {
@@ -415,6 +417,13 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     console.error("Search dropdown button not found");
   }
+  searchInput.addEventListener("keyup", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const query = searchInput.value.trim().toLowerCase();
+      performSearch(query);
+    }
+  });
 
   searchInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
@@ -428,64 +437,114 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+  // Add a clear button to the search input
+  // Modify the part where we create the clear button
+  const clearButton = document.createElement("button");
+  clearButton.innerHTML = '<i class="bi bi-x"></i>';
+  clearButton.className = "btn btn-outline-secondary clear-search";
+  clearButton.type = "button";
+  clearButton.style.display = "none";
+  clearButton.setAttribute("aria-label", "Clear search"); // Add this line
+  searchInput.parentNode.appendChild(clearButton);
 
-  // Update search button click handler
-  // searchButton.addEventListener("click", (e) => {
-  //   e.preventDefault();
-  //   const query = searchInput.value.trim().toLowerCase();
-  //   if (searchButton.getAttribute("title") === "Clear search") {
-  //     // Clear search
-  //     searchInput.value = "";
-  //     searchResultsElement.style.display = "none";
-  //     updateSearchButtonState("");
-  //     contractSearch();
-  //   } else {
-  //     // Perform search
-  //     if (query.length > 0) {
-  //       performSearch(query);
-  //       expandSearch();
-  //     }
-  //   }
-  // });
-
+  clearButton.addEventListener("click", () => {
+    searchInput.value = "";
+    toggleClearButton();
+    searchResultsElement.style.display = "none";
+    contractSearch();
+  });
+  function toggleClearButton() {
+    clearButton.style.display = searchInput.value ? "block" : "none";
+  }
   function displaySearchResults(results, query) {
+    totalResults = results;
+    currentPage = 0;
+    currentFocusedIndex = -1; // Reset the focused index
+
     if (results.length > 0) {
-      let resultsHtml = '<div class="search-results-content">';
-      results.forEach((changelog, index) => {
-        const titleHighlight = highlightMatch(changelog.title, query);
-        const cleanedContent = cleanContentForSearch(changelog.sections);
-        const contentPreview = getContentPreview(cleanedContent, query);
+      searchResultsElement.innerHTML =
+        '<div id="virtualScrollContainer"></div>';
+      const virtualScrollContainer = document.getElementById(
+        "virtualScrollContainer"
+      );
+      virtualScrollContainer.addEventListener("scroll", handleVirtualScroll);
+      loadMoreResults();
 
-        // Check for media types
-        const hasAudio = cleanedContent.includes("[Audio]");
-        const hasVideo = cleanedContent.includes("[Video]");
-        const hasImage = cleanedContent.includes("[Image]");
-
-        // Create tags
-        const audioTag = hasAudio
-          ? '<span class="media-tag audio-tag">Audio</span>'
-          : "";
-        const videoTag = hasVideo
-          ? '<span class="media-tag video-tag">Video</span>'
-          : "";
-        const imageTag = hasImage
-          ? '<span class="media-tag image-tag">Image</span>'
-          : "";
-
-        resultsHtml += `
-          <div class="search-result-item" data-index="${index}">
-            <strong>${titleHighlight}${audioTag}${videoTag}${imageTag}</strong>
-            <p>${contentPreview}</p>
-          </div>
-        `;
-      });
-      resultsHtml += "</div>";
-      searchResultsElement.innerHTML = resultsHtml;
-      searchResultsElement.style.display = "block";
-      addSearchResultListeners(results);
+      // Add this line to set up keyboard navigation
+      document.addEventListener("keydown", handleKeyNavigation);
     } else {
       searchResultsElement.innerHTML = "<p>No results found.</p>";
-      searchResultsElement.style.display = "block";
+    }
+    searchResultsElement.style.display = "block";
+  }
+
+  function loadMoreResults() {
+    const virtualScrollContainer = document.getElementById(
+      "virtualScrollContainer"
+    );
+    const startIndex = currentPage * ITEMS_PER_PAGE;
+    const endIndex = Math.min(
+      (currentPage + 1) * ITEMS_PER_PAGE,
+      totalResults.length
+    );
+
+    for (let i = startIndex; i < endIndex; i++) {
+      const changelog = totalResults[i];
+      const resultItem = createSearchResultItem(changelog, i);
+      virtualScrollContainer.appendChild(resultItem);
+    }
+
+    currentPage++;
+  }
+  function createSearchResultItem(changelog, index) {
+    const item = document.createElement("div");
+    item.className = "search-result-item";
+    item.dataset.index = index;
+
+    const titleHighlight = highlightMatch(changelog.title, searchInput.value);
+    const cleanedContent = cleanContentForSearch(changelog.sections);
+    const contentPreview = getContentPreview(cleanedContent, searchInput.value);
+
+    const hasAudio = cleanedContent.includes("[Audio]");
+    const hasVideo = cleanedContent.includes("[Video]");
+    const hasImage = cleanedContent.includes("[Image]");
+
+    const audioTag = hasAudio
+      ? '<span class="media-tag audio-tag">Audio</span>'
+      : "";
+    const videoTag = hasVideo
+      ? '<span class="media-tag video-tag">Video</span>'
+      : "";
+    const imageTag = hasImage
+      ? '<span class="media-tag image-tag">Image</span>'
+      : "";
+
+    item.innerHTML = `
+      <strong>${titleHighlight}${audioTag}${videoTag}${imageTag}</strong>
+      <p>${contentPreview}</p>
+    `;
+
+    item.addEventListener("click", () => {
+      displayChangelog(changelog);
+      searchResultsElement.style.display = "none";
+      searchInput.value = "";
+      contractSearch();
+    });
+
+    return item;
+  }
+
+  function handleVirtualScroll() {
+    const virtualScrollContainer = document.getElementById(
+      "virtualScrollContainer"
+    );
+    if (
+      virtualScrollContainer.scrollTop + virtualScrollContainer.clientHeight >=
+      virtualScrollContainer.scrollHeight - 100
+    ) {
+      if (currentPage * ITEMS_PER_PAGE < totalResults.length) {
+        loadMoreResults();
+      }
     }
   }
 
@@ -524,7 +583,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function handleKeyNavigation(e) {
-    const items = searchResultsElement.querySelectorAll(".search-result-item");
+    const items = document.querySelectorAll(".search-result-item");
     if (items.length === 0) return;
 
     if (e.key === "ArrowDown") {
@@ -546,7 +605,7 @@ document.addEventListener("DOMContentLoaded", () => {
     items.forEach((item, index) => {
       if (index === currentFocusedIndex) {
         item.classList.add("focused");
-        item.scrollIntoView({ block: "nearest" });
+        item.scrollIntoView({ block: "nearest", behavior: "smooth" });
       } else {
         item.classList.remove("focused");
       }
@@ -568,4 +627,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   contractSearch();
   initializeTimelineCollapse();
+  toggleClearButton();
 });
