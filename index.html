@@ -148,11 +148,13 @@
         </div>
       </header>
     </div>
+
     <div class="container mt-3">
       <div class="row justify-content-center">
         <div class="col-12 col-md-8">
           <div class="row g-2">
-            <div class="col-12">
+            <!-- Search bar -->
+            <div class="col-12 mb-3">
               <div class="input-group">
                 <input
                   type="text"
@@ -176,66 +178,32 @@
                 >
                   Search
                 </button>
-                <div class="col-12">
-                  <div id="search-results-container" class="position-relative">
-                    <div
-                      id="search-results"
-                      class="position-relative w-100 bg-light border rounded shadow-sm mt-3"
-                      style="
-                        display: none;
-                        z-index: 1000;
-                        max-height: 300px;
-                        overflow-y: auto;
-                      "
-                    ></div>
-                  </div>
-                </div>
               </div>
-            </div>
-            <div class="col-12 mb-3">
-              <div id="dateRangeFilter" class="row g-2 align-items-end">
-                <div class="col-md-4">
-                  <label for="startDateBtn" class="form-label"
-                    >Start Date:</label
-                  >
-                  <button
-                    id="startDateBtn"
-                    class="btn btn-outline-secondary w-100"
-                  >
-                    <i class="bi bi-calendar-event me-2"></i
-                    ><span>Select Start Date</span>
-                  </button>
-                  <input type="hidden" id="startDate" />
-                </div>
-                <div class="col-md-4">
-                  <label for="endDateBtn" class="form-label">End Date:</label>
-                  <button
-                    id="endDateBtn"
-                    class="btn btn-outline-secondary w-100"
-                  >
-                    <i class="bi bi-calendar-event me-2"></i
-                    ><span>Select End Date</span>
-                  </button>
-                  <input type="hidden" id="endDate" />
-                </div>
-                <div class="col-md-4">
-                  <button id="clearDateFilter" class="btn btn-secondary w-100">
-                    <i class="bi bi-x-circle me-2"></i>Clear Filter
-                  </button>
-                </div>
+              <div id="search-results-container" class="position-relative">
+                <div
+                  id="search-results"
+                  class="position-relative w-100 bg-light border rounded shadow-sm mt-2"
+                  style="
+                    display: none;
+                    z-index: 1000;
+                    max-height: 300px;
+                    overflow-y: auto;
+                  "
+                ></div>
               </div>
             </div>
 
-            <div class="col-12">
+            <!-- All Changelogs dropdown -->
+            <div class="col-12 mb-3">
               <div class="dropdown w-100">
                 <button
-                  class="btn btn-outline-primary dropdown-toggle w-100"
+                  class="btn btn-primary dropdown-toggle w-100"
                   type="button"
                   id="changelogDropdown"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  <i class="bi bi-calendar-event me-2"></i>Select Changelog
+                  <i class="bi bi-calendar-event me-2"></i>View Changelogs
                 </button>
                 <ul
                   class="dropdown-menu w-100 white-border"
@@ -245,6 +213,21 @@
                   <!-- Dropdown items will be populated here -->
                 </ul>
               </div>
+            </div>
+
+            <!-- Date filter and Clear filter in the same row -->
+            <div class="col-8 col-sm-9 mb-3">
+              <button
+                id="openDateFilterModal"
+                class="btn btn-outline-secondary w-100"
+              >
+                <i class="bi bi-calendar-event me-2"></i>Select Date Range
+              </button>
+            </div>
+            <div class="col-4 col-sm-3 mb-3">
+              <button id="clearDateFilter" class="btn btn-outline-danger w-100">
+                <i class="bi bi-x-circle me-2"></i>Clear
+              </button>
             </div>
           </div>
         </div>
@@ -473,5 +456,63 @@
     >
       <i class="bi bi-arrow-up-circle-fill"></i>
     </button>
+    <div
+      class="modal fade"
+      id="dateFilterModal"
+      tabindex="-1"
+      aria-labelledby="dateFilterModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="dateFilterModalLabel">
+              Select Date Range
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="dateRangeFilter" class="row g-2">
+              <div class="col-md-6">
+                <label for="startDateBtn" class="form-label">Start Date:</label>
+                <button
+                  id="startDateBtn"
+                  class="btn btn-outline-secondary w-100"
+                >
+                  <i class="bi bi-calendar-event me-2"></i
+                  ><span>Select Start Date</span>
+                </button>
+                <input type="hidden" id="startDate" />
+              </div>
+              <div class="col-md-6">
+                <label for="endDateBtn" class="form-label">End Date:</label>
+                <button id="endDateBtn" class="btn btn-outline-secondary w-100">
+                  <i class="bi bi-calendar-event me-2"></i
+                  ><span>Select End Date</span>
+                </button>
+                <input type="hidden" id="endDate" />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-primary" id="applyDateFilter">
+              Apply Filter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

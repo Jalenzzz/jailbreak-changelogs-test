@@ -5,6 +5,37 @@ $(document).ready(function () {
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
   const titleElement = document.getElementById("changelogTitle");
+  const dateFilterModal = new bootstrap.Modal(
+    document.getElementById("dateFilterModal")
+  );
+  document
+    .getElementById("openDateFilterModal")
+    .addEventListener("click", function () {
+      dateFilterModal.show();
+    });
+  document
+    .getElementById("applyDateFilter")
+    .addEventListener("click", function () {
+      const startDate = startDatePicker.getDate();
+      const endDate = endDatePicker.getDate();
+
+      if (!startDate && !endDate) {
+        alert("Please select at least one date before applying the filter.");
+      } else {
+        const filteredChangelogs = filterChangelogsByDate();
+
+        if (filteredChangelogs.length > 0) {
+          populateChangelogDropdown(filteredChangelogs);
+          updateDropdownButton(getDateRangeText());
+          setTimeout(openChangelogDropdown, 100);
+        } else {
+          populateChangelogDropdown([]);
+          updateDropdownButton("No data for selected dates");
+        }
+
+        dateFilterModal.hide();
+      }
+    });
 
   let changelogsData = [];
 
@@ -88,13 +119,21 @@ $(document).ready(function () {
     enableSelectionDaysInNextAndPreviousMonths: true,
     onSelect: function (date) {
       const fieldId = this._o.field.id;
-      document.getElementById(fieldId).value = date
-        ? date.toISOString().split("T")[0]
-        : "";
+      if (date) {
+        // Adjust the date to local timezone
+        const localDate = new Date(
+          date.getTime() - date.getTimezoneOffset() * 60000
+        );
+        document.getElementById(fieldId).value = localDate
+          .toISOString()
+          .split("T")[0];
+      } else {
+        document.getElementById(fieldId).value = "";
+      }
       updateButtonText(fieldId);
-      updateChangelogList();
     },
   };
+
   var startDatePicker = new Pikaday({
     ...pikadayConfig,
     field: document.getElementById("startDate"),
@@ -107,17 +146,24 @@ $(document).ready(function () {
   });
   function updateButtonText(fieldId) {
     const btn = document.getElementById(fieldId + "Btn");
-    const date = document.getElementById(fieldId).value;
-    if (date) {
-      const formattedDate = formatDateForButton(new Date(date));
+    const dateString = document.getElementById(fieldId).value;
+    if (dateString) {
+      const date = new Date(dateString);
+      const formattedDate = formatDateForButton(date);
       btn.querySelector("span").textContent = formattedDate;
     } else {
       btn.querySelector("span").textContent =
         fieldId === "startDate" ? "Select Start Date" : "Select End Date";
     }
   }
+
   function formatDateForButton(date) {
-    const options = { year: "numeric", month: "long", day: "numeric" };
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC",
+    };
     return date.toLocaleDateString("en-US", options);
   }
 
@@ -125,12 +171,12 @@ $(document).ready(function () {
     const startDate = startDatePicker.getDate();
     const endDate = endDatePicker.getDate();
 
-    if (startDate && endDate) {
+    if (startDate || endDate) {
       const filteredChangelogs = filterChangelogsByDate();
 
       if (filteredChangelogs.length > 0) {
         populateChangelogDropdown(filteredChangelogs);
-        updateDropdownButton("Filtered Changelogs");
+        updateDropdownButton(getDateRangeText());
 
         // Add a small delay before opening the dropdown
         setTimeout(openChangelogDropdown, 100);
@@ -143,9 +189,31 @@ $(document).ready(function () {
     } else {
       // If both dates are not selected, reset the dropdown
       populateChangelogDropdown(changelogsData); // Reset to all changelogs
-      updateDropdownButton("default");
+      updateDropdownButton("All Changelogs");
       // Don't open the dropdown automatically when dates are not selected
     }
+  }
+
+  function getDateRangeText() {
+    const startDate = startDatePicker.getDate();
+    const endDate = endDatePicker.getDate();
+
+    if (startDate && endDate) {
+      return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+    } else if (startDate) {
+      return `From: ${formatDate(startDate)}`;
+    } else if (endDate) {
+      return `Until: ${formatDate(endDate)}`;
+    }
+    return "All Changelogs";
+  }
+
+  function formatDate(date) {
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   }
 
   function getDateRangeText() {
@@ -191,26 +259,46 @@ $(document).ready(function () {
     updateButtonText("startDate");
     updateButtonText("endDate");
 
-    // Hide the dropdown
-    const $dropdownEl = $("#changelogDropdown");
-    const dropdown = bootstrap.Dropdown.getInstance($dropdownEl[0]);
-    if (dropdown) {
-      dropdown.hide();
-    }
+    // Hide the modal
+    dateFilterModal.hide();
 
     updateDropdownButton("default");
     updateChangelogList();
   }
+
   document
     .getElementById("clearDateFilter")
     .addEventListener("click", clearDateFilter);
 
   function filterChangelogsByDate() {
-    const startDate = startDatePicker.getDate();
-    const endDate = endDatePicker.getDate();
+    let startDate = startDatePicker.getDate();
+    let endDate = endDatePicker.getDate();
 
     if (!startDate && !endDate) {
       return changelogsData; // Return all changelogs if no dates are selected
+    }
+
+    if (startDate) {
+      startDate = new Date(
+        Date.UTC(
+          startDate.getFullYear(),
+          startDate.getMonth(),
+          startDate.getDate()
+        )
+      );
+    }
+    if (endDate) {
+      endDate = new Date(
+        Date.UTC(
+          endDate.getFullYear(),
+          endDate.getMonth(),
+          endDate.getDate(),
+          23,
+          59,
+          59,
+          999
+        )
+      );
     }
 
     return changelogsData.filter((changelog) => {
@@ -247,7 +335,7 @@ $(document).ready(function () {
     const match = title.match(/(\w+)\s(\d+)(?:st|nd|rd|th)\s(\d{4})/);
     if (match) {
       const [, month, day, year] = match;
-      return new Date(year, months[month], parseInt(day));
+      return new Date(Date.UTC(parseInt(year), months[month], parseInt(day)));
     }
     return null;
   }
