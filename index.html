@@ -75,21 +75,6 @@
           } else {
             iconElement.classList.replace("bi-sun-fill", "bi-moon-stars-fill");
           }
-
-          // Update search result item styles
-          updateSearchResultStyles(theme);
-        }
-        function updateSearchResultStyles(theme) {
-          const searchResultItems = document.querySelectorAll(
-            ".search-result-item"
-          );
-          searchResultItems.forEach((item) => {
-            if (theme === "dark") {
-              item.style.setProperty("--hover-bg-color", "var(--gray-700)");
-            } else {
-              item.style.setProperty("--hover-bg-color", "var(--gray-200)");
-            }
-          });
         }
 
         // Check for saved theme preference or use device preference
@@ -147,7 +132,7 @@
             </div>
             <button
               id="theme-toggle"
-              class="btn btn-outline-dark mt-2 mt-sm-0"
+              class="btn mt-2 mt-sm-0"
               data-bs-toggle="tooltip"
               data-bs-placement="bottom"
               title="Toggle theme"
@@ -190,7 +175,7 @@
                   <div id="search-results-container" class="position-relative">
                     <div
                       id="search-results"
-                      class="position-absolute w-100 bg-light border rounded shadow-sm mt-3"
+                      class="position-relative w-100 bg-light border rounded shadow-sm mt-3"
                       style="
                         display: none;
                         z-index: 1000;

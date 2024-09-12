@@ -15,6 +15,9 @@
   --mention-at-color: #657786;
   --mention-username-color: #1da1f2;
   --mention-hover-bg: #b1defc;
+  --highlight-bg: rgba(255, 213, 79, 0.4); /* Semi-transparent yellow */
+  --highlight-text: #000000;
+  --no-results-color: #333333;
 
   /* News ticker colors */
   --news-ticker-bg: #ff5f29;
@@ -56,6 +59,8 @@
   --mention-at-color: #8899a6;
   --mention-username-color: #4a9cea;
   --mention-hover-bg: #2a4a6a;
+  --highlight-bg: rgba(255, 213, 79, 0.3);
+  --highlight-text: #ffffff;
 
   /* News ticker colors */
   --news-ticker-bg: #d35400;
@@ -144,6 +149,13 @@
       rgba(0, 0, 0, 0) 100%
     );
   }
+}
+.highlight {
+  background-color: var(--highlight-bg);
+  color: var(--highlight-text);
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 3px;
 }
 
 .custom-search-item {

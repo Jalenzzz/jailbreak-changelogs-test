@@ -94,6 +94,21 @@ $(document).ready(function () {
     hideSearchResults();
     dismissKeyboard();
   }
+  function highlightText(text, query) {
+    const words = query
+      .split(/\s+/)
+      .map((word) => word.trim())
+      .filter((word) => word.length > 0);
+    let highlightedText = text;
+    words.forEach((word) => {
+      const regex = new RegExp(word, "gi");
+      highlightedText = highlightedText.replace(
+        regex,
+        (match) => `<span class="highlight">${match}</span>`
+      );
+    });
+    return highlightedText;
+  }
 
   const convertMarkdownToHtml = (markdown) => {
     return markdown
@@ -207,20 +222,47 @@ $(document).ready(function () {
   function displaySearchResults(results) {
     const $searchResultsContainer = $("#search-results");
     $searchResultsContainer.empty();
+    const query = $searchInput.val().trim().toLowerCase();
 
     if (results.length === 0) {
-      $searchResultsContainer.html('<p class="p-3">No results found.</p>');
+      const $noResultsItem = $("<li>").addClass(
+        "list-group-item custom-search-item"
+      );
+      $noResultsItem.text("No results found.");
+      $searchResultsContainer.append(
+        $("<ul>").addClass("list-group list-group-flush").append($noResultsItem)
+      );
     } else {
       const $resultsList = $("<ul>").addClass("list-group list-group-flush");
       results.forEach((changelog) => {
         const $listItem = $("<li>").addClass(
-          "list-group-item search-result-item custom-search-item"
+          "list-group-item custom-search-item"
         );
 
         const cleanedSections = cleanContentForSearch(changelog.sections);
-        const previewText =
-          cleanedSections.substring(0, 100) +
-          (cleanedSections.length > 100 ? "..." : "");
+
+        // Find the position of the query in the content
+        const queryPosition = cleanedSections.toLowerCase().indexOf(query);
+        let previewText = "";
+
+        if (queryPosition !== -1) {
+          // Get a substring around the found query
+          const startPos = Math.max(0, queryPosition - 50);
+          const endPos = Math.min(
+            cleanedSections.length,
+            queryPosition + query.length + 50
+          );
+          previewText = cleanedSections.substring(startPos, endPos);
+
+          // Add ellipsis if we're not at the start or end of the content
+          if (startPos > 0) previewText = "..." + previewText;
+          if (endPos < cleanedSections.length) previewText += "...";
+        } else {
+          // If query not found in content, fall back to the first 100 characters
+          previewText =
+            cleanedSections.substring(0, 100) +
+            (cleanedSections.length > 100 ? "..." : "");
+        }
 
         const hasVideo = changelog.sections.includes("(video)");
         const hasImage = changelog.sections.includes("(image)");
@@ -234,9 +276,12 @@ $(document).ready(function () {
         if (hasAudio)
           mediaTags.push('<span class="media-tag audio-tag">Audio</span>');
 
+        const highlightedTitle = highlightText(changelog.title, query);
+        const highlightedPreview = highlightText(previewText, query);
+
         $listItem.html(`
-          <h5 class="mb-1">${changelog.title} ${mediaTags.join(" ")}</h5>
-          <p class="mb-1 small">${previewText}</p>
+          <h5 class="mb-1">${highlightedTitle} ${mediaTags.join(" ")}</h5>
+          <p class="mb-1 small">${highlightedPreview}</p>
         `);
 
         $listItem.on("click", () => {
