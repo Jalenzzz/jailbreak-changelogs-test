@@ -82,20 +82,20 @@ $(document).ready(function () {
             line.substring(4)
           )}</h3>`;
         } else if (line.startsWith("- - - ")) {
-          return `<p class="mb-2 lead ps-5 position-relative"><span class="position-absolute start-0 ps-4 text-primary">•</span> ${wrapMentions(
+          return `<p class="mb-2 lead ps-5 position-relative"><i class="bi bi-arrow-right position-absolute start-0 ps-4 text-primary"></i> ${wrapMentions(
             line.substring(6)
           )}</p>`;
         } else if (line.startsWith("- - ")) {
-          return `<p class="mb-2 lead ps-5 position-relative"><span class="position-absolute start-0 ps-4 text-primary">•</span> ${wrapMentions(
+          return `<p class="mb-2 lead ps-5 position-relative"><i class="bi bi-arrow-return-right position-absolute start-0 ps-4 text-primary"></i> ${wrapMentions(
             line.substring(4)
           )}</p>`;
         } else if (line.startsWith("- ")) {
           return `
   <div class="d-flex align-items-start mb-2">
-    <span class="text-primary me-2">•</span>
+    <i class="bi bi-arrow-right text-primary me-2 fs-4"></i>
     <p class="lead mb-0">${wrapMentions(line.substring(2))}</p>
   </div>
-`;
+  `;
         } else if (line.startsWith("(audio)")) {
           const audioUrl = line.substring(7).trim();
           const audioType = audioUrl.endsWith(".wav")
@@ -111,9 +111,9 @@ $(document).ready(function () {
         } else {
           return `
   <div class="d-flex align-items-start mb-2">
-    <p class="lead mb-0">${wrapMentions(line.substring(2))}</p>
+    <p class="lead mb-0">${wrapMentions(line)}</p>
   </div>
-`;
+  `;
         }
       })
       .join("");
