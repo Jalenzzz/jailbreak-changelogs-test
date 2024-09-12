@@ -963,6 +963,13 @@ html[data-bs-theme="dark"] .dropdown-menu.white-border {
 
 /* Small to medium devices (phones to tablets, 768px and down) */
 @media (max-width: 768px) {
+  #clearDateFilter {
+    padding: 0.375rem 0.5rem;
+  }
+
+  #clearDateFilter i {
+    font-size: 1.25rem;
+  }
   #theme-toggle {
     font-size: 20px;
   }

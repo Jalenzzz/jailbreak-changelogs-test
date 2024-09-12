@@ -1,5 +1,4 @@
 $(document).ready(function () {
-  console.log("Document ready, script starting");
   const loadingOverlay = document.getElementById("loading-overlay");
   const apiUrl = "https://api.jailbreakchangelogs.xyz/get_changelogs";
   const imageElement = document.getElementById("sidebarImage");
@@ -176,21 +175,15 @@ $(document).ready(function () {
 
       if (filteredChangelogs.length > 0) {
         populateChangelogDropdown(filteredChangelogs);
-        updateDropdownButton(getDateRangeText());
-
-        // Add a small delay before opening the dropdown
+        updateDropdownButton("filtered");
         setTimeout(openChangelogDropdown, 100);
       } else {
-        // No data for selected date range
-        populateChangelogDropdown([]); // Pass empty array to show "No data" message
+        populateChangelogDropdown([]);
         updateDropdownButton("No data for selected dates");
-        // Don't open the dropdown automatically when there's no data
       }
     } else {
-      // If both dates are not selected, reset the dropdown
-      populateChangelogDropdown(changelogsData); // Reset to all changelogs
-      updateDropdownButton("All Changelogs");
-      // Don't open the dropdown automatically when dates are not selected
+      populateChangelogDropdown(changelogsData);
+      updateDropdownButton("default");
     }
   }
 
@@ -263,7 +256,7 @@ $(document).ready(function () {
     dateFilterModal.hide();
 
     updateDropdownButton("default");
-    updateChangelogList();
+    populateChangelogDropdown(changelogsData);
   }
 
   document
@@ -275,6 +268,7 @@ $(document).ready(function () {
     let endDate = endDatePicker.getDate();
 
     if (!startDate && !endDate) {
+      updateDropdownButton("default");
       return changelogsData; // Return all changelogs if no dates are selected
     }
 
@@ -346,12 +340,17 @@ $(document).ready(function () {
       $dropdownButton.html(
         '<i class="bi bi-calendar-event me-2"></i>View Changelogs'
       );
+    } else if (text === "filtered") {
+      $dropdownButton.html(
+        '<i class="bi bi-calendar-event me-2"></i>Filtered Changelogs'
+      );
     } else {
       $dropdownButton.html(`<i class="bi bi-calendar-event me-2"></i>${text}`);
     }
     // Ensure the dropdown is still clickable after updating the text
     $dropdownButton.dropdown();
   }
+
   // Modify the event listener for the dropdown button
   $(document).on("click", "#changelogDropdown", function (e) {
     const buttonText = $(this).text().trim();
@@ -624,6 +623,13 @@ $(document).ready(function () {
       console.warn("No sections available for changelog.");
       contentHtml += '<p class="lead">No sections available.</p>';
     }
+    const dropdownText = $("#changelogDropdown").text().trim();
+    if (
+      dropdownText !== "Filtered Changelogs" &&
+      dropdownText !== "No data for selected dates"
+    ) {
+      updateDropdownButton("default");
+    }
 
     sectionsElement.innerHTML = contentHtml;
   };
@@ -644,15 +650,15 @@ $(document).ready(function () {
     $("html, body").animate({ scrollTop: 0 }, 800);
   });
 
-  $(document).on("click", "#changelogList .dropdown-item", function (e) {
+  $(document).on("click", ".changelog-dropdown-item", function (e) {
     e.preventDefault();
     const changelogId = $(this).data("changelog-id");
     const selectedChangelog = changelogsData.find((cl) => cl.id == changelogId);
     if (selectedChangelog) {
       displayChangelog(selectedChangelog);
-      updateDropdownButton("default");
     }
   });
+
   bootstrap.Dropdown.getOrCreateInstance($("#changelogDropdown")[0]);
   $("#clearDateFilter").on("click", clearDateFilter);
 });
