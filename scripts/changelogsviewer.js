@@ -1,4 +1,5 @@
 $(document).ready(function () {
+  console.log("Document ready, script starting");
   const loadingOverlay = document.getElementById("loading-overlay");
   const apiUrl = "https://api.jailbreakchangelogs.xyz/get_changelogs";
   const imageElement = document.getElementById("sidebarImage");
@@ -47,25 +48,208 @@ $(document).ready(function () {
   });
 
   $clearButton.on("click", clearSearch);
-
   function populateChangelogDropdown(changelogs) {
     const $dropdown = $("#changelogList");
     $dropdown.empty();
-    changelogs.forEach((changelog) => {
-      const date = new Date(changelog.date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
+
+    if (changelogs.length === 0) {
       $dropdown.append(`
         <li>
-          <a class="dropdown-item changelog-dropdown-item" href="#" data-changelog-id="${changelog.id}">
-            <span class="changelog-title">${changelog.title}</span>
-           
-          </a>
+          <span class="dropdown-item-text">No data for selected dates</span>
         </li>
       `);
+    } else {
+      const sortedChangelogs = changelogs.sort((a, b) => b.id - a.id);
+
+      sortedChangelogs.forEach((changelog) => {
+        $dropdown.append(`
+          <li>
+            <a class="dropdown-item changelog-dropdown-item" href="#" data-changelog-id="${changelog.id}">
+              <span class="changelog-title">${changelog.title}</span>
+            </a>
+          </li>
+        `);
+      });
+    }
+  }
+
+  // Initialize Bootstrap dropdowns
+  var dropdownElementList = [].slice.call(
+    document.querySelectorAll(".dropdown-toggle")
+  );
+  var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+    return new bootstrap.Dropdown(dropdownToggleEl);
+  });
+
+  // Pikaday configuration
+  var pikadayConfig = {
+    format: "YYYY-MM-DD",
+    showDaysInNextAndPreviousMonths: true,
+    enableSelectionDaysInNextAndPreviousMonths: true,
+    onSelect: function (date) {
+      const fieldId = this._o.field.id;
+      document.getElementById(fieldId).value = date
+        ? date.toISOString().split("T")[0]
+        : "";
+      updateButtonText(fieldId);
+      updateChangelogList();
+    },
+  };
+  var startDatePicker = new Pikaday({
+    ...pikadayConfig,
+    field: document.getElementById("startDate"),
+    trigger: document.getElementById("startDateBtn"),
+  });
+  var endDatePicker = new Pikaday({
+    ...pikadayConfig,
+    field: document.getElementById("endDate"),
+    trigger: document.getElementById("endDateBtn"),
+  });
+  function updateButtonText(fieldId) {
+    const btn = document.getElementById(fieldId + "Btn");
+    const date = document.getElementById(fieldId).value;
+    if (date) {
+      const formattedDate = formatDateForButton(new Date(date));
+      btn.querySelector("span").textContent = formattedDate;
+    } else {
+      btn.querySelector("span").textContent =
+        fieldId === "startDate" ? "Select Start Date" : "Select End Date";
+    }
+  }
+  function formatDateForButton(date) {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return date.toLocaleDateString("en-US", options);
+  }
+
+  function updateChangelogList() {
+    const startDate = startDatePicker.getDate();
+    const endDate = endDatePicker.getDate();
+
+    if (startDate && endDate) {
+      const filteredChangelogs = filterChangelogsByDate();
+
+      if (filteredChangelogs.length > 0) {
+        populateChangelogDropdown(filteredChangelogs);
+        updateDropdownButton("Filtered Changelogs");
+
+        // Add a small delay before opening the dropdown
+        setTimeout(openChangelogDropdown, 100);
+      } else {
+        // No data for selected date range
+        populateChangelogDropdown([]); // Pass empty array to show "No data" message
+        updateDropdownButton("No data for selected dates");
+        // Don't open the dropdown automatically when there's no data
+      }
+    } else {
+      // If both dates are not selected, reset the dropdown
+      populateChangelogDropdown(changelogsData); // Reset to all changelogs
+      updateDropdownButton("default");
+      // Don't open the dropdown automatically when dates are not selected
+    }
+  }
+
+  function getDateRangeText() {
+    const startDate = startDatePicker.getDate();
+    const endDate = endDatePicker.getDate();
+
+    if (startDate && endDate) {
+      return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+    } else if (startDate) {
+      return `From ${formatDate(startDate)}`;
+    } else if (endDate) {
+      return `Until ${formatDate(endDate)}`;
+    }
+    return "All Changelogs";
+  }
+
+  function formatDate(date) {
+    return date.toISOString().split("T")[0];
+  }
+
+  function openChangelogDropdown() {
+    const $dropdownEl = $("#changelogDropdown");
+    const dropdownInstance = bootstrap.Dropdown.getOrCreateInstance(
+      $dropdownEl[0]
+    );
+
+    // Force the dropdown to show
+    $dropdownEl.dropdown("show");
+
+    // Ensure the dropdown stays open
+    setTimeout(() => {
+      if (!$dropdownEl.hasClass("show")) {
+        $dropdownEl.dropdown("show");
+      }
+    }, 100);
+  }
+
+  function clearDateFilter() {
+    startDatePicker.setDate(null);
+    endDatePicker.setDate(null);
+
+    // Update button texts
+    updateButtonText("startDate");
+    updateButtonText("endDate");
+
+    // Hide the dropdown
+    const $dropdownEl = $("#changelogDropdown");
+    const dropdown = bootstrap.Dropdown.getInstance($dropdownEl[0]);
+    if (dropdown) {
+      dropdown.hide();
+    }
+
+    updateDropdownButton("default");
+    updateChangelogList();
+  }
+  document
+    .getElementById("clearDateFilter")
+    .addEventListener("click", clearDateFilter);
+
+  function filterChangelogsByDate() {
+    const startDate = startDatePicker.getDate();
+    const endDate = endDatePicker.getDate();
+
+    if (!startDate && !endDate) {
+      return changelogsData; // Return all changelogs if no dates are selected
+    }
+
+    return changelogsData.filter((changelog) => {
+      const changelogDate = parseDateFromTitle(changelog.title);
+      if (!changelogDate) return false;
+
+      if (startDate && endDate) {
+        return changelogDate >= startDate && changelogDate <= endDate;
+      } else if (startDate) {
+        return changelogDate >= startDate;
+      } else if (endDate) {
+        return changelogDate <= endDate;
+      }
+      return true;
     });
+  }
+
+  function parseDateFromTitle(title) {
+    const months = {
+      January: 0,
+      February: 1,
+      March: 2,
+      April: 3,
+      May: 4,
+      June: 5,
+      July: 6,
+      August: 7,
+      September: 8,
+      October: 9,
+      November: 10,
+      December: 11,
+    };
+
+    const match = title.match(/(\w+)\s(\d+)(?:st|nd|rd|th)\s(\d{4})/);
+    if (match) {
+      const [, month, day, year] = match;
+      return new Date(year, months[month], parseInt(day));
+    }
+    return null;
   }
 
   function updateDropdownButton(text) {
@@ -77,7 +261,17 @@ $(document).ready(function () {
     } else {
       $dropdownButton.html(`<i class="bi bi-calendar-event me-2"></i>${text}`);
     }
+    // Ensure the dropdown is still clickable after updating the text
+    $dropdownButton.dropdown();
   }
+  // Modify the event listener for the dropdown button
+  $(document).on("click", "#changelogDropdown", function (e) {
+    const buttonText = $(this).text().trim();
+    if (buttonText === "No data for selected dates") {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  });
 
   function toggleClearButton() {
     $clearButton.toggle($searchInput.val().length > 0);
@@ -94,6 +288,7 @@ $(document).ready(function () {
     hideSearchResults();
     dismissKeyboard();
   }
+
   function highlightText(text, query) {
     const words = query
       .split(/\s+/)
@@ -174,7 +369,6 @@ $(document).ready(function () {
 
   $.getJSON(apiUrl)
     .done((data) => {
-      console.log("Data received:", data);
       changelogsData = data;
 
       if (Array.isArray(data) && data.length > 0) {
@@ -299,19 +493,20 @@ $(document).ready(function () {
 
   function cleanContentForSearch(content) {
     return content
-      .replace(/- /g, " ") // Replace " - " with a space
-      .replace(/- - /g, " ") // Replace " - - " with a space
-      .replace(/### /g, " ") // Replace "### " with a space
-      .replace(/\(audio\) /g, " ") // Replace "(audio) " with a space
-      .replace(/\(video\) /g, " ") // Replace "(video) " with a space
-      .replace(/\(image\) /g, " ") // Replace "(image) " with a space
-      .replace(/\(audio\)\s*\S+/g, "[Audio]") // Replace audio links with [Audio]
-      .replace(/\(video\)\s*\S+/g, "[Video]") // Replace video links with [Video]
-      .replace(/\(image\)\s*\S+/g, "[Image]") // Replace image links with [Image]
-      .replace(/@(\w+)/g, "@$1") // Keep mentions as is
-      .replace(/\s+/g, " ") // Replace multiple spaces with a single space
-      .trim(); // Remove leading and trailing whitespace
+      .replace(/- /g, " ")
+      .replace(/- - /g, " ")
+      .replace(/### /g, " ")
+      .replace(/\(audio\) /g, " ")
+      .replace(/\(video\) /g, " ")
+      .replace(/\(image\) /g, " ")
+      .replace(/\(audio\)\s*\S+/g, "[Audio]")
+      .replace(/\(video\)\s*\S+/g, "[Video]")
+      .replace(/\(image\)\s*\S+/g, "[Image]")
+      .replace(/@(\w+)/g, "@$1")
+      .replace(/\s+/g, " ")
+      .trim();
   }
+
   const displayChangelog = (changelog) => {
     history.pushState(null, "", `?id=${changelog.id}`);
     localStorage.setItem("selectedChangelogId", changelog.id);
@@ -341,33 +536,35 @@ $(document).ready(function () {
       console.warn("No sections available for changelog.");
       contentHtml += '<p class="lead">No sections available.</p>';
     }
-    // Back to Top button functionality
-    const backToTopButton = $("#backToTop");
-
-    $(window).scroll(function () {
-      if ($(this).scrollTop() > 100) {
-        backToTopButton.addClass("show");
-      } else {
-        backToTopButton.removeClass("show");
-      }
-    });
-
-    backToTopButton.on("click", function (e) {
-      e.preventDefault();
-      $("html, body").animate({ scrollTop: 0 }, 800);
-    });
-    $(document).on("click", "#changelogList .dropdown-item", function (e) {
-      e.preventDefault();
-      const changelogId = $(this).data("changelog-id");
-      const selectedChangelog = changelogsData.find(
-        (cl) => cl.id == changelogId
-      );
-      if (selectedChangelog) {
-        displayChangelog(selectedChangelog);
-        updateDropdownButton("default");
-      }
-    });
 
     sectionsElement.innerHTML = contentHtml;
   };
+
+  // Back to Top button functionality
+  const backToTopButton = $("#backToTop");
+
+  $(window).scroll(function () {
+    if ($(this).scrollTop() > 100) {
+      backToTopButton.addClass("show");
+    } else {
+      backToTopButton.removeClass("show");
+    }
+  });
+
+  backToTopButton.on("click", function (e) {
+    e.preventDefault();
+    $("html, body").animate({ scrollTop: 0 }, 800);
+  });
+
+  $(document).on("click", "#changelogList .dropdown-item", function (e) {
+    e.preventDefault();
+    const changelogId = $(this).data("changelog-id");
+    const selectedChangelog = changelogsData.find((cl) => cl.id == changelogId);
+    if (selectedChangelog) {
+      displayChangelog(selectedChangelog);
+      updateDropdownButton("default");
+    }
+  });
+  bootstrap.Dropdown.getOrCreateInstance($("#changelogDropdown")[0]);
+  $("#clearDateFilter").on("click", clearDateFilter);
 });
