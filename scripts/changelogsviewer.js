@@ -4,6 +4,10 @@ $(document).ready(function () {
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
   const titleElement = document.getElementById("changelogTitle");
+  const clearFilterBtn = document.getElementById("clearDateFilter");
+  const toast = new bootstrap.Toast(
+    document.getElementById("clearFilterToast")
+  );
   const dateFilterModal = new bootstrap.Modal(
     document.getElementById("dateFilterModal")
   );
@@ -257,6 +261,9 @@ $(document).ready(function () {
 
     updateDropdownButton("default");
     populateChangelogDropdown(changelogsData);
+
+    // Show the toast
+    toast.show();
   }
 
   document
