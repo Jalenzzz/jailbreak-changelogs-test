@@ -48,6 +48,37 @@ $(document).ready(function () {
 
   $clearButton.on("click", clearSearch);
 
+  function populateChangelogDropdown(changelogs) {
+    const $dropdown = $("#changelogList");
+    $dropdown.empty();
+    changelogs.forEach((changelog) => {
+      const date = new Date(changelog.date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+      $dropdown.append(`
+        <li>
+          <a class="dropdown-item changelog-dropdown-item" href="#" data-changelog-id="${changelog.id}">
+            <span class="changelog-title">${changelog.title}</span>
+           
+          </a>
+        </li>
+      `);
+    });
+  }
+
+  function updateDropdownButton(text) {
+    const $dropdownButton = $("#changelogDropdown");
+    if (text === "default") {
+      $dropdownButton.html(
+        '<i class="bi bi-calendar-event me-2"></i>View Changelogs'
+      );
+    } else {
+      $dropdownButton.html(`<i class="bi bi-calendar-event me-2"></i>${text}`);
+    }
+  }
+
   function toggleClearButton() {
     $clearButton.toggle($searchInput.val().length > 0);
   }
@@ -137,7 +168,9 @@ $(document).ready(function () {
         const initialChangelog =
           changelogsData.find((cl) => cl.id == (idFromUrl || savedId)) ||
           changelogsData[0];
+        populateChangelogDropdown(data);
         displayChangelog(initialChangelog);
+        updateDropdownButton("default");
       } else {
         console.error("No changelogs found.");
       }
@@ -263,6 +296,32 @@ $(document).ready(function () {
       console.warn("No sections available for changelog.");
       contentHtml += '<p class="lead">No sections available.</p>';
     }
+    // Back to Top button functionality
+    const backToTopButton = $("#backToTop");
+
+    $(window).scroll(function () {
+      if ($(this).scrollTop() > 100) {
+        backToTopButton.addClass("show");
+      } else {
+        backToTopButton.removeClass("show");
+      }
+    });
+
+    backToTopButton.on("click", function (e) {
+      e.preventDefault();
+      $("html, body").animate({ scrollTop: 0 }, 800);
+    });
+    $(document).on("click", "#changelogList .dropdown-item", function (e) {
+      e.preventDefault();
+      const changelogId = $(this).data("changelog-id");
+      const selectedChangelog = changelogsData.find(
+        (cl) => cl.id == changelogId
+      );
+      if (selectedChangelog) {
+        displayChangelog(selectedChangelog);
+        updateDropdownButton("default");
+      }
+    });
 
     sectionsElement.innerHTML = contentHtml;
   };
