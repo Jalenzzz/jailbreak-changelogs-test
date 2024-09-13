@@ -89,8 +89,8 @@ $(document).ready(function () {
 
       sortedChangelogs.forEach((changelog) => {
         $dropdown.append(`
-          <li>
-            <a class="dropdown-item changelog-dropdown-item" href="#" data-changelog-id="${changelog.id}">
+          <li class="w-100">
+            <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
               <span class="changelog-title">${changelog.title}</span>
             </a>
           </li>
@@ -404,17 +404,6 @@ $(document).ready(function () {
           return `<h2 class="display-5 mt-5 mb-3 text-warning">${wrapMentions(
             line.substring(3)
           )}</h2>`;
-        } else if (line.startsWith("### ")) {
-          return `<h3 class="display-6 mt-4 mb-3 text-warning">${wrapMentions(
-            line.substring(4)
-          )}</h3>`;
-        } else if (line.startsWith("- - - ")) {
-          return `<div class="d-flex mb-2 position-relative">
-                    <i class="bi bi-arrow-right text-primary position-absolute" style="left: 40px; font-size: 1.5rem;"></i>
-                    <p class="lead mb-0 ms-5 ps-4">${wrapMentions(
-                      line.substring(6)
-                    )}</p>
-                  </div>`;
         } else if (line.startsWith("- - ")) {
           return `<div class="d-flex mb-2 position-relative">
                     <i class="bi bi-arrow-return-right text-primary position-absolute" style="left: 20px; font-size: 1.5rem;"></i>

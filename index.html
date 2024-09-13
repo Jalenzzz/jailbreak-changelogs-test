@@ -67,14 +67,25 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const themeToggle = document.getElementById("theme-toggle");
+        const themeToggleMobile = document.getElementById(
+          "theme-toggle-mobile"
+        );
+        const themeToggleDesktop = document.getElementById(
+          "theme-toggle-desktop"
+        );
         const htmlElement = document.documentElement;
-        const iconElement = themeToggle.querySelector("i");
 
         // Function to set theme
         function setTheme(theme) {
           htmlElement.setAttribute("data-bs-theme", theme);
           localStorage.setItem("theme", theme);
+          updateThemeIcon(themeToggleMobile, theme);
+          updateThemeIcon(themeToggleDesktop, theme);
+        }
+
+        // Function to update theme icon
+        function updateThemeIcon(button, theme) {
+          const iconElement = button.querySelector("i");
           if (theme === "dark") {
             iconElement.classList.replace("bi-moon-stars-fill", "bi-sun-fill");
           } else {
@@ -96,11 +107,14 @@
           setTheme("light");
         }
 
-        // Theme toggle button event listener
-        themeToggle.addEventListener("click", function () {
+        // Theme toggle button event listeners
+        function toggleTheme() {
           const currentTheme = htmlElement.getAttribute("data-bs-theme");
           setTheme(currentTheme === "light" ? "dark" : "light");
-        });
+        }
+
+        themeToggleMobile.addEventListener("click", toggleTheme);
+        themeToggleDesktop.addEventListener("click", toggleTheme);
       });
     </script>
   </head>
@@ -114,147 +128,155 @@
         <div class="loading-text">Loading...</div>
       </div>
     </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+      <div class="container-fluid">
+        <a
+          class="navbar-brand d-flex align-items-center"
+          href="https://www.roblox.com/games/606849621/Jailbreak"
+        >
+          <img
+            src="https://cdn.jailbreakchangelogs.xyz/logo/logo_animated.gif"
+            alt="Logo"
+            id="logo"
+            class="header-logo me-2"
+          />
+          <span id="main-title" class="text-white">ChangeLogs</span>
+        </a>
+        <div class="d-flex align-items-center">
+          <!-- Mobile theme toggle -->
+          <button
+            id="theme-toggle-mobile"
+            class="btn btn-outline-none me-2 d-lg-none p-2"
+            data-bs-toggle="tooltip"
+            data-bs-placement="bottom"
+            title="Toggle theme"
+            style="font-size: 1.5rem"
+          >
+            <i class="bi bi-moon-stars-fill" style="font-size: 1.5rem"></i>
+          </button>
+
+          <button
+            class="navbar-toggler custom-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarContent"
+            aria-controls="navbarContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="changelogDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="bi bi-calendar-event me-2"></i>View Changelogs
+              </a>
+              <ul
+                class="dropdown-menu changelog-dropdown w-100"
+                id="changelogList"
+                aria-labelledby="changelogDropdown"
+              >
+                <!-- Dropdown items will be populated here -->
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="openDateFilterModal">
+                <i class="bi bi-calendar-event me-2"></i>Select Date Range
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="clearDateFilter">
+                <i class="bi bi-x-circle me-2"></i>Clear Filter
+              </a>
+            </li>
+          </ul>
+          <form class="d-flex me-2" role="search">
+            <div class="input-group">
+              <span class="input-group-text bg-transparent border-0">
+                <i class="bi bi-search text-light"></i>
+              </span>
+              <input
+                id="search-input"
+                class="form-control bg-gray border-0"
+                type="search"
+                placeholder="Search changelogs..."
+                aria-label="Search changelogs"
+                autocomplete="off"
+              />
+              <button
+                id="clear-search-button"
+                class="btn btn-outline-light"
+                type="button"
+                style="display: none"
+              >
+                <i class="bi bi-x-circle-fill"></i>
+              </button>
+            </div>
+          </form>
+          <!-- Desktop theme toggle -->
+          <button
+            id="theme-toggle-desktop"
+            class="btn btn-outline-none d-none d-lg-block p-2"
+            data-bs-toggle="tooltip"
+            data-bs-placement="bottom"
+            title="Toggle theme"
+            style="font-size: 1.5rem"
+          >
+            <i class="bi bi-moon-stars-fill" style="font-size: 1.5rem"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <div
+      id="search-results"
+      class="dropdown-menu w-100"
+      style="display: none"
+    ></div>
 
     <div id="main-container" class="container-fluid">
-      <header class="row py-3 bg-primary text-white">
-        <div class="col-12">
-          <div
-            class="d-flex justify-content-between align-items-center flex-wrap"
-          >
-            <div class="d-flex align-items-center flex-grow-1">
-              <a
-                href="https://www.roblox.com/games/606849621/Jailbreak"
-                class="me-3"
-              >
-                <img
-                  src="https://cdn.jailbreakchangelogs.xyz/logo/logo_animated.gif"
-                  alt="Logo"
-                  id="logo"
-                  class="header-logo"
-                />
+      <div id="content-wrapper" class="row mt-3">
+        <div class="col-12 col-sm-8 col-md-8">
+          <section id="content"></section>
+        </div>
+        <div class="col-12 col-sm-4 col-md-4">
+          <div id="sidebar-image-wrapper" class="row mb-3">
+            <div class="card">
+              <img
+                id="sidebarImage"
+                class="card-img-top"
+                alt="Changelog Image"
+              />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-12">
+              <a href="timeline.html" class="btn btn-primary btn-lg w-100">
+                <i class="bi bi-clock-history me-2"></i>Jailbreak Timeline
               </a>
-              <h1 id="main-title" class="mb-0 text-white">ChangeLogs</h1>
             </div>
-            <button
-              id="theme-toggle"
-              class="btn mt-2 mt-sm-0"
-              data-bs-toggle="tooltip"
-              data-bs-placement="bottom"
-              title="Toggle theme"
-            >
-              <i class="bi bi-moon-stars-fill"></i>
-            </button>
           </div>
-        </div>
-      </header>
-    </div>
-
-    <div class="container mt-3">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-8">
-          <div class="row g-2">
-            <!-- Search bar -->
-            <div class="col-12 mb-3">
-              <div class="input-group">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Search changelogs..."
-                  aria-label="Search changelogs"
-                  aria-describedby="button-addon2"
-                />
-                <button
-                  class="btn btn-outline-secondary"
-                  type="button"
-                  id="button-addon2"
-                  style="display: none"
-                >
-                  <i class="bi bi-x-circle-fill"></i>
-                </button>
-              </div>
-              <div id="search-results-container" class="position-relative">
-                <div
-                  id="search-results"
-                  class="position-relative w-100 bg-light border rounded shadow-sm mt-2"
-                  style="
-                    display: none;
-                    z-index: 1000;
-                    max-height: 300px;
-                    overflow-y: auto;
-                  "
-                ></div>
-              </div>
-            </div>
-
-            <!-- All Changelogs dropdown -->
-            <div class="col-12 mb-3">
-              <div class="dropdown w-100">
-                <button
-                  class="btn btn-primary dropdown-toggle w-100"
-                  type="button"
-                  id="changelogDropdown"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <i class="bi bi-calendar-event me-2"></i>View Changelogs
-                </button>
-                <ul
-                  class="dropdown-menu w-100 white-border"
-                  id="changelogList"
-                  aria-labelledby="changelogDropdown"
-                >
-                  <!-- Dropdown items will be populated here -->
-                </ul>
-              </div>
-            </div>
-
-            <!-- Date filter and Clear filter in the same row -->
-            <div class="col-8 col-sm-9 mb-3">
+          <div class="row">
+            <div class="col-12">
               <button
-                id="openDateFilterModal"
-                class="btn btn-outline-secondary w-100"
+                class="btn btn-primary btn-lg w-100"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#twitterFeedOffcanvas"
+                aria-controls="twitterFeedOffcanvas"
               >
-                <i class="bi bi-calendar-event me-2"></i>Select Date Range
+                <i class="bi bi-twitter me-2"></i>Twitter Feed
               </button>
             </div>
-            <div class="col-4 col-sm-3 mb-3">
-              <button id="clearDateFilter" class="btn btn-outline-danger w-100">
-                Clear Filter
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="content-wrapper" class="row mt-3">
-      <div class="col-12 col-sm-8 col-md-8">
-        <section id="content"></section>
-      </div>
-      <div class="col-12 col-sm-4 col-md-4">
-        <div id="sidebar-image-wrapper" class="row mb-3">
-          <div class="card">
-            <img id="sidebarImage" class="card-img-top" alt="Changelog Image" />
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-12">
-            <a href="timeline.html" class="btn btn-primary btn-lg w-100">
-              <i class="bi bi-clock-history me-2"></i>Jailbreak Timeline
-            </a>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <button
-              class="btn btn-primary btn-lg w-100"
-              type="button"
-              data-bs-toggle="offcanvas"
-              data-bs-target="#twitterFeedOffcanvas"
-              aria-controls="twitterFeedOffcanvas"
-            >
-              <i class="bi bi-twitter me-2"></i>Twitter Feed
-            </button>
           </div>
         </div>
       </div>

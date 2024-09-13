@@ -177,6 +177,19 @@
 [data-bs-theme="dark"] .custom-search-item:hover {
   background-color: var(--gray-200);
 }
+.custom-toggler:focus,
+.custom-toggler:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.custom-toggler .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.custom-toggler:hover .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
 
 ::selection {
   background-color: var(--selection-bg);
@@ -340,6 +353,54 @@ body,
 p,
 span {
   color: var(--text-color);
+}
+.navbar {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.navbar-brand img {
+  height: 40px;
+  width: auto;
+}
+
+#main-title {
+  font-family: "Bangers", cursive;
+  font-size: 2rem;
+}
+
+.navbar-nav .nav-link {
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+}
+
+#theme-toggle {
+  padding: 0.375rem 0.75rem;
+  font-size: 1.1rem;
+}
+
+.navbar .form-control {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.navbar .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.navbar .input-group-text {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+#clearDateFilter {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+#clearDateFilter:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 header {
@@ -854,7 +915,7 @@ button {
   background-color: var(--hover-bg-color, #f8f9fa);
 }
 
-.changelog-dropdown-item {
+/* .changelog-dropdown-item {
   display: flex;
   flex-direction: column;
 }
@@ -868,7 +929,7 @@ button {
 .changelog-date {
   font-size: 0.8em;
   color: var(--gray-600);
-}
+} */
 
 /* Scrollbar styling for webkit browsers */
 .dropdown-menu::-webkit-scrollbar {
