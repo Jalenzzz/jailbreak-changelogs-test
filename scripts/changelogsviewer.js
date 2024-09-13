@@ -69,19 +69,11 @@ $(document).ready(function () {
   }
 
   const $searchInput = $('input[aria-label="Search changelogs"]');
-  const $searchButton = $("#button-addon2");
-  const $clearButton = $("#clear-search-button");
+  const $clearButton = $("#button-addon2");
 
-  $searchButton.on("click", performSearch);
-  $searchInput.on("keyup", (e) => {
-    if (e.key === "Enter") {
-      performSearch();
-      dismissKeyboard();
-    }
-    toggleClearButton();
-  });
-
+  $searchInput.on("input", performSearch);
   $clearButton.on("click", clearSearch);
+
   function populateChangelogDropdown(changelogs) {
     const $dropdown = $("#changelogList");
     $dropdown.empty();
@@ -506,7 +498,7 @@ $(document).ready(function () {
     } else {
       hideSearchResults();
     }
-    dismissKeyboard();
+    toggleClearButton();
   }
 
   function displaySearchResults(results) {
