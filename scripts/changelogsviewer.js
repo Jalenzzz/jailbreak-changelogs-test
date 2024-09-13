@@ -405,7 +405,7 @@ $(document).ready(function () {
       .map((line) => {
         line = line.trim();
         if (line.startsWith("# ")) {
-          return `<h1 class="display-4 mb-4 text-primary border-bottom border-primary pb-2">${wrapMentions(
+          return `<h1 class="display-4 mb-4 text-warning border-bottom border-warning pb-2">${wrapMentions(
             line.substring(2)
           )}</h1>`;
         } else if (line.startsWith("## ")) {
@@ -413,24 +413,30 @@ $(document).ready(function () {
             line.substring(3)
           )}</h2>`;
         } else if (line.startsWith("### ")) {
-          return `<h3 class="display-6 mt-4 mb-3">${wrapMentions(
+          return `<h3 class="display-6 mt-4 mb-3 text-warning">${wrapMentions(
             line.substring(4)
           )}</h3>`;
         } else if (line.startsWith("- - - ")) {
-          return `<p class="mb-2 lead ps-5 position-relative"><i class="bi bi-arrow-right position-absolute start-0 ps-4 text-primary"></i> ${wrapMentions(
-            line.substring(6)
-          )}</p>`;
+          return `<div class="d-flex mb-2 position-relative">
+                    <i class="bi bi-arrow-right text-primary position-absolute" style="left: 40px; font-size: 1.5rem;"></i>
+                    <p class="lead mb-0 ms-5 ps-4">${wrapMentions(
+                      line.substring(6)
+                    )}</p>
+                  </div>`;
         } else if (line.startsWith("- - ")) {
-          return `<p class="mb-2 lead ps-5 position-relative"><i class="bi bi-arrow-return-right position-absolute start-0 ps-4 text-primary"></i> ${wrapMentions(
-            line.substring(4)
-          )}</p>`;
+          return `<div class="d-flex mb-2 position-relative">
+                    <i class="bi bi-arrow-return-right text-primary position-absolute" style="left: 20px; font-size: 1.5rem;"></i>
+                    <p class="lead mb-0 ms-4 ps-4">${wrapMentions(
+                      line.substring(4)
+                    )}</p>
+                  </div>`;
         } else if (line.startsWith("- ")) {
-          return `
-  <div class="d-flex align-items-start mb-2">
-    <i class="bi bi-arrow-right text-primary me-2 fs-4"></i>
-    <p class="lead mb-0">${wrapMentions(line.substring(2))}</p>
-  </div>
-  `;
+          return `<div class="d-flex mb-2 position-relative">
+                    <i class="bi bi-arrow-right text-primary position-absolute" style="left: 0; font-size: 1.5rem;"></i>
+                    <p class="lead mb-0 ms-4 ps-1">${wrapMentions(
+                      line.substring(2)
+                    )}</p>
+                  </div>`;
         } else if (line.startsWith("(audio)")) {
           const audioUrl = line.substring(7).trim();
           const audioType = audioUrl.endsWith(".wav")
@@ -439,16 +445,12 @@ $(document).ready(function () {
           return `<audio class="w-100 mt-2 mb-2" controls><source src="${audioUrl}" type="${audioType}"></audio>`;
         } else if (line.startsWith("(image)")) {
           const imageUrl = line.substring(7).trim();
-          return `<img src="${imageUrl}" alt="Image" class="img-fluid mt-2 mb-2" style="max-height: 500px;">`;
+          return `<img src="${imageUrl}" alt="Image" class="img-fluid mt-2 mb-2 rounded" style="max-height: 500px;">`;
         } else if (line.startsWith("(video)")) {
           const videoUrl = line.substring(7).trim();
-          return `<video class="w-100 mt-2 mb-2" style="max-height: 500px;" controls><source src="${videoUrl}" type="video/mp4"></video>`;
+          return `<video class="w-100 mt-2 mb-2 rounded" style="max-height: 500px;" controls><source src="${videoUrl}" type="video/mp4"></video>`;
         } else {
-          return `
-  <div class="d-flex align-items-start mb-2">
-    <p class="lead mb-0">${wrapMentions(line)}</p>
-  </div>
-  `;
+          return `<p class="lead mb-2">${wrapMentions(line)}</p>`;
         }
       })
       .join("");
