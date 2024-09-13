@@ -238,7 +238,7 @@ $(document).ready(function () {
     );
 
     // Force the dropdown to show
-    $dropdownEl.dropdown("show");
+    bootstrap.Dropdown.getOrCreateInstance($dropdownEl[0]).show();
 
     // Ensure the dropdown stays open
     setTimeout(() => {
@@ -355,7 +355,7 @@ $(document).ready(function () {
       $dropdownButton.html(`<i class="bi bi-calendar-event me-2"></i>${text}`);
     }
     // Ensure the dropdown is still clickable after updating the text
-    $dropdownButton.dropdown();
+    new bootstrap.Dropdown($dropdownButton[0]);
   }
 
   // Modify the event listener for the dropdown button
