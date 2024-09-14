@@ -182,6 +182,80 @@ $(document).ready(function () {
       updateDropdownButton("default");
     }
   }
+  const copyChangelogBtn = $("#copyChangelog");
+
+  copyChangelogBtn.on("click", function () {
+    // Get the content of the changelog
+    const changelogContent = $("#content").clone();
+
+    // Get the current page URL
+    const currentPageUrl = window.location.href;
+
+    // Get the sidebar image URL
+    const sidebarImageUrl = $("#sidebarImage").attr("src");
+
+    // Process the content
+    let processedContent = [];
+
+    // Add the title (h1) with '#' before it
+    const title = changelogContent.find("h1.display-4").first().text().trim();
+    processedContent.push("# " + title, ""); // '#' added before the title, Empty string for a blank line after title
+
+    // Process other elements
+    changelogContent.children().each(function () {
+      const $elem = $(this);
+      if ($elem.is("h2")) {
+        // Add two newlines before each h2 to separate sections
+        processedContent.push("", $elem.text().trim(), "");
+      } else if ($elem.is("p.lead")) {
+        processedContent.push($elem.text().trim());
+      } else if ($elem.hasClass("d-flex")) {
+        const text = $elem.find(".lead").text().trim();
+        if ($elem.find(".bi-arrow-return-right").length > 0) {
+          // This is an inline item (- -)
+          processedContent.push("• • " + text);
+        } else if ($elem.find(".bi-arrow-right").length > 0) {
+          // This is a regular item (-)
+          processedContent.push("• " + text);
+        } else {
+          // Fallback for any items without arrows
+          processedContent.push("• " + text);
+        }
+      }
+    });
+
+    // Add the sidebar image URL if available
+    if (sidebarImageUrl) {
+      processedContent.push("", "Media:", sidebarImageUrl);
+    }
+
+    // Add custom message at the end with the current page URL
+    processedContent.push(
+      "",
+      "",
+      "This changelog was copied from jailbreakchangelogs.xyz",
+      `Source: ${currentPageUrl}`
+    );
+
+    // Join the processed content with newlines
+    const cleanedContent = processedContent.join("\n");
+
+    navigator.clipboard
+      .writeText(cleanedContent)
+      .then(() => {
+        // Change button icon to indicate success
+        $(this).html('<i class="bi bi-check-lg me-2"></i>Copied!');
+
+        // Revert button icon after 2 seconds
+        setTimeout(() => {
+          $(this).html('<i class="bi bi-clipboard me-2"></i>Copy Changelog');
+        }, 2000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+        alert("Failed to copy changelog. Please try again.");
+      });
+  });
 
   function getDateRangeText() {
     const startDate = startDatePicker.getDate();
@@ -637,7 +711,7 @@ $(document).ready(function () {
 
   backToTopButton.on("click", function (e) {
     e.preventDefault();
-    $("html, body").animate({ scrollTop: 0 }, 800);
+    $("html, body").animate({ scrollTop: 0 }, 100);
   });
 
   $(document).on("click", ".changelog-dropdown-item", function (e) {

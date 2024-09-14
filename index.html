@@ -265,7 +265,7 @@
               </a>
             </div>
           </div>
-          <div class="row">
+          <div class="row mb-3">
             <div class="col-12">
               <button
                 class="btn btn-primary btn-lg w-100"
@@ -274,7 +274,32 @@
                 data-bs-target="#twitterFeedOffcanvas"
                 aria-controls="twitterFeedOffcanvas"
               >
-                <i class="bi bi-twitter me-2"></i>Twitter Feed
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-twitter-x me-2"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"
+                  />
+                </svg>
+                Badimo Feed
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <button
+                id="copyChangelog"
+                class="btn btn-primary btn-lg w-100"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Copy Changelog"
+              >
+                <i class="bi bi-clipboard me-2"></i>Copy Changelog
               </button>
             </div>
           </div>
@@ -377,13 +402,13 @@
                   <div class="col-sm-4">
                     <p class="mb-0">
                       <strong>Version:</strong>
-                      <span id="version-number">6f37327</span>
+                      <span id="version-number">b06310f</span>
                     </p>
                   </div>
                   <div class="col-sm-4">
                     <p class="mb-0">
                       <strong>Last Updated:</strong>
-                      <span id="last-updated">September 13th 2024</span>
+                      <span id="last-updated">September 14th 2024</span>
                     </p>
                   </div>
                   <div class="col-sm-4">
@@ -574,17 +599,33 @@
       id="twitterFeedOffcanvas"
       aria-labelledby="twitterFeedOffcanvasLabel"
     >
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="twitterFeedOffcanvasLabel">
-          Twitter Feed
+      <div class="offcanvas-header bg-primary text-white">
+        <h5
+          class="offcanvas-title d-flex align-items-center"
+          id="twitterFeedOffcanvasLabel"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            class="bi bi-twitter-x me-2"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"
+            />
+          </svg>
+          <span class="fw-bold">Badimo Feed</span>
         </h5>
         <button
           type="button"
-          class="btn-close"
+          class="btn-close btn-close-white"
           data-bs-dismiss="offcanvas"
           aria-label="Close"
         ></button>
       </div>
+
       <div class="offcanvas-body">
         <!-- Twitter feed widget -->
         <div class="sk-ww-twitter-feed" data-embed-id="25462200"></div>
