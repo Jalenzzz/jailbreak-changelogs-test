@@ -4,6 +4,8 @@ $(document).ready(function () {
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
   const titleElement = document.getElementById("changelogTitle");
+  const $searchResultsContainer = $("#search-results");
+  const $navbarCollapse = $("#navbarContent");
   const clearFilterBtn = document.getElementById("clearDateFilter");
   const toast = new bootstrap.Toast(
     document.getElementById("clearFilterToast")
@@ -67,12 +69,32 @@ $(document).ready(function () {
       document.activeElement.blur();
     }
   }
+  function closeNavbar() {
+    if ($navbarCollapse.hasClass("show")) {
+      $navbarCollapse.collapse("hide");
+    }
+  }
 
   const $searchInput = $('input[aria-label="Search changelogs"]');
-  const $clearButton = $("#button-addon2");
+  const $clearButton = $("#clear-search-button");
 
   $searchInput.on("input", performSearch);
-  $clearButton.on("click", clearSearch);
+  $clearButton.on("click", function () {
+    clearSearch();
+  });
+  // Handle Enter key press or mobile 'Go' button
+  $searchInput.on("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent default form submission behavior
+      focusOnSearchResults();
+      dismissKeyboard(); // Dismiss the keyboard on mobile
+    }
+  });
+  function focusOnSearchResults() {
+    if ($searchResultsContainer.children().length > 0) {
+      $searchResultsContainer.children().first().focus();
+    }
+  }
 
   function populateChangelogDropdown(changelogs) {
     const $dropdown = $("#changelogList");
@@ -80,21 +102,21 @@ $(document).ready(function () {
 
     if (changelogs.length === 0) {
       $dropdown.append(`
-        <li>
-          <span class="dropdown-item-text">No data for selected dates</span>
-        </li>
-      `);
+            <li>
+                <span class="dropdown-item-text">No data for selected dates</span>
+            </li>
+        `);
     } else {
       const sortedChangelogs = changelogs.sort((a, b) => b.id - a.id);
 
       sortedChangelogs.forEach((changelog) => {
         $dropdown.append(`
-          <li class="w-100">
-            <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
-              <span class="changelog-title">${changelog.title}</span>
-            </a>
-          </li>
-        `);
+                <li class="w-100">
+                    <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
+                        <span class="changelog-title">${changelog.title}</span>
+                    </a>
+                </li>
+            `);
       });
     }
   }
@@ -471,23 +493,23 @@ $(document).ready(function () {
       .map((line) => {
         line = line.trim();
         if (line.startsWith("# ")) {
-          return `<h1 class="display-4 mb-4 text-warning border-bottom border-warning pb-2">${wrapMentions(
+          return `<h1 class="display-4 mb-4 text-custom-header border-bottom border-custom-header pb-2">${wrapMentions(
             line.substring(2)
           )}</h1>`;
         } else if (line.startsWith("## ")) {
-          return `<h2 class="display-5 mt-5 mb-3 text-warning">${wrapMentions(
+          return `<h2 class="display-5 mt-5 mb-3 text-custom-subheader">${wrapMentions(
             line.substring(3)
           )}</h2>`;
         } else if (line.startsWith("- - ")) {
           return `<div class="d-flex mb-2 position-relative">
-                    <i class="bi bi-arrow-return-right text-primary position-absolute" style="left: 20px; font-size: 1.5rem;"></i>
+                    <i class="bi bi-arrow-return-right text-custom-icon position-absolute" style="left: 20px; font-size: 1.5rem;"></i>
                     <p class="lead mb-0 ms-4 ps-4">${wrapMentions(
                       line.substring(4)
                     )}</p>
                   </div>`;
         } else if (line.startsWith("- ")) {
           return `<div class="d-flex mb-2 position-relative">
-                    <i class="bi bi-arrow-right text-primary position-absolute" style="left: 0; font-size: 1.5rem;"></i>
+                    <i class="bi bi-arrow-right text-custom-icon position-absolute" style="left: 0; font-size: 1.5rem;"></i>
                     <p class="lead mb-0 ms-4 ps-1">${wrapMentions(
                       line.substring(2)
                     )}</p>
@@ -565,7 +587,6 @@ $(document).ready(function () {
   }
 
   function displaySearchResults(results) {
-    const $searchResultsContainer = $("#search-results");
     $searchResultsContainer.empty();
     const query = $searchInput.val().trim().toLowerCase();
 
@@ -586,46 +607,30 @@ $(document).ready(function () {
 
         const cleanedSections = cleanContentForSearch(changelog.sections);
 
-        // Find the position of the query in the content
         const queryPosition = cleanedSections.toLowerCase().indexOf(query);
         let previewText = "";
 
         if (queryPosition !== -1) {
-          // Get a substring around the found query
-          const startPos = Math.max(0, queryPosition - 50);
+          const startPos = Math.max(0, queryPosition - 150);
           const endPos = Math.min(
             cleanedSections.length,
-            queryPosition + query.length + 50
+            queryPosition + query.length + 150
           );
           previewText = cleanedSections.substring(startPos, endPos);
 
-          // Add ellipsis if we're not at the start or end of the content
           if (startPos > 0) previewText = "..." + previewText;
           if (endPos < cleanedSections.length) previewText += "...";
         } else {
-          // If query not found in content, fall back to the first 100 characters
           previewText =
             cleanedSections.substring(0, 100) +
             (cleanedSections.length > 100 ? "..." : "");
         }
 
-        const hasVideo = changelog.sections.includes("(video)");
-        const hasImage = changelog.sections.includes("(image)");
-        const hasAudio = changelog.sections.includes("(audio)");
-
-        const mediaTags = [];
-        if (hasVideo)
-          mediaTags.push('<span class="media-tag video-tag">Video</span>');
-        if (hasImage)
-          mediaTags.push('<span class="media-tag image-tag">Image</span>');
-        if (hasAudio)
-          mediaTags.push('<span class="media-tag audio-tag">Audio</span>');
-
         const highlightedTitle = highlightText(changelog.title, query);
         const highlightedPreview = highlightText(previewText, query);
 
         $listItem.html(`
-          <h5 class="mb-1">${highlightedTitle} ${mediaTags.join(" ")}</h5>
+          <h5 class="mb-1">${highlightedTitle}</h5>
           <p class="mb-1 small">${highlightedPreview}</p>
         `);
 
@@ -633,6 +638,7 @@ $(document).ready(function () {
           displayChangelog(changelog);
           clearSearch();
           dismissKeyboard();
+          closeNavbar(); // Close the navbar when a search result is clicked
         });
 
         $resultsList.append($listItem);
@@ -647,6 +653,7 @@ $(document).ready(function () {
       .replace(/- /g, " ")
       .replace(/- - /g, " ")
       .replace(/### /g, " ")
+      .replace(/## /g, " ")
       .replace(/\(audio\) /g, " ")
       .replace(/\(video\) /g, " ")
       .replace(/\(image\) /g, " ")

@@ -120,20 +120,18 @@
   </head>
 
   <body>
-    <div id="loading-overlay">
+    <div id="loading-overlay" class="show">
       <div class="text-center">
-        <div class="spinner-border text-primary mb-2" role="status">
+        <div class="spinner-border spinner-custom mb-2" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
         <div class="loading-text">Loading...</div>
       </div>
     </div>
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
       <div class="container-fluid">
-        <a
-          class="navbar-brand d-flex align-items-center"
-          href="https://www.roblox.com/games/606849621/Jailbreak"
-        >
+        <a class="navbar-brand d-flex align-items-center">
           <img
             src="https://cdn.jailbreakchangelogs.xyz/logo/logo_animated.gif"
             alt="Logo"
@@ -207,7 +205,7 @@
               <input
                 id="search-input"
                 class="form-control bg-gray border-0"
-                type="search"
+                type="text"
                 placeholder="Search changelogs..."
                 aria-label="Search changelogs"
                 autocomplete="off"
@@ -216,12 +214,12 @@
                 id="clear-search-button"
                 class="btn btn-outline-light"
                 type="button"
-                style="display: none"
               >
                 <i class="bi bi-x-circle-fill"></i>
               </button>
             </div>
           </form>
+
           <!-- Desktop theme toggle -->
           <button
             id="theme-toggle-desktop"
@@ -237,11 +235,10 @@
       </div>
     </nav>
 
-    <div
-      id="search-results"
-      class="dropdown-menu w-100"
-      style="display: none"
-    ></div>
+    <div id="search-results" class="dropdown-menu w-100 w-lg-50">
+      <!-- Content goes here -->
+      Search Results
+    </div>
 
     <div id="main-container" class="container-fluid">
       <div id="content-wrapper" class="row mt-3">
@@ -314,16 +311,22 @@
           <div class="card-header bg-info text-white">
             <h5 class="mb-0 text-center">From badimo</h5>
           </div>
-          <div class="card-body">
-            <p class="lead text-center mb-2">
+          <div class="card-body text-center">
+            <p class="lead mb-2">
               To all of our players over all of these years, we love this game.
             </p>
-            <p class="font-italic text-center mb-2">
+            <p class="font-italic mb-2">
               Keep up the fight for Jailbreak forever! It'll never go away.
             </p>
-            <p class="font-weight-bold text-center mb-0">
-              Thank you for playing!
-            </p>
+            <p class="font-weight-bold mb-3">Thank you for playing!</p>
+            <!-- Play Here Button -->
+            <a
+              href="https://www.roblox.com/games/606849621/Jailbreak"
+              target="_blank"
+              class="btn btn-primary btn-lg d-flex align-items-center justify-content-center"
+            >
+              <strong>Play Here</strong>
+            </a>
           </div>
         </div>
 
@@ -423,6 +426,7 @@
         </div>
 
         <!-- Quick Links -->
+        <!-- Quick Links -->
         <div class="card mt-3">
           <div class="card-header bg-secondary text-white">
             <h5 class="mb-0 text-center">
@@ -434,35 +438,35 @@
               <a
                 href="https://www.reddit.com/r/robloxjailbreak/"
                 target="_blank"
-                class="btn btn-link"
+                class="btn btn-link reddit-link"
               >
                 <i class="bi bi-reddit"></i> r/RobloxJailbreak
               </a>
               <a
                 href="https://discord.com/invite/tWbDg7MbUU"
                 target="_blank"
-                class="btn btn-link"
+                class="btn btn-link discord-link"
               >
                 <i class="bi bi-discord"></i> r/RobloxJailbreak Discord
               </a>
               <a
                 href="https://discord.gg/jailbreak"
                 target="_blank"
-                class="btn btn-link"
+                class="btn btn-link discord-link"
               >
                 <i class="bi bi-discord"></i> Official Jailbreak Discord
               </a>
               <a
                 href="https://jailbreak.fandom.com/wiki/Jailbreak_Wiki:Home"
                 target="_blank"
-                class="btn btn-link"
+                class="btn btn-link wiki-link"
               >
                 <i class="bi bi-book"></i> Jailbreak Wiki
               </a>
               <a
                 href="https://github.com/JBChangelogs/JailbreakChangelogs"
                 target="_blank"
-                class="btn btn-link"
+                class="btn btn-link github-link"
               >
                 <i class="bi bi-github"></i> GitHub
               </a>
@@ -599,7 +603,7 @@
       id="twitterFeedOffcanvas"
       aria-labelledby="twitterFeedOffcanvasLabel"
     >
-      <div class="offcanvas-header bg-primary text-white">
+      <div class="offcanvas-header">
         <h5
           class="offcanvas-title d-flex align-items-center"
           id="twitterFeedOffcanvasLabel"
@@ -620,7 +624,7 @@
         </h5>
         <button
           type="button"
-          class="btn-close btn-close-white"
+          class="btn-close"
           data-bs-dismiss="offcanvas"
           aria-label="Close"
         ></button>
