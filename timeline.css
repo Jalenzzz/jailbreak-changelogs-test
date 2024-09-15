@@ -70,6 +70,28 @@
   --gray-800: #aaaaaa;
   --gray-900: #bbbbbb;
 }
+/* Back to Top Button */
+#backToTop {
+  display: none; /* Initially hidden */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--button-primary-bg);
+  color: #ffffff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, display 0.3s;
+  z-index: 1000; /* Ensure it's above other content */
+}
+
+#backToTop.show {
+  display: block; /* Show when the 'show' class is added */
+}
+
+#backToTop:hover {
+  background-color: var(--button-primary-hover-bg);
+}
 html,
 body {
   height: 100%;
@@ -614,29 +636,6 @@ footer {
 
 .version-info p {
   margin: 0;
-}
-
-/* Back to Top Button */
-#backToTop {
-  display: none; /* Initially hidden */
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: var(--button-primary-bg);
-  color: #ffffff;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s, display 0.3s;
-  z-index: 1000; /* Ensure it's above other content */
-}
-
-#backToTop.show {
-  display: block; /* Show when the 'show' class is added */
-}
-
-#backToTop:hover {
-  background-color: var(--button-primary-hover-bg);
 }
 
 /* General Link Styles */

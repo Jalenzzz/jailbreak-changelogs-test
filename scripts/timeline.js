@@ -87,11 +87,35 @@ $(document).ready(function () {
 
     let formattedTitle = `<span class="fw-bold" style="font-size: 1.2em;">${mainTitle}</span>`;
     if (subtitle) {
-      formattedTitle += `<br><span class="text-uppercase" style="font-size: 0.9em; color: #6c757d;">${subtitle}</span>`;
+      formattedTitle += `<br><span class="text-uppercase" style="font-size: 0.9em;">${subtitle}</span>`;
     }
 
     return formattedTitle;
   }
+  // Back to Top button functionality
+  const backToTopButton = $("#backToTop");
+
+  $(window).scroll(function () {
+    if ($(this).scrollTop() > 100) {
+      backToTopButton.addClass("show");
+    } else {
+      backToTopButton.removeClass("show");
+    }
+  });
+
+  backToTopButton.on("click", function (e) {
+    e.preventDefault();
+    $("html, body").animate({ scrollTop: 0 }, 100);
+  });
+
+  $(document).on("click", ".changelog-dropdown-item", function (e) {
+    e.preventDefault();
+    const changelogId = $(this).data("changelog-id");
+    const selectedChangelog = changelogsData.find((cl) => cl.id == changelogId);
+    if (selectedChangelog) {
+      displayChangelog(selectedChangelog);
+    }
+  });
 
   function createTimelineEntry(changelog, index) {
     if (!changelog || !changelog.title) return ""; // Skip empty entries
