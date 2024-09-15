@@ -76,11 +76,29 @@ $(document).ready(function () {
   }
 
   const $searchInput = $('input[aria-label="Search changelogs"]');
+  const $exampleQueries = $("#exampleQueries");
   const $clearButton = $("#clear-search-button");
 
   $searchInput.on("input", performSearch);
   $clearButton.on("click", function () {
+    $searchInput.val("");
+    $exampleQueries.addClass("d-none");
     clearSearch();
+  });
+  // Hide example queries when the search input loses focus
+  $searchInput.on("blur", function () {
+    setTimeout(() => $exampleQueries.addClass("d-none"), 200);
+  });
+  // Show example queries when the search input is focused
+  $searchInput.on("focus", function () {
+    $exampleQueries.removeClass("d-none");
+  });
+  // Populate search input with example query when clicked
+  $(".example-query").on("click", function (e) {
+    e.preventDefault();
+    const query = $(this).text();
+    $searchInput.val(query).focus();
+    performSearch(); // Call your search function here
   });
   // Handle Enter key press or mobile 'Go' button
   $searchInput.on("keydown", function (e) {
@@ -301,24 +319,6 @@ $(document).ready(function () {
     });
   }
 
-  function getDateRangeText() {
-    const startDate = startDatePicker.getDate();
-    const endDate = endDatePicker.getDate();
-
-    if (startDate && endDate) {
-      return `${formatDate(startDate)} - ${formatDate(endDate)}`;
-    } else if (startDate) {
-      return `From ${formatDate(startDate)}`;
-    } else if (endDate) {
-      return `Until ${formatDate(endDate)}`;
-    }
-    return "All Changelogs";
-  }
-
-  function formatDate(date) {
-    return date.toISOString().split("T")[0];
-  }
-
   function openChangelogDropdown() {
     const $dropdownEl = $("#changelogDropdown");
     const dropdownInstance = bootstrap.Dropdown.getOrCreateInstance(
@@ -466,6 +466,7 @@ $(document).ready(function () {
 
   function clearSearch() {
     $searchInput.val("");
+    $exampleQueries.addClass("d-none");
     toggleClearButton();
     hideSearchResults();
     dismissKeyboard();
@@ -569,8 +570,27 @@ $(document).ready(function () {
 
   function performSearch() {
     const query = $searchInput.val().trim().toLowerCase();
-    if (query) {
-      const searchResults = changelogsData.filter((changelog) => {
+    let searchResults = [];
+
+    if (query.startsWith("has:")) {
+      // Handle special query for media types
+      const mediaType = query.split(":")[1].trim();
+
+      searchResults = changelogsData.filter((changelog) => {
+        switch (mediaType) {
+          case "audio":
+            return changelog.sections.includes("(audio)");
+          case "video":
+            return changelog.sections.includes("(video)");
+          case "image":
+            return changelog.sections.includes("(image)");
+          default:
+            return false;
+        }
+      });
+    } else {
+      // Regular search
+      searchResults = changelogsData.filter((changelog) => {
         const titleMatch = changelog.title.toLowerCase().includes(query);
         const contentMatch =
           changelog.sections &&
@@ -578,11 +598,9 @@ $(document).ready(function () {
           changelog.sections.toLowerCase().includes(query);
         return titleMatch || contentMatch;
       });
-
-      displaySearchResults(searchResults);
-    } else {
-      hideSearchResults();
     }
+
+    displaySearchResults(searchResults);
     toggleClearButton();
   }
 
@@ -629,8 +647,33 @@ $(document).ready(function () {
         const highlightedTitle = highlightText(changelog.title, query);
         const highlightedPreview = highlightText(previewText, query);
 
+        // Check for media tags
+        const hasAudio = changelog.sections.includes("(audio)");
+        const hasVideo = changelog.sections.includes("(video)");
+        const hasImage = changelog.sections.includes("(image)");
+
+        let mediaLabels = "";
+        if (hasAudio) {
+          mediaLabels += `
+            <span class="badge bg-primary me-1">
+              <i class="bi bi-volume-up me-1"></i>Audio
+            </span>`;
+        }
+        if (hasVideo) {
+          mediaLabels += `
+            <span class="badge bg-success me-1">
+              <i class="bi bi-camera-video me-1"></i>Video
+            </span>`;
+        }
+        if (hasImage) {
+          mediaLabels += `
+            <span class="badge bg-info me-1">
+              <i class="bi bi-image me-1"></i>Image
+            </span>`;
+        }
+
         $listItem.html(`
-          <h5 class="mb-1">${highlightedTitle}</h5>
+          <h5 class="mb-1">${highlightedTitle} ${mediaLabels}</h5>
           <p class="mb-1 small">${highlightedPreview}</p>
         `);
 
@@ -657,9 +700,9 @@ $(document).ready(function () {
       .replace(/\(audio\) /g, " ")
       .replace(/\(video\) /g, " ")
       .replace(/\(image\) /g, " ")
-      .replace(/\(audio\)\s*\S+/g, "[Audio]")
-      .replace(/\(video\)\s*\S+/g, "[Video]")
-      .replace(/\(image\)\s*\S+/g, "[Image]")
+      .replace(/\(audio\)\s*\S+/g, "")
+      .replace(/\(video\)\s*\S+/g, "")
+      .replace(/\(image\)\s*\S+/g, "")
       .replace(/@(\w+)/g, "@$1")
       .replace(/\s+/g, " ")
       .trim();

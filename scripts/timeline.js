@@ -1,103 +1,93 @@
-document.addEventListener("DOMContentLoaded", () => {
+$(document).ready(function () {
   const loadingOverlay = document.getElementById("loading-overlay");
-  const timelineContainer = document.getElementById("timeline");
   const apiUrl = "https://api.jailbreakchangelogs.xyz/get_changelogs";
+  const $timeline = $("#timeline");
+  const $footer = $("footer");
+  let isLoading = false;
+  let lastScrollTop = 0;
+  let footerTimeout;
 
-  function showLoadingOverlay() {
-    loadingOverlay.classList.add("show");
+  if ($timeline.length === 0) {
+    console.error("Timeline element not found");
+    return;
   }
 
-  function hideLoadingOverlay() {
-    loadingOverlay.classList.remove("show");
+  function toggleLoadingOverlay(show) {
+    loadingOverlay.classList.toggle("show", show);
   }
 
-  function createTimeline(changelogs) {
-    timelineContainer.innerHTML = "";
-
-    changelogs.forEach((changelog, index) => {
-      const timelineItem = document.createElement("div");
-      timelineItem.classList.add(
-        "timeline-item",
-        index % 2 === 0 ? "left" : "right"
-      );
-
-      timelineItem.innerHTML = `
-        <div class="timeline-content">
-          <div class="timeline-icon">
-            <i class="bi bi-calendar-event"></i>
-          </div>
-          <h3 class="timeline-title">${changelog.title}</h3>
-         
-          <button class="btn btn-primary btn-sm timeline-view-btn">View Details</button>
+  function createTimelineEntry(changelog, index) {
+    if (!changelog || !changelog.title) return ""; // Skip empty entries
+    const sideClass = index % 2 === 0 ? "left" : "right";
+    return `
+      <div class="timeline-entry-container ${sideClass}" style="display: none;">
+        <div class="timeline-entry">
+          <h5 class="text-custom-header">${changelog.title}</h5>
+          <img src="${changelog.image_url}" alt="${changelog.title}" class="img-fluid">
+          <p>${changelog.sections}</p>
         </div>
-      `;
-
-      timelineContainer.appendChild(timelineItem);
-
-      const viewBtn = timelineItem.querySelector(".timeline-view-btn");
-      viewBtn.addEventListener("click", () => displayChangelog(changelog));
-    });
+        <div class="timeline-line"></div>
+      </div>
+    `;
   }
 
-  function displayChangelog(changelog) {
-    window.location.href = `index.html?id=${changelog.id}`;
+  function loadAllEntries() {
+    if (isLoading) return;
+    isLoading = true;
+
+    toggleLoadingOverlay(true);
+    $footer.addClass("hide");
+
+    $.getJSON(apiUrl)
+      .done((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const validData = data.filter((entry) => entry && entry.title);
+          if (validData.length > 0) {
+            const entriesHtml = validData.map(createTimelineEntry).join("");
+            $timeline.html(entriesHtml);
+            fadeInEntries(0, validData.length);
+          } else {
+            $timeline.append("<p>No changelogs found.</p>");
+          }
+        } else {
+          $timeline.append("<p>No changelogs found.</p>");
+        }
+      })
+      .fail((jqXHR, textStatus, errorThrown) => {
+        console.error("Error fetching changelogs:", errorThrown);
+        $timeline.append(
+          "<p>Error loading changelogs. Please try again later.</p>"
+        );
+      })
+      .always(() => {
+        isLoading = false;
+        toggleLoadingOverlay(false);
+        setTimeout(() => $footer.removeClass("hide"), 300);
+      });
   }
 
-  showLoadingOverlay();
+  function fadeInEntries(start, end) {
+    $timeline
+      .find(".timeline-entry-container")
+      .slice(start, end)
+      .each((index, element) => {
+        $(element)
+          .delay(index * 100)
+          .fadeIn(500);
+      });
+  }
 
-  fetch(apiUrl)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log("Data received:", data);
-      if (Array.isArray(data) && data.length > 0) {
-        createTimeline(data);
-      } else {
-        console.error("No changelogs found.");
-      }
-      hideLoadingOverlay();
-    })
-    .catch((error) => {
-      console.error("Error fetching changelogs:", error);
-      timelineContainer.innerHTML =
-        "<p class='text-center text-danger'>Error loading changelogs. Please try again later.</p>";
-      hideLoadingOverlay();
-    });
+  loadAllEntries();
 
-  // Theme toggle functionality
-  const themeToggle = document.getElementById("theme-toggle");
-  const htmlElement = document.documentElement;
-  const iconElement = themeToggle.querySelector("i");
-
-  function setTheme(theme) {
-    htmlElement.setAttribute("data-bs-theme", theme);
-    localStorage.setItem("theme", theme);
-    if (theme === "dark") {
-      iconElement.classList.replace("bi-moon-stars-fill", "bi-sun-fill");
+  $(window).on("scroll", function () {
+    const st = $(this).scrollTop();
+    if (st > lastScrollTop) {
+      $footer.addClass("hide");
+      clearTimeout(footerTimeout);
     } else {
-      iconElement.classList.replace("bi-sun-fill", "bi-moon-stars-fill");
+      clearTimeout(footerTimeout);
+      footerTimeout = setTimeout(() => $footer.removeClass("hide"), 500);
     }
-  }
-
-  const savedTheme = localStorage.getItem("theme");
-  const prefersDarkMode = window.matchMedia(
-    "(prefers-color-scheme: dark)"
-  ).matches;
-
-  if (savedTheme) {
-    setTheme(savedTheme);
-  } else if (prefersDarkMode) {
-    setTheme("dark");
-  } else {
-    setTheme("light");
-  }
-
-  themeToggle.addEventListener("click", function () {
-    const currentTheme = htmlElement.getAttribute("data-bs-theme");
-    setTheme(currentTheme === "light" ? "dark" : "light");
+    lastScrollTop = st;
   });
 });

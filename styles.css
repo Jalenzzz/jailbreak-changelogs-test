@@ -572,11 +572,6 @@ span {
   width: auto;
 }
 
-#main-title {
-  font-family: "Bangers", cursive;
-  font-size: 2rem;
-}
-
 .navbar-nav .nav-link {
   font-size: 1.1rem;
   padding: 0.5rem 1rem;
@@ -628,6 +623,32 @@ span {
 #clearDateFilter:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
+.example-queries {
+  background-color: var(--bg-color);
+  border: 1px solid var(--gray-300);
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 5px;
+  color: var(--text-color);
+}
+
+.example-queries ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.example-queries li {
+  margin-bottom: 5px;
+}
+
+.example-queries a {
+  text-decoration: none;
+  color: var(--footer-link-color);
+}
+
+.example-queries a:hover {
+  text-decoration: underline;
+}
 
 header {
   border-radius: 10px;
@@ -655,6 +676,7 @@ header {
 #main-title {
   font-family: "Bangers", Arial, Helvetica, sans-serif;
   letter-spacing: 1px;
+  font-size: 2rem;
 }
 
 #theme-toggle {

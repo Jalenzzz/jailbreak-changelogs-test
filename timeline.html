@@ -2,9 +2,47 @@
 <html lang="en" data-bs-theme="light">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="referrer" content="no-referrer" />
-    <title>Jailbreak Timeline</title>
+    <meta
+      property="og:title"
+      content="Jailbreak Changelogs | Latest Updates & Patch Notes"
+    />
+    <meta
+      property="og:description"
+      content="Get updates on Jailbreak's latest features, bug fixes, and balance changes."
+    />
+    <meta
+      property="og:image"
+      content="https://cdn.jailbreakchangelogs.xyz/meta/thumbnail.png"
+    />
+    <meta property="og:image:width" content="2328" />
+    <meta property="og:image:height" content="1054" />
+    <meta property="og:url" content="https://jailbreakchangelogs.xyz" />
+    <meta property="og:type" content="website" />
+    <meta
+      name="description"
+      content="Jailbreak Changelogs: Your go-to source for the latest updates, patch notes, and feature releases in Roblox Jailbreak. Stay informed about new vehicles, weapons, map changes, and more!"
+    />
+    <meta
+      name="keywords"
+      content="Jailbreak, Roblox, changelogs, updates, patch notes, game features, Jailbreak updates"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Jailbreak Changelogs | Latest Updates & Patch Notes"
+    />
+    <meta
+      name="twitter:description"
+      content="Get up-to-date information on Jailbreak's latest features, bug fixes, and balance changes. Stay ahead in the game!"
+    />
+    <meta
+      name="twitter:image"
+      content="https://cdn.jailbreakchangelogs.xyz/meta/thumbnail.png"
+    />
+
+    <title>Jailbreak | TimeLine</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -13,63 +51,150 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css"
+    />
+
+    <link rel="stylesheet" href="timeline.css" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link
       href="https://fonts.googleapis.com/css2?family=Bangers&display=swap"
       rel="stylesheet"
     />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const themeToggleMobile = document.getElementById(
+          "theme-toggle-mobile"
+        );
+        const themeToggleDesktop = document.getElementById(
+          "theme-toggle-desktop"
+        );
+        const htmlElement = document.documentElement;
+
+        // Function to set theme
+        function setTheme(theme) {
+          htmlElement.setAttribute("data-bs-theme", theme);
+          localStorage.setItem("theme", theme);
+          updateThemeIcon(themeToggleMobile, theme);
+          updateThemeIcon(themeToggleDesktop, theme);
+        }
+
+        // Function to update theme icon
+        function updateThemeIcon(button, theme) {
+          const iconElement = button.querySelector("i");
+          if (theme === "dark") {
+            iconElement.classList.replace("bi-moon-stars-fill", "bi-sun-fill");
+          } else {
+            iconElement.classList.replace("bi-sun-fill", "bi-moon-stars-fill");
+          }
+        }
+
+        // Check for saved theme preference or use device preference
+        const savedTheme = localStorage.getItem("theme");
+        const prefersDarkMode = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+
+        if (savedTheme) {
+          setTheme(savedTheme);
+        } else if (prefersDarkMode) {
+          setTheme("dark");
+        } else {
+          setTheme("light");
+        }
+
+        // Theme toggle button event listeners
+        function toggleTheme() {
+          const currentTheme = htmlElement.getAttribute("data-bs-theme");
+          setTheme(currentTheme === "light" ? "dark" : "light");
+        }
+
+        themeToggleMobile.addEventListener("click", toggleTheme);
+        themeToggleDesktop.addEventListener("click", toggleTheme);
+      });
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/locomotive-scroll/dist/locomotive-scroll.min.css"
+    />
+    <script src="https://unpkg.com/locomotive-scroll/dist/locomotive-scroll.min.js"></script>
   </head>
-  <body>
-    <div id="loading-overlay">
+
+  <body data-scroll-container>
+    <div id="loading-overlay" class="show">
       <div class="text-center">
-        <div class="spinner-border text-primary mb-2" role="status">
+        <div class="spinner-border spinner-custom mb-2" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
         <div class="loading-text">Loading...</div>
       </div>
     </div>
 
-    <div id="main-container" class="container-fluid">
-      <header class="row py-3 bg-primary text-white">
-        <div class="col-12">
-          <div
-            class="d-flex justify-content-between align-items-center flex-wrap"
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center">
+          <img
+            src="https://cdn.jailbreakchangelogs.xyz/logo/logo_animated.gif"
+            alt="Logo"
+            id="logo"
+            class="header-logo me-2"
+          />
+          <span id="main-title" class="text-white">TimeLine</span>
+        </a>
+        <div class="d-flex align-items-center">
+          <!-- Mobile theme toggle -->
+          <button
+            id="theme-toggle-mobile"
+            class="btn btn-outline-none me-2 d-lg-none p-2"
+            data-bs-toggle="tooltip"
+            data-bs-placement="bottom"
+            title="Toggle theme"
+            style="font-size: 1.5rem"
           >
-            <div class="d-flex align-items-center flex-grow-1">
-              <a
-                href="https://www.roblox.com/games/606849621/Jailbreak"
-                class="me-3"
-              >
-                <img
-                  src="https://cdn.jailbreakchangelogs.xyz/logo/logo_animated.gif"
-                  alt="Logo"
-                  id="logo"
-                  class="header-logo"
-                />
-              </a>
-              <h1 id="main-title" class="mb-0 text-white">Timeline</h1>
-            </div>
-            <button
-              id="theme-toggle"
-              class="btn btn-outline-dark mt-2 mt-sm-0"
-              data-bs-toggle="tooltip"
-              data-bs-placement="bottom"
-              title="Toggle theme"
-            >
-              <i class="bi bi-moon-stars-fill"></i>
-            </button>
-          </div>
-        </div>
-      </header>
-    </div>
+            <i class="bi bi-moon-stars-fill" style="font-size: 1.5rem"></i>
+          </button>
 
-    <div class="container mt-4">
-      <div id="timeline-container" class="row">
+          <!-- Desktop theme toggle -->
+          <button
+            id="theme-toggle-desktop"
+            class="btn btn-outline-none d-none d-lg-block p-2"
+            data-bs-toggle="tooltip"
+            data-bs-placement="bottom"
+            title="Toggle theme"
+            style="font-size: 1.5rem"
+          >
+            <i class="bi bi-moon-stars-fill" style="font-size: 1.5rem"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <div id="main-container" class="container-fluid">
+      <div id="content-wrapper" class="row mt-3">
         <div class="col-12">
-          <div id="timeline" class="timeline-vertical">
-            <!-- Timeline items will be dynamically added here -->
-          </div>
+          <section id="content">
+            <div id="timeline-container" class="container-fluid mt-5">
+              <div id="timeline" class="timeline">
+                <div class="timeline-entry-container left">
+                  <div class="timeline-entry">
+                    <!-- Content for the entry -->
+                  </div>
+                  <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-entry-container right">
+                  <div class="timeline-entry">
+                    <!-- Content for the entry -->
+                  </div>
+                  <div class="timeline-line"></div>
+                </div>
+                <!-- Repeat as needed -->
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </div>
@@ -81,16 +206,22 @@
           <div class="card-header bg-info text-white">
             <h5 class="mb-0 text-center">From badimo</h5>
           </div>
-          <div class="card-body">
-            <p class="lead text-center mb-2">
+          <div class="card-body text-center">
+            <p class="lead mb-2">
               To all of our players over all of these years, we love this game.
             </p>
-            <p class="font-italic text-center mb-2">
+            <p class="font-italic mb-2">
               Keep up the fight for Jailbreak forever! It'll never go away.
             </p>
-            <p class="font-weight-bold text-center mb-0">
-              Thank you for playing!
-            </p>
+            <p class="font-weight-bold mb-3">Thank you for playing!</p>
+            <!-- Play Here Button -->
+            <a
+              href="https://www.roblox.com/games/606849621/Jailbreak"
+              target="_blank"
+              class="btn btn-primary btn-lg d-flex align-items-center justify-content-center"
+            >
+              <strong>Play Here</strong>
+            </a>
           </div>
         </div>
 
@@ -169,13 +300,13 @@
                   <div class="col-sm-4">
                     <p class="mb-0">
                       <strong>Version:</strong>
-                      <span id="version-number">55fb939</span>
+                      <span id="version-number">3061d9f</span>
                     </p>
                   </div>
                   <div class="col-sm-4">
                     <p class="mb-0">
                       <strong>Last Updated:</strong>
-                      <span id="last-updated">September 10th 2024</span>
+                      <span id="last-updated">September 15th 2024</span>
                     </p>
                   </div>
                   <div class="col-sm-4">
@@ -190,6 +321,7 @@
         </div>
 
         <!-- Quick Links -->
+        <!-- Quick Links -->
         <div class="card mt-3">
           <div class="card-header bg-secondary text-white">
             <h5 class="mb-0 text-center">
@@ -201,35 +333,35 @@
               <a
                 href="https://www.reddit.com/r/robloxjailbreak/"
                 target="_blank"
-                class="btn btn-outline-secondary m-1"
+                class="btn btn-link reddit-link"
               >
                 <i class="bi bi-reddit"></i> r/RobloxJailbreak
               </a>
               <a
                 href="https://discord.com/invite/tWbDg7MbUU"
                 target="_blank"
-                class="btn btn-outline-secondary m-1"
+                class="btn btn-link discord-link"
               >
                 <i class="bi bi-discord"></i> r/RobloxJailbreak Discord
               </a>
               <a
                 href="https://discord.gg/jailbreak"
                 target="_blank"
-                class="btn btn-outline-secondary m-1"
+                class="btn btn-link discord-link"
               >
                 <i class="bi bi-discord"></i> Official Jailbreak Discord
               </a>
               <a
                 href="https://jailbreak.fandom.com/wiki/Jailbreak_Wiki:Home"
                 target="_blank"
-                class="btn btn-outline-secondary m-1"
+                class="btn btn-link wiki-link"
               >
                 <i class="bi bi-book"></i> Jailbreak Wiki
               </a>
               <a
                 href="https://github.com/JBChangelogs/JailbreakChangelogs"
                 target="_blank"
-                class="btn btn-outline-secondary m-1"
+                class="btn btn-link github-link"
               >
                 <i class="bi bi-github"></i> GitHub
               </a>
@@ -268,6 +400,135 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
     <script src="scripts/timeline.js"></script>
+    <script
+      src="https://widgets.sociablekit.com/twitter-feed/widget.js"
+      async
+      defer
+    ></script>
+    <button
+      id="backToTop"
+      class="btn rounded-circle position-fixed bottom-0 end-0 m-3"
+    >
+      <i class="bi bi-arrow-up-circle-fill"></i>
+    </button>
+    <div
+      class="modal fade"
+      id="dateFilterModal"
+      tabindex="-1"
+      aria-labelledby="dateFilterModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="dateFilterModalLabel">
+              Select Date Range
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="dateRangeFilter" class="row g-2">
+              <div class="col-md-6">
+                <label for="startDateBtn" class="form-label">Start Date:</label>
+                <button
+                  id="startDateBtn"
+                  class="btn btn-outline-secondary w-100"
+                >
+                  <i class="bi bi-calendar-event me-2"></i
+                  ><span>Select Start Date</span>
+                </button>
+                <input type="hidden" id="startDate" />
+              </div>
+              <div class="col-md-6">
+                <label for="endDateBtn" class="form-label">End Date:</label>
+                <button id="endDateBtn" class="btn btn-outline-secondary w-100">
+                  <i class="bi bi-calendar-event me-2"></i
+                  ><span>Select End Date</span>
+                </button>
+                <input type="hidden" id="endDate" />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-primary" id="applyDateFilter">
+              Apply Filter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div
+        id="clearFilterToast"
+        class="toast align-items-center text-white bg-success border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div class="toast-body">Filter cleared successfully.</div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add the offcanvas component -->
+    <div
+      class="offcanvas offcanvas-end w-100 w-md-50"
+      tabindex="-1"
+      id="twitterFeedOffcanvas"
+      aria-labelledby="twitterFeedOffcanvasLabel"
+    >
+      <div class="offcanvas-header">
+        <h5
+          class="offcanvas-title d-flex align-items-center"
+          id="twitterFeedOffcanvasLabel"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            class="bi bi-twitter-x me-2"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"
+            />
+          </svg>
+          <span class="fw-bold">Badimo Feed</span>
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="offcanvas-body">
+        <!-- Twitter feed widget -->
+        <div class="sk-ww-twitter-feed" data-embed-id="25462200"></div>
+      </div>
+    </div>
   </body>
 </html>

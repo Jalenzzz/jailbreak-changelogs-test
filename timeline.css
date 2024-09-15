@@ -1,144 +1,747 @@
+/* Light theme */
+[data-bs-theme="light"] body {
+  --bg-color: #f7f7f9; /* Ghost White */
+  --text-color: #2e2e2e; /* Dark Charcoal */
+  --header-bg: #ff4500; /* Orange Red */
+  --header-text: #ffffff;
+  --footer-link-color: #ff6347; /* Tomato */
+  --footer-link-hover-color: #ff7f50; /* Coral */
+  --button-primary-bg: #ff4500; /* Orange Red */
+  --button-primary-text: #ffffff;
+  --button-primary-hover-bg: #ff6347; /* Tomato */
+  --button-secondary-bg: #32cd32; /* Lime Green */
+  --button-secondary-hover-bg: #006400; /* Dark Green */
+  --highlight-bg: rgba(255, 165, 0, 0.5); /* Semi-transparent Orange */
+  --highlight-text: #000000;
+
+  --selection-bg: #b0e0e6; /* Powder Blue */
+  --selection-text: #000000;
+  --glow-color: 255, 99, 71; /* Tomato */
+  --custom-header-color: #ffcc00; /* Example color */
+  --custom-subheader-color: #ffaa00; /* Example color */
+  --custom-icon-color: #ff8800; /* Example color */
+  --reddit-color: #ff4500; /* Reddit Orange */
+  --discord-color: #7289da; /* Discord Blurple */
+  --wiki-color: #1a73e8; /* Wiki Blue */
+  --github-color: #333333; /* GitHub Black */
+  --hover-bg-color: #fe94002e;
+
+  --gray-100: #f9f9f9;
+  --gray-200: #eeeeee;
+  --gray-300: #dddddd;
+  --gray-400: #cccccc;
+  --gray-500: #bbbbbb;
+  --gray-600: #aaaaaa;
+  --gray-700: #999999;
+  --gray-800: #888888;
+  --gray-900: #777777;
+}
+
+/* Dark theme */
+[data-bs-theme="dark"] body {
+  --bg-color: #222222; /* Dark Gray */
+  --text-color: #ffffff;
+  --header-bg: #8b0000; /* Dark Red */
+  --header-text: #ffffff;
+  --footer-link-color: #ff6347; /* Tomato */
+  --footer-link-hover-color: #ff7f50; /* Coral */
+  --button-primary-bg: #ff4500; /* Orange Red */
+  --button-primary-text: #ffffff;
+  --button-primary-hover-bg: #ff6347; /* Tomato */
+  --button-secondary-bg: #32cd32; /* Lime Green */
+  --button-secondary-hover-bg: #006400; /* Dark Green */
+  --selection-bg: #4682b4; /* Steel Blue */
+  --selection-text: #ffffff;
+  --glow-color: 255, 165, 0; /* Orange */
+  --hover-bg-color: #5a5a5a;
+
+  --reddit-color: #ff4500; /* Reddit Orange */
+  --discord-color: #7289da; /* Discord Blurple */
+  --wiki-color: #8ab4f8; /* Lighter Wiki Blue */
+  --github-color: #ffffff; /* GitHub White */
+
+  --gray-100: #333333;
+  --gray-200: #444444;
+  --gray-300: #555555;
+  --gray-400: #666666;
+  --gray-500: #777777;
+  --gray-600: #888888;
+  --gray-700: #999999;
+  --gray-800: #aaaaaa;
+  --gray-900: #bbbbbb;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+#main-container {
+  min-height: calc(100vh - 100px); /* Adjust based on footer height */
+  display: flex;
+  flex-direction: column;
+}
+
+footer {
+  transition: transform 0.3s ease-out;
+}
+
+footer.hide {
+  transform: translateY(100%);
+}
+
+body {
+  background: linear-gradient(
+    135deg,
+    #3b8d99,
+    #6b6b83,
+    #aa4b6b
+  ); /* A gradient from teal to gray to soft pink */
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+.scrollMe {
+  animation: scroll 20s linear infinite; /* adjust duration and add infinite */
+}
+
+#timeline.scrollMe {
+  animation-name: scroll;
+
+  animation-duration: 20s;
+
+  animation-timing-function: linear;
+
+  animation-iteration-count: infinite;
+}
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
 .timeline {
   position: relative;
-  max-width: 1200px;
   margin: 0 auto;
   padding: 20px 0;
+  width: 80%;
 }
 
-.timeline::after {
+.timeline::before {
   content: "";
   position: absolute;
-  width: 4px;
-  background-color: #007bff;
+  left: 50%;
   top: 0;
   bottom: 0;
-  left: 50%;
-  margin-left: -2px;
+  width: 2px;
+  background-color: var(--text-color);
+  transform: translateX(-50%);
 }
 
-.timeline-item {
-  padding: 10px 40px;
+.timeline-entry-container {
   position: relative;
-  background-color: inherit;
   width: 50%;
+  padding: 10px 40px;
+  box-sizing: border-box;
 }
 
-.timeline-item::after {
-  content: "";
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  right: -10px;
-  background-color: #fff;
-  border: 4px solid #007bff;
-  top: 15px;
-  border-radius: 50%;
-  z-index: 1;
-}
-
-.left {
+.timeline-entry-container.left {
   left: 0;
 }
 
-.right {
+.timeline-entry-container.right {
   left: 50%;
 }
 
-.left::before {
-  content: " ";
-  height: 0;
-  position: absolute;
-  top: 22px;
-  width: 0;
-  z-index: 1;
-  right: 30px;
-  border: medium solid #fff;
-  border-width: 10px 0 10px 10px;
-  border-color: transparent transparent transparent #fff;
+.timeline-entry {
+  background-color: var(--bg-color);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-.right::before {
-  content: " ";
-  height: 0;
-  position: absolute;
-  top: 22px;
-  width: 0;
-  z-index: 1;
-  left: 30px;
-  border: medium solid #fff;
-  border-width: 10px 10px 10px 0;
-  border-color: transparent #fff transparent transparent;
+.timeline-entry-container.left .timeline-entry {
+  margin-left: auto;
+  text-align: left;
 }
 
-.right::after {
+.timeline-entry-container.right .timeline-entry {
+  margin-right: auto;
+  text-align: right;
+}
+
+.timeline-line {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 2px;
+  background-color: var(--text-color);
+}
+
+.timeline-entry-container.left .timeline-line {
+  right: -10px;
+}
+
+.timeline-entry-container.right .timeline-line {
   left: -10px;
 }
 
-.timeline-content {
+.text-custom-header {
+  color: var(--custom-header-color) !important;
+}
+
+.border-custom-header {
+  border-color: var(--custom-header-color) !important;
+}
+
+.text-custom-subheader {
+  color: var(--custom-subheader-color) !important;
+}
+
+.text-custom-icon {
+  color: var(--custom-icon-color) !important;
+}
+/* Override Bootstrap's bg-primary class for navbar */
+.navbar {
+  background-color: var(
+    --header-bg
+  ) !important; /* Using your custom variable */
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: var(--header-text) !important; /* Ensures text color is consistent */
+}
+
+/* If you want to ensure the navbar brand text color */
+.navbar-dark .navbar-brand {
+  color: var(--header-text) !important;
+}
+
+/* Additional styles for hover effects */
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: var(--footer-link-hover-color);
+}
+
+/* Override Bootstrap's btn-primary class */
+.btn-primary {
+  background-color: var(
+    --button-primary-bg
+  ) !important; /* Use your custom variable */
+  border-color: var(--button-primary-bg) !important;
+  color: var(--button-primary-text) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active {
+  background-color: var(--button-primary-hover-bg) !important;
+  border-color: var(--button-primary-hover-bg) !important;
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 0.2rem rgba(var(--glow-color), 0.5);
+}
+
+.btn-close {
+  color: #ffffff;
+}
+
+.btn-close:hover {
+  color: #ff6347;
+}
+.gradient-bg {
+  background: linear-gradient(
+    to right,
+    var(--button-primary-bg),
+    var(--button-secondary-bg)
+  ) !important;
+}
+
+.svg-icon {
+  fill: var(--text-color) !important;
+  stroke: var(--button-primary-bg) !important;
+}
+
+.semi-transparent-bg {
+  background-color: rgba(var(--glow-color), 0.5) !important;
+}
+
+#loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  background-color: #ffffff;
+}
+.spinner-custom {
+  color: var(--button-primary-bg); /* Use primary button background color */
+}
+
+#loading-overlay.show {
+  display: flex;
+}
+
+#loading-overlay .spinner-border {
+  width: 5rem;
+  height: 5rem;
+}
+
+#loading-overlay .loading-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+[data-bs-theme="dark"] #loading-overlay {
+  background-color: #000000;
+}
+
+[data-bs-theme="light"] #loading-overlay {
+  background-color: #ffffff;
+}
+
+[data-bs-theme="dark"] #loading-overlay .loading-text {
+  color: #ffffff;
+}
+
+[data-bs-theme="light"] #loading-overlay .loading-text {
+  color: #000000;
+}
+
+.responsive-text {
+  font-size: 1rem;
+}
+
+#content-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#content {
+  flex: 1;
+  min-width: 0;
+}
+
+#content h1 {
+  color: var(--footer-link-color);
+  font-family: "Bangers", Arial, Helvetica, sans-serif;
+  border-bottom: 2px solid var(--footer-link-color);
+}
+
+/* #content h2 {
+  color: var(--orange-button-bg);
+  font-family: "Bangers", Arial, Helvetica, sans-serif;
+}
+
+#content h3 {
+  color: var(--text-color);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#content p {
+  color: var(--text-color);
+}
+
+#content .bullet {
+  color: var(--footer-link-color);
+}
+
+#content .sub-bullet {
+  color: var(--footer-link-color);
+}
+
+
+.mention {
+  color: var(--mention-color-light);
+  background-color: var(--mention-bg);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.mention .at {
+  color: var(--at-color-light);
+}
+
+.mention .username {
+  color: var(--username-color-light);
+}
+
+.mention:hover {
+  background-color: var(--mention-hover-bg);
+  cursor: pointer;
+}
+
+
+[data-bs-theme="dark"] .mention {
+  color: var(--mention-color-dark);
+  background-color: var(--mention-bg); 
+  transition: background-color 0.3s, color 0.3s;
+}
+
+[data-bs-theme="dark"] .mention .at {
+  color: var(--at-color-dark);
+}
+
+[data-bs-theme="dark"] .mention .username {
+  color: var(--username-color-dark);
+}
+
+[data-bs-theme="dark"] .mention:hover {
+  background-color: #9662006c;
+  cursor: pointer; 
+} */
+
+.row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+body,
+p,
+span {
+  color: var(--text-color);
+}
+
+.navbar {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.navbar-brand img {
+  height: 40px;
+  width: auto;
+}
+
+.navbar-nav .nav-link {
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+}
+
+#theme-toggle {
+  padding: 0.375rem 0.75rem;
+  font-size: 1.1rem;
+}
+
+.header-logo {
+  width: 10vw; /* 10% of the viewport width */
+  max-width: 65px; /* Maximum size */
+  min-width: 40px; /* Minimum size */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 10px;
+}
+
+.header-logo:hover {
+  transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+#main-title {
+  font-family: "Bangers", Arial, Helvetica, sans-serif;
+  letter-spacing: 1px;
+  font-size: 2rem;
+}
+
+#theme-toggle {
+  border: none;
+  cursor: pointer;
+  color: var(--header-text);
+  font-size: 30px;
+  margin-left: auto;
+}
+
+/* Remove outline for all elements */
+* {
+  outline: none;
+}
+
+/* Specific styles for buttons and interactive elements */
+button:focus,
+a:focus,
+input:focus,
+select:focus {
+  box-shadow: none;
+}
+
+button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+/* Footer Styling */
+footer {
+  background-color: var(--bg-color);
+  padding: 2rem 0;
+  color: var(--text-color);
+}
+
+/* Badimo Message Card */
+.badimo-message {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.badimo-message .card-header {
+  background-color: var(--header-bg);
+  color: var(--header-text);
+  text-align: center;
+  font-weight: bold;
+}
+
+.badimo-message .card-body {
   padding: 20px;
-  background-color: #fff;
-  position: relative;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.badimo-message .lead {
+  font-size: 1.2rem;
+  color: var(--highlight-text);
+}
+
+.badimo-message .font-italic {
+  font-style: italic;
+  color: var(--text-color);
+}
+
+.badimo-message .font-weight-bold {
+  font-weight: bold;
+  color: var(--highlight-text);
+}
+
+/* Light Mode Accordion Styling */
+[data-bs-theme="light"] .accordion-item {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  background-color: var(--gray-100); /* Light background for accordion */
+}
+
+[data-bs-theme="light"] .accordion-button {
+  background-color: var(
+    --gray-200
+  ); /* Slightly darker than the item background */
+  color: var(--text-color); /* Dark text for contrast */
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+[data-bs-theme="light"] .accordion-button:not(.collapsed) {
+  background-color: var(--gray-300); /* Even darker when expanded */
+  color: var(--header-bg); /* Accent color for active state */
+}
+
+[data-bs-theme="light"] .accordion-button:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 69, 0, 0.25); /* Accent outline on focus */
+}
+
+[data-bs-theme="light"] .accordion-body {
+  background-color: var(--gray-100); /* Light body for contrast with button */
+  color: var(--text-color); /* Dark text */
+  padding: 15px;
+  border-top: 1px solid var(--gray-300); /* Subtle border for separation */
+}
+
+/* Dark Mode Accordion Styling */
+[data-bs-theme="dark"] .accordion-item {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 1rem;
+  background-color: #2c2c2c; /* Dark background for accordion */
+}
+
+[data-bs-theme="dark"] .accordion-button {
+  background-color: #3a3a3a; /* Slightly lighter than the item background */
+  color: #ffffff; /* White text for better contrast */
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+[data-bs-theme="dark"] .accordion-button:not(.collapsed) {
+  background-color: #4a4a4a; /* Even lighter when expanded */
+  color: #ffcc00; /* Accent color for active state */
+}
+
+[data-bs-theme="dark"] .accordion-button:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 204, 0, 0.25); /* Accent outline on focus */
+}
+
+[data-bs-theme="dark"] .accordion-body {
+  background-color: #333333; /* Darker body for contrast with button */
+  color: #e0e0e0; /* Light gray text */
+  padding: 15px;
+  border-top: 1px solid #444444; /* Subtle border for separation */
+}
+/* Admin Links */
+.admin-link {
+  color: var(--footer-link-color);
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.admin-link:hover {
+  color: var(--footer-link-hover-color);
+}
+
+/* Version Info Styling */
+.version-info {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.version-info p {
+  margin: 0;
+}
+
+/* Back to Top Button */
+#backToTop {
+  display: none; /* Initially hidden */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--button-primary-bg);
+  color: #ffffff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, display 0.3s;
+  z-index: 1000; /* Ensure it's above other content */
+}
+
+#backToTop.show {
+  display: block; /* Show when the 'show' class is added */
+}
+
+#backToTop:hover {
+  background-color: var(--button-primary-hover-bg);
+}
+
+/* General Link Styles */
+.btn-link {
+  padding: 8px 16px;
+  border-radius: 4px;
   transition: all 0.3s ease;
 }
 
-.timeline-content:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  transform: translateY(-5px);
+/* Reddit Link Styles */
+.reddit-link {
+  color: var(--reddit-color);
+  text-decoration: none;
 }
 
-.timeline-icon {
-  position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: #007bff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  font-size: 0.8em;
+.reddit-link:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: var(--reddit-color); /* Reddit Orange background */
+  transform: scale(1.05); /* Slightly larger */
 }
 
-.timeline-title {
-  margin-top: 10px;
-  margin-bottom: 15px;
-  color: #333;
-  font-size: 1.2em;
+/* Discord Link Styles */
+.discord-link {
+  color: var(--discord-color);
+  text-decoration: none;
 }
 
-.timeline-view-btn {
-  margin-top: 10px;
+.discord-link:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: var(--discord-color); /* Discord Blurple background */
+  transform: scale(1.05); /* Slightly larger */
 }
 
-@media screen and (max-width: 600px) {
-  .timeline::after {
-    left: 31px;
+/* Wiki Link Styles */
+.wiki-link {
+  color: var(--wiki-color);
+  text-decoration: none;
+}
+
+.wiki-link:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: var(--wiki-color); /* Wiki Blue background */
+  transform: scale(1.05); /* Slightly larger */
+}
+
+/* GitHub Link Styles */
+.github-link {
+  color: var(--github-color);
+  text-decoration: none;
+}
+
+.github-link:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: #000000; /* True black background */
+  transform: scale(1.05); /* Slightly larger */
+}
+
+/* Dark Theme Adjustments */
+[data-bs-theme="dark"] .github-link:hover {
+  background-color: #444c56; /* Lighter gray for better visibility in dark mode */
+}
+
+@media (max-width: 768px) {
+  .timeline-entry {
+    background-color: var(--bg-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden; /* Ensure content doesn't overflow */
+    word-wrap: break-word; /* Break long words */
   }
-
-  .timeline-item {
+  .timeline {
     width: 100%;
-    padding-left: 70px;
-    padding-right: 25px;
+    padding: 10px 0;
   }
 
-  .timeline-item::before {
-    left: 60px;
-    border: medium solid #fff;
-    border-width: 10px 10px 10px 0;
-    border-color: transparent #fff transparent transparent;
+  .timeline::before {
+    left: 20px; /* Adjusted for better visibility on smaller screens */
   }
 
-  .left::after,
-  .right::after {
-    left: 15px;
+  .timeline-entry-container {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    left: 0 !important;
+    margin-bottom: 20px; /* Added margin for spacing between entries */
   }
 
-  .right {
-    left: 0%;
+  .timeline-line {
+    display: none; /* Hide the line on mobile to reduce clutter */
+  }
+
+  /* Adjust font sizes and padding for better readability */
+  #main-title {
+    font-size: 1.5rem; /* Smaller font size for mobile */
+  }
+
+  .navbar-brand {
+    font-size: 1.25rem; /* Adjusted for smaller screens */
+  }
+
+  .navbar-nav .nav-link {
+    font-size: 0.9rem; /* Adjusted font size for mobile */
   }
 }
