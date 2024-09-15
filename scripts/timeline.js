@@ -139,36 +139,36 @@ $(document).ready(function () {
     const formattedTitle = formatTitle(changelog.title);
 
     return `
-      <div class="timeline-entry-container ${sideClass}" style="display: none;">
-        <div class="timeline-entry">
-          <h3 class="entry-title mb-3 text-custom-header">${formattedTitle}</h3>
-          <div class="accordion" id="accordion-${index}">
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading-${index}">
-                <button class="accordion-button view-details-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${index}" aria-expanded="false" aria-controls="collapse-${index}">
-                  View Details
-                </button>
-              </h2>
-              <div id="collapse-${index}" class="accordion-collapse collapse" aria-labelledby="heading-${index}" data-bs-parent="#accordion-${index}">
-                <div class="accordion-body">
-                  ${
-                    changelog.image_url
-                      ? `<img src="${changelog.image_url}" alt="${changelog.title}" class="img-fluid mb-3">`
-                      : ""
-                  }
-                  <div>${sectionsHtml}</div>
-                </div>
-              </div>
+  <div class="timeline-entry-container ${sideClass}" style="display: none;">
+    <div class="timeline-entry">
+      <h3 class="entry-title mb-3 text-custom-header">${formattedTitle}</h3>
+      <div class="accordion timeline-accordion" id="accordion-${index}">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading-${index}">
+            <button class="accordion-button timeline-accordion-button view-details-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${index}" aria-expanded="false" aria-controls="collapse-${index}">
+              View Details
+            </button>
+          </h2>
+          <div id="collapse-${index}" class="accordion-collapse collapse" aria-labelledby="heading-${index}" data-bs-parent="#accordion-${index}">
+            <div class="accordion-body">
+              ${
+                changelog.image_url
+                  ? `<img src="${changelog.image_url}" alt="${changelog.title}" class="img-fluid mb-3">`
+                  : ""
+              }
+              <div>${sectionsHtml}</div>
             </div>
           </div>
         </div>
-        <div class="timeline-line"></div>
       </div>
-    `;
+    </div>
+    <div class="timeline-line"></div>
+  </div>
+`;
   }
 
   function setupAccordionButtonText() {
-    $(".accordion-button").each(function () {
+    $(".footer-accordion-button, .timeline-accordion-button").each(function () {
       const $button = $(this);
       const $collapse = $($button.data("bs-target"));
 
@@ -177,12 +177,7 @@ $(document).ready(function () {
           $collapse.hasClass("show") ? "Close Details" : "View Details"
         );
       }
-
-      // Set initial text
-      updateButtonText();
-
-      // Update text on collapse events
-      $collapse.on("show.bs.collapse hide.bs.collapse", updateButtonText);
+      // ...
     });
   }
   function fadeInEntries(start, end) {
