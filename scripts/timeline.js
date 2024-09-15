@@ -92,6 +92,7 @@ $(document).ready(function () {
 
     return formattedTitle;
   }
+
   // Back to Top button functionality
   const backToTopButton = $("#backToTop");
 
@@ -140,17 +141,59 @@ $(document).ready(function () {
     return `
       <div class="timeline-entry-container ${sideClass}" style="display: none;">
         <div class="timeline-entry">
-          <h3 class="entry-title mb-4 text-custom-header">${formattedTitle}</h3>
-          ${
-            changelog.image_url
-              ? `<img src="${changelog.image_url}" alt="${changelog.title}" class="img-fluid mb-3">`
-              : ""
-          }
-          <div>${sectionsHtml}</div>
+          <h3 class="entry-title mb-3 text-custom-header">${formattedTitle}</h3>
+          <div class="accordion" id="accordion-${index}">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading-${index}">
+                <button class="accordion-button view-details-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${index}" aria-expanded="false" aria-controls="collapse-${index}">
+                  View Details
+                </button>
+              </h2>
+              <div id="collapse-${index}" class="accordion-collapse collapse" aria-labelledby="heading-${index}" data-bs-parent="#accordion-${index}">
+                <div class="accordion-body">
+                  ${
+                    changelog.image_url
+                      ? `<img src="${changelog.image_url}" alt="${changelog.title}" class="img-fluid mb-3">`
+                      : ""
+                  }
+                  <div>${sectionsHtml}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="timeline-line"></div>
       </div>
     `;
+  }
+
+  function setupAccordionButtonText() {
+    $(".accordion-button").each(function () {
+      const $button = $(this);
+      const $collapse = $($button.data("bs-target"));
+
+      function updateButtonText() {
+        $button.text(
+          $collapse.hasClass("show") ? "Close Details" : "View Details"
+        );
+      }
+
+      // Set initial text
+      updateButtonText();
+
+      // Update text on collapse events
+      $collapse.on("show.bs.collapse hide.bs.collapse", updateButtonText);
+    });
+  }
+  function fadeInEntries(start, end) {
+    $timeline
+      .find(".timeline-entry-container")
+      .slice(start, end)
+      .each((index, element) => {
+        $(element)
+          .delay(index * 100)
+          .fadeIn(500);
+      });
   }
 
   function loadAllEntries() {
@@ -168,6 +211,15 @@ $(document).ready(function () {
             const entriesHtml = validData.map(createTimelineEntry).join("");
             $timeline.html(entriesHtml);
             fadeInEntries(0, validData.length);
+            setupAccordionButtonText();
+
+            // Open the first accordion item
+            $timeline
+              .find(".accordion-button")
+              .first()
+              .removeClass("collapsed")
+              .attr("aria-expanded", "true");
+            $timeline.find(".accordion-collapse").first().addClass("show");
           } else {
             $timeline.append("<p>No changelogs found.</p>");
           }
@@ -188,17 +240,6 @@ $(document).ready(function () {
       });
   }
 
-  function fadeInEntries(start, end) {
-    $timeline
-      .find(".timeline-entry-container")
-      .slice(start, end)
-      .each((index, element) => {
-        $(element)
-          .delay(index * 100)
-          .fadeIn(500);
-      });
-  }
-
   loadAllEntries();
 
   $(window).on("scroll", function () {
@@ -208,8 +249,10 @@ $(document).ready(function () {
       clearTimeout(footerTimeout);
     } else {
       clearTimeout(footerTimeout);
-      footerTimeout = setTimeout(() => $footer.removeClass("hide"), 300);
+      footerTimeout = setTimeout(() => {
+        $footer.removeClass("hide");
+      }, 500);
     }
-    lastScrollTop = st;
+    lastScrollTop = st <= 0 ? 0 : st;
   });
 });

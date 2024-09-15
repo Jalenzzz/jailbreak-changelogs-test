@@ -82,7 +82,7 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s, display 0.3s;
-  z-index: 1000; /* Ensure it's above other content */
+  z-index: 1000;
 }
 
 #backToTop.show {
@@ -104,7 +104,6 @@ body {
 }
 
 #main-container {
-  min-height: calc(100vh - 100px); /* Adjust based on footer height */
   display: flex;
   flex-direction: column;
 }
@@ -168,6 +167,48 @@ body {
   transform: translateX(-50%);
 }
 
+.timeline-entry {
+  background-color: var(--bg-color);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: all 0.3s ease; /* Add transition for smooth animation */
+}
+/* Hover effect for timeline entries */
+.timeline-entry:hover {
+  transform: scale(1.03); /* Slightly increase size on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+}
+/* Add a subtle glow effect on hover */
+.timeline-entry::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(255, 165, 0, 0.3); /* Adjust color as needed */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.timeline-entry:hover::after {
+  opacity: 1;
+}
+/* Ensure content stays above the glow effect */
+.timeline-entry > * {
+  position: relative;
+  z-index: 1;
+}
+.entry-title {
+  transition: transform 0.3s ease;
+}
+
+.timeline-entry:hover .entry-title {
+  transform: translateY(-2px) rotate(-1deg);
+}
+
 .timeline-entry-container {
   position: relative;
   width: 50%;
@@ -181,14 +222,6 @@ body {
 
 .timeline-entry-container.right {
   left: 50%;
-}
-
-.timeline-entry {
-  background-color: var(--bg-color);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: relative;
 }
 
 .timeline-entry-container.left .timeline-entry {
@@ -548,72 +581,71 @@ footer {
   font-weight: bold;
   color: var(--highlight-text);
 }
+/* Bigger View Details text */
+.view-details-btn {
+  font-size: 1.7rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.timeline-entry:hover .view-details-btn {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}
 
-/* Light Mode Accordion Styling */
+/* Remove duplicate accordion styling */
+.accordion-button,
+.accordion-button:not(.collapsed) {
+  background-color: transparent;
+  color: inherit;
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+}
+
+/* Light theme accordion */
 [data-bs-theme="light"] .accordion-item {
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 1rem;
-  background-color: var(--gray-100); /* Light background for accordion */
+  background-color: var(--gray-100);
 }
 
 [data-bs-theme="light"] .accordion-button {
-  background-color: var(
-    --gray-200
-  ); /* Slightly darker than the item background */
-  color: var(--text-color); /* Dark text for contrast */
-  font-weight: bold;
-  transition: background-color 0.3s, color 0.3s;
+  background-color: var(--gray-200);
+  color: var(--text-color);
 }
 
 [data-bs-theme="light"] .accordion-button:not(.collapsed) {
-  background-color: var(--gray-300); /* Even darker when expanded */
-  color: var(--header-bg); /* Accent color for active state */
+  background-color: var(--gray-300);
+  color: var(--header-bg);
 }
 
-[data-bs-theme="light"] .accordion-button:focus {
-  box-shadow: 0 0 0 0.2rem rgba(255, 69, 0, 0.25); /* Accent outline on focus */
-}
-
-[data-bs-theme="light"] .accordion-body {
-  background-color: var(--gray-100); /* Light body for contrast with button */
-  color: var(--text-color); /* Dark text */
-  padding: 15px;
-  border-top: 1px solid var(--gray-300); /* Subtle border for separation */
-}
-
-/* Dark Mode Accordion Styling */
+/* Dark theme accordion */
 [data-bs-theme="dark"] .accordion-item {
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-bottom: 1rem;
-  background-color: #2c2c2c; /* Dark background for accordion */
+  background-color: #2c2c2c;
 }
 
 [data-bs-theme="dark"] .accordion-button {
-  background-color: #3a3a3a; /* Slightly lighter than the item background */
-  color: #ffffff; /* White text for better contrast */
-  font-weight: bold;
-  transition: background-color 0.3s, color 0.3s;
+  background-color: #3a3a3a;
+  color: #ffffff;
 }
 
 [data-bs-theme="dark"] .accordion-button:not(.collapsed) {
-  background-color: #4a4a4a; /* Even lighter when expanded */
-  color: #ffcc00; /* Accent color for active state */
+  background-color: #4a4a4a;
+  color: #ffcc00;
+}
+/* Light theme adjustments */
+[data-bs-theme="light"] .timeline-entry:hover::after {
+  box-shadow: 0 0 20px rgba(255, 69, 0, 0.2); /* Lighter glow for light theme */
 }
 
-[data-bs-theme="dark"] .accordion-button:focus {
-  box-shadow: 0 0 0 0.2rem rgba(255, 204, 0, 0.25); /* Accent outline on focus */
+/* Dark theme adjustments */
+[data-bs-theme="dark"] .timeline-entry:hover::after {
+  box-shadow: 0 0 20px rgba(255, 165, 0, 0.4); /* Stronger glow for dark theme */
 }
 
-[data-bs-theme="dark"] .accordion-body {
-  background-color: #333333; /* Darker body for contrast with button */
-  color: #e0e0e0; /* Light gray text */
-  padding: 15px;
-  border-top: 1px solid #444444; /* Subtle border for separation */
+[data-bs-theme="dark"] .timeline-entry:hover .view-details-btn {
+  background-color: var(--button-primary-hover-bg);
 }
+
 /* Admin Links */
 .admin-link {
   color: var(--footer-link-color);
