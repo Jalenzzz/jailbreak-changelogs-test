@@ -80,26 +80,44 @@ $(document).ready(function () {
   const $clearButton = $("#clear-search-button");
 
   $searchInput.on("input", performSearch);
+  $searchInput.on("input", function () {
+    const query = $(this).val().trim();
+
+    // Hide example queries as soon as typing starts
+    if (query.length > 0) {
+      $exampleQueries.addClass("d-none");
+    } else {
+      $exampleQueries.removeClass("d-none");
+    }
+
+    performSearch();
+    toggleClearButton();
+  });
+
   $clearButton.on("click", function () {
     $searchInput.val("");
-    $exampleQueries.addClass("d-none");
+    $exampleQueries.removeClass("d-none");
     clearSearch();
   });
   // Hide example queries when the search input loses focus
   $searchInput.on("blur", function () {
-    setTimeout(() => $exampleQueries.addClass("d-none"), 200);
+    setTimeout(() => $exampleQueries.addClass("d-none"));
   });
   // Show example queries when the search input is focused
   $searchInput.on("focus", function () {
-    $exampleQueries.removeClass("d-none");
+    if ($(this).val().trim().length === 0) {
+      $exampleQueries.removeClass("d-none");
+    }
   });
   // Populate search input with example query when clicked
   $(".example-query").on("click", function (e) {
     e.preventDefault();
     const query = $(this).text();
     $searchInput.val(query).focus();
-    performSearch(); // Call your search function here
+    performSearch();
+    $exampleQueries.addClass("d-none");
   });
+
   // Handle Enter key press or mobile 'Go' button
   $searchInput.on("keydown", function (e) {
     if (e.key === "Enter") {
@@ -258,7 +276,7 @@ $(document).ready(function () {
           // This is a regular item (-)
           processedContent.push("• " + text);
         } else {
-          // Fallback for any items without arrows
+          // Fallback for any items without hyphens
           processedContent.push("• " + text);
         }
       }
@@ -455,6 +473,12 @@ $(document).ready(function () {
     }
   });
 
+  $(document).on("click", function (event) {
+    if (!$(event.target).closest(".d-flex.position-relative").length) {
+      $exampleQueries.addClass("d-none");
+    }
+  });
+
   function toggleClearButton() {
     $clearButton.toggle($searchInput.val().length > 0);
   }
@@ -478,13 +502,24 @@ $(document).ready(function () {
       .map((word) => word.trim())
       .filter((word) => word.length > 0);
     let highlightedText = text;
+
+    // Highlight @mentions
+    highlightedText = highlightedText.replace(
+      /@(\w+)/g,
+      '<span class="highlight mention">@$1</span>'
+    );
+
+    // Highlight other query words
     words.forEach((word) => {
-      const regex = new RegExp(word, "gi");
-      highlightedText = highlightedText.replace(
-        regex,
-        (match) => `<span class="highlight">${match}</span>`
-      );
+      if (word !== "has:" && word !== "mention") {
+        const regex = new RegExp(`(${word})`, "gi");
+        highlightedText = highlightedText.replace(
+          regex,
+          '<span class="highlight">$1</span>'
+        );
+      }
     });
+
     return highlightedText;
   }
 
@@ -573,23 +608,25 @@ $(document).ready(function () {
     let searchResults = [];
 
     if (query.startsWith("has:")) {
-      // Handle special query for media types
-      const mediaType = query.split(":")[1].trim();
+      // Handle special query for media types and mentions
+      const queryType = query.split(":")[1].trim();
 
       searchResults = changelogsData.filter((changelog) => {
-        switch (mediaType) {
+        switch (queryType) {
           case "audio":
             return changelog.sections.includes("(audio)");
           case "video":
             return changelog.sections.includes("(video)");
           case "image":
             return changelog.sections.includes("(image)");
+          case "mention":
+            return /@\w+/.test(changelog.sections); // Check for @ mentions
           default:
             return false;
         }
       });
     } else {
-      // Regular search
+      // Regular search (unchanged)
       searchResults = changelogsData.filter((changelog) => {
         const titleMatch = changelog.title.toLowerCase().includes(query);
         const contentMatch =
@@ -600,22 +637,14 @@ $(document).ready(function () {
       });
     }
 
-    displaySearchResults(searchResults);
+    displaySearchResults(searchResults, query);
     toggleClearButton();
   }
-
-  function displaySearchResults(results) {
+  function displaySearchResults(results, query) {
     $searchResultsContainer.empty();
-    const query = $searchInput.val().trim().toLowerCase();
 
     if (results.length === 0) {
-      const $noResultsItem = $("<li>").addClass(
-        "list-group-item custom-search-item"
-      );
-      $noResultsItem.text("No results found.");
-      $searchResultsContainer.append(
-        $("<ul>").addClass("list-group list-group-flush").append($noResultsItem)
-      );
+      $searchResultsContainer.html('<p class="p-3">No results found.</p>');
     } else {
       const $resultsList = $("<ul>").addClass("list-group list-group-flush");
       results.forEach((changelog) => {
@@ -623,54 +652,68 @@ $(document).ready(function () {
           "list-group-item custom-search-item"
         );
 
-        const cleanedSections = cleanContentForSearch(changelog.sections);
-
-        const queryPosition = cleanedSections.toLowerCase().indexOf(query);
         let previewText = "";
+        let highlightedPreview = "";
 
-        if (queryPosition !== -1) {
-          const startPos = Math.max(0, queryPosition - 150);
-          const endPos = Math.min(
-            cleanedSections.length,
-            queryPosition + query.length + 150
-          );
-          previewText = cleanedSections.substring(startPos, endPos);
-
-          if (startPos > 0) previewText = "..." + previewText;
-          if (endPos < cleanedSections.length) previewText += "...";
+        if (query.startsWith("has:")) {
+          const mediaType = query.split(":")[1].trim();
+          switch (mediaType) {
+            case "audio":
+            case "video":
+            case "image":
+              const mediaRegex = new RegExp(`\\(${mediaType}\\)`, "g");
+              const mediaCount = (changelog.sections.match(mediaRegex) || [])
+                .length;
+              previewText = `${mediaCount} ${mediaType}${
+                mediaCount !== 1 ? "s" : ""
+              } found`;
+              highlightedPreview = previewText; // No highlighting for media types
+              break;
+            case "mention":
+              const mentionMatches = [
+                ...new Set(changelog.sections.match(/@\w+/g) || []),
+              ];
+              if (mentionMatches.length > 0) {
+                previewText = `Mentions found: ${mentionMatches.join(", ")}`;
+                highlightedPreview = highlightText(previewText, query); // Highlight mentions
+              } else {
+                previewText = "No mentions found";
+                highlightedPreview = previewText;
+              }
+              break;
+          }
         } else {
-          previewText =
-            cleanedSections.substring(0, 100) +
-            (cleanedSections.length > 100 ? "..." : "");
+          // Regular search preview logic (unchanged)
+          const cleanedSections = cleanContentForSearch(changelog.sections);
+          const queryPosition = cleanedSections.toLowerCase().indexOf(query);
+          if (queryPosition !== -1) {
+            const startPos = Math.max(0, queryPosition - 50);
+            const endPos = Math.min(
+              cleanedSections.length,
+              queryPosition + query.length + 50
+            );
+            previewText = cleanedSections.substring(startPos, endPos);
+            if (startPos > 0) previewText = "..." + previewText;
+            if (endPos < cleanedSections.length) previewText += "...";
+          } else {
+            previewText =
+              cleanedSections.substring(0, 100) +
+              (cleanedSections.length > 100 ? "..." : "");
+          }
+          highlightedPreview = highlightText(previewText, query);
         }
 
         const highlightedTitle = highlightText(changelog.title, query);
-        const highlightedPreview = highlightText(previewText, query);
 
-        // Check for media tags
+        // Create media labels
         const hasAudio = changelog.sections.includes("(audio)");
         const hasVideo = changelog.sections.includes("(video)");
         const hasImage = changelog.sections.includes("(image)");
-
-        let mediaLabels = "";
-        if (hasAudio) {
-          mediaLabels += `
-            <span class="badge bg-primary me-1">
-              <i class="bi bi-volume-up me-1"></i>Audio
-            </span>`;
-        }
-        if (hasVideo) {
-          mediaLabels += `
-            <span class="badge bg-success me-1">
-              <i class="bi bi-camera-video me-1"></i>Video
-            </span>`;
-        }
-        if (hasImage) {
-          mediaLabels += `
-            <span class="badge bg-info me-1">
-              <i class="bi bi-image me-1"></i>Image
-            </span>`;
-        }
+        const mediaLabels = [
+          hasAudio ? '<span class="badge bg-primary me-1">Audio</span>' : "",
+          hasVideo ? '<span class="badge bg-success me-1">Video</span>' : "",
+          hasImage ? '<span class="badge bg-info me-1">Image</span>' : "",
+        ].join("");
 
         $listItem.html(`
           <h5 class="mb-1">${highlightedTitle} ${mediaLabels}</h5>
@@ -681,7 +724,7 @@ $(document).ready(function () {
           displayChangelog(changelog);
           clearSearch();
           dismissKeyboard();
-          closeNavbar(); // Close the navbar when a search result is clicked
+          closeNavbar();
         });
 
         $resultsList.append($listItem);

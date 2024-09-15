@@ -273,6 +273,12 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   padding: 2px 4px;
   border-radius: 3px;
 }
+.highlight.mention {
+  background-color: #e6f3ff;
+  color: #0366d6;
+  border-radius: 3px;
+  padding: 0 2px;
+}
 
 #search-results {
   max-height: 400px;
@@ -623,31 +629,66 @@ span {
 #clearDateFilter:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
+/* Common styles for example queries */
 .example-queries {
-  background-color: var(--bg-color);
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  z-index: 1000;
+  width: 100%;
+  top: 100%;
+  left: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Light theme styles for example queries */
+[data-bs-theme="light"] .example-queries {
+  background-color: var(--gray-100);
   border: 1px solid var(--gray-300);
-  padding: 10px;
-  border-radius: 5px;
-  margin-top: 5px;
+}
+
+[data-bs-theme="light"] .example-queries p {
   color: var(--text-color);
 }
 
-.example-queries ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.example-queries li {
-  margin-bottom: 5px;
-}
-
-.example-queries a {
-  text-decoration: none;
+[data-bs-theme="light"] .example-query {
   color: var(--footer-link-color);
 }
 
-.example-queries a:hover {
-  text-decoration: underline;
+[data-bs-theme="light"] .example-query:hover {
+  color: var(--footer-link-hover-color);
+  background-color: var(--gray-200);
+}
+
+/* Dark theme styles for example queries */
+[data-bs-theme="dark"] .example-queries {
+  background-color: var(--gray-200);
+  border: 1px solid var(--gray-700);
+}
+
+[data-bs-theme="dark"] .example-queries p {
+  color: var(--header-text);
+}
+
+[data-bs-theme="dark"] .example-query {
+  color: var(--footer-link-color);
+}
+
+[data-bs-theme="dark"] .example-query:hover {
+  color: var(--gray-300);
+  background-color: var(--gray-700);
+}
+
+/* Common styles for example query links */
+.example-query {
+  display: block;
+  padding: 0.25rem 0.5rem;
+  text-decoration: none;
+  border-radius: 0.25rem;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+.example-query:hover {
+  text-decoration: none;
 }
 
 header {
@@ -729,10 +770,18 @@ button {
 /* Footer Styling */
 footer {
   background-color: var(--bg-color);
-  padding: 2rem 0;
   color: var(--text-color);
+  padding: 2rem 0;
+  border-top: 1px solid var(--border-color);
+}
+/* Dark Theme Adjustments */
+[data-bs-theme="dark"] footer {
+  background-color: var(--gray-100);
 }
 
+[data-bs-theme="dark"] .footer-section h3 {
+  color: var(--footer-link-color);
+}
 /* Badimo Message Card */
 .badimo-message {
   background-color: rgba(255, 255, 255, 0.1);

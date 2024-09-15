@@ -197,7 +197,7 @@
               </a>
             </li>
           </ul>
-          <form class="d-flex me-2" role="search">
+          <form class="d-flex me-2 position-relative" role="search">
             <div class="input-group">
               <span class="input-group-text bg-transparent border-0">
                 <i class="bi bi-search text-light"></i>
@@ -218,16 +218,20 @@
                 <i class="bi bi-x-circle-fill"></i>
               </button>
             </div>
+            <!-- Move the example queries here, inside the form -->
+            <div
+              id="exampleQueries"
+              class="example-queries d-none position-absolute"
+            >
+              <p>Try these queries:</p>
+              <ul class="list-unstyled">
+                <li><a href="#" class="example-query">has: audio</a></li>
+                <li><a href="#" class="example-query">has: video</a></li>
+                <li><a href="#" class="example-query">has: image</a></li>
+                <li><a href="#" class="example-query">has: mention</a></li>
+              </ul>
+            </div>
           </form>
-          <!-- Example Queries -->
-          <div id="exampleQueries" class="example-queries d-none">
-            <p>Try these queries:</p>
-            <ul>
-              <li><a href="#" class="example-query">has: audio</a></li>
-              <li><a href="#" class="example-query">has: video</a></li>
-              <li><a href="#" class="example-query">has: image</a></li>
-            </ul>
-          </div>
 
           <!-- Desktop theme toggle -->
           <button

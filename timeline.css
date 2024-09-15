@@ -149,6 +149,16 @@ body {
     transform: translateX(-100%);
   }
 }
+.timeline-entry-container.right .timeline-entry h1,
+.timeline-entry-container.right .timeline-entry h2,
+.timeline-entry-container.right .timeline-entry h3,
+.timeline-entry-container.right .timeline-entry p,
+.timeline-entry-container.right .timeline-entry .accordion {
+  text-align: left; /* Ensure these elements are left-aligned */
+}
+.timeline-entry-container.right .entry-title {
+  text-align: right; /* Keep the title aligned to the right */
+}
 .timeline {
   position: relative;
   margin: 0 auto;
@@ -731,41 +741,109 @@ footer {
 }
 
 @media (max-width: 768px) {
-  .timeline-entry {
-    background-color: var(--bg-color);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative;
-    overflow: hidden; /* Ensure content doesn't overflow */
-    word-wrap: break-word; /* Break long words */
-  }
   .timeline {
     width: 100%;
     padding: 10px 0;
   }
 
   .timeline::before {
-    left: 20px; /* Adjusted for better visibility on smaller screens */
+    left: 20px;
   }
 
   .timeline-entry-container {
-    width: 100%;
-    padding: 10px;
+    width: calc(100% - 40px);
+    margin-left: 40px;
+    padding: 0;
     box-sizing: border-box;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .timeline-entry-container.left,
+  .timeline-entry-container.right {
     left: 0 !important;
-    margin-bottom: 20px; /* Added margin for spacing between entries */
+    transform: none !important;
+  }
+
+  .timeline-entry {
+    background-color: var(--bg-color);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    word-wrap: break-word;
+    font-size: 0.85rem;
+    width: 100%;
+    margin: 0;
+  }
+
+  /* Ensure all entries are left-aligned */
+  .timeline-entry-container.left .timeline-entry,
+  .timeline-entry-container.right .timeline-entry {
+    text-align: left;
+  }
+
+  .timeline-entry * {
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  /* Adjust font sizes for different elements inside timeline entries */
+  .timeline-entry h1 {
+    font-size: 1.2rem;
+  }
+  .timeline-entry h2 {
+    font-size: 1.1rem;
+  }
+  .timeline-entry h3 {
+    font-size: 1rem;
+  }
+  .timeline-entry p,
+  .timeline-entry li {
+    font-size: 0.9rem;
   }
 
   .timeline-line {
-    display: none; /* Hide the line on mobile to reduce clutter */
+    display: none;
   }
 
-  .navbar-brand {
-    font-size: 1.25rem; /* Adjusted for smaller screens */
+  .timeline-entry-container::before {
+    content: "";
+    position: absolute;
+    left: -30px;
+    top: 15px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #3498db;
+    z-index: 1;
   }
 
-  .navbar-nav .nav-link {
-    font-size: 0.9rem; /* Adjusted font size for mobile */
+  /* Ensure images and other media are responsive */
+  .timeline-entry img,
+  .timeline-entry video,
+  .timeline-entry iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Adjust entry title for mobile */
+  .entry-title {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  /* Adjust entry content for mobile */
+  .entry-content p {
+    margin-bottom: 10px;
+  }
+
+  /* Adjust view details button for mobile */
+  .view-details-btn {
+    font-size: 0.9rem;
+    padding: 5px 10px;
   }
 }
