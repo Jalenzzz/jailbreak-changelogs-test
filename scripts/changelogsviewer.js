@@ -82,40 +82,15 @@ $(document).ready(function () {
   $searchInput.on("input", performSearch);
   $searchInput.on("input", function () {
     const query = $(this).val().trim();
-
-    // Hide example queries as soon as typing starts
-    if (query.length > 0) {
-      $exampleQueries.addClass("d-none");
-    } else {
-      $exampleQueries.removeClass("d-none");
-    }
-
+    $exampleQueries.addClass("d-none");
     performSearch();
     toggleClearButton();
   });
 
   $clearButton.on("click", function () {
     $searchInput.val("");
-    $exampleQueries.removeClass("d-none");
+
     clearSearch();
-  });
-  // Hide example queries when the search input loses focus
-  $searchInput.on("blur", function () {
-    setTimeout(() => $exampleQueries.addClass("d-none"));
-  });
-  // Show example queries when the search input is focused
-  $searchInput.on("focus", function () {
-    if ($(this).val().trim().length === 0) {
-      $exampleQueries.removeClass("d-none");
-    }
-  });
-  // Populate search input with example query when clicked
-  $(".example-query").on("click", function (e) {
-    e.preventDefault();
-    const query = $(this).text();
-    $searchInput.val(query).focus();
-    performSearch();
-    $exampleQueries.addClass("d-none");
   });
 
   // Handle Enter key press or mobile 'Go' button
@@ -124,6 +99,29 @@ $(document).ready(function () {
       e.preventDefault(); // Prevent default form submission behavior
       focusOnSearchResults();
       dismissKeyboard(); // Dismiss the keyboard on mobile
+    }
+  });
+
+  // Handle example query click
+  $(".example-query").on("click", function (e) {
+    e.preventDefault();
+    const query = $(this).text();
+    $searchInput.val(query);
+    performSearch();
+    $exampleQueries.addClass("d-none");
+  });
+
+  // Show example queries when clicking on the search input
+  $searchInput.on("focus", function () {
+    if ($(this).val().trim() === "") {
+      $exampleQueries.removeClass("d-none");
+    }
+  });
+
+  // Hide example queries when clicking outside
+  $(document).on("click", function (event) {
+    if (!$(event.target).closest(".d-flex").length) {
+      $exampleQueries.addClass("d-none");
     }
   });
   function focusOnSearchResults() {
@@ -473,12 +471,6 @@ $(document).ready(function () {
     }
   });
 
-  $(document).on("click", function (event) {
-    if (!$(event.target).closest(".d-flex.position-relative").length) {
-      $exampleQueries.addClass("d-none");
-    }
-  });
-
   function toggleClearButton() {
     $clearButton.toggle($searchInput.val().length > 0);
   }
@@ -490,7 +482,7 @@ $(document).ready(function () {
 
   function clearSearch() {
     $searchInput.val("");
-    $exampleQueries.addClass("d-none");
+
     toggleClearButton();
     hideSearchResults();
     dismissKeyboard();
