@@ -103,6 +103,58 @@
         }
       }
     </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const themeToggleMobile = document.getElementById(
+          "theme-toggle-mobile"
+        );
+        const themeToggleDesktop = document.getElementById(
+          "theme-toggle-desktop"
+        );
+        const htmlElement = document.documentElement;
+
+        // Function to set theme
+        function setTheme(theme) {
+          htmlElement.setAttribute("data-bs-theme", theme);
+          localStorage.setItem("theme", theme);
+          updateThemeIcon(themeToggleMobile, theme);
+          updateThemeIcon(themeToggleDesktop, theme);
+        }
+
+        // Function to update theme icon
+        function updateThemeIcon(button, theme) {
+          const iconElement = button.querySelector("i");
+          if (theme === "dark") {
+            iconElement.classList.replace("bi-moon-stars-fill", "bi-sun-fill");
+          } else {
+            iconElement.classList.replace("bi-sun-fill", "bi-moon-stars-fill");
+          }
+        }
+
+        // Check for saved theme preference or use device preference
+        const savedTheme = localStorage.getItem("theme");
+        const prefersDarkMode = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+
+        if (savedTheme) {
+          setTheme(savedTheme);
+        } else if (prefersDarkMode) {
+          setTheme("dark");
+        } else {
+          setTheme("light");
+        }
+
+        // Theme toggle button event listeners
+        function toggleTheme() {
+          const currentTheme = htmlElement.getAttribute("data-bs-theme");
+          setTheme(currentTheme === "light" ? "dark" : "light");
+        }
+
+        themeToggleMobile.addEventListener("click", toggleTheme);
+        themeToggleDesktop.addEventListener("click", toggleTheme);
+      });
+    </script>
   </head>
 
   <body data-scroll-container>
@@ -164,10 +216,26 @@
     <div id="main-container" class="container-fluid">
       <div id="content-wrapper" class="row mt-3">
         <section id="content" class="d-flex flex-grow-1">
-          <div id="cards-container" class="row">
-            <!-- Cards will be dynamically inserted here -->
+          <div id="season-details" class="col-12">
+            <!-- Season description and rewards will be dynamically inserted here -->
           </div>
         </section>
+        <div class="col-md-4" id="sidebar-image-wrapper">
+          <div id="rewardsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner" id="carousel-inner">
+              <!-- Carousel items will be dynamically inserted here -->
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#rewardsCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#rewardsCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
 

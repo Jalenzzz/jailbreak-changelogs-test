@@ -17,13 +17,6 @@
   --selection-bg: #b0e0e6; /* Powder Blue */
   --selection-text: #000000;
   --glow-color: 255, 99, 71; /* Tomato */
-  --custom-header-color: #ffcc00; /* Example color */
-  --custom-subheader-color: #ffaa00; /* Example color */
-  --custom-icon-color: #ff8800; /* Example color */
-  --reddit-color: #ff4500; /* Reddit Orange */
-  --discord-color: #7289da; /* Discord Blurple */
-  --wiki-color: #1a73e8; /* Wiki Blue */
-  --github-color: #333333; /* GitHub Black */
   --hover-bg-color: #fe94002e;
 
   --gray-100: #f9f9f9;
@@ -70,6 +63,7 @@
   --gray-800: #aaaaaa;
   --gray-900: #bbbbbb;
 }
+
 /* Back to Top Button */
 #backToTop {
   display: none; /* Initially hidden */
@@ -81,7 +75,7 @@
   padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s, display 0.3s;
+  transition: background-color 0.3s;
   z-index: 1000;
 }
 
@@ -92,11 +86,7 @@
 #backToTop:hover {
   background-color: var(--button-primary-hover-bg);
 }
-html,
-body {
-  height: 100%;
-  margin: 0;
-}
+
 html,
 body {
   height: 100%;
@@ -123,141 +113,21 @@ body {
     #6b6b83,
     #aa4b6b
   ); /* A gradient from teal to gray to soft pink */
-  margin: 0;
   font-family: Arial, sans-serif;
   color: #333;
 }
+
 .scrollMe {
   animation: scroll 20s linear infinite; /* adjust duration and add infinite */
 }
 
-#timeline.scrollMe {
-  animation-name: scroll;
-
-  animation-duration: 20s;
-
-  animation-timing-function: linear;
-
-  animation-iteration-count: infinite;
-}
 @keyframes scroll {
   0% {
     transform: translateX(0);
   }
-
   100% {
     transform: translateX(-100%);
   }
-}
-.timeline-entry-container.right .timeline-entry h1,
-.timeline-entry-container.right .timeline-entry h2,
-.timeline-entry-container.right .timeline-entry h3,
-.timeline-entry-container.right .timeline-entry p,
-.timeline-entry-container.right .timeline-entry .accordion {
-  text-align: left; /* Ensure these elements are left-aligned */
-}
-.timeline-entry-container.right .entry-title {
-  text-align: right; /* Keep the title aligned to the right */
-}
-.timeline {
-  position: relative;
-  margin: 0 auto;
-  padding: 20px 0;
-  width: 80%;
-}
-
-.timeline::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background-color: var(--text-color);
-  transform: translateX(-50%);
-}
-
-.timeline-entry {
-  background-color: var(--bg-color);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: relative;
-  transition: all 0.3s ease; /* Add transition for smooth animation */
-}
-/* Hover effect for timeline entries */
-.timeline-entry:hover {
-  transform: scale(1.03); /* Slightly increase size on hover */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
-}
-/* Add a subtle glow effect on hover */
-.timeline-entry::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(255, 165, 0, 0.3); /* Adjust color as needed */
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.timeline-entry:hover::after {
-  opacity: 1;
-}
-/* Ensure content stays above the glow effect */
-.timeline-entry > * {
-  position: relative;
-  z-index: 1;
-}
-.entry-title {
-  transition: transform 0.3s ease;
-}
-
-.timeline-entry:hover .entry-title {
-  transform: translateY(-2px) rotate(-1deg);
-}
-
-.timeline-entry-container {
-  position: relative;
-  width: 50%;
-  padding: 10px 40px;
-  box-sizing: border-box;
-}
-
-.timeline-entry-container.left {
-  left: 0;
-}
-
-.timeline-entry-container.right {
-  left: 50%;
-}
-
-.timeline-entry-container.left .timeline-entry {
-  margin-left: auto;
-  text-align: left;
-}
-
-.timeline-entry-container.right .timeline-entry {
-  margin-right: auto;
-  text-align: right;
-}
-
-.timeline-line {
-  position: absolute;
-  top: 50%;
-  width: 20px;
-  height: 2px;
-  background-color: var(--text-color);
-}
-
-.timeline-entry-container.left .timeline-line {
-  right: -10px;
-}
-
-.timeline-entry-container.right .timeline-line {
-  left: -10px;
 }
 
 .text-custom-header {
@@ -275,6 +145,7 @@ body {
 .text-custom-icon {
   color: var(--custom-icon-color) !important;
 }
+
 /* Override Bootstrap's bg-primary class for navbar */
 .navbar {
   background-color: var(
@@ -313,10 +184,6 @@ body {
   border-color: var(--button-primary-hover-bg) !important;
 }
 
-.btn-primary:focus {
-  box-shadow: 0 0 0 0.2rem rgba(var(--glow-color), 0.5);
-}
-
 .btn-close {
   color: #ffffff;
 }
@@ -324,6 +191,7 @@ body {
 .btn-close:hover {
   color: #ff6347;
 }
+
 .gradient-bg {
   background: linear-gradient(
     to right,
@@ -353,6 +221,7 @@ body {
   z-index: 9999;
   background-color: #ffffff;
 }
+
 .spinner-custom {
   color: var(--button-primary-bg); /* Use primary button background color */
 }
@@ -391,9 +260,29 @@ body {
   font-size: 1rem;
 }
 
-#content-wrapper {
-  display: flex;
-  flex-wrap: wrap;
+.minimalist {
+  background-color: #ffffff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.minimalist h2,
+.minimalist h3 {
+  color: #333;
+}
+
+.minimalist p {
+  color: #555;
+}
+
+.reward-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.reward-item:last-child {
+  border-bottom: none;
 }
 
 #content {
@@ -419,52 +308,6 @@ body {
 
 #content p {
   color: var(--text-color);
-}
-
-#content .bullet {
-  color: var(--footer-link-color);
-}
-
-#content .sub-bullet {
-  color: var(--footer-link-color);
-}
-
-.mention {
-  color: var(--mention-color-light);
-  background-color: var(--mention-bg);
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.mention .at {
-  color: var(--at-color-light);
-}
-
-.mention .username {
-  color: var(--username-color-light);
-}
-
-.mention:hover {
-  background-color: var(--mention-hover-bg);
-  cursor: pointer;
-}
-
-[data-bs-theme="dark"] .mention {
-  color: var(--mention-color-dark);
-  background-color: var(--mention-bg);
-  transition: background-color 0.3s, color 0.3s;
-}
-
-[data-bs-theme="dark"] .mention .at {
-  color: var(--at-color-dark);
-}
-
-[data-bs-theme="dark"] .mention .username {
-  color: var(--username-color-dark);
-}
-
-[data-bs-theme="dark"] .mention:hover {
-  background-color: #9662006c;
-  cursor: pointer;
 }
 
 .row {
@@ -550,6 +393,7 @@ button {
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
 }
+
 /* Footer Styling */
 footer {
   background-color: var(--bg-color);
@@ -591,6 +435,7 @@ footer {
   font-weight: bold;
   color: var(--highlight-text);
 }
+
 /* Bigger View Details text */
 .view-details-btn {
   font-size: 1.7rem;
@@ -642,6 +487,7 @@ footer {
   background-color: #4a4a4a;
   color: #ffcc00;
 }
+
 /* Light theme adjustments */
 [data-bs-theme="light"] .timeline-entry:hover::after {
   box-shadow: 0 0 20px rgba(255, 69, 0, 0.2); /* Lighter glow for light theme */
@@ -736,114 +582,47 @@ footer {
 }
 
 /* Dark Theme Adjustments */
+/* Dark Theme Adjustments */
 [data-bs-theme="dark"] .github-link:hover {
   background-color: #444c56; /* Lighter gray for better visibility in dark mode */
 }
 
-@media (max-width: 768px) {
-  .timeline {
-    width: 100%;
-    padding: 10px 0;
+.season-rewards .list-group-item:hover {
+  background-color: var(--hover-bg-color);
+  color: var(--text-color);
+  cursor: pointer;
+  transform: scale(1.02);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 1.1rem;
+  transition: background-color 0.3s ease, transform 0.3s ease,
+    box-shadow 0.3s ease, padding 0.3s ease;
+}
+
+/* Target all text elements inside the list item */
+.season-rewards .list-group-item:hover * {
+  text-decoration: none; /* Remove underline if any */
+  color: var(--header-text); /* Change text color on hover */
+  font-weight: bold; /* Make text bold */
+}
+
+.season-rewards .list-group-item:hover .badge {
+  background-color: var(--header-bg);
+  color: #fff;
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.bonus-badge {
+  margin-right: 0.5rem; /* Adjust the spacing as needed */
+}
+
+@media (max-width: 576px) {
+  .season-rewards .badge {
+    margin: 0 0.25rem; /* Add horizontal spacing between badges */
   }
 
-  .timeline::before {
-    left: 20px;
-  }
-
-  .timeline-entry-container {
-    width: calc(100% - 40px);
-    margin-left: 40px;
-    padding: 0;
-    box-sizing: border-box;
-    margin-bottom: 20px;
-    position: relative;
-  }
-
-  .timeline-entry-container.left,
-  .timeline-entry-container.right {
-    left: 0 !important;
-    transform: none !important;
-  }
-
-  .timeline-entry {
-    background-color: var(--bg-color);
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative;
-    overflow: hidden;
-    word-wrap: break-word;
-    font-size: 0.85rem;
-    width: 100%;
-    margin: 0;
-  }
-
-  /* Ensure all entries are left-aligned */
-  .timeline-entry-container.left .timeline-entry,
-  .timeline-entry-container.right .timeline-entry {
-    text-align: left;
-  }
-
-  .timeline-entry * {
-    max-width: 100%;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
-  }
-
-  /* Adjust font sizes for different elements inside timeline entries */
-  .timeline-entry h1 {
-    font-size: 1.2rem;
-  }
-  .timeline-entry h2 {
-    font-size: 1.1rem;
-  }
-  .timeline-entry h3 {
-    font-size: 1rem;
-  }
-  .timeline-entry p,
-  .timeline-entry li {
-    font-size: 0.9rem;
-  }
-
-  .timeline-line {
-    display: none;
-  }
-
-  .timeline-entry-container::before {
-    content: "";
-    position: absolute;
-    left: -30px;
-    top: 15px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: #3498db;
-    z-index: 1;
-  }
-
-  /* Ensure images and other media are responsive */
-  .timeline-entry img,
-  .timeline-entry video,
-  .timeline-entry iframe {
-    max-width: 100%;
-    height: auto;
-  }
-
-  /* Adjust entry title for mobile */
-  .entry-title {
-    font-size: 1rem;
-    margin-bottom: 10px;
-  }
-
-  /* Adjust entry content for mobile */
-  .entry-content p {
-    margin-bottom: 10px;
-  }
-
-  /* Adjust view details button for mobile */
-  .view-details-btn {
-    font-size: 0.9rem;
-    padding: 5px 10px;
+  .season-rewards .d-flex {
+    flex-direction: row; /* Ensure badges are in a row */
+    flex-wrap: nowrap; /* Prevent wrapping */
   }
 }

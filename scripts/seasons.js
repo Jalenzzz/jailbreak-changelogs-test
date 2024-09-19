@@ -1,153 +1,151 @@
-const loadingOverlay = document.getElementById("loading-overlay"); // Reference to loading overlay
-
 document.addEventListener("DOMContentLoaded", function () {
-  const themeToggleMobile = document.getElementById("theme-toggle-mobile");
-  const themeToggleDesktop = document.getElementById("theme-toggle-desktop");
-  const htmlElement = document.documentElement;
+  const seasonDetailsContainer = document.getElementById("season-details");
+  const carouselInner = document.getElementById("carousel-inner");
+  const loadingOverlay = document.getElementById("loading-overlay");
 
-  function setTheme(theme) {
+  async function fetchSeasonDescription() {
     try {
-      htmlElement.setAttribute("data-bs-theme", theme);
-      localStorage.setItem("theme", theme);
-      updateThemeIcon(themeToggleMobile, theme);
-      updateThemeIcon(themeToggleDesktop, theme);
+      const response = await fetch(
+        "https://api.jailbreakchangelogs.xyz/get_seasons"
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Error fetching season descriptions: ${response.statusText}`
+        );
+      }
+      return await response.json();
     } catch (error) {
-      console.error("Failed to set theme:", error);
+      console.error("Failed to fetch season descriptions:", error);
+      return [];
     }
   }
 
-  function updateThemeIcon(button, theme) {
+  async function fetchSeasonRewards() {
     try {
-      const iconElement = button.querySelector("i");
-      if (theme === "dark") {
-        iconElement.classList.replace("bi-moon-stars-fill", "bi-sun-fill");
-      } else {
-        iconElement.classList.replace("bi-sun-fill", "bi-moon-stars-fill");
+      const response = await fetch(
+        "https://api.jailbreakchangelogs.xyz/list_rewards"
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Error fetching season rewards: ${response.statusText}`
+        );
       }
+      return await response.json();
     } catch (error) {
-      console.error("Failed to update theme icon:", error);
+      console.error("Failed to fetch season rewards:", error);
+      return [];
     }
   }
-
-  const savedTheme = localStorage.getItem("theme");
-  const prefersDarkMode = window.matchMedia(
-    "(prefers-color-scheme: dark)"
-  ).matches;
-
-  if (savedTheme) {
-    setTheme(savedTheme);
-  } else if (prefersDarkMode) {
-    setTheme("dark");
-  } else {
-    setTheme("light");
-  }
-
-  function toggleTheme() {
-    const currentTheme = htmlElement.getAttribute("data-bs-theme");
-    setTheme(currentTheme === "light" ? "dark" : "light");
-  }
-
-  themeToggleMobile?.addEventListener("click", toggleTheme);
-  themeToggleDesktop?.addEventListener("click", toggleTheme);
-});
-
-// Fetch all season descriptions
-async function loadAllSeasonDescriptions() {
-  try {
-    const response = await fetch(
-      `https://api.jailbreakchangelogs.xyz/get_seasons`
+  function displaySeasonDetails(season, descriptionData, rewardsData) {
+    const seasonData = descriptionData.find((desc) => desc.season === season);
+    const rewards = rewardsData.filter(
+      (reward) => reward.season_number === season
     );
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch season descriptions: ${response.statusText}`
-      );
+
+    if (!seasonData) {
+      console.warn(`No description found for season ${season}`);
+      return;
     }
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching season descriptions:", error);
-    return [];
+
+    // Insert season title and description
+    seasonDetailsContainer.innerHTML = `
+        <h2 class="season-title border-bottom display-4">Season ${season} / ${seasonData.title}</h2>
+        <p class="season-description lead">${seasonData.description}</p>
+        <h3 class="prizes-title display-5">Season Rewards</h3>
+    `;
+
+    // Add season rewards below the description
+    const rewardsHTML = rewards
+      .map((reward) => {
+        const isBonus = reward.bonus === "True";
+        const bonusBadge = isBonus
+          ? `<span class="badge bg-warning text-dark rounded-pill fs-6 fs-md-5">Bonus</span>`
+          : "";
+        const requirementBadge = `<span class="badge bg-primary rounded-pill fs-6 fs-md-5">${reward.requirement}</span>`;
+
+        return `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold fs-6 fs-md-5">${reward.item}</h6>
+                    <div class="d-flex align-items-center">
+                        ${bonusBadge}
+                        ${requirementBadge}
+                    </div>
+                </li>`;
+      })
+      .join("");
+
+    seasonDetailsContainer.innerHTML += `
+    <ul class="list-group season-rewards">${rewardsHTML}</ul>`;
   }
-}
 
-// Fetch all rewards
-async function loadAllRewards() {
-  try {
-    const response = await fetch(
-      `https://api.jailbreakchangelogs.xyz/list_rewards`
-    );
-    if (!response.ok) {
-      throw new Error(`Failed to fetch rewards: ${response.statusText}`);
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching rewards:", error);
-    return [];
-  }
-}
+  function updateCarousel(rewards) {
+    carouselInner.innerHTML = ""; // Clear the existing carousel items
 
-// Create card for each season
-function createCard(seasonDescription, rewards) {
-  const card = document.createElement("div");
-  card.className = "col-md-3 mb-3";
-  card.innerHTML = `
-    <div class="card">
-      <div class="card-header">
-        <h5 class="card-title">Season ${seasonDescription.season} - ${
-    seasonDescription.title
-  }</h5>
-        <p>${seasonDescription.description}</p>
-      </div>
-      <div class="card-body">
-        <ul class="list-group">
-          ${rewards
-            .map(
-              (item) => `
-            <li class="list-group-item">
-              <h6>${item.item}</h6>
-              <p>Requirement: ${item.requirement}</p>
-              <img src="${item.link}" alt="${item.item}" class="img-fluid">
-            </li>
-          `
-            )
-            .join("")}
-        </ul>
-      </div>
-      <div class="card-footer text-muted">
-        Data last updated on ${new Date().toLocaleDateString()}
-      </div>
-    </div>
-  `;
-  return card;
-}
+    rewards.forEach((reward, index) => {
+      const isActive = index === 0 ? "active" : "";
 
-// Load and combine season data
-async function loadSeasonCards() {
-  const cardsContainer = document.getElementById("cards-container");
-
-  try {
-    // Show loading overlay
-    loadingOverlay.style.display = "block";
-
-    // Fetch season descriptions and rewards
-    const seasonDescriptions = await loadAllSeasonDescriptions();
-    const allRewards = await loadAllRewards();
-
-    seasonDescriptions.forEach((seasonDescription) => {
-      const seasonNumber = seasonDescription.season;
-      const rewards = allRewards.filter(
-        (reward) => reward.season_number === seasonNumber
-      );
-
-      // Create card for each season with its corresponding rewards
-      if (rewards.length > 0) {
-        const card = createCard(seasonDescription, rewards);
-        cardsContainer.appendChild(card);
+      // Check if the reward is a bonus and its requirement starts with "Level"
+      if (reward.bonus === "True" && reward.requirement.startsWith("Level")) {
+        // Skip adding this reward to the carousel if it meets the condition
+        return;
       }
+
+      // Proceed if the condition is not met
+      const carouselItem = document.createElement("div");
+      carouselItem.className = `carousel-item ${isActive}`;
+      carouselItem.innerHTML = `
+        <img src="${reward.link}" class="d-block w-100 img-fluid" alt="${reward.item}">
+      `;
+      carouselInner.appendChild(carouselItem);
     });
-  } finally {
-    // Hide loading overlay
-    loadingOverlay.style.display = "none";
   }
-}
 
-document.addEventListener("DOMContentLoaded", loadSeasonCards);
+  async function loadSeasonDetails(season) {
+    try {
+      loadingOverlay.style.display = "block"; // Show loading overlay
+
+      const seasonDescriptions = await fetchSeasonDescription();
+      const seasonRewards = await fetchSeasonRewards();
+
+      // Check if the season exists in the API
+      const seasonExists = seasonDescriptions.some(
+        (desc) => desc.season === season
+      );
+
+      if (!seasonExists) {
+        // If the season doesn't exist, redirect to the latest season
+        const latestSeason = Math.max(
+          ...seasonDescriptions.map((desc) => desc.season)
+        );
+        window.location.href = `${window.location.pathname}?id=${latestSeason}`;
+        return;
+      }
+
+      displaySeasonDetails(season, seasonDescriptions, seasonRewards);
+      const rewardsForSeason = seasonRewards.filter(
+        (reward) => reward.season_number === season
+      );
+      updateCarousel(rewardsForSeason);
+    } catch (error) {
+      console.error(`Failed to load season ${season} details:`, error);
+    } finally {
+      loadingOverlay.style.display = "none"; // Hide loading overlay
+    }
+  }
+
+  // Get season number from URL (e.g., ?id=340)
+  const urlParams = new URLSearchParams(window.location.search);
+  const seasonNumber = urlParams.get("id");
+
+  // If no season number in URL, redirect to the latest season
+  fetchSeasonDescription().then((seasonDescriptions) => {
+    if (!seasonNumber) {
+      const latestSeason = Math.max(
+        ...seasonDescriptions.map((desc) => desc.season)
+      );
+      window.location.href = `${window.location.pathname}?id=${latestSeason}`;
+    } else {
+      loadSeasonDetails(parseInt(seasonNumber)); // Load the season based on URL parameter
+    }
+  });
+});
