@@ -1,41 +1,32 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const seasonDetailsContainer = document.getElementById("season-details");
-  const carouselInner = document.getElementById("carousel-inner");
-  const loadingOverlay = document.getElementById("loading-overlay");
+$(document).ready(function () {
+  const $seasonDetailsContainer = $("#season-details");
+  const $carouselInner = $("#carousel-inner");
+  const $loadingOverlay = $("#loading-overlay");
 
-  async function fetchSeasonDescription() {
-    try {
-      const response = await fetch(
-        "https://api.jailbreakchangelogs.xyz/get_seasons"
-      );
-      if (!response.ok) {
-        throw new Error(
-          `Error fetching season descriptions: ${response.statusText}`
-        );
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("Failed to fetch season descriptions:", error);
-      return [];
-    }
+  function fetchSeasonDescription() {
+    return $.ajax({
+      url: "https://api.jailbreakchangelogs.xyz/get_seasons",
+      method: "GET",
+      dataType: "json",
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error("Failed to fetch season descriptions:", errorThrown);
+        return [];
+      },
+    });
   }
 
-  async function fetchSeasonRewards() {
-    try {
-      const response = await fetch(
-        "https://api.jailbreakchangelogs.xyz/list_rewards"
-      );
-      if (!response.ok) {
-        throw new Error(
-          `Error fetching season rewards: ${response.statusText}`
-        );
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("Failed to fetch season rewards:", error);
-      return [];
-    }
+  function fetchSeasonRewards() {
+    return $.ajax({
+      url: "https://api.jailbreakchangelogs.xyz/list_rewards",
+      method: "GET",
+      dataType: "json",
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error("Failed to fetch season rewards:", errorThrown);
+        return [];
+      },
+    });
   }
+
   function displaySeasonDetails(season, descriptionData, rewardsData) {
     const seasonData = descriptionData.find((desc) => desc.season === season);
     const rewards = rewardsData.filter(
@@ -46,13 +37,11 @@ document.addEventListener("DOMContentLoaded", function () {
       console.warn(`No description found for season ${season}`);
       return;
     }
-
-    // Insert season title and description
-    seasonDetailsContainer.innerHTML = `
-        <h2 class="season-title border-bottom display-4">Season ${season} / ${seasonData.title}</h2>
-        <p class="season-description lead">${seasonData.description}</p>
-        <h3 class="prizes-title display-5">Season Rewards</h3>
-    `;
+    $seasonDetailsContainer.html(`
+      <h2 class="season-title display-4 text-custom-header">Season ${season} / ${seasonData.title}</h2>
+      <p class="season-description lead">${seasonData.description}</p>
+     <h3 class="prizes-title display-5 custom-prizes-title">Season Rewards</h3>
+    `);
 
     // Add season rewards below the description
     const rewardsHTML = rewards
@@ -64,22 +53,23 @@ document.addEventListener("DOMContentLoaded", function () {
         const requirementBadge = `<span class="badge bg-primary rounded-pill fs-6 fs-md-5">${reward.requirement}</span>`;
 
         return `
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <h6 class="fw-bold fs-6 fs-md-5">${reward.item}</h6>
-                    <div class="d-flex align-items-center">
-                        ${bonusBadge}
-                        ${requirementBadge}
-                    </div>
-                </li>`;
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold fs-6 fs-md-5">${reward.item}</h6>
+          <div class="d-flex align-items-center">
+            ${bonusBadge}
+            ${requirementBadge}
+          </div>
+        </li>`;
       })
       .join("");
 
-    seasonDetailsContainer.innerHTML += `
-    <ul class="list-group season-rewards">${rewardsHTML}</ul>`;
+    $seasonDetailsContainer.append(
+      `<ul class="list-group season-rewards">${rewardsHTML}</ul>`
+    );
   }
 
   function updateCarousel(rewards) {
-    carouselInner.innerHTML = ""; // Clear the existing carousel items
+    $carouselInner.empty(); // Clear the existing carousel items
 
     rewards.forEach((reward, index) => {
       const isActive = index === 0 ? "active" : "";
@@ -91,22 +81,17 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // Proceed if the condition is not met
-      const carouselItem = document.createElement("div");
-      carouselItem.className = `carousel-item ${isActive}`;
-      carouselItem.innerHTML = `
-        <img src="${reward.link}" class="d-block w-100 img-fluid" alt="${reward.item}">
-      `;
-      carouselInner.appendChild(carouselItem);
+      const carouselItem = $(`
+        <div class="carousel-item ${isActive}">
+          <img src="${reward.link}" class="d-block w-100 img-fluid" alt="${reward.item}">
+        </div>
+      `);
+      $carouselInner.append(carouselItem);
     });
   }
 
-  async function loadSeasonDetails(season) {
+  async function loadSeasonDetails(season, seasonDescriptions, seasonRewards) {
     try {
-      loadingOverlay.style.display = "block"; // Show loading overlay
-
-      const seasonDescriptions = await fetchSeasonDescription();
-      const seasonRewards = await fetchSeasonRewards();
-
       // Check if the season exists in the API
       const seasonExists = seasonDescriptions.some(
         (desc) => desc.season === season
@@ -128,24 +113,39 @@ document.addEventListener("DOMContentLoaded", function () {
       updateCarousel(rewardsForSeason);
     } catch (error) {
       console.error(`Failed to load season ${season} details:`, error);
-    } finally {
-      loadingOverlay.style.display = "none"; // Hide loading overlay
     }
   }
 
-  // Get season number from URL (e.g., ?id=340)
-  const urlParams = new URLSearchParams(window.location.search);
-  const seasonNumber = urlParams.get("id");
+  // Show loading overlay
+  $loadingOverlay.show();
 
-  // If no season number in URL, redirect to the latest season
-  fetchSeasonDescription().then((seasonDescriptions) => {
-    if (!seasonNumber) {
-      const latestSeason = Math.max(
-        ...seasonDescriptions.map((desc) => desc.season)
-      );
-      window.location.href = `${window.location.pathname}?id=${latestSeason}`;
-    } else {
-      loadSeasonDetails(parseInt(seasonNumber)); // Load the season based on URL parameter
-    }
-  });
+  // Fetch both season descriptions and rewards
+  $.when(fetchSeasonDescription(), fetchSeasonRewards())
+    .done((seasonDescriptionsResponse, seasonRewardsResponse) => {
+      const seasonDescriptions = seasonDescriptionsResponse[0]; // Unwrap response
+      const seasonRewards = seasonRewardsResponse[0]; // Unwrap response
+
+      // Get season number from URL (e.g., ?id=340)
+      const urlParams = new URLSearchParams(window.location.search);
+      const seasonNumber = urlParams.get("id");
+
+      if (!seasonNumber) {
+        const latestSeason = Math.max(
+          ...seasonDescriptions.map((desc) => desc.season)
+        );
+        window.location.href = `${window.location.pathname}?id=${latestSeason}`;
+      } else {
+        loadSeasonDetails(
+          parseInt(seasonNumber),
+          seasonDescriptions,
+          seasonRewards
+        );
+      }
+    })
+    .fail(() => {
+      console.error("Failed to fetch one or more resources.");
+    })
+    .always(() => {
+      $loadingOverlay.hide(); // Hide loading overlay
+    });
 });
