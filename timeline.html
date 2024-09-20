@@ -57,7 +57,7 @@
       href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css"
     />
 
-    <link rel="stylesheet" href="timeline.css" />
+    <link rel="stylesheet" href="styles/timeline.css" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link
       href="https://fonts.googleapis.com/css2?family=Bangers&display=swap"
@@ -211,6 +211,19 @@
         </div>
       </div>
     </nav>
+
+    <div class="alert alert-warning d-flex align-items-center" role="alert">
+      <i
+        class="bi bi-exclamation-triangle-fill me-2"
+        style="font-size: 1.5rem"
+      ></i>
+      <div>
+        <strong>Notice:</strong> All media, including the logo, are currently
+        unavailable due to a Cloudflare issue. We are actively working to
+        restore them as soon as possible.
+      </div>
+    </div>
+
     <div class="container-fluid mt-3">
       <div class="row">
         <div class="col-12 back-button-container">
@@ -348,13 +361,13 @@
                   <div class="col-sm-4">
                     <p class="mb-0">
                       <strong>Version:</strong>
-                      <span id="version-number">03e2825</span>
+                      <span id="version-number">6f2bcd2</span>
                     </p>
                   </div>
                   <div class="col-sm-4">
                     <p class="mb-0">
                       <strong>Last Updated:</strong>
-                      <span id="last-updated">September 19th 2024</span>
+                      <span id="last-updated">September 20th 2024</span>
                     </p>
                   </div>
                   <div class="col-sm-4">
@@ -536,46 +549,6 @@
             aria-label="Close"
           ></button>
         </div>
-      </div>
-    </div>
-
-    <!-- Add the offcanvas component -->
-    <div
-      class="offcanvas offcanvas-end w-100 w-md-50"
-      tabindex="-1"
-      id="twitterFeedOffcanvas"
-      aria-labelledby="twitterFeedOffcanvasLabel"
-    >
-      <div class="offcanvas-header">
-        <h5
-          class="offcanvas-title d-flex align-items-center"
-          id="twitterFeedOffcanvasLabel"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="currentColor"
-            class="bi bi-twitter-x me-2"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"
-            />
-          </svg>
-          <span class="fw-bold">Badimo Feed</span>
-        </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
-      </div>
-
-      <div class="offcanvas-body">
-        <!-- Twitter feed widget -->
-        <div class="sk-ww-twitter-feed" data-embed-id="25462200"></div>
       </div>
     </div>
   </body>
