@@ -573,13 +573,9 @@ $(document).ready(function () {
       changelogsData = data;
 
       if (Array.isArray(data) && data.length > 0) {
-        const savedId = localStorage.getItem("selectedChangelogId");
-        const idFromUrl = new URLSearchParams(window.location.search).get("id");
-        const initialChangelog =
-          changelogsData.find((cl) => cl.id == (idFromUrl || savedId)) ||
-          changelogsData[0];
-        populateChangelogDropdown(data);
-        displayChangelog(initialChangelog);
+        populateChangelogDropdown(data); // Populate the dropdown with all changelogs
+        const latestChangelog = data.sort((a, b) => b.id - a.id)[0]; // Get the latest changelog
+        displayChangelog(latestChangelog); // Display the latest changelog
         updateDropdownButton("default");
       } else {
         console.error("No changelogs found.");
