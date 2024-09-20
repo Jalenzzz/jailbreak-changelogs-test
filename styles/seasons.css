@@ -87,6 +87,32 @@
 #backToTop:hover {
   background-color: var(--button-primary-hover-bg);
 }
+
+/* Common styles for the dropdown menu */
+.dropdown-menu {
+  margin-top: 0; /* Remove margin to align with the button */
+  border: 1px solid; /* Define border once, specific colors in theme rules */
+}
+
+[data-bs-theme="light"] .dropdown-menu {
+  background-color: var(--gray-200); /* Light gray for light theme */
+  border-color: var(--gray-300); /* Border for light theme */
+}
+
+[data-bs-theme="dark"] .dropdown-menu {
+  background-color: var(--gray-100); /* Dark gray for dark theme */
+  border-color: var(--gray-600); /* Border for dark theme */
+}
+
+/* Common styles for dropdown items */
+.dropdown-menu .dropdown-item {
+  color: var(--text-color); /* Default text color */
+}
+
+[data-bs-theme="dark"] .dropdown-menu .dropdown-item {
+  color: #ffffff; /* Override for dark theme */
+}
+/* Custom dropdown styling */
 .changelog-dropdown {
   min-width: 350px;
   max-height: 400px;
@@ -94,6 +120,12 @@
   border-radius: 8px;
   padding: 0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-dropdown-btn {
+  padding: 8px 46px;
+  display: inline-block;
+  min-width: 150px;
 }
 
 html,

@@ -594,9 +594,15 @@ $(document).ready(function () {
       );
       hideLoadingOverlay();
     });
-
   function performSearch() {
     const query = $searchInput.val().trim().toLowerCase();
+
+    if (query.length === 0) {
+      // Hide search results if the input is empty
+      hideSearchResults();
+      return; // Exit the function early
+    }
+
     let searchResults = [];
 
     if (query.startsWith("has:")) {
@@ -618,7 +624,7 @@ $(document).ready(function () {
         }
       });
     } else {
-      // Regular search (unchanged)
+      // Regular search
       searchResults = changelogsData.filter((changelog) => {
         const titleMatch = changelog.title.toLowerCase().includes(query);
         const contentMatch =
@@ -632,6 +638,12 @@ $(document).ready(function () {
     displaySearchResults(searchResults, query);
     toggleClearButton();
   }
+
+  function hideSearchResults() {
+    $searchResultsContainer.hide(); // Hide the search results container
+    $searchInput.focus(); // Focus on the search input
+  }
+
   function displaySearchResults(results, query) {
     $searchResultsContainer.empty();
 

@@ -163,9 +163,7 @@
     </div>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      
       <div class="container-fluid">
-        
         <a class="navbar-brand d-flex align-items-center">
           <img
             src="https://cdn.jailbreakchangelogs.xyz/logo/logo_animated.gif"
@@ -175,26 +173,6 @@
           />
           <span id="main-title" class="text-white">Seasons</span>
         </a>
-        <div class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            id="changelogDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <i class="bi bi-calendar-event me-2"></i>View Seasons
-          </a>
-          <ul
-            class="dropdown-menu changelog-dropdown w-100"
-            id="seasonList"
-            aria-labelledby="changelogDropdown"
-          >
-            <!-- Dropdown items for seasons will be populated here -->
-          </ul>
-        </div>
-        
         <div class="d-flex align-items-center">
           <button
             id="theme-toggle-mobile"
@@ -206,8 +184,6 @@
           >
             <i class="bi bi-moon-stars-fill" style="font-size: 1.5rem"></i>
           </button>
-          <!-- Dropdown for View Changelogs -->
-      
           <button
             id="theme-toggle-desktop"
             class="btn btn-outline-none d-none d-lg-block p-2"
@@ -221,12 +197,39 @@
         </div>
       </div>
     </nav>
+    
+   <!-- New div for dropdown button below the navbar -->
+   <div class="text-center mt-3">
+    <div class="nav-item dropdown">
+      <a
+        class="nav-link dropdown-toggle btn btn-primary custom-dropdown-btn"
+        href="#"
+        id="changelogDropdown"
+        role="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <i class="bi bi-calendar-event me-2"></i>View Seasons
+      </a>
+      <ul
+        class="dropdown-menu changelog-dropdown w-100 text-center"
+        id="seasonList"
+        aria-labelledby="changelogDropdown"
+      >
+        <!-- Dropdown items will be populated here -->
+      </ul>
+    </div>
+  </div>
+  
+
+    
     <div class="alert alert-warning d-flex align-items-center" role="alert">
       <i class="bi bi-exclamation-triangle-fill me-2" style="font-size: 1.5rem;"></i>
       <div>
-          <strong>Notice:</strong> All media, including the logo, are currently unavailable due to a Cloudflare issue. We are actively working to restore them as soon as possible.
+        <strong>Notice:</strong> All media, including the logo, are currently unavailable due to a Cloudflare issue. We are actively working to restore them as soon as possible.
       </div>
-  </div>
+    </div>
+    
   
 
     <div class="container-fluid mt-3">
