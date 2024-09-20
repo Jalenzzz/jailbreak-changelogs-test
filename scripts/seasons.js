@@ -2,6 +2,7 @@ $(document).ready(function () {
   const $seasonDetailsContainer = $("#season-details");
   const $carouselInner = $("#carousel-inner");
   const $loadingOverlay = $("#loading-overlay");
+  const $seasonList = $("#seasonList"); // Reference to the season dropdown
 
   function fetchSeasonDescription() {
     return $.ajax({
@@ -26,6 +27,20 @@ $(document).ready(function () {
       },
     });
   }
+  // New function to populate the season dropdown
+  function populateSeasonDropdown(seasonData) {
+    seasonData.forEach((season) => {
+      const listItem = $(`
+        <li class="w-100">
+          <a class="dropdown-item changelog-dropdown-item w-100" href="?id=${season.season}">
+            <span class="badge bg-primary me-2">Season ${season.season}</span> 
+            ${season.title}
+          </a>
+        </li>
+      `);
+      $seasonList.append(listItem);
+    });
+  }
 
   function displaySeasonDetails(season, descriptionData, rewardsData) {
     const seasonData = descriptionData.find((desc) => desc.season === season);
@@ -40,7 +55,7 @@ $(document).ready(function () {
     $seasonDetailsContainer.html(`
       <h2 class="season-title display-4 text-custom-header">Season ${season} / ${seasonData.title}</h2>
       <p class="season-description lead">${seasonData.description}</p>
-     <h3 class="prizes-title display-5 custom-prizes-title">Season Rewards</h3>
+      <h3 class="prizes-title display-5 custom-prizes-title">Season Rewards</h3>
     `);
 
     // Add season rewards below the description
@@ -90,6 +105,22 @@ $(document).ready(function () {
     });
   }
 
+  // Back to Top button functionality
+  const backToTopButton = $("#backToTop");
+
+  $(window).scroll(function () {
+    if ($(this).scrollTop() > 100) {
+      backToTopButton.addClass("show");
+    } else {
+      backToTopButton.removeClass("show");
+    }
+  });
+
+  backToTopButton.on("click", function (e) {
+    e.preventDefault();
+    $("html, body").animate({ scrollTop: 0 }, 100);
+  });
+
   async function loadSeasonDetails(season, seasonDescriptions, seasonRewards) {
     try {
       // Check if the season exists in the API
@@ -124,6 +155,9 @@ $(document).ready(function () {
     .done((seasonDescriptionsResponse, seasonRewardsResponse) => {
       const seasonDescriptions = seasonDescriptionsResponse[0]; // Unwrap response
       const seasonRewards = seasonRewardsResponse[0]; // Unwrap response
+
+      // Populate the dropdown with season items
+      populateSeasonDropdown(seasonDescriptions);
 
       // Get season number from URL (e.g., ?id=340)
       const urlParams = new URLSearchParams(window.location.search);

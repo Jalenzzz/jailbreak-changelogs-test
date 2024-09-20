@@ -65,6 +65,36 @@
   --gray-800: #aaaaaa;
   --gray-900: #bbbbbb;
 }
+/* Back to Top Button */
+#backToTop {
+  display: none; /* Initially hidden */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--button-primary-bg);
+  color: #ffffff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, display 0.3s;
+  z-index: 1000;
+}
+
+#backToTop.show {
+  display: block; /* Show when the 'show' class is added */
+}
+
+#backToTop:hover {
+  background-color: var(--button-primary-hover-bg);
+}
+.changelog-dropdown {
+  min-width: 350px;
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 8px;
+  padding: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
 html,
 body {
