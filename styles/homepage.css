@@ -1,4 +1,5 @@
 .hero {
+  position: relative;
   background: url("https://cdn.jailbreakchangelogs.xyz/meta/thumbnail.png")
     no-repeat center center;
   background-size: cover;
@@ -8,9 +9,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  position: relative;
 }
-
 .hero::before {
   content: "";
   position: absolute;
@@ -21,8 +20,33 @@
   background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
   z-index: 1;
 }
+.hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+  z-index: 1;
+}
+.hero h1,
+.hero p {
+  position: relative; /* Position text above the overlay */
+  z-index: 2;
+}
+.feature-icon {
+  font-size: 3rem;
+}
+body {
+  background-color: #f8f9fa;
+}
 
 .hero div {
   position: relative;
   z-index: 2; /* Ensures text is on top of the overlay */
+}
+.cursive {
+  font-size: 0.8rem; /* make the text smaller */
+  font-style: italic; /* make the text cursive */
 }

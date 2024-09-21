@@ -19,22 +19,11 @@
     <link rel="stylesheet" href="styles/homepage.css" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <style>
-      body {
-        background-color: #f8f9fa;
-      }
-      .hero {
-        background: url("https://cdn.jailbreakchangelogs.xyz/meta/thumbnail.png")
-          no-repeat center center;
-        background-size: cover;
-        height: 50vh;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      .disclaimer {
+        font-size: 0.9rem;
+        color: #6c757d;
         text-align: center;
-      }
-      .feature-icon {
-        font-size: 3rem;
+        margin-top: 10px;
       }
     </style>
   </head>
@@ -63,11 +52,8 @@
             <li class="nav-item">
               <a class="nav-link" href="seasons.html">Seasons</a>
             </li>
-            <li class="nav-item"></li>
-              <a class="nav-link" href="timeline.html">Timeline</a>
-            </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">About</a>
+              <a class="nav-link" href="timeline.html">Timeline</a>
             </li>
           </ul>
         </div>
@@ -81,14 +67,26 @@
           Your source for the latest updates and patch notes in Roblox
           Jailbreak.
         </p>
+        <p class="text-center">
+          Last updated: <span id="last-updated">September 21, 2024</span>
+        </p>
         <a href="changelogs.html" class="btn btn-light">View Latest Updates</a>
+        <a
+          href="https://www.roblox.com/games/606849621/Jailbreak"
+          class="btn btn-primary"
+          >Play Jailbreak Now!</a
+        >
       </div>
     </div>
+    <p class="text-muted text-center mt-3 small">
+      Note: This website is not affiliated with Badimo, the official developers
+      of Jailbreak.
+    </p>
 
     <div class="container my-5">
       <h2 class="text-center mb-4">Features</h2>
       <div class="row">
-        <div class="col-md-4 text-center mb-4">
+        <div class="col-md-3 text-center mb-4">
           <div class="feature-icon text-primary">
             <i class="bi bi-journal-text"></i>
           </div>
@@ -98,7 +96,7 @@
             stay informed about all updates.
           </p>
         </div>
-        <div class="col-md-4 text-center mb-4">
+        <div class="col-md-3 text-center mb-4">
           <div class="feature-icon text-primary">
             <i class="bi bi-hourglass-split"></i>
           </div>
@@ -108,7 +106,7 @@
             including rewards and features.
           </p>
         </div>
-        <div class="col-md-4 text-center mb-4">
+        <div class="col-md-3 text-center mb-4">
           <div class="feature-icon text-primary">
             <i class="bi bi-discord"></i>
           </div>
@@ -125,8 +123,31 @@
             strategies.
           </p>
         </div>
+        <div class="col-md-3 text-center mb-4">
+          <div class="feature-icon text-primary">
+            <i class="bi bi-github"></i>
+          </div>
+          <h3>Open Source Contributions</h3>
+          <p>
+            Contributions can be made by anyone! Our project is fully open
+            source on
+            <a
+              href="https://github.com/JailbreakProject/JailbreakChangelogs"
+              target="_blank"
+              class="text-primary"
+            >
+              GitHub.
+            </a>
+          </p>
+        </div>
       </div>
     </div>
+
+    <p class="cursive text-center">
+      Made with ❤️ by
+      <a href="https://www.roblox.com/users/435983066/profile">v3kmw</a> and
+      <a href="https://www.roblox.com/users/1910948809/profile">Jalenzz16</a>
+    </p>
 
     <footer class="bg-primary text-white text-center py-4">
       <p>© 2024 Jailbreak Changelogs. All rights reserved.</p>
@@ -137,6 +158,9 @@
           data-bs-toggle="modal"
           data-bs-target="#privacyPolicyModal"
           >Privacy Policy</a
+        >
+        <a href="mailto:jailbreakchangelogs@gmail.com" class="text-white me-2"
+          >Contact Us</a
         >
       </div>
     </footer>
@@ -163,7 +187,7 @@
           </div>
           <div class="modal-body">
             <h1>Privacy Policy</h1>
-            <p><strong>Last updated:</strong> September 20, 2024</p>
+            <p><strong>Last updated:</strong> September 21, 2024</p>
 
             <p>
               This Privacy Policy outlines our commitment to protecting your
