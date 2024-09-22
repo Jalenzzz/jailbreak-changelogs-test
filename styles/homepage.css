@@ -50,3 +50,14 @@ body {
   font-size: 0.8rem; /* make the text smaller */
   font-style: italic; /* make the text cursive */
 }
+.navbar-logo {
+  height: 50px;
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* On hover */
+.navbar-logo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
