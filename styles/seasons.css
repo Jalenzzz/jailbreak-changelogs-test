@@ -617,6 +617,18 @@ footer {
   background-color: #000000; /* True black background */
   transform: scale(1.05); /* Slightly larger */
 }
+.season-rewards .badge {
+  margin-left: 8px; /* Add space between the badges */
+}
+
+.season-rewards li:hover .badge {
+  transform: scale(1.05); /* Slightly enlarge on hover for effect */
+  transition: transform 0.2s ease-in-out; /* Smooth transition */
+}
+
+.season-rewards li {
+  padding: 10px;
+}
 
 /* Dark Theme Adjustments */
 /* Dark Theme Adjustments */
