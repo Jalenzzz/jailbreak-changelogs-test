@@ -240,59 +240,59 @@ footer.hide {
 .semi-transparent-bg {
   background-color: rgba(var(--glow-color), 0.5) !important;
 }
+.custom-spinner {
+  border-top-color: #31b1ff; /* Blue */
+  border-right-color: #31b1ff; /* Blue */
+  border-bottom-color: #ff341c; /* Orange */
+  border-left-color: #ff341c; /* Orange */
+}
 
 #loading-overlay {
-  position: fixed; /* Make sure the overlay covers the whole viewport */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-  display: flex;
-  align-items: center; /* Center vertically */
-  justify-content: center; /* Center horizontally */
-  z-index: 9999; /* Ensure it is above other content */
-  color: #fff; /* Text color */
-  font-size: 1.5rem; /* Font size */
-  text-align: center; /* Center text */
-  /* Hide it by default, will be shown via JS */
   display: none;
-}
-
-.spinner-custom {
-  width: 3rem; /* Adjust size if needed */
-  height: 3rem; /* Adjust size if needed */
-  color: var(--button-primary-bg); /* Use primary button background color */
-}
-
-#loading-overlay.show {
-  display: flex;
-}
-
-#loading-overlay .spinner-border {
-  width: 5rem;
-  height: 5rem;
-}
-
-#loading-overlay .loading-text {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-[data-bs-theme="dark"] #loading-overlay {
-  background-color: #000000;
-}
-
-[data-bs-theme="light"] #loading-overlay {
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
   background-color: #ffffff;
 }
 
+#loading-overlay.show {
+  display: flex; /* Enable flexbox */
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Center items vertically */
+  align-items: center; /* Center items horizontally */
+  height: 100vh; /* Optional: full height for overlay */
+}
+
+#loading-overlay .loading-logo {
+  width: 300px; /* Adjust the width of your logo as needed */
+  height: auto; /* Maintain the aspect ratio */
+}
+
+#loading-overlay .loading-text {
+  font-size: 1.5rem; /* Font size for loading text */
+  font-weight: bold; /* Bold text */
+  margin-top: 10px; /* Space above loading text */
+}
+
+[data-bs-theme="dark"] #loading-overlay {
+  background-color: #000000; /* Dark background */
+}
+
+[data-bs-theme="light"] #loading-overlay {
+  background-color: #ffffff; /* Light background */
+}
+
 [data-bs-theme="dark"] #loading-overlay .loading-text {
-  color: #ffffff;
+  color: #ffffff; /* White text in dark theme */
 }
 
 [data-bs-theme="light"] #loading-overlay .loading-text {
-  color: #000000;
+  color: #000000; /* Black text in light theme */
 }
 
 .responsive-text {

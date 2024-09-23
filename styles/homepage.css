@@ -41,6 +41,20 @@
 body {
   background-color: #f8f9fa;
 }
+.offcanvas-header {
+  display: none; /* hide the header */
+}
+
+.offcanvas-body {
+  background-color: transparent;
+  padding: 0;
+}
+
+.offcanvas {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+}
 
 .hero div {
   position: relative;

@@ -318,6 +318,12 @@ body {
 .semi-transparent-bg {
   background-color: rgba(var(--glow-color), 0.5) !important;
 }
+.custom-spinner {
+  border-top-color: #31b1ff; /* Blue */
+  border-right-color: #31b1ff; /* Blue */
+  border-bottom-color: #ff341c; /* Orange */
+  border-left-color: #ff341c; /* Orange */
+}
 
 #loading-overlay {
   position: fixed;
@@ -331,38 +337,40 @@ body {
   z-index: 9999;
   background-color: #ffffff;
 }
-.spinner-custom {
-  color: var(--button-primary-bg); /* Use primary button background color */
-}
 
 #loading-overlay.show {
-  display: flex;
+  display: flex; /* Enable flexbox */
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Center items vertically */
+  align-items: center; /* Center items horizontally */
+  height: 100vh; /* Optional: full height for overlay */
 }
 
-#loading-overlay .spinner-border {
-  width: 5rem;
-  height: 5rem;
+#loading-overlay .loading-logo {
+  width: 300px; /* Adjust the width of your logo as needed */
+  height: auto; /* Maintain the aspect ratio */
 }
 
 #loading-overlay .loading-text {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.5rem; /* Font size for loading text */
+  font-weight: bold; /* Bold text */
+  margin-top: 10px; /* Space above loading text */
 }
 
 [data-bs-theme="dark"] #loading-overlay {
-  background-color: #000000;
+  background-color: #000000; /* Dark background */
 }
 
 [data-bs-theme="light"] #loading-overlay {
-  background-color: #ffffff;
+  background-color: #ffffff; /* Light background */
 }
 
 [data-bs-theme="dark"] #loading-overlay .loading-text {
-  color: #ffffff;
+  color: #ffffff; /* White text in dark theme */
 }
 
 [data-bs-theme="light"] #loading-overlay .loading-text {
-  color: #000000;
+  color: #000000; /* Black text in light theme */
 }
 
 .responsive-text {
