@@ -253,6 +253,26 @@ body {
   height: 2px;
   background-color: var(--text-color);
 }
+.btn-custom {
+  background-color: #007bff; /* Light theme background color */
+  color: white; /* Light theme text color */
+  border: none; /* Remove default border if needed */
+}
+
+.btn-custom:hover {
+  background-color: #0056b3; /* Darker blue on hover for light mode */
+  color: white; /* Keep text color white */
+}
+/* Dark theme styles */
+[data-bs-theme="dark"] .btn-custom {
+  background-color: #0056b3; /* Dark theme background color */
+  color: #fff; /* Dark theme text color */
+}
+
+[data-bs-theme="dark"] .btn-custom:hover {
+  background-color: #004494; /* Darker color on hover for dark mode */
+  color: #fff; /* Keep text color visible */
+}
 
 /* Override Bootstrap's btn-primary class */
 .btn-primary {
