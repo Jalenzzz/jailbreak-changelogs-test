@@ -121,6 +121,36 @@
   padding: 0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+.button-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-group .btn {
+  margin: 0 5px; /* add some spacing between buttons */
+}
+.btn-custom {
+  background-color: #007bff; /* Light theme background color */
+  color: white; /* Light theme text color */
+  border: none; /* Remove default border if needed */
+}
+
+.btn-custom:hover {
+  background-color: #0056b3; /* Darker blue on hover for light mode */
+  color: white; /* Keep text color white */
+}
+
+/* Dark theme styles */
+[data-bs-theme="dark"] .btn-custom {
+  background-color: #0056b3; /* Dark theme background color */
+  color: #fff; /* Dark theme text color */
+}
+
+[data-bs-theme="dark"] .btn-custom:hover {
+  background-color: #004494; /* Darker color on hover for dark mode */
+  color: #fff; /* Keep text color visible */
+}
 
 .custom-dropdown-btn {
   padding: 8px 46px;
@@ -619,12 +649,8 @@ footer {
 }
 .carousel-item img {
   border-radius: 10px;
-  transition: transform 0.3s ease;
 }
 
-.carousel-item img:hover {
-  transform: scale(1.05); /* Slight zoom effect */
-}
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
   background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */

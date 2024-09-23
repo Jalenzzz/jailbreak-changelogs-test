@@ -97,7 +97,7 @@ $(document).ready(function () {
 
       // Proceed if the condition is not met
       const carouselItem = $(`
-        <div class="carousel-item ${isActive}">
+        <div class="carousel-item ${isActive} rounded"> 
           <img src="${reward.link}" class="d-block w-100 img-fluid" alt="${reward.item}">
         </div>
       `);
