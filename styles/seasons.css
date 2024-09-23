@@ -617,6 +617,36 @@ footer {
   background-color: #000000; /* True black background */
   transform: scale(1.05); /* Slightly larger */
 }
+.carousel-item img {
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.carousel-item img:hover {
+  transform: scale(1.05); /* Slight zoom effect */
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  padding: 10px;
+  border-radius: 50%;
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  background-color: rgba(0, 0, 0, 0.8); /* Darker on hover */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: 50px; /* Adjust arrow button size */
+}
+
+.carousel-control-prev-icon::before,
+.carousel-control-next-icon::before {
+  font-size: 20px; /* Increase arrow size */
+}
+
 .season-rewards .badge {
   margin-left: 8px; /* Add space between the badges */
 }
