@@ -15,6 +15,11 @@
   --highlight-text: #000000;
   --border-color: #ff6347;
   --season-rewards-hover-text: #0058db;
+  --reddit-color: #ff4500; /* Reddit Orange */
+  --discord-color: #7289da; /* Discord Blurple */
+  --wiki-color: #1a73e8; /* Wiki Blue */
+  --github-color: #333333; /* GitHub Black */
+  --hover-bg-color: #fe94002e;
 
   --selection-bg: #b0e0e6; /* Powder Blue */
   --selection-text: #000000;
@@ -68,6 +73,7 @@
   --gray-800: #aaaaaa;
   --gray-900: #bbbbbb;
 }
+
 /* Back to Top Button */
 #backToTop {
   display: none; /* Initially hidden */
@@ -191,43 +197,6 @@ footer.hide {
   100% {
     transform: translateX(-100%);
   }
-}
-
-.text-custom-header {
-  color: var(--custom-header-color) !important;
-}
-
-.border-custom-header {
-  border-color: var(--custom-header-color) !important;
-}
-
-.text-custom-subheader {
-  color: var(--custom-subheader-color) !important;
-}
-
-.text-custom-icon {
-  color: var(--custom-icon-color) !important;
-}
-
-/* Override Bootstrap's bg-primary class for navbar */
-.navbar {
-  background-color: var(
-    --header-bg
-  ) !important; /* Using your custom variable */
-}
-
-.navbar-dark .navbar-nav .nav-link {
-  color: var(--header-text) !important; /* Ensures text color is consistent */
-}
-
-/* If you want to ensure the navbar brand text color */
-.navbar-dark .navbar-brand {
-  color: var(--header-text) !important;
-}
-
-/* Additional styles for hover effects */
-.navbar-dark .navbar-nav .nav-link:hover {
-  color: var(--footer-link-hover-color);
 }
 
 /* Override Bootstrap's btn-primary class */
@@ -404,15 +373,20 @@ p,
 span {
   color: var(--text-color);
 }
+.bi-moon-stars-fill {
+  color: #ffffffaf; /* or any other bright color */
+}
+.custom-navbar-color {
+  background-color: #4b4b4b;
+}
+[data-bs-theme="dark"] .custom-navbar-color {
+  background-color: #032b44; /* darker blue color for dark mode */
+  color: #ffffff; /* white text color */
+}
 
 .navbar {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-}
-
-.navbar-brand img {
-  height: 40px;
-  width: auto;
 }
 
 .navbar-nav .nav-link {
@@ -423,18 +397,6 @@ span {
 #theme-toggle {
   padding: 0.375rem 0.75rem;
   font-size: 1.1rem;
-}
-
-.header-logo {
-  width: 10vw; /* 10% of the viewport width */
-  max-width: 65px; /* Maximum size */
-  min-width: 40px; /* Minimum size */
-  height: auto; /* Maintain aspect ratio */
-  border-radius: 10px;
-}
-
-.header-logo:hover {
-  transform: scale(1.1);
 }
 
 @keyframes fadeIn {
@@ -478,13 +440,99 @@ button {
   transition: background-color 0.3s, color 0.3s;
 }
 
+.carousel-item img {
+  border-radius: 10px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  padding: 10px;
+  border-radius: 50%;
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  background-color: rgba(0, 0, 0, 0.8); /* Darker on hover */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: 50px; /* Adjust arrow button size */
+}
+
+.carousel-control-prev-icon::before,
+.carousel-control-next-icon::before {
+  font-size: 20px; /* Increase arrow size */
+}
+
+.season-rewards .badge {
+  margin-left: 8px; /* Add space between the badges */
+}
+
+.season-rewards li:hover .badge {
+  transform: scale(1.05); /* Slightly enlarge on hover for effect */
+  transition: transform 0.2s ease-in-out; /* Smooth transition */
+}
+
+.season-rewards li {
+  padding: 10px;
+}
+
+.season-title {
+  border-bottom: 4px solid var(--border-color);
+  color: var(--border-color) !important;
+}
+.custom-prizes-title {
+  border-bottom: 4px solid var(--border-color);
+  font-size: 2.5rem;
+  color: var(--border-color) !important;
+  font-family: "Luckiest Guy", "Bangers", Arial, Helvetica, sans-serif;
+}
+
+.season-rewards .list-group-item:hover {
+  background-color: var(--gray-300);
+  color: var(--text-color);
+  cursor: pointer;
+  transform: scale(1.02);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 1.1rem;
+  transition: background-color 0.3s ease, transform 0.3s ease,
+    box-shadow 0.3s ease, padding 0.3s ease;
+}
+
+/* Target all text elements inside the list item */
+.season-rewards .list-group-item:hover * {
+  text-decoration: none; /* Remove underline if any */
+  color: var(--season-rewards-hover-text); /* Change text color on hover */
+  font-weight: bold; /* Make text bold */
+}
+
+.season-rewards .list-group-item:hover .badge {
+  background-color: var(--header-bg);
+  color: #fff;
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.bonus-badge {
+  margin-right: 0.5rem; /* Adjust the spacing as needed */
+}
 /* Footer Styling */
 footer {
   background-color: var(--bg-color);
-  padding: 2rem 0;
   color: var(--text-color);
+  padding: 2rem 0;
+  border-top: 1px solid var(--border-color);
+}
+/* Dark Theme Adjustments */
+[data-bs-theme="dark"] footer {
+  background-color: var(--gray-100);
 }
 
+[data-bs-theme="dark"] .footer-section h3 {
+  color: var(--footer-link-color);
+}
 /* Badimo Message Card */
 .badimo-message {
   background-color: rgba(255, 255, 255, 0.1);
@@ -520,72 +568,71 @@ footer {
   color: var(--highlight-text);
 }
 
-/* Bigger View Details text */
-.view-details-btn {
-  font-size: 1.7rem;
-  font-weight: bold;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-.timeline-entry:hover .view-details-btn {
-  background-color: var(--button-primary-bg);
-  color: var(--button-primary-text);
-}
-
-/* Remove duplicate accordion styling */
-.accordion-button,
-.accordion-button:not(.collapsed) {
-  background-color: transparent;
-  color: inherit;
-}
-
-.accordion-button:focus {
-  box-shadow: none;
-}
-
-/* Light theme accordion */
+/* Light Mode Accordion Styling */
 [data-bs-theme="light"] .accordion-item {
-  background-color: var(--gray-100);
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  background-color: var(--gray-100); /* Light background for accordion */
 }
 
 [data-bs-theme="light"] .accordion-button {
-  background-color: var(--gray-200);
-  color: var(--text-color);
+  background-color: var(
+    --gray-200
+  ); /* Slightly darker than the item background */
+  color: var(--text-color); /* Dark text for contrast */
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 [data-bs-theme="light"] .accordion-button:not(.collapsed) {
-  background-color: var(--gray-300);
-  color: var(--header-bg);
+  background-color: var(--gray-300); /* Even darker when expanded */
+  color: var(--header-bg); /* Accent color for active state */
 }
 
-/* Dark theme accordion */
+[data-bs-theme="light"] .accordion-button:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 69, 0, 0.25); /* Accent outline on focus */
+}
+
+[data-bs-theme="light"] .accordion-body {
+  background-color: var(--gray-100); /* Light body for contrast with button */
+  color: var(--text-color); /* Dark text */
+  padding: 15px;
+  border-top: 1px solid var(--gray-300); /* Subtle border for separation */
+}
+
+/* Dark Mode Accordion Styling */
 [data-bs-theme="dark"] .accordion-item {
-  background-color: #2c2c2c;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 1rem;
+  background-color: #2c2c2c; /* Dark background for accordion */
 }
 
 [data-bs-theme="dark"] .accordion-button {
-  background-color: #3a3a3a;
-  color: #ffffff;
+  background-color: #3a3a3a; /* Slightly lighter than the item background */
+  color: #ffffff; /* White text for better contrast */
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 [data-bs-theme="dark"] .accordion-button:not(.collapsed) {
-  background-color: #4a4a4a;
-  color: #ffcc00;
+  background-color: #4a4a4a; /* Even lighter when expanded */
+  color: #ffcc00; /* Accent color for active state */
 }
 
-/* Light theme adjustments */
-[data-bs-theme="light"] .timeline-entry:hover::after {
-  box-shadow: 0 0 20px rgba(255, 69, 0, 0.2); /* Lighter glow for light theme */
+[data-bs-theme="dark"] .accordion-button:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 204, 0, 0.25); /* Accent outline on focus */
 }
 
-/* Dark theme adjustments */
-[data-bs-theme="dark"] .timeline-entry:hover::after {
-  box-shadow: 0 0 20px rgba(255, 165, 0, 0.4); /* Stronger glow for dark theme */
+[data-bs-theme="dark"] .accordion-body {
+  background-color: #333333; /* Darker body for contrast with button */
+  color: #e0e0e0; /* Light gray text */
+  padding: 15px;
+  border-top: 1px solid #444444; /* Subtle border for separation */
 }
-
-[data-bs-theme="dark"] .timeline-entry:hover .view-details-btn {
-  background-color: var(--button-primary-hover-bg);
-}
-
 /* Admin Links */
 .admin-link {
   color: var(--footer-link-color);
@@ -608,6 +655,29 @@ footer {
 
 .version-info p {
   margin: 0;
+}
+
+/* Back to Top Button */
+#backToTop {
+  display: none; /* Initially hidden */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--button-primary-bg);
+  color: #ffffff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, display 0.3s;
+  z-index: 1000; /* Ensure it's above other content */
+}
+
+#backToTop.show {
+  display: block; /* Show when the 'show' class is added */
+}
+
+#backToTop:hover {
+  background-color: var(--button-primary-hover-bg);
 }
 
 /* General Link Styles */
@@ -664,90 +734,11 @@ footer {
   background-color: #000000; /* True black background */
   transform: scale(1.05); /* Slightly larger */
 }
-.carousel-item img {
-  border-radius: 10px;
-}
 
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-  padding: 10px;
-  border-radius: 50%;
-}
-
-.carousel-control-prev-icon:hover,
-.carousel-control-next-icon:hover {
-  background-color: rgba(0, 0, 0, 0.8); /* Darker on hover */
-}
-
-.carousel-control-prev,
-.carousel-control-next {
-  width: 50px; /* Adjust arrow button size */
-}
-
-.carousel-control-prev-icon::before,
-.carousel-control-next-icon::before {
-  font-size: 20px; /* Increase arrow size */
-}
-
-.season-rewards .badge {
-  margin-left: 8px; /* Add space between the badges */
-}
-
-.season-rewards li:hover .badge {
-  transform: scale(1.05); /* Slightly enlarge on hover for effect */
-  transition: transform 0.2s ease-in-out; /* Smooth transition */
-}
-
-.season-rewards li {
-  padding: 10px;
-}
-
-/* Dark Theme Adjustments */
 /* Dark Theme Adjustments */
 [data-bs-theme="dark"] .github-link:hover {
   background-color: #444c56; /* Lighter gray for better visibility in dark mode */
 }
-.season-title {
-  border-bottom: 4px solid var(--border-color);
-  color: var(--border-color) !important;
-}
-.custom-prizes-title {
-  border-bottom: 4px solid var(--border-color);
-  font-size: 2.5rem;
-  color: var(--border-color) !important;
-  font-family: "Luckiest Guy", "Bangers", Arial, Helvetica, sans-serif;
-}
-
-.season-rewards .list-group-item:hover {
-  background-color: var(--gray-300);
-  color: var(--text-color);
-  cursor: pointer;
-  transform: scale(1.02);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  padding: 1.1rem;
-  transition: background-color 0.3s ease, transform 0.3s ease,
-    box-shadow 0.3s ease, padding 0.3s ease;
-}
-
-/* Target all text elements inside the list item */
-.season-rewards .list-group-item:hover * {
-  text-decoration: none; /* Remove underline if any */
-  color: var(--season-rewards-hover-text); /* Change text color on hover */
-  font-weight: bold; /* Make text bold */
-}
-
-.season-rewards .list-group-item:hover .badge {
-  background-color: var(--header-bg);
-  color: #fff;
-  transform: scale(1.1);
-  transition: transform 0.3s ease;
-}
-
-.bonus-badge {
-  margin-right: 0.5rem; /* Adjust the spacing as needed */
-}
-
 @media (max-width: 576px) {
   .season-rewards .badge {
     margin: 0 0.25rem; /* Add horizontal spacing between badges */
