@@ -8,7 +8,7 @@
   --footer-link-hover-color: #ff7f50; /* Coral */
   --button-primary-bg: #ff4500; /* Orange Red */
   --button-primary-text: #ffffff;
-  --button-primary-hover-bg: #ff6347; /* Tomato */
+  --button-primary-hover-bg: #fc2600;
   --button-secondary-bg: #32cd32; /* Lime Green */
   --button-secondary-hover-bg: #006400; /* Dark Green */
   --mention-bg: #ffe4c4; /* Bisque */
@@ -134,6 +134,27 @@
   ) !important; /* Use your custom variable */
   border-color: var(--button-primary-bg) !important;
   color: var(--button-primary-text) !important;
+}
+.btn-custom {
+  background-color: #007bff; /* Light theme background color */
+  color: white; /* Light theme text color */
+  border: none; /* Remove default border if needed */
+}
+
+.btn-custom:hover {
+  background-color: #0056b3; /* Darker blue on hover for light mode */
+  color: white; /* Keep text color white */
+}
+
+/* Dark theme styles */
+[data-bs-theme="dark"] .btn-custom {
+  background-color: #0056b3; /* Dark theme background color */
+  color: #fff; /* Dark theme text color */
+}
+
+[data-bs-theme="dark"] .btn-custom:hover {
+  background-color: #004494; /* Darker color on hover for dark mode */
+  color: #fff; /* Keep text color visible */
 }
 
 .btn-primary:hover,
