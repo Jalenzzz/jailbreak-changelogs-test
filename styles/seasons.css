@@ -11,9 +11,10 @@
   --button-primary-hover-bg: #ff6347; /* Tomato */
   --button-secondary-bg: #32cd32; /* Lime Green */
   --button-secondary-hover-bg: #006400; /* Dark Green */
-  --highlight-bg: rgba(255, 165, 0, 0.5); /* Semi-transparent Orange */
+  --highlight-bg: rgba(255, 166, 0, 0.5); /* Semi-transparent Orange */
   --highlight-text: #000000;
   --border-color: #ff6347;
+  --season-rewards-hover-text: #0058db;
 
   --selection-bg: #b0e0e6; /* Powder Blue */
   --selection-text: #000000;
@@ -48,7 +49,9 @@
   --selection-text: #ffffff;
   --glow-color: 255, 165, 0; /* Orange */
   --hover-bg-color: #5a5a5a;
+  --highlight-bg: rgba(189, 44, 0, 0.5);
   --border-color: #ff6347;
+  --season-rewards-hover-text: #5494f3;
 
   --reddit-color: #ff4500; /* Reddit Orange */
   --discord-color: #7289da; /* Discord Blurple */
@@ -356,21 +359,35 @@ footer.hide {
   flex: 1;
   min-width: 0;
 }
+/* Add this to your CSS file */
 
-#content h1 {
-  color: var(--footer-link-color);
-  font-family: "Bangers", Arial, Helvetica, sans-serif;
-  border-bottom: 2px solid var(--footer-link-color);
+.card {
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
+}
+.card-body {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700; /* or 800, 900 for an even bolder look */
+}
+.card-body .card-text {
+  background-color: var(--highlight-bg); /* Change background color on hover */
+  padding: 0.2rem 0.5rem; /* Add padding to create a highlight effect */
+  border-radius: 0.5rem; /* Add border radius to the highlight */
+  color: inherit; /* Inherit text color from parent */
+  font-weight: bold; /* Make text bold on hover */
+}
 #content h2 {
   color: var(--orange-button-bg);
-  font-family: "Bangers", Arial, Helvetica, sans-serif;
+  font-family: "Luckiest Guy", "Bangers", Arial, Helvetica, sans-serif;
 }
 
 #content h3 {
   color: var(--text-color);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Luckiest Guy", "Bangers", Arial, Helvetica, sans-serif;
 }
 
 #content p {
@@ -699,11 +716,11 @@ footer {
   border-bottom: 4px solid var(--border-color);
   font-size: 2.5rem;
   color: var(--border-color) !important;
-  font-family: "Bangers", Arial, Helvetica, sans-serif !important;
+  font-family: "Luckiest Guy", "Bangers", Arial, Helvetica, sans-serif;
 }
 
 .season-rewards .list-group-item:hover {
-  background-color: var(--hover-bg-color);
+  background-color: var(--gray-300);
   color: var(--text-color);
   cursor: pointer;
   transform: scale(1.02);
@@ -716,7 +733,7 @@ footer {
 /* Target all text elements inside the list item */
 .season-rewards .list-group-item:hover * {
   text-decoration: none; /* Remove underline if any */
-  color: var(--header-text); /* Change text color on hover */
+  color: var(--season-rewards-hover-text); /* Change text color on hover */
   font-weight: bold; /* Make text bold */
 }
 

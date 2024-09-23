@@ -53,9 +53,13 @@ $(document).ready(function () {
       return;
     }
     $seasonDetailsContainer.html(`
-      <h2 class="season-title display-4 text-custom-header">Season ${season} / ${seasonData.title}</h2>
-      <p class="season-description lead">${seasonData.description}</p>
-      <h3 class="prizes-title display-5 custom-prizes-title">Season Rewards</h3>
+      <h2 class="season-title display-4 text-custom-header mb-3">Season ${season} / ${seasonData.title}</h2>
+      <div class="card mb-5 shadow">
+        <div class="card-body py-4">
+          <p class="card-text lead">${seasonData.description}</p>
+        </div>
+      </div>
+      <h3 class="prizes-title display-5 custom-prizes-title mb-4">Season Rewards</h3>
     `);
 
     // Add season rewards below the description
