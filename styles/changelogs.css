@@ -94,21 +94,28 @@ html[data-bs-theme="light"] .changelog-dropdown-item:hover {
 
 /* Light Theme Styles for Example Queries */
 [data-bs-theme="light"] .example-queries {
-  background-color: var(--gray-100);
-  border: 1px solid var(--gray-300);
+  background-color: #f7f7f9; /* Match the main background color */
+  border: 1px solid #cccccc; /* Softer gray border */
+  padding: 15px; /* Add some padding for better readability */
+  border-radius: 10px; /* Add a subtle border radius */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
 }
 
 [data-bs-theme="light"] .example-queries p {
-  color: var(--text-color);
+  color: #333333; /* Use a darker gray for better contrast */
+  font-size: 1rem; /* Use a standard font size */
+  margin-bottom: 10px; /* Add some margin for better spacing */
 }
 
 [data-bs-theme="light"] .example-query {
-  color: var(--footer-link-color);
+  color: #ff341c; /* Use a brighter color for links */
+  text-decoration: none; /* Remove the default underline */
+  transition: color 0.3s; /* Add a smooth transition for hover effects */
 }
 
 [data-bs-theme="light"] .example-query:hover {
-  color: var(--footer-link-hover-color);
-  background-color: var(--gray-200);
+  color: #ff7f50; /* Use a slightly darker color on hover */
+  background-color: #e6f7ff; /* Add a light blue background on hover */
 }
 
 /* Light Mode Accordion Styling */
@@ -143,6 +150,10 @@ html[data-bs-theme="light"] .changelog-dropdown-item:hover {
   color: var(--text-color); /* Dark Text */
   padding: 15px;
   border-top: 1px solid var(--gray-300); /* Subtle Border for Separation */
+}
+[data-bs-theme="light"] .custom-search-item:hover {
+  background-color: #f8f9fa; /* Light background on hover */
+  color: #0056b3; /* Text color on hover */
 }
 
 /* Dark Theme Colors */
@@ -266,23 +277,29 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Dark Theme Styles for Example Queries */
 [data-bs-theme="dark"] .example-queries {
-  background-color: var(--gray-200);
-  border: 1px solid var(--gray-700);
+  background-color: #333333; /* Dark gray background */
+  border: 1px solid #4a4a4a; /* Dark gray border */
+  padding: 15px; /* Add some padding for better readability */
+  border-radius: 10px; /* Add a subtle border radius */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
 }
 
 [data-bs-theme="dark"] .example-queries p {
-  color: var(--header-text);
+  color: #ffffff; /* White text color */
+  font-size: 1rem; /* Use a standard font size */
+  margin-bottom: 10px; /* Add some margin for better spacing */
 }
 
 [data-bs-theme="dark"] .example-query {
-  color: var(--footer-link-color);
+  color: #ff6347; /* Tomato color for links */
+  text-decoration: none; /* Remove the default underline */
+  transition: color 0.3s; /* Add a smooth transition for hover effects */
 }
 
 [data-bs-theme="dark"] .example-query:hover {
-  color: var(--gray-300);
-  background-color: var(--gray-700);
+  color: #ff7f50; /* Coral color on hover */
+  background-color: #3a3a3a; /* Dark gray background on hover */
 }
-
 /* Dark Theme Adjustments */
 [data-bs-theme="dark"] footer {
   background-color: var(--gray-100);
@@ -323,6 +340,12 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   padding: 15px;
   border-top: 1px solid var(--gray-300); /* Subtle Border for Separation */
 }
+/* Dark mode hover styles for custom search item */
+[data-bs-theme="dark"] .custom-search-item:hover {
+  background-color: #5c6269; /* Deep blue-gray background for dark mode hover */
+  color: #ffdd57; /* Vibrant yellow-orange text color for dark mode hover */
+}
+
 /* Icon Color */
 .bi-moon-stars-fill {
   color: #ffffffaf; /* Semi-transparent white for moon icon */
@@ -495,10 +518,6 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 .custom-search-item {
   cursor: pointer; /* Pointer cursor on hover */
   transition: background-color 0.2s; /* Smooth background color transition */
-}
-
-.custom-search-item:hover {
-  background-color: var(--hover-bg-color, #f8f9fa); /* Hover background color */
 }
 
 /* Copy Changelog Button Styles */
@@ -787,29 +806,6 @@ span {
   color: #333; /* Darker color on hover */
 }
 
-/* Example Queries Styles */
-.example-queries {
-  border-radius: 0.25rem; /* Rounded corners */
-  padding: 0.5rem; /* Padding */
-  z-index: 1000; /* High stacking context */
-  width: 100%; /* Full width */
-  top: 100%; /* Position below element */
-  left: 0; /* Align to left */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-/* Example Query Link Styles */
-.example-query {
-  display: block; /* Block display */
-  padding: 0.25rem 0.5rem; /* Padding */
-  text-decoration: none; /* No underline */
-  border-radius: 0.25rem; /* Rounded corners */
-  transition: color 0.3s, background-color 0.3s; /* Smooth transitions */
-}
-
-.example-query:hover {
-  text-decoration: none; /* No underline on hover */
-}
 /* Header Styles */
 header {
   border-radius: 10px; /* Rounded corners */

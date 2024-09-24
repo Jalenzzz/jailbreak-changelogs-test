@@ -148,9 +148,17 @@ $(document).ready(function () {
     }
   });
 
-  // Hide example queries when clicking outside
+  // Hide example queries when clicking outside the search input or example queries container
   $(document).on("click", function (event) {
-    if (!$(event.target).closest(".d-flex").length) {
+    // Check if the click event is not triggered on the example queries themselves
+    if (
+      !$exampleQueries.is(event.target) &&
+      // Check if the click event is not triggered on any descendants of the example queries
+      $exampleQueries.has(event.target).length === 0 &&
+      // Check if the click event is not triggered on the search input
+      !$(event.target).is($searchInput)
+    ) {
+      // If all conditions are true, hide the example queries
       $exampleQueries.addClass("d-none"); // Hide if clicked outside
     }
   });

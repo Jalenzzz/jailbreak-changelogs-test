@@ -220,14 +220,17 @@
             </button>
           </div>
           <div
-            id="exampleQueries"
-            class="d-none position-absolute w-100 bg-light border rounded mt-1"
-            style="top: 100%; left: 0"
-          >
+          id="exampleQueries"
+          class="position-absolute w-100 rounded mt-1"
+          :data-bs-theme="theme === 'light' ? 'light' : 'dark'"
+          style="top: 100%; left: 0"
+        >
+          <div class="example-queries">
             <a href="#" class="example-query d-block px-2 py-1">has: audio</a>
             <a href="#" class="example-query d-block px-2 py-1">has: video</a>
             <a href="#" class="example-query d-block px-2 py-1">has: image</a>
           </div>
+        </div>
         </form>
 
         <div class="d-flex align-items-center">
