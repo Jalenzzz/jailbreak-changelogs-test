@@ -42,7 +42,9 @@ body {
   background-color: #f8f9fa;
 }
 .offcanvas-header {
-  display: none; /* hide the header */
+  display: flex; /* Keep the header visible */
+  justify-content: space-between; /* Align items properly */
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
 }
 
 .offcanvas-body {
@@ -51,7 +53,12 @@ body {
 }
 
 .offcanvas {
-  background-color: transparent;
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.9
+  ); /* Slightly opaque to ensure visibility */
   border: none;
   box-shadow: none;
 }

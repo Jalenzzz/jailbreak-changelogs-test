@@ -246,13 +246,6 @@ body {
   text-align: right;
 }
 
-.timeline-line {
-  position: absolute;
-  top: 50%;
-  width: 20px;
-  height: 2px;
-  background-color: var(--text-color);
-}
 .btn-custom {
   background-color: #007bff; /* Light theme background color */
   color: white; /* Light theme text color */
