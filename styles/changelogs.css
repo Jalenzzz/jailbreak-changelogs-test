@@ -1,20 +1,27 @@
 /* Light theme */
 [data-bs-theme="light"] body {
   --bg-color: #f7f7f9; /* Ghost White */
+  --content-h1: #31b1ff; /* Color for h1 */
+  --content-h2: #ff341c; /* Color for h2 */
+  --content-h3: #333333; /* Color for h3 and paragraph text */
+  --content-paragraph: #333333; /* Color for paragraphs */
+  --content-bullet: #31b1ff; /* Color for bullets */
   --text-color: #2e2e2e; /* Dark Charcoal */
   --header-bg: #ff4500; /* Orange Red */
   --header-text: #ffffff; /* White */
   --footer-link-color: #ff6347; /* Tomato */
   --footer-link-hover-color: #ff7f50; /* Coral */
-  --button-primary-bg: #ff4500; /* Orange Red */
-  --button-primary-text: #ffffff; /* White */
-  --button-primary-hover-bg: #fc2600; /* Scarlet Red */
+  --button-primary-bg: #4b4b4b; /* new primary color */
+  --button-primary-text: #ffffff;
+  --button-primary-hover-bg: #5a5a5a;
   --button-secondary-bg: #32cd32; /* Lime Green */
   --button-secondary-hover-bg: #006400; /* Dark Green */
-  --mention-bg: #ffe4c4; /* Bisque */
-  --mention-at-color: #8b0000; /* Dark Red */
-  --mention-username-color: #ff4500; /* Orange Red */
-  --mention-hover-bg: #ffdab9; /* Peach Puff */
+  --mention-color-light: #000000; /* Default text color for mentions */
+  --mention-bg: #e0e0e0; /* Background color for mentions */
+  --at-color-light: #007bff; /* Color for '@' symbol */
+  --username-color-light: #ff341c; /* Color for username */
+  --mention-hover-bg: #d0d0d0; /* Hover background color for mentions */
+
   --highlight-bg: rgba(255, 165, 0, 0.5); /* Semi-transparent Orange */
   --highlight-text: #000000; /* Black */
   --no-results-color: #2e2e2e; /* Dark Charcoal */
@@ -22,11 +29,10 @@
   --news-ticker-text: #ffffff; /* White */
   --selection-bg: #b0e0e6; /* Powder Blue */
   --selection-text: #000000; /* Black */
-  --glow-color: 255, 99, 71; /* Tomato */
+  --glow-color: #ffc107; /* glow color, same as primary color */
   --custom-header-color: #ffcc00; /* Goldenrod Yellow */
   --custom-subheader-color: #ffaa00; /* Amber */
   --custom-icon-color: #ff8800; /* Dark Orange */
-  --mention-color-light: #ff8800; /* Light Orange */
   --at-color-light: #ff6600; /* Bright Orange */
   --username-color-light: #cc4400; /* Burnt Orange */
   --reddit-color: #ff4500; /* Reddit Orange */
@@ -49,28 +55,34 @@
 /* Dark theme */
 [data-bs-theme="dark"] body {
   --bg-color: #222222; /* Dark Gray */
+  --content-h1: #31b1ff; /* Lighter blue for dark mode */
+  --content-h2: #fa523f; /* Softer red for dark mode */
+  --content-h3: #e0e0e0; /* Light gray for h3 and paragraph text */
+  --content-paragraph: #e0e0e0; /* Light gray for paragraphs */
+  --content-bullet: #1e90ff; /* Lighter blue for bullets */
   --text-color: #ffffff; /* White */
   --header-bg: #8b0000; /* Dark Red */
   --header-text: #ffffff; /* White */
   --footer-link-color: #ff6347; /* Tomato */
   --footer-link-hover-color: #ff7f50; /* Coral */
-  --button-primary-bg: #ff4500; /* Orange Red */
-  --button-primary-text: #ffffff; /* White */
-  --button-primary-hover-bg: #ff6347; /* Tomato */
+  --button-primary-bg: #032b44;
+  --button-primary-text: #ffffff; /* white text color */
+  --button-primary-hover-bg: #054b6e; /* darker grey hover color for dark mode */
   --button-secondary-bg: #32cd32; /* Lime Green */
   --button-secondary-hover-bg: #006400; /* Dark Green */
-  --mention-bg: #b97200; /* Peru */
-  --mention-at-color: #f5f5f5; /* White Smoke */
-  --mention-username-color: #3cff00; /* Electric Green */
-  --mention-bg: #431d00; /* Seal Brown */
+  --mention-color-dark: #ff6f61; /* Bright Orange */
+  --mention-bg: #1e1e1e; /* Dark Slate Blue */
+  --at-color-dark: #ffd700; /* Bright Yellow for '@' symbol */
+  --username-color-dark: #ff4500; /* Bright Orange Red for username */
+
   --highlight-bg: rgba(255, 165, 0, 0.4); /* Semi-transparent Orange */
   --highlight-text: #ffffff; /* White */
   --news-ticker-bg: #ff4500; /* Orange Red */
   --news-ticker-text: #ffffff; /* White */
   --selection-bg: #4682b4; /* Steel Blue */
   --selection-text: #ffffff; /* White */
-  --glow-color: 255, 165, 0; /* Orange */
-  --mention-color-dark: #ff8800; /* Dark Orange */
+  --glow-color: #4b4b4b; /* glow color, same as dark mode primary color */
+
   --at-color-dark: #ff6600; /* Bright Orange */
   --username-color-dark: #cc4400; /* Burnt Orange */
   --hover-bg-color: #5a5a5a; /* Dim Gray */
@@ -112,11 +124,20 @@
 
 /* Override Bootstrap's btn-primary class */
 .btn-primary {
-  background-color: var(
-    --button-primary-bg
-  ) !important; /* Use your custom variable */
-  border-color: var(--button-primary-bg) !important;
-  color: var(--button-primary-text) !important;
+  background-color: var(--button-primary-bg);
+  border-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active {
+  background-color: var(--button-primary-hover-bg);
+  border-color: var(--button-primary-hover-bg);
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 0.2rem rgba(var(--glow-color), 0.5);
 }
 .btn-custom {
   background-color: #007bff; /* Light theme background color */
@@ -140,17 +161,6 @@
   color: #fff; /* Keep text color visible */
 }
 
-.btn-primary:hover,
-.btn-primary:focus,
-.btn-primary:active,
-.btn-primary.active {
-  background-color: var(--button-primary-hover-bg) !important;
-  border-color: var(--button-primary-hover-bg) !important;
-}
-
-.btn-primary:focus {
-  box-shadow: 0 0 0 0.2rem rgba(var(--glow-color), 0.5);
-}
 /* Style for the dropdown toggle link */
 .nav-link.dropdown-toggle {
   color: #ffffff;
@@ -478,32 +488,33 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   min-width: 0;
 }
 
+/* Styles for content */
 #content h1 {
-  color: var(--footer-link-color);
+  color: var(--content-h1);
   font-family: "Bangers", Arial, Helvetica, sans-serif;
-  border-bottom: 2px solid var(--footer-link-color);
+  border-bottom: 2px solid var(--content-h1);
 }
 
 #content h2 {
-  color: var(--orange-button-bg);
+  color: var(--content-h2);
   font-family: "Bangers", Arial, Helvetica, sans-serif;
 }
 
 #content h3 {
-  color: var(--text-color);
+  color: var(--content-h3);
   font-family: Arial, Helvetica, sans-serif;
 }
 
 #content p {
-  color: var(--text-color);
+  color: var(--content-paragraph);
 }
 
 #content .bullet {
-  color: var(--footer-link-color);
+  color: var(--content-bullet);
 }
 
 #content .sub-bullet {
-  color: var(--footer-link-color);
+  color: var(--content-bullet);
 }
 
 /* Light mode */
@@ -542,7 +553,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 
 [data-bs-theme="dark"] .mention:hover {
-  background-color: #9662006c;
+  background-color: #9662006c; /* Custom hover background */
   cursor: pointer; /* Change cursor to pointer on hover */
 }
 
@@ -583,7 +594,7 @@ span {
   color: var(--text-color);
 }
 .custom-navbar-color {
-  background-color: #4b4b4b;
+  background-color: #333333;
 }
 [data-bs-theme="dark"] .custom-navbar-color {
   background-color: #032b44; /* darker blue color for dark mode */
