@@ -1,88 +1,111 @@
 $(document).ready(function () {
+  // Get references to DOM elements
   const loadingOverlay = document.getElementById("loading-overlay");
   const apiUrl = "https://api.jailbreakchangelogs.xyz/get_changelogs";
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
   const titleElement = document.getElementById("changelogTitle");
+
+  // jQuery references for search results and navbar
   const $searchResultsContainer = $("#search-results");
   const $navbarCollapse = $("#navbarContent");
+
+  // Get reference to the clear filter button
   const clearFilterBtn = document.getElementById("clearDateFilter");
 
+  // Initialize Bootstrap modal for date filtering
   const dateFilterModal = new bootstrap.Modal(
     document.getElementById("dateFilterModal")
   );
+
+  // Event listeners to open the date filter modal
   document
     .getElementById("mobileOpenDateFilterModal")
     .addEventListener("click", function () {
       dateFilterModal.show();
     });
+
   document
     .getElementById("desktopOpenDateFilterModal")
     .addEventListener("click", function () {
       dateFilterModal.show();
     });
+
+  // Event listener for applying the date filter
   document
     .getElementById("applyDateFilter")
     .addEventListener("click", function () {
-      const startDate = startDatePicker.getDate();
-      const endDate = endDatePicker.getDate();
+      const startDate = startDatePicker.getDate(); // Get start date
+      const endDate = endDatePicker.getDate(); // Get end date
 
+      // Validate that at least one date is selected
       if (!startDate && !endDate) {
         alert("Please select at least one date before applying the filter.");
       } else {
-        const filteredChangelogs = filterChangelogsByDate();
+        const filteredChangelogs = filterChangelogsByDate(); // Filter changelogs by selected dates
 
+        // Populate dropdown with filtered changelogs
         if (filteredChangelogs.length > 0) {
           populateChangelogDropdown(filteredChangelogs);
           // Update the button text to show the date range
           updateDropdownButton(getDateRangeText());
-          setTimeout(openChangelogDropdown, 100);
+          setTimeout(openChangelogDropdown, 100); // Open dropdown after a short delay
         } else {
-          populateChangelogDropdown([]);
+          populateChangelogDropdown([]); // Clear dropdown if no changelogs found
         }
 
-        dateFilterModal.hide();
+        dateFilterModal.hide(); // Close the modal
       }
     });
 
+  // Initialize changelogs data and debounce timer
   let changelogsData = [];
   let debounceTimer;
 
+  // Function to show the loading overlay
   function showLoadingOverlay() {
     loadingOverlay.classList.add("show");
   }
 
+  // Function to hide the loading overlay
   function hideLoadingOverlay() {
     loadingOverlay.classList.remove("show");
   }
 
+  // Show the loading overlay initially
   showLoadingOverlay();
 
+  // Function to preprocess Markdown text
   const preprocessMarkdown = (markdown) =>
     markdown
-      .replace(/ - /g, "\n- ")
-      .replace(/ - - /g, "\n- - ")
-      .replace(/## /g, "\n## ")
-      .replace(/### /g, "\n### ")
-      .replace(/\(audio\) /g, "\n(audio) ")
-      .replace(/\(video\) /g, "\n(video) ")
-      .replace(/\(image\) /g, "\n(image) ");
+      .replace(/ - /g, "\n- ") // Format list items
+      .replace(/ - - /g, "\n- - ") // Format nested list items
+      .replace(/## /g, "\n## ") // Format second-level headers
+      .replace(/### /g, "\n### ") // Format third-level headers
+      .replace(/\(audio\) /g, "\n(audio) ") // Format audio references
+      .replace(/\(video\) /g, "\n(video) ") // Format video references
+      .replace(/\(image\) /g, "\n(image) "); // Format image references
 
+  // Function to dismiss the keyboard on mobile
   function dismissKeyboard() {
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
   }
+
+  // Function to close the navbar if it is open
   function closeNavbar() {
     if ($navbarCollapse.hasClass("show")) {
       $navbarCollapse.collapse("hide");
     }
   }
 
+  // jQuery references for search input and UI elements
   const $searchInput = $('input[aria-label="Search changelogs"]');
   const $exampleQueries = $("#exampleQueries");
   const $clearButton = $("#clear-search-button");
 
+  // Event listener for input in the search field
   $searchInput.on("input", function () {
     clearTimeout(debounceTimer); // Clear the previous timer
     const query = $(this).val().trim(); // Get the trimmed query
@@ -94,206 +117,214 @@ $(document).ready(function () {
     }, 300); // 300 milliseconds delay
   });
 
+  // Event listener for the clear button
   $clearButton.on("click", function () {
-    $searchInput.val("");
-
-    clearSearch();
+    $searchInput.val(""); // Clear the search input
+    clearSearch(); // Call clearSearch function
   });
 
   // Handle Enter key press or mobile 'Go' button
   $searchInput.on("keydown", function (e) {
     if (e.key === "Enter") {
       e.preventDefault(); // Prevent default form submission behavior
-      focusOnSearchResults();
+      focusOnSearchResults(); // Focus on the search results
       dismissKeyboard(); // Dismiss the keyboard on mobile
     }
   });
 
   // Handle example query click
   $(".example-query").on("click", function (e) {
-    e.preventDefault();
-    const query = $(this).text();
-    $searchInput.val(query);
-    performSearch();
-    $exampleQueries.addClass("d-none");
+    e.preventDefault(); // Prevent default action
+    const query = $(this).text(); // Get the example query text
+    $searchInput.val(query); // Set the search input to the example query
+    performSearch(); // Perform the search
+    $exampleQueries.addClass("d-none"); // Hide example queries
   });
 
   // Show example queries when clicking on the search input
   $searchInput.on("focus", function () {
     if ($(this).val().trim() === "") {
-      $exampleQueries.removeClass("d-none");
+      $exampleQueries.removeClass("d-none"); // Show example queries if input is empty
     }
   });
 
   // Hide example queries when clicking outside
   $(document).on("click", function (event) {
     if (!$(event.target).closest(".d-flex").length) {
-      $exampleQueries.addClass("d-none");
+      $exampleQueries.addClass("d-none"); // Hide if clicked outside
     }
   });
+
+  // Function to focus on the first search result
   function focusOnSearchResults() {
     if ($searchResultsContainer.children().length > 0) {
-      $searchResultsContainer.children().first().focus();
+      $searchResultsContainer.children().first().focus(); // Focus on the first result
     }
   }
 
+  // Function to populate the changelog dropdowns for mobile and desktop
   function populateChangelogDropdown(changelogs) {
-    const $mobileDropdown = $("#mobileChangelogList");
-    const $desktopDropdown = $("#desktopChangelogList");
+    const $mobileDropdown = $("#mobileChangelogList"); // Reference to mobile dropdown
+    const $desktopDropdown = $("#desktopChangelogList"); // Reference to desktop dropdown
 
-    $mobileDropdown.empty();
-    $desktopDropdown.empty();
+    $mobileDropdown.empty(); // Clear existing items in mobile dropdown
+    $desktopDropdown.empty(); // Clear existing items in desktop dropdown
 
+    // Check if there are no changelogs to display
     if (changelogs.length === 0) {
       $mobileDropdown.append(`
-            <li>
-                <span class="dropdown-item-text">No data for selected dates</span>
-            </li>
-        `);
+          <li>
+              <span class="dropdown-item-text">No data for selected dates</span>
+          </li>
+      `);
       $desktopDropdown.append(`
-            <li>
-                <span class="dropdown-item-text">No data for selected dates</span>
-            </li>
-        `);
+          <li>
+              <span class="dropdown-item-text">No data for selected dates</span>
+          </li>
+      `);
     } else {
+      // Sort changelogs by ID in descending order
       const sortedChangelogs = changelogs.sort((a, b) => b.id - a.id);
 
+      // Populate dropdowns with sorted changelogs
       sortedChangelogs.forEach((changelog) => {
         $mobileDropdown.append(`
-                <li class="w-100">
-                    <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
-                        <span class="changelog-title">${changelog.title}</span>
-                    </a>
-                </li>
-            `);
+              <li class="w-100">
+                  <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
+                      <span class="changelog-title">${changelog.title}</span>
+                  </a>
+              </li>
+          `);
         $desktopDropdown.append(`
-                <li class="w-100">
-                    <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
-                        <span class="changelog-title">${changelog.title}</span>
-                    </a>
-                </li>
-            `);
+              <li class="w-100">
+                  <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
+                      <span class="changelog-title">${changelog.title}</span>
+                  </a>
+              </li>
+          `);
       });
     }
   }
 
   // Initialize Bootstrap dropdowns
   var dropdownElementList = [].slice.call(
-    document.querySelectorAll(".dropdown-toggle")
+    document.querySelectorAll(".dropdown-toggle") // Select all dropdown toggle elements
   );
   var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-    return new bootstrap.Dropdown(dropdownToggleEl);
+    return new bootstrap.Dropdown(dropdownToggleEl); // Create Bootstrap dropdown instances
   });
 
-  // Pikaday configuration
-  // Initialize Bootstrap dropdowns
-  var dropdownElementList = [].slice.call(
-    document.querySelectorAll(".dropdown-toggle")
-  );
-  var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-    return new bootstrap.Dropdown(dropdownToggleEl);
-  });
-
-  // Pikaday configuration
+  // Pikaday configuration for date picker
   var pikadayConfig = {
-    format: "YYYY-MM-DD",
-    showDaysInNextAndPreviousMonths: true,
-    enableSelectionDaysInNextAndPreviousMonths: true,
+    format: "YYYY-MM-DD", // Date format
+    showDaysInNextAndPreviousMonths: true, // Show days in adjacent months
+    enableSelectionDaysInNextAndPreviousMonths: true, // Allow selection of days in adjacent months
     onSelect: function (date) {
-      const fieldId = this._o.field.id;
+      // Callback on date selection
+      const fieldId = this._o.field.id; // Get the ID of the input field
       if (date) {
         // Adjust the date to local timezone
         const localDate = new Date(
-          date.getTime() - date.getTimezoneOffset() * 60000
+          date.getTime() - date.getTimezoneOffset() * 60000 // Convert to local time
         );
         document.getElementById(fieldId).value = localDate
           .toISOString()
-          .split("T")[0];
+          .split("T")[0]; // Set the value of the input field
       } else {
-        document.getElementById(fieldId).value = "";
+        document.getElementById(fieldId).value = ""; // Clear the input field if no date is selected
       }
     },
   };
+
+  // Function to update the button text based on the selected date
   function updateButtonText(fieldId) {
-    const btn = document.getElementById(fieldId + "Btn");
-    const dateString = document.getElementById(fieldId).value;
+    const btn = document.getElementById(fieldId + "Btn"); // Get the button element
+    const dateString = document.getElementById(fieldId).value; // Get the date input value
     if (dateString) {
-      const date = new Date(dateString);
-      const formattedDate = formatDateForButton(date);
-      btn.querySelector("span").textContent = formattedDate;
+      const date = new Date(dateString); // Create a Date object
+      const formattedDate = formatDateForButton(date); // Format the date for display
+      btn.querySelector("span").textContent = formattedDate; // Update button text
     } else {
+      // Set default button text based on the field ID
       btn.querySelector("span").textContent =
         fieldId === "startDate" ? "Select Start Date" : "Select End Date";
     }
   }
+
+  // Function to format the date for the button display
   function formatDateForButton(date) {
     const options = {
       year: "numeric",
       month: "long",
       day: "numeric",
-      timeZone: "UTC",
+      timeZone: "UTC", // Use UTC timezone
     };
-    return date.toLocaleDateString("en-US", options);
+    return date.toLocaleDateString("en-US", options); // Format date as a string
   }
+
+  // Function to update the changelog list based on selected dates
   function updateChangelogList() {
-    const startDate = startDatePicker.getDate();
-    const endDate = endDatePicker.getDate();
+    const startDate = startDatePicker.getDate(); // Get the start date from the picker
+    const endDate = endDatePicker.getDate(); // Get the end date from the picker
 
     if (startDate || endDate) {
-      const filteredChangelogs = filterChangelogsByDate();
+      const filteredChangelogs = filterChangelogsByDate(); // Filter changelogs by date
 
       if (filteredChangelogs.length > 0) {
-        populateChangelogDropdown(filteredChangelogs);
-        updateDropdownButton("filtered");
-        setTimeout(openChangelogDropdown, 100);
+        populateChangelogDropdown(filteredChangelogs); // Populate dropdown with filtered changelogs
+        updateDropdownButton("filtered"); // Update the dropdown button state
+        setTimeout(openChangelogDropdown, 100); // Open dropdown after a brief delay
       } else {
-        populateChangelogDropdown([]);
-        updateDropdownButton("No data for selected dates");
+        populateChangelogDropdown([]); // Populate dropdown with no data
+        updateDropdownButton("No data for selected dates"); // Update button text
       }
     } else {
-      populateChangelogDropdown(changelogsData);
-      updateDropdownButton("default");
+      populateChangelogDropdown(changelogsData); // Populate dropdown with all changelogs
+      updateDropdownButton("default"); // Set button to default state
     }
   }
 
+  // Initialize the start date picker with Pikaday
   var startDatePicker = new Pikaday({
-    ...pikadayConfig,
-    field: document.getElementById("startDate"),
-    trigger: document.getElementById("startDateBtn"),
+    ...pikadayConfig, // Spread existing configuration
+    field: document.getElementById("startDate"), // Input field for start date
+    trigger: document.getElementById("startDateBtn"), // Button to trigger date picker
     onSelect: function () {
-      updateButtonText("startDate");
-      updateChangelogList();
+      updateButtonText("startDate"); // Update button text on date selection
+      updateChangelogList(); // Update changelog list based on new date
     },
   });
 
+  // Initialize the end date picker with Pikaday
   var endDatePicker = new Pikaday({
-    ...pikadayConfig,
-    field: document.getElementById("endDate"),
-    trigger: document.getElementById("endDateBtn"),
+    ...pikadayConfig, // Spread existing configuration
+    field: document.getElementById("endDate"), // Input field for end date
+    trigger: document.getElementById("endDateBtn"), // Button to trigger date picker
     onSelect: function () {
-      updateButtonText("endDate");
-      updateChangelogList();
+      updateButtonText("endDate"); // Update button text on date selection
+      updateChangelogList(); // Update changelog list based on new date
     },
   });
 
-  // Modify the event listener for the dropdown button
+  // Modify the event listener for the dropdown button to prevent default behavior
   $(document).on(
     "click",
     "#mobileChangelogDropdown, #desktopChangelogDropdown",
     function (e) {
-      const buttonText = $(this).text().trim();
+      const buttonText = $(this).text().trim(); // Get the text of the clicked dropdown
       if (buttonText === "No data for selected dates") {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); // Prevent default action if no data is available
+        e.stopPropagation(); // Stop the event from bubbling up
       }
     }
   );
 
-  // Update the dropdown button text
+  // Update the dropdown button text based on the provided text
   function updateDropdownButton(text) {
-    const $mobileDropdownButton = $("#mobileChangelogDropdown");
-    const $desktopDropdownButton = $("#desktopChangelogDropdown");
+    const $mobileDropdownButton = $("#mobileChangelogDropdown"); // Mobile dropdown reference
+    const $desktopDropdownButton = $("#desktopChangelogDropdown"); // Desktop dropdown reference
 
+    // Check if the text is default and set button text accordingly
     if (text === "default") {
       $mobileDropdownButton.html(
         '<i class="bi bi-calendar-event me-2"></i>View Changelogs'
@@ -310,32 +341,32 @@ $(document).ready(function () {
       );
     }
 
-    // Initialize the dropdown instance
+    // Initialize the dropdown instance for Bootstrap
     var dropdownElementList = [].slice.call(
-      document.querySelectorAll(".dropdown-toggle")
+      document.querySelectorAll(".dropdown-toggle") // Select all dropdown toggle elements
     );
     var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-      return new bootstrap.Dropdown(dropdownToggleEl);
+      return new bootstrap.Dropdown(dropdownToggleEl); // Create Bootstrap dropdown instances
     });
   }
 
-  // Open date filter modal
+  // Open date filter modal when the button is clicked
   document
     .getElementById("mobileOpenDateFilterModal")
     .addEventListener("click", function () {
-      dateFilterModal.show();
+      dateFilterModal.show(); // Show the date filter modal
     });
   document
     .getElementById("desktopOpenDateFilterModal")
     .addEventListener("click", function () {
-      dateFilterModal.show();
+      dateFilterModal.show(); // Show the date filter modal
     });
 
-  // Define buttons
+  // Define buttons for copying changelog
   const mobileCopyChangelogBtn = $("#mobileCopyChangelog");
   const desktopCopyChangelogBtn = $("#desktopCopyChangelog");
 
-  // Combined function to handle copying the changelog
+  // Combined function to handle copying the changelog content
   function copyChangelog() {
     // Disable buttons to prevent spamming
     mobileCopyChangelogBtn.prop("disabled", true);
@@ -350,28 +381,28 @@ $(document).ready(function () {
     // Get the sidebar image URL
     const sidebarImageUrl = $("#sidebarImage").attr("src");
 
-    // Process the content
+    // Process the content into an array
     let processedContent = [];
 
     // Add the title (h1) with '#' before it
     const title = changelogContent.find("h1.display-4").first().text().trim();
     processedContent.push("# " + title, ""); // '#' added before the title, Empty string for a blank line after title
 
-    // Process other elements
+    // Process other elements in the changelog
     changelogContent.children().each(function () {
       const $elem = $(this);
       if ($elem.is("h2")) {
         // Add two newlines before each h2 to separate sections
         processedContent.push("", $elem.text().trim(), "");
       } else if ($elem.is("p.lead")) {
-        processedContent.push($elem.text().trim());
+        processedContent.push($elem.text().trim()); // Add lead paragraph text
       } else if ($elem.hasClass("d-flex")) {
         const text = $elem.find(".lead").text().trim();
         if ($elem.find(".bi-arrow-return-right").length > 0) {
-          // This is an inline item (- -)
+          // Inline item indicator
           processedContent.push("• • " + text);
         } else if ($elem.find(".bi-arrow-right").length > 0) {
-          // This is a regular item (-)
+          // Regular item indicator
           processedContent.push("• " + text);
         } else {
           // Fallback for any items without hyphens
@@ -396,33 +427,35 @@ $(document).ready(function () {
     // Join the processed content with newlines
     const cleanedContent = processedContent.join("\n");
 
+    // Copy the cleaned content to the clipboard
     navigator.clipboard
       .writeText(cleanedContent)
       .then(() => {
         // Show the toast notification
-        copiedChangelogToast("Changelog copied to clipboard!");
+        copiedChangelogToast("Changelog copied to clipboard!"); // Notify user of success
       })
       .catch((err) => {
-        console.error("Failed to copy text: ", err);
-        alert("Failed to copy changelog. Please try again.");
+        console.error("Failed to copy text: ", err); // Log error if copy fails
+        alert("Failed to copy changelog. Please try again."); // Alert user of failure
       })
       .finally(() => {
-        // Re-enable buttons after 5 seconds
+        // Re-enable buttons after a delay
         setTimeout(() => {
           mobileCopyChangelogBtn.prop("disabled", false);
-          desktopCopyChangelogBtn.prop("disabled", false);
-        }, 3500);
+          desktopCopyChangelogBtn.prop("disabled", false); // Re-enable both buttons
+        }, 5000); // 5 seconds delay
       });
   }
-
-  // Attach the combined function to both buttons
+  // Attach the combined function to both copy changelog buttons
   mobileCopyChangelogBtn.on("click", copyChangelog);
   desktopCopyChangelogBtn.on("click", copyChangelog);
 
+  // Function to get a formatted date range text
   function getDateRangeText() {
-    const startDate = startDatePicker.getDate();
-    const endDate = endDatePicker.getDate();
+    const startDate = startDatePicker.getDate(); // Get start date
+    const endDate = endDatePicker.getDate(); // Get end date
 
+    // Format the date range based on available dates
     if (startDate && endDate) {
       return `From: ${formatDate(startDate)} - To: ${formatDate(endDate)}`;
     } else if (startDate) {
@@ -430,9 +463,10 @@ $(document).ready(function () {
     } else if (endDate) {
       return `To: ${formatDate(endDate)}`;
     }
-    return "Select Start Date and End Date";
+    return "Select Start Date and End Date"; // Default message if no dates are selected
   }
 
+  // Function to format a date into a readable string
   function formatDate(date) {
     return date.toLocaleDateString("en-US", {
       year: "numeric",
@@ -441,10 +475,12 @@ $(document).ready(function () {
     });
   }
 
+  // Function to open the changelog dropdown
   function openChangelogDropdown() {
-    const $mobileDropdownEl = $("#mobileChangelogDropdown");
-    const $desktopDropdownEl = $("#desktopChangelogDropdown");
+    const $mobileDropdownEl = $("#mobileChangelogDropdown"); // Mobile dropdown reference
+    const $desktopDropdownEl = $("#desktopChangelogDropdown"); // Desktop dropdown reference
 
+    // Get or create Bootstrap dropdown instances
     const mobileDropdownInstance = bootstrap.Dropdown.getOrCreateInstance(
       $mobileDropdownEl[0]
     );
@@ -466,6 +502,8 @@ $(document).ready(function () {
       }
     }, 100);
   }
+
+  // Function to show a toast notification after copying the changelog
   function copiedChangelogToast(message) {
     toastr.success(message, "Changelog copied!", {
       positionClass: "toast-bottom-right", // Position at the bottom right
@@ -474,6 +512,7 @@ $(document).ready(function () {
       progressBar: true, // Show a progress bar
     });
   }
+
   // Toast function for clearing filters
   function clearedFilterToast(message) {
     toastr.success(message, "Filter cleared!", {
@@ -484,63 +523,67 @@ $(document).ready(function () {
     });
   }
 
-  // Function to clear date filter
+  // Function to clear the date filter
   function clearDateFilter() {
-    startDatePicker.setDate(null);
-    endDatePicker.setDate(null);
+    startDatePicker.setDate(null); // Reset start date
+    endDatePicker.setDate(null); // Reset end date
 
     // Update button texts
     updateButtonText("startDate");
     updateButtonText("endDate");
 
-    // Hide the modal
+    // Hide the date filter modal
     dateFilterModal.hide();
 
+    // Populate changelog dropdown with all data
     populateChangelogDropdown(changelogsData);
 
-    // Show the toast notification
+    // Show the toast notification for clearing the filter
     clearedFilterToast("The date filter has been cleared successfully!");
   }
 
   // Function to handle clearing the filter with spam prevention
   function handleClearDateFilter(event) {
-    event.preventDefault();
+    event.preventDefault(); // Prevent default button action
 
     // Disable buttons to prevent spamming
     document
       .querySelectorAll("#mobileClearDateFilter, #desktopClearDateFilter")
       .forEach((button) => {
-        button.disabled = true;
+        button.disabled = true; // Disable each button
       });
 
-    clearDateFilter();
+    clearDateFilter(); // Call the function to clear the date filter
 
     // Re-enable buttons after 5 seconds
     setTimeout(() => {
       document
         .querySelectorAll("#mobileClearDateFilter, #desktopClearDateFilter")
         .forEach((button) => {
-          button.disabled = false;
+          button.disabled = false; // Re-enable each button
         });
-    }, 4000);
+    }, 4000); // 4 seconds delay
   }
 
-  // Attach the event listener to both buttons
+  // Attach the event listener to both clear date filter buttons
   document
     .querySelectorAll("#mobileClearDateFilter, #desktopClearDateFilter")
     .forEach((button) => {
-      button.addEventListener("click", handleClearDateFilter);
+      button.addEventListener("click", handleClearDateFilter); // Add click event listener
     });
 
+  // Function to filter changelogs based on selected date range
   function filterChangelogsByDate() {
-    let startDate = startDatePicker.getDate();
-    let endDate = endDatePicker.getDate();
+    let startDate = startDatePicker.getDate(); // Get the start date
+    let endDate = endDatePicker.getDate(); // Get the end date
 
+    // If no dates are selected, return all changelogs
     if (!startDate && !endDate) {
       updateDropdownButton("default");
-      return changelogsData; // Return all changelogs if no dates are selected
+      return changelogsData; // Return all changelogs
     }
 
+    // Normalize the start date to UTC
     if (startDate) {
       startDate = new Date(
         Date.UTC(
@@ -550,6 +593,7 @@ $(document).ready(function () {
         )
       );
     }
+    // Normalize the end date to UTC, set to the end of the day
     if (endDate) {
       endDate = new Date(
         Date.UTC(
@@ -564,10 +608,12 @@ $(document).ready(function () {
       );
     }
 
+    // Filter changelogs based on date range
     return changelogsData.filter((changelog) => {
-      const changelogDate = parseDateFromTitle(changelog.title);
-      if (!changelogDate) return false;
+      const changelogDate = parseDateFromTitle(changelog.title); // Parse the date from the changelog title
+      if (!changelogDate) return false; // If no date found, exclude this changelog
 
+      // Check if the changelog date falls within the selected range
       if (startDate && endDate) {
         return changelogDate >= startDate && changelogDate <= endDate;
       } else if (startDate) {
@@ -575,10 +621,11 @@ $(document).ready(function () {
       } else if (endDate) {
         return changelogDate <= endDate;
       }
-      return true;
+      return true; // Default case, include the changelog
     });
   }
 
+  // Function to parse the date from the changelog title
   function parseDateFromTitle(title) {
     const months = {
       January: 0,
@@ -595,16 +642,18 @@ $(document).ready(function () {
       December: 11,
     };
 
+    // Match the date format in the title
     const match = title.match(/(\w+)\s(\d+)(?:st|nd|rd|th)\s(\d{4})/);
     if (match) {
-      const [, month, day, year] = match;
-      return new Date(Date.UTC(parseInt(year), months[month], parseInt(day)));
+      const [, month, day, year] = match; // Destructure the matched groups
+      return new Date(Date.UTC(parseInt(year), months[month], parseInt(day))); // Return date object
     }
-    return null;
+    return null; // Return null if no match
   }
 
+  // Function to update the dropdown button text based on filtering
   function updateDropdownButton(text) {
-    const $dropdownButton = $("#changelogDropdown");
+    const $dropdownButton = $("#changelogDropdown"); // Reference to the dropdown button
     if (text === "default") {
       $dropdownButton.html(
         '<i class="bi bi-calendar-event me-2"></i>View Changelogs'
@@ -620,254 +669,267 @@ $(document).ready(function () {
 
   // Modify the event listener for the dropdown button
   $(document).on("click", "#changelogDropdown", function (e) {
-    const buttonText = $(this).text().trim();
+    const buttonText = $(this).text().trim(); // Get the current button text
     if (buttonText === "No data for selected dates") {
-      e.preventDefault();
-      e.stopPropagation();
+      e.preventDefault(); // Prevent default action if there's no data
+      e.stopPropagation(); // Stop event propagation
     }
   });
 
+  // Function to toggle the visibility of the clear button based on input
   function toggleClearButton() {
-    $clearButton.toggle($searchInput.val().length > 0);
+    $clearButton.toggle($searchInput.val().length > 0); // Show/hide clear button based on input length
   }
 
+  // Function to hide search results and focus on the input
   function hideSearchResults() {
-    $("#search-results").hide();
-    $searchInput.focus();
+    $("#search-results").hide(); // Hide search results
+    $searchInput.focus(); // Focus on the search input
   }
 
+  // Function to clear the search input and reset UI elements
   function clearSearch() {
-    $searchInput.val("");
+    $searchInput.val(""); // Clear the input value
 
-    toggleClearButton();
-    hideSearchResults();
-    dismissKeyboard();
+    toggleClearButton(); // Update clear button visibility
+    hideSearchResults(); // Hide search results
+    dismissKeyboard(); // Dismiss the keyboard
   }
 
+  // Function to highlight specific text in a string based on a query
   function highlightText(text, query) {
     const words = query
       .split(/\s+/)
       .map((word) => word.trim())
-      .filter((word) => word.length > 0);
-    let highlightedText = text;
+      .filter((word) => word.length > 0); // Split query into words
 
-    // Highlight @mentions
+    let highlightedText = text; // Initialize highlighted text
+
+    // Highlight @mentions in the text
     highlightedText = highlightedText.replace(
       /@(\w+)/g,
       '<span class="highlight mention">@$1</span>'
     );
 
-    // Highlight other query words
+    // Highlight other query words in the text
     words.forEach((word) => {
       if (word !== "has:" && word !== "mention") {
-        const regex = new RegExp(`(${word})`, "gi");
+        const regex = new RegExp(`(${word})`, "gi"); // Create a regex for the word
         highlightedText = highlightedText.replace(
           regex,
-          '<span class="highlight">$1</span>'
+          '<span class="highlight">$1</span>' // Highlight the word
         );
       }
     });
 
-    return highlightedText;
+    return highlightedText; // Return the highlighted text
   }
 
+  // Function to convert Markdown text to HTML
   const convertMarkdownToHtml = (markdown) => {
     return markdown
-      .split("\n")
+      .split("\n") // Split the markdown into lines
       .map((line) => {
-        line = line.trim();
+        line = line.trim(); // Trim whitespace from the line
+        // Handle different Markdown syntaxes
         if (line.startsWith("# ")) {
           return `<h1 class="display-4 mb-4 text-custom-header border-bottom border-custom-header pb-2">${wrapMentions(
             line.substring(2)
-          )}</h1>`;
+          )}</h1>`; // Convert to H1
         } else if (line.startsWith("## ")) {
           return `<h2 class="display-5 mt-5 mb-3 text-custom-subheader">${wrapMentions(
             line.substring(3)
-          )}</h2>`;
+          )}</h2>`; // Convert to H2
         } else if (line.startsWith("- - ")) {
           return `<div class="d-flex mb-2 position-relative">
-                    <i class="bi bi-arrow-return-right text-custom-icon position-absolute" style="left: 20px; font-size: 1.5rem;"></i>
-                    <p class="lead mb-0 ms-4 ps-4">${wrapMentions(
-                      line.substring(4)
-                    )}</p>
-                  </div>`;
+                          <i class="bi bi-arrow-return-right text-custom-icon position-absolute" style="left: 20px; font-size: 1.5rem;"></i>
+                          <p class="lead mb-0 ms-4 ps-4">${wrapMentions(
+                            line.substring(4)
+                          )}</p>
+                      </div>`; // Convert to styled list item
         } else if (line.startsWith("- ")) {
           return `<div class="d-flex mb-2 position-relative">
-                    <i class="bi bi-arrow-right text-custom-icon position-absolute" style="left: 0; font-size: 1.5rem;"></i>
-                    <p class="lead mb-0 ms-4 ps-1">${wrapMentions(
-                      line.substring(2)
-                    )}</p>
-                  </div>`;
+                          <i class="bi bi-arrow-right text-custom-icon position-absolute" style="left: 0; font-size: 1.5rem;"></i>
+                          <p class="lead mb-0 ms-4 ps-1">${wrapMentions(
+                            line.substring(2)
+                          )}</p>
+                      </div>`; // Convert to another styled list item
         } else if (line.startsWith("(audio)")) {
-          const audioUrl = line.substring(7).trim();
+          const audioUrl = line.substring(7).trim(); // Extract audio URL
           const audioType = audioUrl.endsWith(".wav")
             ? "audio/wav"
-            : "audio/mpeg";
-          return `<audio class="w-100 mt-2 mb-2" controls><source src="${audioUrl}" type="${audioType}"></audio>`;
+            : "audio/mpeg"; // Determine audio type
+          return `<audio class="w-100 mt-2 mb-2" controls><source src="${audioUrl}" type="${audioType}"></audio>`; // Create audio element
         } else if (line.startsWith("(image)")) {
-          const imageUrl = line.substring(7).trim();
-          return `<img src="${imageUrl}" alt="Image" class="img-fluid mt-2 mb-2 rounded" style="max-height: 500px;">`;
+          const imageUrl = line.substring(7).trim(); // Extract image URL
+          return `<img src="${imageUrl}" alt="Image" class="img-fluid mt-2 mb-2 rounded" style="max-height: 500px;">`; // Create image element
         } else if (line.startsWith("(video)")) {
-          const videoUrl = line.substring(7).trim();
-          return `<video class="w-100 mt-2 mb-2 rounded" style="max-height: 500px;" controls><source src="${videoUrl}" type="video/mp4"></video>`;
+          const videoUrl = line.substring(7).trim(); // Extract video URL
+          return `<video class="w-100 mt-2 mb-2 rounded" style="max-height: 500px;" controls><source src="${videoUrl}" type="video/mp4"></video>`; // Create video element
         } else {
-          return `<p class="lead mb-2">${wrapMentions(line)}</p>`;
+          return `<p class="lead mb-2">${wrapMentions(line)}</p>`; // Default to paragraph
         }
       })
-      .join("");
+      .join(""); // Join all lines into a single HTML string
   };
 
+  // Function to wrap mentions in a specific HTML structure
   const wrapMentions = (text) => {
     return text.replace(
       /@(\w+)/g,
-      '<span class="mention fw-bold"><span class="at">@</span><span class="username">$1</span></span>'
+      '<span class="mention fw-bold"><span class="at">@</span><span class="username">$1</span></span>' // Highlight mentions
     );
   };
 
+  // Fetch changelogs data from the API
   $.getJSON(apiUrl)
     .done((data) => {
-      changelogsData = data;
+      changelogsData = data; // Store fetched data
 
       if (Array.isArray(data) && data.length > 0) {
         populateChangelogDropdown(data); // Populate the dropdown with all changelogs
         const urlParams = new URLSearchParams(window.location.search);
-        const changelogId = urlParams.get("id");
+        const changelogId = urlParams.get("id"); // Get changelog ID from URL
         const selectedChangelog = changelogsData.find(
-          (cl) => cl.id == changelogId
+          (cl) => cl.id == changelogId // Find the selected changelog
         );
         if (selectedChangelog) {
-          displayChangelog(selectedChangelog); // Display the changelog that corresponds to the ID in the URL query parameter
+          displayChangelog(selectedChangelog); // Display the selected changelog
         } else {
           const latestChangelog = data[0]; // Get the latest changelog
-          displayChangelog(latestChangelog); // Display the latest changelog if no ID is provided in the URL
+          displayChangelog(latestChangelog); // Display the latest changelog if no ID is provided
         }
       }
 
-      hideLoadingOverlay();
+      hideLoadingOverlay(); // Hide loading overlay after data is fetched
     })
     .fail((jqXHR, textStatus, errorThrown) => {
-      console.error("Error fetching changelogs:", errorThrown);
+      console.error("Error fetching changelogs:", errorThrown); // Log error
       $("#content").html(
-        "<p>Error loading changelogs. Please try again later.</p>"
+        "<p>Error loading changelogs. Please try again later.</p>" // Show error message
       );
-      hideLoadingOverlay();
+      hideLoadingOverlay(); // Hide loading overlay
     });
+
+  // Function to perform a search based on user input
   function performSearch() {
-    const query = $searchInput.val().trim().toLowerCase();
+    const query = $searchInput.val().trim().toLowerCase(); // Get and normalize the search query
 
     if (query.length === 0) {
-      // Hide search results if the input is empty
-      hideSearchResults();
+      hideSearchResults(); // Hide search results if the input is empty
       return; // Exit the function early
     }
 
-    let searchResults = [];
+    let searchResults = []; // Initialize an array for search results
 
     if (query.startsWith("has:")) {
       // Handle special query for media types and mentions
-      const queryType = query.split(":")[1].trim();
+      const queryType = query.split(":")[1].trim(); // Extract the type of query
 
       searchResults = changelogsData.filter((changelog) => {
         switch (queryType) {
           case "audio":
-            return changelog.sections.includes("(audio)");
+            return changelog.sections.includes("(audio)"); // Check for audio sections
           case "video":
-            return changelog.sections.includes("(video)");
+            return changelog.sections.includes("(video)"); // Check for video sections
           case "image":
-            return changelog.sections.includes("(image)");
+            return changelog.sections.includes("(image)"); // Check for image sections
           case "mention":
             return /@\w+/.test(changelog.sections); // Check for @ mentions
           default:
-            return false;
+            return false; // Default case, no match
         }
       });
     } else {
       // Regular search
       searchResults = changelogsData.filter((changelog) => {
-        const titleMatch = changelog.title.toLowerCase().includes(query);
+        const titleMatch = changelog.title.toLowerCase().includes(query); // Check if title matches
         const contentMatch =
           changelog.sections &&
           typeof changelog.sections === "string" &&
-          changelog.sections.toLowerCase().includes(query);
-        return titleMatch || contentMatch;
+          changelog.sections.toLowerCase().includes(query); // Check if content matches
+        return titleMatch || contentMatch; // Return true if either matches
       });
     }
 
-    displaySearchResults(searchResults, query);
-    toggleClearButton();
+    displaySearchResults(searchResults, query); // Display the search results
+    toggleClearButton(); // Update clear button visibility
   }
 
+  // Function to hide the search results container and focus on the search input
   function hideSearchResults() {
     $searchResultsContainer.hide(); // Hide the search results container
     $searchInput.focus(); // Focus on the search input
   }
 
+  // Function to display search results based on the user's query
   function displaySearchResults(results, query) {
-    $searchResultsContainer.empty();
+    $searchResultsContainer.empty(); // Clear previous results
 
     if (results.length === 0) {
-      $searchResultsContainer.html('<p class="p-3">No results found.</p>');
+      $searchResultsContainer.html('<p class="p-3">No results found.</p>'); // Show message if no results
     } else {
-      const $resultsList = $("<ul>").addClass("list-group list-group-flush");
+      const $resultsList = $("<ul>").addClass("list-group list-group-flush"); // Create a list for results
       results.forEach((changelog) => {
         const $listItem = $("<li>").addClass(
           "list-group-item custom-search-item"
-        );
+        ); // Create a list item
 
         let previewText = "";
         let highlightedPreview = "";
 
         if (query.startsWith("has:")) {
+          // Handle special query for media types and mentions
           const mediaType = query.split(":")[1].trim();
           switch (mediaType) {
             case "audio":
             case "video":
             case "image":
-              const mediaRegex = new RegExp(`\\(${mediaType}\\)`, "g");
+              const mediaRegex = new RegExp(`\\(${mediaType}\\)`, "g"); // Create regex for media type
               const mediaCount = (changelog.sections.match(mediaRegex) || [])
-                .length;
+                .length; // Count occurrences
               previewText = `${mediaCount} ${mediaType}${
                 mediaCount !== 1 ? "s" : ""
-              } found`;
+              } found`; // Prepare preview text
               highlightedPreview = previewText; // No highlighting for media types
               break;
             case "mention":
               const mentionMatches = [
                 ...new Set(changelog.sections.match(/@\w+/g) || []),
-              ];
+              ]; // Find unique mentions
               if (mentionMatches.length > 0) {
-                previewText = `Mentions found: ${mentionMatches.join(", ")}`;
+                previewText = `Mentions found: ${mentionMatches.join(", ")}`; // Prepare mention preview
                 highlightedPreview = highlightText(previewText, query); // Highlight mentions
               } else {
-                previewText = "No mentions found";
+                previewText = "No mentions found"; // No mentions case
                 highlightedPreview = previewText;
               }
               break;
           }
         } else {
-          // Regular search preview logic (unchanged)
-          const cleanedSections = cleanContentForSearch(changelog.sections);
-          const queryPosition = cleanedSections.toLowerCase().indexOf(query);
+          // Regular search preview logic
+          const cleanedSections = cleanContentForSearch(changelog.sections); // Clean content for search
+          const queryPosition = cleanedSections.toLowerCase().indexOf(query); // Find query position
           if (queryPosition !== -1) {
-            const startPos = Math.max(0, queryPosition - 50);
+            const startPos = Math.max(0, queryPosition - 50); // Determine start position for preview
             const endPos = Math.min(
               cleanedSections.length,
               queryPosition + query.length + 50
-            );
-            previewText = cleanedSections.substring(startPos, endPos);
-            if (startPos > 0) previewText = "..." + previewText;
-            if (endPos < cleanedSections.length) previewText += "...";
+            ); // Determine end position
+            previewText = cleanedSections.substring(startPos, endPos); // Create preview text
+            if (startPos > 0) previewText = "..." + previewText; // Add ellipsis if needed
+            if (endPos < cleanedSections.length) previewText += "..."; // Add ellipsis if needed
           } else {
             previewText =
               cleanedSections.substring(0, 100) +
-              (cleanedSections.length > 100 ? "..." : "");
+              (cleanedSections.length > 100 ? "..." : ""); // Default preview
           }
-          highlightedPreview = highlightText(previewText, query);
+          highlightedPreview = highlightText(previewText, query); // Highlight the preview text
         }
 
-        const highlightedTitle = highlightText(changelog.title, query);
+        const highlightedTitle = highlightText(changelog.title, query); // Highlight the changelog title
 
-        // Create media labels
+        // Create media labels based on available sections
         const hasAudio = changelog.sections.includes("(audio)");
         const hasVideo = changelog.sections.includes("(video)");
         const hasImage = changelog.sections.includes("(image)");
@@ -878,23 +940,26 @@ $(document).ready(function () {
         ].join("");
 
         $listItem.html(`
-          <h5 class="mb-1">${highlightedTitle} ${mediaLabels}</h5>
-          <p class="mb-1 small">${highlightedPreview}</p>
-        `);
+              <h5 class="mb-1">${highlightedTitle} ${mediaLabels}</h5>
+              <p class="mb-1 small">${highlightedPreview}</p>
+          `);
 
+        // Click event to display the selected changelog
         $listItem.on("click", () => {
-          displayChangelog(changelog);
-          clearSearch();
-          dismissKeyboard();
-          closeNavbar();
+          displayChangelog(changelog); // Display the selected changelog
+          clearSearch(); // Clear the search input
+          dismissKeyboard(); // Dismiss the keyboard
+          closeNavbar(); // Close the navigation bar
         });
 
-        $resultsList.append($listItem);
+        $resultsList.append($listItem); // Append the list item to the results list
       });
-      $searchResultsContainer.append($resultsList);
+      $searchResultsContainer.append($resultsList); // Append the results list to the container
     }
-    $searchResultsContainer.show();
+    $searchResultsContainer.show(); // Show the search results container
   }
+
+  // Prevent body scrolling when interacting with the search results container
   $searchResultsContainer.on("wheel", function (event) {
     event.stopPropagation(); // Prevent the body from scrolling
   });
@@ -903,89 +968,103 @@ $(document).ready(function () {
     event.stopPropagation(); // Prevent body scrolling on touch devices
   });
 
+  // Function to clean content for search
   function cleanContentForSearch(content) {
     return content
-      .replace(/- /g, " ")
-      .replace(/- - /g, " ")
-      .replace(/### /g, " ")
-      .replace(/## /g, " ")
-      .replace(/\(audio\) /g, " ")
-      .replace(/\(video\) /g, " ")
-      .replace(/\(image\) /g, " ")
-      .replace(/\(audio\)\s*\S+/g, "")
-      .replace(/\(video\)\s*\S+/g, "")
-      .replace(/\(image\)\s*\S+/g, "")
-      .replace(/@(\w+)/g, "@$1")
-      .replace(/\s+/g, " ")
-      .trim();
+      .replace(/- /g, " ") // Remove bullet points
+      .replace(/- - /g, " ") // Remove double bullet points
+      .replace(/### /g, " ") // Remove H3 headers
+      .replace(/## /g, " ") // Remove H2 headers
+      .replace(/\(audio\) /g, " ") // Remove audio tags
+      .replace(/\(video\) /g, " ") // Remove video tags
+      .replace(/\(image\) /g, " ") // Remove image tags
+      .replace(/\(audio\)\s*\S+/g, "") // Remove audio file references
+      .replace(/\(video\)\s*\S+/g, "") // Remove video file references
+      .replace(/\(image\)\s*\S+/g, "") // Remove image file references
+      .replace(/@(\w+)/g, "@$1") // Normalize mentions
+      .replace(/\s+/g, " ") // Collapse whitespace
+      .trim(); // Trim leading and trailing whitespace
   }
 
+  // Function to display the selected changelog
   const displayChangelog = (changelog) => {
-    localStorage.setItem("selectedChangelogId", changelog.id);
+    localStorage.setItem("selectedChangelogId", changelog.id); // Store selected changelog ID in local storage
 
-    document.title = `Jailbreak Changelog: ${changelog.title}`;
+    document.title = `Jailbreak Changelog: ${changelog.title}`; // Set document title
     if (titleElement) {
-      titleElement.textContent = changelog.title;
+      titleElement.textContent = changelog.title; // Update title element
     }
 
+    // Update image element if available
     if (changelog.image_url) {
       imageElement.src = changelog.image_url;
       imageElement.alt = `Image for ${changelog.title}`;
-      imageElement.style.display = "block";
+      imageElement.style.display = "block"; // Show image
     } else {
       imageElement.src = "";
       imageElement.alt = "No image available";
-      imageElement.style.display = "none";
+      imageElement.style.display = "none"; // Hide image
     }
 
-    let contentHtml = `<h1 class="display-4 mb-4">${changelog.title}</h1>`;
+    let contentHtml = `<h1 class="display-4 mb-4">${changelog.title}</h1>`; // Initialize content HTML
 
     if (changelog.sections) {
-      const processedMarkdown = preprocessMarkdown(changelog.sections);
-      const processedSections = convertMarkdownToHtml(processedMarkdown);
-      contentHtml += processedSections;
+      const processedMarkdown = preprocessMarkdown(changelog.sections); // Preprocess markdown
+      const processedSections = convertMarkdownToHtml(processedMarkdown); // Convert markdown to HTML
+      contentHtml += processedSections; // Append processed sections to content HTML
     } else {
-      console.warn("No sections available for changelog.");
-      contentHtml += '<p class="lead">No sections available.</p>';
+      console.warn("No sections available for changelog."); // Log warning if no sections
+      contentHtml += '<p class="lead">No sections available.</p>'; // Show message if no sections
     }
     const dropdownText = $("#mobileChangelogDropdown").text().trim();
     if (
       dropdownText !== "Filtered Changelogs" &&
       dropdownText !== "No data for selected dates"
     ) {
-      updateDropdownButton("default");
+      updateDropdownButton("default"); // Update dropdown button if not filtered
     }
 
-    sectionsElement.innerHTML = contentHtml;
+    sectionsElement.innerHTML = contentHtml; // Update sections element with content HTML
   };
+
   // Back to Top button functionality
   const backToTopButton = $("#backToTop");
 
+  // Show or hide the back to top button based on scroll position
   $(window).scroll(function () {
     if ($(this).scrollTop() > 100) {
-      backToTopButton.addClass("show");
+      backToTopButton.addClass("show"); // Show button if scrolled down
     } else {
-      backToTopButton.removeClass("show");
+      backToTopButton.removeClass("show"); // Hide button if at the top
     }
   });
 
+  // Click event for back to top button
   backToTopButton.on("click", function (e) {
-    e.preventDefault();
-    $("html, body").animate({ scrollTop: 0 }, 100);
+    e.preventDefault(); // Prevent default action
+    $("html, body").animate({ scrollTop: 0 }, 100); // Smooth scroll to top
   });
 
+  // Click event for changelog dropdown items
   $(document).on("click", ".changelog-dropdown-item", function (e) {
-    e.preventDefault();
-    const changelogId = $(this).data("changelog-id");
-    const selectedChangelog = changelogsData.find((cl) => cl.id == changelogId);
+    e.preventDefault(); // Prevent default action
+    const changelogId = $(this).data("changelog-id"); // Get changelog ID from data attribute
+    const selectedChangelog = changelogsData.find((cl) => cl.id == changelogId); // Find selected changelog
     if (selectedChangelog) {
-      displayChangelog(selectedChangelog);
+      displayChangelog(selectedChangelog); // Display the selected changelog
       const accordion = document.getElementById("filterAccordion");
-      const collapseElement = accordion.querySelector(".collapse");
-      bootstrap.Collapse.getInstance(collapseElement).hide();
+      const collapseElement = accordion.querySelector(".collapse"); // Get collapse element
+      if (collapseElement) {
+        const collapseInstance =
+          bootstrap.Collapse.getOrCreateInstance(collapseElement);
+        collapseInstance.hide(); // Hide the accordion if it's open
+      } else {
+        console.error("Collapse element not found!"); // Log error if collapse element is not found
+      }
     }
   });
 
+  // Initialize Bootstrap dropdowns
   bootstrap.Dropdown.getOrCreateInstance($("#mobileChangelogDropdown")[0]);
   bootstrap.Dropdown.getOrCreateInstance($("#desktopChangelogDropdown")[0]);
 });
