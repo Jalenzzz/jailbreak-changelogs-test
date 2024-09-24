@@ -43,6 +43,7 @@ $(document).ready(function () {
     });
 
   let changelogsData = [];
+  let debounceTimer;
 
   function showLoadingOverlay() {
     loadingOverlay.classList.add("show");
@@ -79,12 +80,15 @@ $(document).ready(function () {
   const $exampleQueries = $("#exampleQueries");
   const $clearButton = $("#clear-search-button");
 
-  $searchInput.on("input", performSearch);
   $searchInput.on("input", function () {
-    const query = $(this).val().trim();
-    $exampleQueries.addClass("d-none");
-    performSearch();
-    toggleClearButton();
+    clearTimeout(debounceTimer); // Clear the previous timer
+    const query = $(this).val().trim(); // Get the trimmed query
+    $exampleQueries.addClass("d-none"); // Hide example queries
+
+    debounceTimer = setTimeout(() => {
+      performSearch(); // Call performSearch after the delay
+      toggleClearButton(); // Toggle clear button visibility
+    }, 300); // 300 milliseconds delay
   });
 
   $clearButton.on("click", function () {
@@ -733,6 +737,13 @@ $(document).ready(function () {
     }
     $searchResultsContainer.show();
   }
+  $searchResultsContainer.on("wheel", function (event) {
+    event.stopPropagation(); // Prevent the body from scrolling
+  });
+
+  $searchResultsContainer.on("touchstart touchmove", function (event) {
+    event.stopPropagation(); // Prevent body scrolling on touch devices
+  });
 
   function cleanContentForSearch(content) {
     return content
