@@ -72,11 +72,9 @@ body {
   font-style: italic; /* make the text cursive */
 }
 .navbar-logo {
-  height: 70px; /* Fixed height */
-  width: 100%; /* Set a specific width */
-  object-fit: contain; /* Ensures the image maintains its aspect ratio */
-  display: block;
-  margin: 0 auto;
+  height: 70px; /* Default height for large screens */
+  width: auto;
+  object-fit: contain;
 }
 footer a:hover {
   background-color: #333; /* change the background color on hover */

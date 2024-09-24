@@ -992,11 +992,18 @@ footer {
 [data-bs-theme="dark"] .github-link:hover {
   background-color: #444c56; /* Lighter gray for better visibility in dark mode */
 }
-
+.navbar-logo {
+  height: 70px; /* Default height for large screens */
+  width: auto;
+  object-fit: contain;
+}
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .navbar-brand {
     font-size: 1.5rem;
+  }
+  .navbar-logo {
+    height: 50px; /* Smaller height for small screens */
   }
 
   .quick-links .btn-link {
