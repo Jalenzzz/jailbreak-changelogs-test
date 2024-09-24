@@ -181,6 +181,7 @@
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <!-- Other nav items if needed -->
           </ul>
+
           <form class="d-flex me-2 position-relative" role="search">
             <div class="input-group">
               <span class="input-group-text bg-transparent border-0">
@@ -203,7 +204,17 @@
                 <i class="bi bi-x-circle-fill"></i>
               </button>
             </div>
+            <div
+              id="exampleQueries"
+              class="d-none position-absolute w-100 bg-light border rounded mt-1"
+              style="top: 100%; left: 0"
+            >
+              <a href="#" class="example-query d-block px-2 py-1">has: audio</a>
+              <a href="#" class="example-query d-block px-2 py-1">has: video</a>
+              <a href="#" class="example-query d-block px-2 py-1">has: image</a>
+            </div>
           </form>
+
           <div class="d-flex align-items-center">
             <!-- Desktop theme toggle -->
             <button
