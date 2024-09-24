@@ -1,0 +1,23 @@
+.navbar-logo {
+  height: 70px; /* Fixed height */
+  width: 100%; /* Set a specific width */
+  object-fit: contain; /* Ensures the image maintains its aspect ratio */
+  display: block;
+  margin: 0 auto;
+}
+footer a:hover {
+  background-color: #333; /* change the background color on hover */
+  padding: 5px 10px;
+  font-size: 1.1em; /* increase the font size on hover */
+  transition: 0.2s ease-in-out; /* add a smooth transition effect */
+}
+.btn-custom {
+  background-color: #007bff; /* Light theme background color */
+  color: white; /* Light theme text color */
+  border: none; /* Remove default border if needed */
+}
+
+.btn-custom:hover {
+  background-color: #0056b3; /* Darker blue on hover for light mode */
+  color: white; /* Keep text color white */
+}

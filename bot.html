@@ -3,11 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Welcome to Jailbreak Changelogs, your source for the latest updates!"
-    />
-    <title>Jailbreak Changelogs | Home</title>
+    <meta name="description" content="Welcome to the Discord Bot Page!" />
+    <title>Discord Bot | Home</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -16,14 +13,37 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
     />
-    <link rel="stylesheet" href="styles/homepage.css" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="stylesheet" href="styles/bot.css" />
     <style>
-      .disclaimer {
-        font-size: 0.9rem;
-        color: #6c757d;
+      .hero {
+        padding: 80px 0;
         text-align: center;
-        margin-top: 10px;
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #e9ecef;
+      }
+      .feature-icon {
+        font-size: 50px;
+        margin-bottom: 15px;
+      }
+      .feature-card {
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 20px;
+        transition: transform 0.2s;
+      }
+      .feature-card:hover {
+        transform: scale(1.05);
+      }
+      footer {
+        background-color: #343a40;
+      }
+      .btn-custom {
+        width: 200px; /* Set the same width for both buttons */
+        height: 50px; /* Set a fixed height for both buttons */
+        display: inline-flex; /* Aligns content vertically */
+        align-items: center; /* Centers icon and text vertically */
+        justify-content: center; /* Centers content horizontally */
       }
     </style>
   </head>
@@ -34,57 +54,20 @@
         <a class="navbar-brand" href="#">
           <img
             class="navbar-logo mx-auto"
-            src="https://res.cloudinary.com/dsvlphknq/image/upload/v1727135248/logo/jailbreak_changelogs_home.png"
+            src="https://res.cloudinary.com/dsvlphknq/image/upload/v1727140252/logo/jailbreak_changelogs_discord_bot.png"
             alt="Jailbreak Changelogs Home Logo"
             height="70"
           />
         </a>
-
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="changelogs.html">Changelogs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="seasons.html">Seasons</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="timeline.html">Timeline</a>
-            </li>
             <li class="nav-item"></li>
-              <a class="nav-link" href="bot.html">Our Discord Bot</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="faq.html">FAQ</a>
-            </li>
-            <li class="nav-item">
-              <button
-                class="nav-link btn btn-primary"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#discordOffcanvas"
-                aria-controls="discordOffcanvas"
-              >
-                Join the Discord
-              </button>
-            </li>
           </ul>
         </div>
       </div>
     </nav>
-    <!-- Offcanvas -->
+
+    <!-- Offcanvas for Discord -->
     <div
       class="offcanvas offcanvas-end"
       tabindex="-1"
@@ -103,13 +86,10 @@
         ></button>
       </div>
       <div class="offcanvas-body">
-        <div class="offcanvas-header">
-          <button class="offcanvas-close">&times;</button>
-        </div>
         <iframe
           src="https://discord.com/widget?id=1286064050135896064&theme=dark"
           width="100%"
-          height="100%"
+          height="300"
           allowtransparency="true"
           frameborder="0"
           sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
@@ -118,86 +98,73 @@
     </div>
 
     <div class="hero">
-      <div>
-        <h1>Welcome to Jailbreak Changelogs</h1>
-        <p>
-          Your source for the latest updates and patch notes in Roblox
-          Jailbreak.
-        </p>
-        <p class="text-center">
-          Last updated: <span id="last-updated">September 24th, 2024</span>
-        </p>
-        <a href="changelogs.html" class="btn btn-light">View Latest Updates</a>
-        <a
-          href="https://www.roblox.com/games/606849621/Jailbreak"
-          class="btn btn-primary"
-          >Play Jailbreak Now!</a
-        >
+      <h1>
+        <i class="bi bi-discord me-2" style="font-size: 2rem"></i>
+        Welcome to our Discord Bot Page
+      </h1>
+      <p class="lead">
+        Your go-to resource for information and updates about our Discord bot!
+      </p>
+      <!-- Updated button text -->
+      <a
+        class="btn btn-primary btn-custom"
+        href="botinvite.html"
+        title="Invite to Your Server"
+      >
+        <i class="bi bi-person-plus-fill me-2"></i> Invite to Your Server
+      </a>
+      <div class="my-3">
+        <span class="text-muted">OR</span>
       </div>
+      <a href="index.html" class="btn btn-primary btn-lg btn-custom">
+        <i class="bi bi-house-door-fill me-2"></i> Home
+      </a>
     </div>
-    <p class="text-muted text-center mt-3 small">
-      Note: This website is not affiliated with Badimo, the official developers
-      of Jailbreak.
-    </p>
 
     <div class="container my-5">
-      <h2 class="text-center mb-4">Features</h2>
+      <h2 class="text-center mb-4">Bot Features</h2>
       <div class="row">
-        <div class="col-md-3 text-center mb-4">
-          <div class="feature-icon text-primary">
-            <i class="bi bi-journal-text"></i>
+        <div class="col-md-4 mb-4">
+          <div class="feature-card text-center p-4">
+            <div class="feature-icon text-primary">
+              <i class="bi bi-people-fill"></i>
+            </div>
+            <h3>Crew Tracking</h3>
+            <p>
+              View the stats of your jailbreak crew as well as other players'
+              crews directly from the bot, making it easy to keep track of
+              without any hassle.
+            </p>
           </div>
-          <h3>View Changelogs</h3>
-          <p>
-            Access the latest changelogs for the game Jailbreak on Roblox and
-            stay informed about all updates.
-          </p>
         </div>
-        <div class="col-md-3 text-center mb-4">
-          <div class="feature-icon text-primary">
-            <i class="bi bi-hourglass-split"></i>
+        <div class="col-md-4 mb-4">
+          <div class="feature-card text-center p-4">
+            <div class="feature-icon text-primary">
+              <i class="bi bi-calendar-event-fill"></i>
+            </div>
+            <h3>Season Tracking</h3>
+            <p>
+              Remove the hassle of visiting the website! With season tracking,
+              you can view all the latest season content directly from the
+              Discord bot.
+            </p>
           </div>
-          <h3>Seasonal Changes</h3>
-          <p>
-            Explore changes made during past and current in-game seasons,
-            including rewards and features.
-          </p>
         </div>
-        <div class="col-md-3 text-center mb-4">
-          <div class="feature-icon text-primary">
-            <i class="bi bi-gear-fill"></i>
+        <div class="col-md-4 mb-4">
+          <div class="feature-card text-center p-4">
+            <div class="feature-icon text-primary">
+              <i class="bi bi-file-earmark-text-fill"></i>
+            </div>
+            <h3>Changelog Tracking</h3>
+            <p>
+              Stay informed about the latest updates and changes without the
+              hassle of visiting external sites. Get instant updates on
+              changelogs right from the bot.
+            </p>
           </div>
-          <h3>Fast Changelog Updates</h3>
-          <p>
-            Our data is sourced directly from our API, ensuring you receive the
-            latest changelogs faster than ever.
-          </p>
-        </div>
-        <div class="col-md-3 text-center mb-4">
-          <div class="feature-icon text-primary">
-            <i class="bi bi-github"></i>
-          </div>
-          <h3>Open Source Contributions</h3>
-          <p>
-            Contributions can be made by anyone! Our project is fully open
-            source on
-            <a
-              href="https://github.com/JailbreakProject/JailbreakChangelogs"
-              target="_blank"
-              class="text-primary"
-            >
-              GitHub.
-            </a>
-          </p>
         </div>
       </div>
     </div>
-
-    <p class="cursive text-center">
-      Made with ❤️ by
-      <a href="https://www.roblox.com/users/435983066/profile">v3kmw</a> and
-      <a href="https://www.roblox.com/users/1910948809/profile">Jalenzz16</a>
-    </p>
 
     <footer class="bg-primary text-white text-center py-4">
       <p>© 2024 Jailbreak Changelogs. All rights reserved.</p>
