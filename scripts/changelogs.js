@@ -7,14 +7,17 @@ $(document).ready(function () {
   const $searchResultsContainer = $("#search-results");
   const $navbarCollapse = $("#navbarContent");
   const clearFilterBtn = document.getElementById("clearDateFilter");
-  const toast = new bootstrap.Toast(
-    document.getElementById("clearFilterToast")
-  );
+
   const dateFilterModal = new bootstrap.Modal(
     document.getElementById("dateFilterModal")
   );
   document
-    .getElementById("openDateFilterModal")
+    .getElementById("mobileOpenDateFilterModal")
+    .addEventListener("click", function () {
+      dateFilterModal.show();
+    });
+  document
+    .getElementById("desktopOpenDateFilterModal")
     .addEventListener("click", function () {
       dateFilterModal.show();
     });
@@ -31,11 +34,11 @@ $(document).ready(function () {
 
         if (filteredChangelogs.length > 0) {
           populateChangelogDropdown(filteredChangelogs);
+          // Update the button text to show the date range
           updateDropdownButton(getDateRangeText());
           setTimeout(openChangelogDropdown, 100);
         } else {
           populateChangelogDropdown([]);
-          updateDropdownButton("No data for selected dates");
         }
 
         dateFilterModal.hide();
@@ -135,11 +138,19 @@ $(document).ready(function () {
   }
 
   function populateChangelogDropdown(changelogs) {
-    const $dropdown = $("#changelogList");
-    $dropdown.empty();
+    const $mobileDropdown = $("#mobileChangelogList");
+    const $desktopDropdown = $("#desktopChangelogList");
+
+    $mobileDropdown.empty();
+    $desktopDropdown.empty();
 
     if (changelogs.length === 0) {
-      $dropdown.append(`
+      $mobileDropdown.append(`
+            <li>
+                <span class="dropdown-item-text">No data for selected dates</span>
+            </li>
+        `);
+      $desktopDropdown.append(`
             <li>
                 <span class="dropdown-item-text">No data for selected dates</span>
             </li>
@@ -148,7 +159,14 @@ $(document).ready(function () {
       const sortedChangelogs = changelogs.sort((a, b) => b.id - a.id);
 
       sortedChangelogs.forEach((changelog) => {
-        $dropdown.append(`
+        $mobileDropdown.append(`
+                <li class="w-100">
+                    <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
+                        <span class="changelog-title">${changelog.title}</span>
+                    </a>
+                </li>
+            `);
+        $desktopDropdown.append(`
                 <li class="w-100">
                     <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
                         <span class="changelog-title">${changelog.title}</span>
@@ -159,6 +177,15 @@ $(document).ready(function () {
     }
   }
 
+  // Initialize Bootstrap dropdowns
+  var dropdownElementList = [].slice.call(
+    document.querySelectorAll(".dropdown-toggle")
+  );
+  var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+    return new bootstrap.Dropdown(dropdownToggleEl);
+  });
+
+  // Pikaday configuration
   // Initialize Bootstrap dropdowns
   var dropdownElementList = [].slice.call(
     document.querySelectorAll(".dropdown-toggle")
@@ -185,20 +212,8 @@ $(document).ready(function () {
       } else {
         document.getElementById(fieldId).value = "";
       }
-      updateButtonText(fieldId);
     },
   };
-
-  var startDatePicker = new Pikaday({
-    ...pikadayConfig,
-    field: document.getElementById("startDate"),
-    trigger: document.getElementById("startDateBtn"),
-  });
-  var endDatePicker = new Pikaday({
-    ...pikadayConfig,
-    field: document.getElementById("endDate"),
-    trigger: document.getElementById("endDateBtn"),
-  });
   function updateButtonText(fieldId) {
     const btn = document.getElementById(fieldId + "Btn");
     const dateString = document.getElementById(fieldId).value;
@@ -211,7 +226,6 @@ $(document).ready(function () {
         fieldId === "startDate" ? "Select Start Date" : "Select End Date";
     }
   }
-
   function formatDateForButton(date) {
     const options = {
       year: "numeric",
@@ -221,7 +235,6 @@ $(document).ready(function () {
     };
     return date.toLocaleDateString("en-US", options);
   }
-
   function updateChangelogList() {
     const startDate = startDatePicker.getDate();
     const endDate = endDatePicker.getDate();
@@ -242,9 +255,160 @@ $(document).ready(function () {
       updateDropdownButton("default");
     }
   }
-  const copyChangelogBtn = $("#copyChangelog");
 
-  copyChangelogBtn.on("click", function () {
+  var startDatePicker = new Pikaday({
+    ...pikadayConfig,
+    field: document.getElementById("startDate"),
+    trigger: document.getElementById("startDateBtn"),
+    onSelect: function () {
+      updateButtonText("startDate");
+      updateChangelogList();
+    },
+  });
+
+  var endDatePicker = new Pikaday({
+    ...pikadayConfig,
+    field: document.getElementById("endDate"),
+    trigger: document.getElementById("endDateBtn"),
+    onSelect: function () {
+      updateButtonText("endDate");
+      updateChangelogList();
+    },
+  });
+
+  // Modify the event listener for the dropdown button
+  $(document).on(
+    "click",
+    "#mobileChangelogDropdown, #desktopChangelogDropdown",
+    function (e) {
+      const buttonText = $(this).text().trim();
+      if (buttonText === "No data for selected dates") {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }
+  );
+
+  // Update the dropdown button text
+  function updateDropdownButton(text) {
+    const $mobileDropdownButton = $("#mobileChangelogDropdown");
+    const $desktopDropdownButton = $("#desktopChangelogDropdown");
+
+    if (text === "default") {
+      $mobileDropdownButton.html(
+        '<i class="bi bi-calendar-event me-2"></i>View Changelogs'
+      );
+      $desktopDropdownButton.html(
+        '<i class="bi bi-calendar-event me-2"></i>View Changelogs'
+      );
+    } else {
+      $mobileDropdownButton.html(
+        `<i class="bi bi-calendar-event me-2"></i>${text}`
+      );
+      $desktopDropdownButton.html(
+        `<i class="bi bi-calendar-event me-2"></i>${text}`
+      );
+    }
+
+    // Initialize the dropdown instance
+    var dropdownElementList = [].slice.call(
+      document.querySelectorAll(".dropdown-toggle")
+    );
+    var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+      return new bootstrap.Dropdown(dropdownToggleEl);
+    });
+  }
+
+  // Open date filter modal
+  document
+    .getElementById("mobileOpenDateFilterModal")
+    .addEventListener("click", function () {
+      dateFilterModal.show();
+    });
+  document
+    .getElementById("desktopOpenDateFilterModal")
+    .addEventListener("click", function () {
+      dateFilterModal.show();
+    });
+
+  // Copy changelog
+  const mobileCopyChangelogBtn = $("#mobileCopyChangelog");
+  const desktopCopyChangelogBtn = $("#desktopCopyChangelog");
+
+  mobileCopyChangelogBtn.on("click", function () {
+    // Get the content of the changelog
+    const changelogContent = $("#content").clone();
+
+    // Get the current page URL
+    const currentPageUrl = window.location.href;
+
+    // Get the sidebar image URL
+    const sidebarImageUrl = $("#sidebarImage").attr("src");
+
+    // Process the content
+    let processedContent = [];
+
+    // Add the title (h1) with '#' before it
+    const title = changelogContent.find("h1.display-4").first().text().trim();
+    processedContent.push("# " + title, ""); // '#' added before the title, Empty string for a blank line after title
+
+    // Process other elements
+    changelogContent.children().each(function () {
+      const $elem = $(this);
+      if ($elem.is("h2")) {
+        // Add two newlines before each h2 to separate sections
+        processedContent.push("", $elem.text().trim(), "");
+      } else if ($elem.is("p.lead")) {
+        processedContent.push($elem.text().trim());
+      } else if ($elem.hasClass("d-flex")) {
+        const text = $elem.find(".lead").text().trim();
+        if ($elem.find(".bi-arrow-return-right").length > 0) {
+          // This is an inline item (- -)
+          processedContent.push("• • " + text);
+        } else if ($elem.find(".bi-arrow-right").length > 0) {
+          // This is a regular item (-)
+          processedContent.push("• " + text);
+        } else {
+          // Fallback for any items without hyphens
+          processedContent.push("• " + text);
+        }
+      }
+    });
+
+    // Add the sidebar image URL if available
+    if (sidebarImageUrl) {
+      processedContent.push("", "Media:", sidebarImageUrl);
+    }
+
+    // Add custom message at the end with the current page URL
+    processedContent.push(
+      "",
+      "",
+      "This changelog was copied from jailbreakchangelogs.xyz",
+      `Source: ${currentPageUrl}`
+    );
+
+    // Join the processed content with newlines
+    const cleanedContent = processedContent.join("\n");
+
+    navigator.clipboard
+      .writeText(cleanedContent)
+      .then(() => {
+        // Change button icon to indicate success
+        $(this).html('<i class="bi bi-check-lg me-2"></i>Copied!');
+
+        // Revert button icon after 2 seconds
+        setTimeout(() => {
+          $(this).html('<i class="bi bi-clipboard me-2"></i>Copy Changelog');
+        }, 2000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+        alert("Failed to copy changelog. Please try again.");
+      });
+  });
+
+  desktopCopyChangelogBtn.on("click", function () {
     // Get the content of the changelog
     const changelogContent = $("#content").clone();
 
@@ -322,13 +486,13 @@ $(document).ready(function () {
     const endDate = endDatePicker.getDate();
 
     if (startDate && endDate) {
-      return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+      return `From: ${formatDate(startDate)} - To: ${formatDate(endDate)}`;
     } else if (startDate) {
       return `From: ${formatDate(startDate)}`;
     } else if (endDate) {
-      return `Until: ${formatDate(endDate)}`;
+      return `To: ${formatDate(endDate)}`;
     }
-    return "All Changelogs";
+    return "Select Start Date and End Date";
   }
 
   function formatDate(date) {
@@ -340,22 +504,38 @@ $(document).ready(function () {
   }
 
   function openChangelogDropdown() {
-    const $dropdownEl = $("#changelogDropdown");
-    const dropdownInstance = bootstrap.Dropdown.getOrCreateInstance(
-      $dropdownEl[0]
+    const $mobileDropdownEl = $("#mobileChangelogDropdown");
+    const $desktopDropdownEl = $("#desktopChangelogDropdown");
+
+    const mobileDropdownInstance = bootstrap.Dropdown.getOrCreateInstance(
+      $mobileDropdownEl[0]
+    );
+    const desktopDropdownInstance = bootstrap.Dropdown.getOrCreateInstance(
+      $desktopDropdownEl[0]
     );
 
     // Force the dropdown to show
-    bootstrap.Dropdown.getOrCreateInstance($dropdownEl[0]).show();
+    mobileDropdownInstance.show();
+    desktopDropdownInstance.show();
 
     // Ensure the dropdown stays open
     setTimeout(() => {
-      if (!$dropdownEl.hasClass("show")) {
-        $dropdownEl.dropdown("show");
+      if (!$mobileDropdownEl.hasClass("show")) {
+        $mobileDropdownEl.dropdown("show");
+      }
+      if (!$desktopDropdownEl.hasClass("show")) {
+        $desktopDropdownEl.dropdown("show");
       }
     }, 100);
   }
-
+  function clearedFilterToast(message) {
+    toastr.success(message, "Filter cleared!", {
+      positionClass: "toast-bottom-right", // Position at the bottom right
+      timeOut: 5000, // Toast will disappear after 5 seconds
+      closeButton: true, // Add a close button
+      progressBar: true, // Show a progress bar
+    });
+  }
   function clearDateFilter() {
     startDatePicker.setDate(null);
     endDatePicker.setDate(null);
@@ -367,16 +547,20 @@ $(document).ready(function () {
     // Hide the modal
     dateFilterModal.hide();
 
-    updateDropdownButton("default");
     populateChangelogDropdown(changelogsData);
 
-    // Show the toast
-    toast.show();
+    // Show the toast notification
+    clearedFilterToast("The date filter has been cleared successfully!");
   }
 
   document
-    .getElementById("clearDateFilter")
-    .addEventListener("click", clearDateFilter);
+    .querySelectorAll("#mobileClearDateFilter, #desktopClearDateFilter")
+    .forEach((button) => {
+      button.addEventListener("click", function (event) {
+        event.preventDefault();
+        clearDateFilter();
+      });
+    });
 
   function filterChangelogsByDate() {
     let startDate = startDatePicker.getDate();
@@ -462,8 +646,6 @@ $(document).ready(function () {
     } else {
       $dropdownButton.html(`<i class="bi bi-calendar-event me-2"></i>${text}`);
     }
-    // Ensure the dropdown is still clickable after updating the text
-    new bootstrap.Dropdown($dropdownButton[0]);
   }
 
   // Modify the event listener for the dropdown button
@@ -589,9 +771,6 @@ $(document).ready(function () {
           const latestChangelog = data[0]; // Get the latest changelog
           displayChangelog(latestChangelog); // Display the latest changelog if no ID is provided in the URL
         }
-        updateDropdownButton("default");
-      } else {
-        console.error("No changelogs found.");
       }
 
       hideLoadingOverlay();
@@ -772,7 +951,6 @@ $(document).ready(function () {
   }
 
   const displayChangelog = (changelog) => {
-    history.pushState(null, "", `?id=${changelog.id}`);
     localStorage.setItem("selectedChangelogId", changelog.id);
 
     document.title = `Jailbreak Changelog: ${changelog.title}`;
@@ -800,7 +978,7 @@ $(document).ready(function () {
       console.warn("No sections available for changelog.");
       contentHtml += '<p class="lead">No sections available.</p>';
     }
-    const dropdownText = $("#changelogDropdown").text().trim();
+    const dropdownText = $("#mobileChangelogDropdown").text().trim();
     if (
       dropdownText !== "Filtered Changelogs" &&
       dropdownText !== "No data for selected dates"
@@ -810,7 +988,6 @@ $(document).ready(function () {
 
     sectionsElement.innerHTML = contentHtml;
   };
-
   // Back to Top button functionality
   const backToTopButton = $("#backToTop");
 
@@ -833,9 +1010,12 @@ $(document).ready(function () {
     const selectedChangelog = changelogsData.find((cl) => cl.id == changelogId);
     if (selectedChangelog) {
       displayChangelog(selectedChangelog);
+      const accordion = document.getElementById("filterAccordion");
+      const collapseElement = accordion.querySelector(".collapse");
+      bootstrap.Collapse.getInstance(collapseElement).hide();
     }
   });
 
-  bootstrap.Dropdown.getOrCreateInstance($("#changelogDropdown")[0]);
-  $("#clearDateFilter").on("click", clearDateFilter);
+  bootstrap.Dropdown.getOrCreateInstance($("#mobileChangelogDropdown")[0]);
+  bootstrap.Dropdown.getOrCreateInstance($("#desktopChangelogDropdown")[0]);
 });

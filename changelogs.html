@@ -49,6 +49,10 @@
     />
     <link
       rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+    />
+    <link
+      rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
     />
     <link
@@ -64,6 +68,7 @@
       rel="stylesheet"
     />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -234,38 +239,218 @@
 
     <!-- New Container for Filter Options -->
     <div class="container mt-3">
-      <div class="d-flex justify-content-center align-items-center gap-3">
-        <!-- Home icon with background -->
-        <a class="btn btn-custom" href="index.html" title="Home">
-          <i class="bi bi-house-door-fill me-2"></i> Home
-        </a>
-        <div class="dropdown">
-          <button
-            class="btn btn-primary dropdown-toggle"
-            id="changelogDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            aria-haspopup="true"
+      <!-- Accordion for mobile (visible on mobile only) -->
+      <div class="accordion d-md-none" id="filterAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="filterAccordionHeading">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#filterAccordionCollapse"
+              aria-expanded="false"
+              aria-controls="filterAccordionCollapse"
+            >
+              Filter Options
+            </button>
+          </h2>
+          <div
+            id="filterAccordionCollapse"
+            class="accordion-collapse collapse"
+            aria-labelledby="filterAccordionHeading"
+            data-bs-parent="#filterAccordion"
           >
-            <i class="bi bi-calendar-event me-2"></i>View Changelogs
-          </button>
-          <ul
-            class="dropdown-menu changelog-dropdown w-100"
-            id="changelogList"
-            aria-labelledby="changelogDropdown"
-          >
-            <!-- Dropdown items will be populated here -->
-          </ul>
+            <div class="accordion-body">
+              <!-- First row of buttons inside accordion -->
+              <div class="row justify-content-center">
+                <div class="col-12 mb-3">
+                  <a
+                    class="btn btn-custom w-100"
+                    href="index.html"
+                    title="Home"
+                  >
+                    <i class="bi bi-house-door-fill me-2"></i> Home
+                  </a>
+                </div>
+                <div class="col-12 mb-3">
+                  <div class="dropdown w-100">
+                    <button
+                      class="btn btn-primary dropdown-toggle w-100"
+                      id="mobileChangelogDropdown"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <i class="bi bi-calendar-event me-2"></i> View Changelogs
+                    </button>
+                    <ul
+                      class="dropdown-menu changelog-dropdown w-100"
+                      id="mobileChangelogList"
+                      aria-labelledby="mobileChangelogDropdown"
+                    >
+                      <!-- Dropdown items will be populated here -->
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12 mb-3">
+                  <div
+                    class="btn-group w-100"
+                    role="group"
+                    aria-label="Filter Options"
+                  >
+                    <button
+                      class="btn btn-secondary"
+                      id="mobileOpenDateFilterModal"
+                    >
+                      <i class="bi bi-calendar-event me-2"></i> Select Date
+                      Range
+                    </button>
+                    <button class="btn btn-danger" id="mobileClearDateFilter">
+                      <i class="bi bi-x-circle me-2"></i> Clear Filter
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Second row of buttons inside accordion -->
+              <div class="row justify-content-center">
+                <div class="col-12 mb-3">
+                  <a href="timeline.html" class="btn btn-primary w-100">
+                    <i class="bi bi-clock-history me-2"></i> Jailbreak Timeline
+                  </a>
+                </div>
+                <div class="col-12 mb-3">
+                  <a href="seasons.html" class="btn btn-primary w-100">
+                    <i class="bi bi-calendar me-2"></i> Seasons
+                  </a>
+                </div>
+                <div class="col-12 mb-3">
+                  <button
+                    class="btn btn-primary w-100"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#twitterFeedOffcanvas"
+                    aria-controls="twitterFeedOffcanvas"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      class="bi bi-twitter-x me-2"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"
+                      />
+                    </svg>
+                    Badimo Feed
+                  </button>
+                </div>
+                <div class="col-12 mb-3">
+                  <button
+                    id="mobileCopyChangelog"
+                    class="btn btn-primary w-100"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Copy Changelog"
+                  >
+                    <i class="bi bi-clipboard me-2"></i> Copy Changelog
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- Button Group for Filter Options -->
-        <div class="btn-group" role="group" aria-label="Filter Options">
-          <button class="btn btn-secondary" id="openDateFilterModal">
-            <i class="bi bi-calendar-event me-2"></i>Select Date Range
-          </button>
-          <button class="btn btn-danger" id="clearDateFilter">
-            <i class="bi bi-x-circle me-2"></i>Clear Filter
-          </button>
+      </div>
+
+      <!-- Regular layout for larger screens (hidden on mobile) -->
+      <div class="d-none d-md-block">
+        <!-- First row of buttons -->
+        <div class="row justify-content-center">
+          <div class="col-md-auto mb-3">
+            <a class="btn btn-custom" href="index.html" title="Home">
+              <i class="bi bi-house-door-fill me-2"></i> Home
+            </a>
+          </div>
+          <div class="col-md-auto mb-3">
+            <div class="dropdown">
+              <button
+                class="btn btn-primary dropdown-toggle"
+                id="desktopChangelogDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="bi bi-calendar-event me-2"></i> View Changelogs
+              </button>
+              <ul
+                class="dropdown-menu changelog-dropdown w-100"
+                id="desktopChangelogList"
+                aria-labelledby="desktopChangelogDropdown"
+              >
+                <!-- Dropdown items will be populated here -->
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-auto mb-3">
+            <div class="btn-group" role="group" aria-label="Filter Options">
+              <button class="btn btn-secondary" id="desktopOpenDateFilterModal">
+                <i class="bi bi-calendar-event me-2"></i> Select Date Range
+              </button>
+              <button class="btn btn-danger" id="desktopClearDateFilter">
+                <i class="bi bi-x-circle me-2"></i> Clear Filter
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Second row of buttons -->
+        <div class="row justify-content-center">
+          <div class="col-md-3 mb-3">
+            <a href="timeline.html" class="btn btn-primary w-100">
+              <i class="bi bi-clock-history me-2"></i> Jailbreak Timeline
+            </a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <a href="seasons.html" class="btn btn-primary w-100">
+              <i class="bi bi-calendar me-2"></i> Seasons
+            </a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <button
+              class="btn btn-primary w-100"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#twitterFeedOffcanvas"
+              aria-controls="twitterFeedOffcanvas"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-twitter-x me-2"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"
+                />
+              </svg>
+              Badimo Feed
+            </button>
+          </div>
+          <div class="col-md-3 mb-3">
+            <button
+              id="desktopCopyChangelog"
+              class="btn btn-primary w-100"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Copy Changelog"
+            >
+              <i class="bi bi-clipboard me-2"></i> Copy Changelog
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -293,54 +478,7 @@
               </div>
             </div>
           </div>
-          <div class="row mb-3">
-            <div class="col-12 col-sm-6 mb-2">
-              <a href="timeline.html" class="btn btn-primary btn-lg w-100">
-                <i class="bi bi-clock-history me-2"></i>Jailbreak Timeline
-              </a>
-            </div>
-            <div class="col-12 col-sm-6 mb-2">
-              <a href="seasons.html" class="btn btn-primary btn-lg w-100">
-                <i class="bi bi-calendar me-2"></i>Seasons
-              </a>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-12 col-sm-6 mb-2">
-              <button
-                class="btn btn-primary btn-lg w-100"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#twitterFeedOffcanvas"
-                aria-controls="twitterFeedOffcanvas"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  class="bi bi-twitter-x me-2"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"
-                  />
-                </svg>
-                Badimo Feed
-              </button>
-            </div>
-            <div class="col-12 col-sm-6 mb-2">
-              <button
-                id="copyChangelog"
-                class="btn btn-primary btn-lg w-100"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Copy Changelog"
-              >
-                <i class="bi bi-clipboard me-2"></i>Copy Changelog
-              </button>
-            </div>
-          </div>
+          <!-- Removed extra buttons below the sidebar image wrapper -->
         </div>
       </div>
     </div>
@@ -614,25 +752,6 @@
               Apply Filter
             </button>
           </div>
-        </div>
-      </div>
-    </div>
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-      <div
-        id="clearFilterToast"
-        class="toast align-items-center text-white bg-success border-0"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-      >
-        <div class="d-flex">
-          <div class="toast-body">Filter cleared successfully.</div>
-          <button
-            type="button"
-            class="btn-close btn-close-white me-2 m-auto"
-            data-bs-dismiss="toast"
-            aria-label="Close"
-          ></button>
         </div>
       </div>
     </div>
