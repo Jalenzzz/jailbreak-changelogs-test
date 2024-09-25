@@ -539,8 +539,8 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 
 .offcanvas-header {
-  background-color: var(--header-bg); /* Header background color */
-  color: var(--header-text); /* Header text color */
+  background-color: rgb(187, 94, 0);
+  color: var(--text-color);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
 }
 
