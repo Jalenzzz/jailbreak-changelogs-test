@@ -163,6 +163,13 @@ $(document).ready(function () {
     }
   });
 
+  // Hide example queries on page load if search input is empty
+  $(document).ready(function () {
+    if ($searchInput.val().trim() === "") {
+      $exampleQueries.addClass("d-none"); // Hide example queries if input is empty
+    }
+  });
+
   // Function to focus on the first search result
   function focusOnSearchResults() {
     if ($searchResultsContainer.children().length > 0) {
@@ -1033,6 +1040,14 @@ $(document).ready(function () {
     }
 
     sectionsElement.innerHTML = contentHtml; // Update sections element with content HTML
+    // Update the URL with the ID parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("id", changelog.id);
+    window.history.pushState(
+      {},
+      "",
+      `${window.location.pathname}?${urlParams.toString()}`
+    );
   };
 
   // Back to Top button functionality
