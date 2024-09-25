@@ -251,7 +251,7 @@
   </nav>
 </body>
 
- <!-- New Container for Filter Options -->
+<!-- Container for Filter Options -->
 <div class="container mt-3">
   <!-- Accordion for Filter Options (Visible on Mobile Only) -->
   <div class="accordion d-md-none" id="filterAccordion">
@@ -275,119 +275,56 @@
         data-bs-parent="#filterAccordion"
       >
         <div class="accordion-body">
-          <!-- First Row of Filter Buttons -->
-          <div class="row justify-content-center">
-            <!-- ... (first row content) ... -->
-            <div class="col-12 mb-3">
-              <!-- Home Button -->
-              <a
-                class="btn btn-custom w-100"
-                href="index.html"
-                title="Home"
-              >
+          <!-- Mobile Filter Options -->
+          <div class="row g-3">
+            <!-- Primary Actions -->
+            <div class="col-12 mb-2">
+              <a class="btn btn-custom w-100" href="index.html" title="Home">
                 <i class="bi bi-house-door-fill me-2"></i> Home
               </a>
             </div>
-            <div class="col-12 mb-3">
-              <!-- Dropdown to View Changelogs -->
+            <div class="col-12">
+              <button id="mobileLatestChangelogBtn" class="btn btn-info w-100">
+                <i class="bi bi-rocket-takeoff me-2"></i> Jump to Latest
+              </button>
+            </div>
+
+            <!-- Changelog Actions -->
+            <div class="col-12">
               <div class="dropdown w-100">
-                <button
-                  class="btn btn-primary dropdown-toggle w-100"
-                  id="mobileChangelogDropdown"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
+                <button class="btn btn-primary dropdown-toggle w-100" id="mobileChangelogDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-calendar-event me-2"></i> View Changelogs
                 </button>
-                <ul
-                  class="dropdown-menu changelog-dropdown w-100"
-                  id="mobileChangelogList"
-                  aria-labelledby="mobileChangelogDropdown"
-                >
+                <ul class="dropdown-menu changelog-dropdown w-100" id="mobileChangelogList" aria-labelledby="mobileChangelogDropdown">
                   <!-- Dropdown items will be populated dynamically -->
                 </ul>
               </div>
             </div>
-            <div class="col-12 mb-3">
-              <!-- Button Group for Date Filter Options -->
-              <div
-                class="btn-group w-100"
-                role="group"
-                aria-label="Filter Options"
-              >
-                <button
-                  class="btn btn-secondary"
-                  id="mobileOpenDateFilterModal"
-                >
-                  <i class="bi bi-calendar-event me-2"></i> Select Date Range
-                </button>
-                <button class="btn btn-danger" id="mobileClearDateFilter">
-                  <i class="bi bi-x-circle me-2"></i> Clear Filter
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Second Row of Filter Buttons -->
-          <div class="row justify-content-center">
-            <div class="col-md-2 mb-3">
-              <!-- Link to Jailbreak Timeline -->
-              <a href="timeline.html" class="btn btn-primary w-100">
-                <i class="bi bi-clock-history me-2"></i> Jailbreak Timeline
-              </a>
-            </div>
-            <div class="col-md-2 mb-3">
-              <!-- Link to Seasons Page -->
-              <a href="seasons.html" class="btn btn-primary w-100">
-                <i class="bi bi-calendar me-2"></i> Seasons
-              </a>
-            </div>
-            <div class="col-md-2 mb-3">
-              <!-- Button to Open Badimo Feed Offcanvas -->
-              <button
-                class="btn btn-primary w-100"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#twitterFeedOffcanvas"
-                aria-controls="twitterFeedOffcanvas"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  class="bi bi-twitter-x me-2"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"
-                  />
-                </svg>
-                Badimo Feed
-              </button>
-            </div>
-            <div class="col-md-2 mb-3">
-              <!-- Button to Copy Changelog -->
-              <button
-                id="mobileCopyChangelog"
-                class="btn btn-primary w-100"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Copy Changelog"
-              >
+            <div class="col-12">
+              <button id="mobileCopyChangelog" class="btn btn-primary w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Changelog">
                 <i class="bi bi-clipboard me-2"></i> Copy Changelog
               </button>
             </div>
-            <!-- New Latest Changelog Button -->
-            <div class="col-md-2 mb-3">
-              <button
-                id="mobileLatestChangelogBtn"
-                class="btn btn-primary w-100"
-                style="display: none;"
-              >
-              <i class="bi bi-rocket-takeoff me-2"></i> Jump to Newest
 
+            <!-- Date Filter Options -->
+            <div class="col-12">
+              <div class="btn-group w-100" role="group" aria-label="Date Filter Options">
+                <button class="btn btn-secondary" id="mobileOpenDateFilterModal">
+                  <i class="bi bi-calendar-event me-2"></i> Select Date
+                </button>
+                <button class="btn btn-danger" id="mobileClearDateFilter">
+                  <i class="bi bi-x-circle me-2"></i> Clear
+                </button>
+              </div>
+            </div>
+
+            <!-- Additional Actions -->
+            <div class="col-12">
+              <button class="btn btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#twitterFeedOffcanvas" aria-controls="twitterFeedOffcanvas">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x me-2" viewBox="0 0 16 16">
+                  <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
+                </svg>
+                Badimo Feed
               </button>
             </div>
           </div>
@@ -395,112 +332,64 @@
       </div>
     </div>
   </div>
-</div>
 
-
-<!-- Regular layout for larger screens (hidden on mobile) -->
-<div class="d-none d-md-block">
-  <!-- First Row of Filter Buttons -->
-  <div class="row justify-content-center">
-    <div class="col-md-auto mb-3">
+  <!-- Desktop layout (hidden on mobile) -->
+  <div class="d-none d-md-block">
+    <div class="row justify-content-center g-3">
       <!-- Home Button -->
-      <a class="btn btn-custom" href="index.html" title="Home">
-        <i class="bi bi-house-door-fill me-2"></i> Home
-      </a>
-    </div>
-    <div class="col-md-auto mb-3">
-      <!-- Dropdown to View Changelogs -->
-      <div class="dropdown">
-        <button
-          class="btn btn-primary dropdown-toggle"
-          id="desktopChangelogDropdown"
-          role="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          <i class="bi bi-calendar-event me-2"></i> View Changelogs
-        </button>
-        <ul
-          class="dropdown-menu changelog-dropdown w-100"
-          id="desktopChangelogList"
-          aria-labelledby="desktopChangelogDropdown"
-        >
-          <!-- Dropdown items will be populated dynamically -->
-        </ul>
+      <div class="col-auto">
+        <a class="btn btn-custom" href="index.html" title="Home">
+          <i class="bi bi-house-door-fill me-2"></i> Home
+        </a>
       </div>
-    </div>
-    <div class="col-md-auto mb-3">
-      <!-- Button Group for Date Filter Options -->
-      <div class="btn-group" role="group" aria-label="Filter Options">
-        <button class="btn btn-secondary" id="desktopOpenDateFilterModal">
-          <i class="bi bi-calendar-event me-2"></i> Select Date Range
-        </button>
-        <button class="btn btn-danger" id="desktopClearDateFilter">
-          <i class="bi bi-x-circle me-2"></i> Clear Filter
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Second Row of Filter Buttons -->
-  <div class="row justify-content-center">
-    <div class="col-md-3 mb-3">
-      <!-- Link to Jailbreak Timeline -->
-      <a href="timeline.html" class="btn btn-primary w-100">
-        <i class="bi bi-clock-history me-2"></i> Jailbreak Timeline
-      </a>
-    </div>
-    <div class="col-md-3 mb-3">
-      <!-- Link to Seasons Page -->
-      <a href="seasons.html" class="btn btn-primary w-100">
-        <i class="bi bi-calendar me-2"></i> Seasons
-      </a>
-    </div>
-    <div class="col-md-3 mb-3">
-      <!-- Button to Open Badimo Feed Offcanvas -->
-      <button
-        class="btn btn-primary w-100"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#twitterFeedOffcanvas"
-        aria-controls="twitterFeedOffcanvas"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          class="bi bi-twitter-x me-2"
-          viewBox="0 0 16 16"
-        >
-          <path
-            d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"
-          />
-        </svg>
-        Badimo Feed
-      </button>
-    </div>
-    <div class="col-md-3 mb-3">
-      <!-- Button to Copy Changelog -->
-      <button
-        id="desktopCopyChangelog"
-        class="btn btn-primary w-100"
-        data-bs-toggle="tooltip"
-        data-bs-placement="top"
-        title="Copy Changelog"
-      >
-        <i class="bi bi-clipboard me-2"></i> Copy Changelog
-      </button>
-    </div>
-    <!-- New Latest Changelog Button for Desktop -->
-    <div class="col-md-2 mb-3">
-      <button
-        id="desktopLatestChangelogBtn"
-        class="btn btn-primary w-100"
-        style="display: none;"
-      >
-        <i class="bi bi-rocket-takeoff me-2"></i> Jump to Newest
-      </button>
+      <!-- Dropdown to View Changelogs -->
+      <div class="col-auto">
+        <div class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" id="desktopChangelogDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-calendar-event me-2"></i> View Changelogs
+          </button>
+          <ul class="dropdown-menu changelog-dropdown" id="desktopChangelogList" aria-labelledby="desktopChangelogDropdown">
+            <!-- Dropdown items will be populated dynamically -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- Date Filter Options -->
+      <div class="col-auto">
+        <div class="btn-group" role="group" aria-label="Filter Options">
+          <button class="btn btn-secondary" id="desktopOpenDateFilterModal">
+            <i class="bi bi-calendar-event me-2"></i> Select Date Range
+          </button>
+          <button class="btn btn-danger" id="desktopClearDateFilter">
+            <i class="bi bi-x-circle me-2"></i> Clear Filter
+          </button>
+        </div>
+      </div>
+
+      <!-- Badimo Feed Button -->
+      <div class="col-auto">
+        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#twitterFeedOffcanvas" aria-controls="twitterFeedOffcanvas">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x me-2" viewBox="0 0 16 16">
+            <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
+          </svg>
+          Badimo Feed
+        </button>
+      </div>
+
+      <!-- Copy Changelog Button -->
+      <div class="col-auto">
+        <button id="desktopCopyChangelog" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Changelog">
+          <i class="bi bi-clipboard me-2"></i> Copy Changelog
+        </button>
+      </div>
+
+      <!-- Latest Changelog Button -->
+      <div class="col-auto">
+        <button id="desktopLatestChangelogBtn" class="btn btn-info">
+          <i class="bi bi-rocket-takeoff me-2"></i> Jump to Latest
+        </button>
+      </div>
     </div>
   </div>
 </div>
