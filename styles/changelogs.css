@@ -90,6 +90,10 @@ html[data-bs-theme="light"] .changelog-dropdown-item:hover {
 [data-bs-theme="light"] #loading-overlay {
   background-color: #ffffff; /* Light Background for Loading Overlay */
 }
+/* Light theme custom navbar color */
+[data-bs-theme="light"] .custom-navbar-color {
+  background-color: #333333; /* Dark background for navbar in light theme */
+}
 
 /* Light Theme Styles for Example Queries */
 [data-bs-theme="light"] .example-queries {
@@ -703,11 +707,6 @@ span {
   color: var(--text-color); /* Default text color */
 }
 
-/* Custom Navbar Color */
-.custom-navbar-color {
-  background-color: #333333; /* Dark background for navbar */
-}
-
 /* Navbar Padding */
 .navbar {
   padding-top: 0.5rem; /* Top padding */
@@ -830,76 +829,6 @@ button {
   transition: background-color 0.3s, color 0.3s; /* Smooth transition */
 }
 
-/* Footer Styles */
-footer {
-  color: var(--text-color); /* Text color */
-  padding: 2rem 0; /* Padding */
-  border-top: 1px solid var(--border-color); /* Top border */
-}
-
-/* Badimo Message Card Styles */
-.badimo-message {
-  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  overflow: hidden; /* Hide overflow */
-}
-
-/* Badimo Message Card Header Styles */
-.badimo-message .card-header {
-  background-color: var(--header-bg); /* Header background color */
-  color: var(--header-text); /* Header text color */
-  text-align: center; /* Center text */
-  font-weight: bold; /* Bold text */
-}
-
-/* Badimo Message Card Body Styles */
-.badimo-message .card-body {
-  padding: 20px; /* Padding */
-  text-align: center; /* Center text */
-}
-
-/* Lead Text Styles */
-.badimo-message .lead {
-  font-size: 1.2rem; /* Font size */
-  color: var(--highlight-text); /* Highlight text color */
-}
-
-/* Italic and Bold Text Styles */
-.badimo-message .font-italic {
-  font-style: italic; /* Italic text */
-  color: var(--text-color); /* Text color */
-}
-
-.badimo-message .font-weight-bold {
-  font-weight: bold; /* Bold text */
-  color: var(--highlight-text); /* Highlight text color */
-}
-
-/* Admin Links Styles */
-.admin-link {
-  color: var(--footer-link-color); /* Link color */
-  text-decoration: none; /* No underline */
-  font-weight: bold; /* Bold text */
-  transition: color 0.3s; /* Smooth color transition */
-}
-
-.admin-link:hover {
-  color: var(--footer-link-hover-color); /* Hover color */
-}
-
-/* Version Info Styles */
-.version-info {
-  display: flex; /* Flexbox layout */
-  justify-content: space-around; /* Space items evenly */
-  margin-top: 1rem; /* Top margin */
-  font-size: 0.9rem; /* Font size */
-}
-
-.version-info p {
-  margin: 0; /* Remove default margin */
-}
-
 /* Back to Top Button Styles */
 #backToTop {
   display: none; /* Initially hidden */
@@ -922,59 +851,27 @@ footer {
 #backToTop:hover {
   background-color: var(--button-primary-hover-bg); /* Hover background color */
 }
-/* General Link Styles */
-.btn-link {
-  padding: 8px 16px; /* Padding for button links */
-  border-radius: 4px; /* Rounded corners */
-  transition: all 0.3s ease; /* Smooth transition for all properties */
+footer {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  padding: 2rem 0;
+  border-top: 1px solid var(--border-color);
+  transition: transform 0.3s ease-out;
+}
+footer.hide {
+  transform: translateY(100%);
 }
 
-/* Reddit Link Styles */
-.reddit-link {
-  color: var(--reddit-color); /* Reddit color */
-  text-decoration: none; /* No underline */
+/* Version Info Styling */
+.version-info {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+  font-size: 0.9rem;
 }
 
-.reddit-link:hover {
-  color: #ffffff; /* White text on hover */
-  background-color: var(--reddit-color); /* Reddit background */
-  transform: scale(1.05); /* Slightly enlarge on hover */
-}
-
-/* Discord Link Styles */
-.discord-link {
-  color: var(--discord-color); /* Discord color */
-  text-decoration: none; /* No underline */
-}
-
-.discord-link:hover {
-  color: #ffffff; /* White text on hover */
-  background-color: var(--discord-color); /* Discord background */
-  transform: scale(1.05); /* Slightly enlarge on hover */
-}
-
-/* Wiki Link Styles */
-.wiki-link {
-  color: var(--wiki-color); /* Wiki color */
-  text-decoration: none; /* No underline */
-}
-
-.wiki-link:hover {
-  color: #ffffff; /* White text on hover */
-  background-color: var(--wiki-color); /* Wiki background */
-  transform: scale(1.05); /* Slightly enlarge on hover */
-}
-
-/* GitHub Link Styles */
-.github-link {
-  color: var(--github-color); /* GitHub color */
-  text-decoration: none; /* No underline */
-}
-
-.github-link:hover {
-  color: #ffffff; /* White text on hover */
-  background-color: #000000; /* Black background */
-  transform: scale(1.05); /* Slightly enlarge on hover */
+.version-info p {
+  margin: 0;
 }
 
 /* Responsive Adjustments */

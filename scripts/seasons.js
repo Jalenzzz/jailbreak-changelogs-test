@@ -1,9 +1,11 @@
 $(document).ready(function () {
+  // DOM element references
   const $seasonDetailsContainer = $("#season-details");
   const $carouselInner = $("#carousel-inner");
   const $loadingOverlay = $("#loading-overlay");
   const $seasonList = $("#seasonList"); // Reference to the season dropdown
 
+  // Function to fetch season descriptions from the API
   function fetchSeasonDescription() {
     return $.ajax({
       url: "https://api.jailbreakchangelogs.xyz/get_seasons",
@@ -16,6 +18,7 @@ $(document).ready(function () {
     });
   }
 
+  // Function to fetch season rewards from the API
   function fetchSeasonRewards() {
     return $.ajax({
       url: "https://api.jailbreakchangelogs.xyz/list_rewards",
@@ -27,7 +30,8 @@ $(document).ready(function () {
       },
     });
   }
-  // New function to populate the season dropdown
+
+  // Function to populate the season dropdown menu
   function populateSeasonDropdown(seasonData) {
     seasonData.forEach((season) => {
       const listItem = $(`
@@ -42,8 +46,11 @@ $(document).ready(function () {
     });
   }
 
+  // Function to display season details and rewards
   function displaySeasonDetails(season, descriptionData, rewardsData) {
+    // Find the season data from the description data
     const seasonData = descriptionData.find((desc) => desc.season === season);
+    // Filter rewards for the current season
     const rewards = rewardsData.filter(
       (reward) => reward.season_number === season
     );
@@ -52,6 +59,8 @@ $(document).ready(function () {
       console.warn(`No description found for season ${season}`);
       return;
     }
+
+    // Populate the season details container
     $seasonDetailsContainer.html(`
       <h2 class="season-title display-4 text-custom-header mb-3">Season ${season} / ${seasonData.title}</h2>
       <div class="card mb-5 shadow">
@@ -62,7 +71,7 @@ $(document).ready(function () {
       <h3 class="prizes-title display-5 custom-prizes-title mb-4">Season Rewards</h3>
     `);
 
-    // Add season rewards below the description
+    // Generate HTML for season rewards
     const rewardsHTML = rewards
       .map((reward) => {
         const isBonus = reward.bonus === "True";
@@ -82,29 +91,30 @@ $(document).ready(function () {
       })
       .join("");
 
+    // Append the rewards list to the season details container
     $seasonDetailsContainer.append(
       `<ul class="list-group season-rewards">${rewardsHTML}</ul>`
     );
   }
 
+  // Function to update the carousel with reward images
   function updateCarousel(rewards) {
-    $carouselInner.empty(); // Clear the existing carousel items
+    // Clear any existing carousel items
+    $carouselInner.empty();
 
+    // Iterate through each reward in the rewards array
     rewards.forEach((reward, index) => {
+      // Determine if this is the first (active) carousel item
       const isActive = index === 0 ? "active" : "";
 
-      // Check if the reward is a bonus and its requirement starts with "Level"
-      if (reward.bonus === "True" && reward.requirement.startsWith("Level")) {
-        // Skip adding this reward to the carousel if it meets the condition
-        return;
-      }
-
-      // Proceed if the condition is not met
+      // Create a new carousel item using a template literal
       const carouselItem = $(`
-        <div class="carousel-item ${isActive} rounded"> 
+      <div class="carousel-item ${isActive} rounded"> 
           <img src="${reward.link}" class="d-block w-100 img-fluid" alt="${reward.item}">
-        </div>
+      </div>
       `);
+
+      // Append the new carousel item to the carousel inner container
       $carouselInner.append(carouselItem);
     });
   }
@@ -112,6 +122,7 @@ $(document).ready(function () {
   // Back to Top button functionality
   const backToTopButton = $("#backToTop");
 
+  // Show/hide the Back to Top button based on scroll position
   $(window).scroll(function () {
     if ($(this).scrollTop() > 100) {
       backToTopButton.addClass("show");
@@ -120,11 +131,13 @@ $(document).ready(function () {
     }
   });
 
+  // Smooth scroll to top when the Back to Top button is clicked
   backToTopButton.on("click", function (e) {
     e.preventDefault();
     $("html, body").animate({ scrollTop: 0 }, 100);
   });
 
+  // Function to load and display season details
   async function loadSeasonDetails(season, seasonDescriptions, seasonRewards) {
     try {
       // Check if the season exists in the API
@@ -141,6 +154,7 @@ $(document).ready(function () {
         return;
       }
 
+      // Display season details and update the carousel
       displaySeasonDetails(season, seasonDescriptions, seasonRewards);
       const rewardsForSeason = seasonRewards.filter(
         (reward) => reward.season_number === season
@@ -168,11 +182,13 @@ $(document).ready(function () {
       const seasonNumber = urlParams.get("id");
 
       if (!seasonNumber) {
+        // If no season is specified, redirect to the latest season
         const latestSeason = Math.max(
           ...seasonDescriptions.map((desc) => desc.season)
         );
         window.location.href = `${window.location.pathname}?id=${latestSeason}`;
       } else {
+        // Load details for the specified season
         loadSeasonDetails(
           parseInt(seasonNumber),
           seasonDescriptions,

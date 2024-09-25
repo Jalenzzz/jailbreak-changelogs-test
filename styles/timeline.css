@@ -113,6 +113,9 @@ body {
 
 footer {
   transition: transform 0.3s ease-out;
+  background-color: var(--bg-color);
+  padding: 2rem 0;
+  color: var(--text-color);
 }
 
 footer.hide {
@@ -511,12 +514,6 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
-}
-/* Footer Styling */
-footer {
-  background-color: var(--bg-color);
-  padding: 2rem 0;
-  color: var(--text-color);
 }
 
 /* Badimo Message Card */
