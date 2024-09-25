@@ -251,7 +251,7 @@
   </nav>
 </body>
 
-   <!-- New Container for Filter Options -->
+ <!-- New Container for Filter Options -->
 <div class="container mt-3">
   <!-- Accordion for Filter Options (Visible on Mobile Only) -->
   <div class="accordion d-md-none" id="filterAccordion">
@@ -277,6 +277,7 @@
         <div class="accordion-body">
           <!-- First Row of Filter Buttons -->
           <div class="row justify-content-center">
+            <!-- ... (first row content) ... -->
             <div class="col-12 mb-3">
               <!-- Home Button -->
               <a
@@ -330,19 +331,19 @@
 
           <!-- Second Row of Filter Buttons -->
           <div class="row justify-content-center">
-            <div class="col-12 mb-3">
+            <div class="col-md-2 mb-3">
               <!-- Link to Jailbreak Timeline -->
               <a href="timeline.html" class="btn btn-primary w-100">
                 <i class="bi bi-clock-history me-2"></i> Jailbreak Timeline
               </a>
             </div>
-            <div class="col-12 mb-3">
+            <div class="col-md-2 mb-3">
               <!-- Link to Seasons Page -->
               <a href="seasons.html" class="btn btn-primary w-100">
                 <i class="bi bi-calendar me-2"></i> Seasons
               </a>
             </div>
-            <div class="col-12 mb-3">
+            <div class="col-md-2 mb-3">
               <!-- Button to Open Badimo Feed Offcanvas -->
               <button
                 class="btn btn-primary w-100"
@@ -366,7 +367,7 @@
                 Badimo Feed
               </button>
             </div>
-            <div class="col-12 mb-3">
+            <div class="col-md-2 mb-3">
               <!-- Button to Copy Changelog -->
               <button
                 id="mobileCopyChangelog"
@@ -378,12 +379,24 @@
                 <i class="bi bi-clipboard me-2"></i> Copy Changelog
               </button>
             </div>
+            <!-- New Latest Changelog Button -->
+            <div class="col-md-2 mb-3">
+              <button
+                id="mobileLatestChangelogBtn"
+                class="btn btn-primary w-100"
+                style="display: none;"
+              >
+              <i class="bi bi-rocket-takeoff me-2"></i> Jump to Newest
+
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- Regular layout for larger screens (hidden on mobile) -->
 <div class="d-none d-md-block">
@@ -479,6 +492,16 @@
         <i class="bi bi-clipboard me-2"></i> Copy Changelog
       </button>
     </div>
+    <!-- New Latest Changelog Button for Desktop -->
+    <div class="col-md-2 mb-3">
+      <button
+        id="desktopLatestChangelogBtn"
+        class="btn btn-primary w-100"
+        style="display: none;"
+      >
+        <i class="bi bi-rocket-takeoff me-2"></i> Jump to Newest
+      </button>
+    </div>
   </div>
 </div>
 
@@ -508,7 +531,6 @@
           </div>
         </div>
       </div>
-      <!-- Removed extra buttons below the sidebar image wrapper -->
     </div>
   </div>
 </div>

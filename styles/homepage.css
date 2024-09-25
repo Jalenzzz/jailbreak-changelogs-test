@@ -72,13 +72,39 @@ body {
   font-style: italic; /* make the text cursive */
 }
 .navbar-logo {
-  height: 70px; /* Default height for large screens */
+  height: 50px;
   width: auto;
-  object-fit: contain;
+  transition: height 0.3s ease;
 }
+.navbar-brand {
+  margin-right: 0;
+}
+.disclaimer {
+  font-size: 0.9rem;
+  color: #6c757d;
+  text-align: center;
+  margin-top: 10px;
+}
+
 footer a:hover {
   background-color: #333; /* change the background color on hover */
   padding: 5px 10px;
   font-size: 1.1em; /* increase the font size on hover */
   transition: 0.2s ease-in-out; /* add a smooth transition effect */
+}
+
+@media (max-width: 991px) {
+  .navbar-brand {
+    margin-right: auto;
+  }
+
+  .navbar-logo {
+    height: 40px;
+  }
+}
+
+@media (max-width: 575px) {
+  .navbar-logo {
+    height: 35px;
+  }
 }

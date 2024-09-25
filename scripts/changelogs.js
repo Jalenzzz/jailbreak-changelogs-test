@@ -5,6 +5,12 @@ $(document).ready(function () {
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
   const titleElement = document.getElementById("changelogTitle");
+  const desktopLatestChangelogBtn = document.getElementById(
+    "desktopLatestChangelogBtn"
+  );
+  const mobileLatestChangelogBtn = document.getElementById(
+    "mobileLatestChangelogBtn"
+  );
 
   // jQuery references for search results and navbar
   const $searchResultsContainer = $("#search-results");
@@ -62,6 +68,58 @@ $(document).ready(function () {
   let changelogsData = [];
   let debounceTimer;
 
+  // Displays the most recent changelog entry.
+  function displayLatestChangelog() {
+    if (changelogsData.length > 0) {
+      const latestChangelog = changelogsData[0]; // Get the first (latest) changelog
+      displayChangelog(latestChangelog); // Display the changelog content
+      updateDropdownButton("default"); // Reset the dropdown button to its default state
+      changelogToast("Showing latest changelog"); // Show a toast notification
+    }
+  }
+
+  // Event listener for the desktop version of the "Latest Changelog" button
+  desktopLatestChangelogBtn.addEventListener("click", displayLatestChangelog);
+
+  // Event listener for the mobile version of the "Latest Changelog" button
+  mobileLatestChangelogBtn.addEventListener("click", function (e) {
+    e.preventDefault(); // Prevent default action if the button is a link
+
+    displayLatestChangelog(); // Show the latest changelog
+
+    // Mobile-specific behavior: Collapse the filter options accordion if on a mobile device
+    if (window.innerWidth < 768) {
+      // Check if screen width is less than 768px (mobile breakpoint)
+      const accordion = document.getElementById("filterAccordion");
+      if (accordion) {
+        // Find all collapsible elements within the accordion
+        const collapsibleElements = accordion.querySelectorAll(
+          '[data-bs-toggle="collapse"]'
+        );
+
+        // Iterate through each collapsible element
+        collapsibleElements.forEach((element) => {
+          // Get the target element's ID (from data-bs-target or href attribute)
+          const targetId =
+            element.getAttribute("data-bs-target") ||
+            element.getAttribute("href");
+
+          if (targetId) {
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+              // Get the Bootstrap Collapse instance for the target element
+              const bsCollapse = bootstrap.Collapse.getInstance(targetElement);
+              // If the collapse is currently shown, hide it
+              if (bsCollapse && bsCollapse._isShown()) {
+                bsCollapse.hide();
+              }
+            }
+          }
+        });
+      }
+    }
+  });
+
   // Function to show the loading overlay
   function showLoadingOverlay() {
     loadingOverlay.classList.add("show");
@@ -90,13 +148,6 @@ $(document).ready(function () {
   function dismissKeyboard() {
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
-    }
-  }
-
-  // Function to close the navbar if it is open
-  function closeNavbar() {
-    if ($navbarCollapse.hasClass("show")) {
-      $navbarCollapse.collapse("hide");
     }
   }
 
@@ -538,6 +589,16 @@ $(document).ready(function () {
     });
   }
 
+  // Toast function for latest changelog
+  function changelogToast(message) {
+    toastr.info(message, "Changelog", {
+      positionClass: "toast-bottom-right", // Position at the bottom right
+      timeOut: 3000, // Toast will disappear after 3 seconds
+      closeButton: true, // Add a close button
+      progressBar: true, // Show a progress bar
+    });
+  }
+
   // Function to clear the date filter
   function clearDateFilter() {
     startDatePicker.setDate(null); // Reset start date
@@ -796,34 +857,64 @@ $(document).ready(function () {
     );
   };
 
-  // Fetch changelogs data from the API
+  // Fetch changelog data from the API
   $.getJSON(apiUrl)
     .done((data) => {
-      changelogsData = data; // Store fetched data
+      // Store the fetched data globally for later use
+      changelogsData = data;
 
+      // Check if we received valid data
       if (Array.isArray(data) && data.length > 0) {
-        populateChangelogDropdown(data); // Populate the dropdown with all changelogs
+        // Populate the changelog dropdown with the fetched data
+        populateChangelogDropdown(data);
+
+        // Get the 'id' parameter from the URL, if present
         const urlParams = new URLSearchParams(window.location.search);
-        const changelogId = urlParams.get("id"); // Get changelog ID from URL
-        const selectedChangelog = changelogsData.find(
-          (cl) => cl.id == changelogId // Find the selected changelog
-        );
-        if (selectedChangelog) {
-          displayChangelog(selectedChangelog); // Display the selected changelog
-        } else {
-          const latestChangelog = data[0]; // Get the latest changelog
-          displayChangelog(latestChangelog); // Display the latest changelog if no ID is provided
+        const changelogId = urlParams.get("id");
+
+        let selectedChangelog;
+
+        // If an ID is provided in the URL, find the corresponding changelog
+        if (changelogId) {
+          selectedChangelog = changelogsData.find((cl) => cl.id == changelogId);
+        }
+
+        // If no changelog was found with the provided ID, or no ID was provided,
+        // default to the latest changelog (first in the array)
+        if (!selectedChangelog) {
+          selectedChangelog = data[0];
+        }
+
+        // Display the selected or latest changelog
+        displayChangelog(selectedChangelog);
+
+        // Make the "Latest Changelog" buttons visible by default
+        // This ensures they're shown when viewing older changelogs
+        desktopLatestChangelogBtn.style.display = "block";
+        mobileLatestChangelogBtn.style.display = "block";
+
+        // If the displayed changelog is the latest one, hide the "Latest Changelog" buttons
+        // as they're not needed when already viewing the latest changelog
+        if (selectedChangelog.id === data[0].id) {
+          desktopLatestChangelogBtn.style.display = "none";
+          mobileLatestChangelogBtn.style.display = "none";
         }
       }
 
-      hideLoadingOverlay(); // Hide loading overlay after data is fetched
+      // Hide the loading overlay once everything is loaded and displayed
+      hideLoadingOverlay();
     })
     .fail((jqXHR, textStatus, errorThrown) => {
-      console.error("Error fetching changelogs:", errorThrown); // Log error
+      // Log the error for debugging purposes
+      console.error("Error fetching changelogs:", errorThrown);
+
+      // Display a user-friendly error message
       $("#content").html(
-        "<p>Error loading changelogs. Please try again later.</p>" // Show error message
+        "<p>Error loading changelogs. Please try again later.</p>"
       );
-      hideLoadingOverlay(); // Hide loading overlay
+
+      // Hide the loading overlay even if there's an error
+      hideLoadingOverlay();
     });
 
   // Function to perform a search based on user input
@@ -964,7 +1055,6 @@ $(document).ready(function () {
           displayChangelog(changelog); // Display the selected changelog
           clearSearch(); // Clear the search input
           dismissKeyboard(); // Dismiss the keyboard
-          closeNavbar(); // Close the navigation bar
         });
 
         $resultsList.append($listItem); // Append the list item to the results list
@@ -1002,10 +1092,11 @@ $(document).ready(function () {
   }
 
   // Function to display the selected changelog
-  const displayChangelog = (changelog) => {
+  function displayChangelog(changelog) {
     localStorage.setItem("selectedChangelogId", changelog.id); // Store selected changelog ID in local storage
 
-    document.title = `Jailbreak Changelog: ${changelog.title}`; // Set document title
+    document.title = changelog.title; // Set document title to just the changelog title
+
     if (titleElement) {
       titleElement.textContent = changelog.title; // Update title element
     }
@@ -1016,8 +1107,8 @@ $(document).ready(function () {
       imageElement.alt = `Image for ${changelog.title}`;
       imageElement.style.display = "block"; // Show image
     } else {
-      imageElement.src = "";
-      imageElement.alt = "No image available";
+      imageElement.src = ""; // Clear the source
+      imageElement.alt = ""; // Clear alt text when no image is present
       imageElement.style.display = "none"; // Hide image
     }
 
@@ -1031,6 +1122,7 @@ $(document).ready(function () {
       console.warn("No sections available for changelog."); // Log warning if no sections
       contentHtml += '<p class="lead">No sections available.</p>'; // Show message if no sections
     }
+
     const dropdownText = $("#mobileChangelogDropdown").text().trim();
     if (
       dropdownText !== "Filtered Changelogs" &&
@@ -1040,6 +1132,7 @@ $(document).ready(function () {
     }
 
     sectionsElement.innerHTML = contentHtml; // Update sections element with content HTML
+
     // Update the URL with the ID parameter
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set("id", changelog.id);
@@ -1048,7 +1141,18 @@ $(document).ready(function () {
       "",
       `${window.location.pathname}?${urlParams.toString()}`
     );
-  };
+    // Check if the currently displayed changelog is the latest one
+    const isLatestChangelog = changelog.id === changelogsData[0].id;
+
+    // Hide the "Latest Changelog" buttons if we're already showing the latest changelog
+    if (isLatestChangelog) {
+      desktopLatestChangelogBtn.style.display = "none";
+      mobileLatestChangelogBtn.style.display = "none";
+    } else {
+      desktopLatestChangelogBtn.style.display = ""; // Reset to default display value
+      mobileLatestChangelogBtn.style.display = ""; // Reset to default display value
+    }
+  }
 
   // Back to Top button functionality
   const backToTopButton = $("#backToTop");
@@ -1067,23 +1171,51 @@ $(document).ready(function () {
     e.preventDefault(); // Prevent default action
     $("html, body").animate({ scrollTop: 0 }, 100); // Smooth scroll to top
   });
-
   // Click event for changelog dropdown items
   $(document).on("click", ".changelog-dropdown-item", function (e) {
     e.preventDefault(); // Prevent default action
     const changelogId = $(this).data("changelog-id"); // Get changelog ID from data attribute
     const selectedChangelog = changelogsData.find((cl) => cl.id == changelogId); // Find selected changelog
+
     if (selectedChangelog) {
       displayChangelog(selectedChangelog); // Display the selected changelog
-      const accordion = document.getElementById("filterAccordion");
-      const collapseElement = accordion.querySelector(".collapse"); // Get collapse element
-      if (collapseElement) {
-        const collapseInstance =
-          bootstrap.Collapse.getOrCreateInstance(collapseElement);
-        collapseInstance.hide(); // Hide the accordion if it's open
-      } else {
-        console.error("Collapse element not found!"); // Log error if collapse element is not found
+
+      // Check if we're on a mobile device
+      if (window.innerWidth < 768) {
+        // Adjust this breakpoint as needed
+        const accordion = document.getElementById("filterAccordion");
+        if (accordion) {
+          // Find all elements that could be collapsible within the accordion
+          const collapsibleElements = accordion.querySelectorAll(
+            '[data-bs-toggle="collapse"]'
+          );
+          collapsibleElements.forEach((element) => {
+            const targetId =
+              element.getAttribute("data-bs-target") ||
+              element.getAttribute("href");
+            if (targetId) {
+              const targetElement = document.querySelector(targetId);
+              if (targetElement) {
+                const bsCollapse =
+                  bootstrap.Collapse.getInstance(targetElement);
+                if (bsCollapse && bsCollapse._isShown()) {
+                  bsCollapse.hide(); // Only hide if it's currently shown
+                }
+              }
+            }
+          });
+        }
       }
+
+      // Close the dropdown after selection
+      const dropdown = bootstrap.Dropdown.getInstance(
+        this.closest(".dropdown-menu").previousElementSibling
+      );
+      if (dropdown) {
+        dropdown.hide();
+      }
+    } else {
+      console.error("Selected changelog not found!");
     }
   });
 
