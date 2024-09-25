@@ -1,6 +1,5 @@
 /* Light Theme Colors */
 [data-bs-theme="light"] body {
-  --bg-color: #f7f7f9; /* Ghost White */
   --content-h1: #31b1ff; /* Light Blue for H1 */
   --content-h2: #ff341c; /* Light Red for H2 */
   --content-h3: #333333; /* Dark Gray for H3 and Paragraph Text */
@@ -118,47 +117,48 @@ html[data-bs-theme="light"] .changelog-dropdown-item:hover {
   background-color: #e6f7ff; /* Add a light blue background on hover */
 }
 
-/* Light Mode Accordion Styling */
-[data-bs-theme="light"] .accordion-item {
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 1rem;
-  background-color: var(--gray-100); /* Light Background for Accordion */
-}
-
-[data-bs-theme="light"] .accordion-button {
-  background-color: var(
-    --gray-200
-  ); /* Slightly Darker than the Item Background */
-  color: var(--text-color); /* Dark Text for Contrast */
-  font-weight: bold;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-[data-bs-theme="light"] .accordion-button:not(.collapsed) {
-  background-color: var(--gray-300); /* Even Darker when Expanded */
-  color: var(--header-bg); /* Accent Color for Active State */
-}
-
-[data-bs-theme="light"] .accordion-button:focus {
-  box-shadow: 0 0 0 0.2rem rgba(255, 69, 0, 0.25); /* Accent Outline on Focus */
-}
-
-[data-bs-theme="light"] .accordion-body {
-  background-color: var(--gray-100); /* Light Body for Contrast with Button */
-  color: var(--text-color); /* Dark Text */
-  padding: 15px;
-  border-top: 1px solid var(--gray-300); /* Subtle Border for Separation */
-}
 [data-bs-theme="light"] .custom-search-item:hover {
   background-color: #f8f9fa; /* Light background on hover */
   color: #0056b3; /* Text color on hover */
 }
+[data-bs-theme="light"] .mention {
+  color: var(--mention-color); /* Color for mentions */
+  background-color: var(--mention-bg); /* Background color for mentions */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
+}
+
+[data-bs-theme="light"] .mention .at {
+  color: var(--at-color); /* Color for '@' symbol */
+}
+
+[data-bs-theme="light"] .mention .username {
+  color: var(--username-color); /* Color for username */
+}
+
+[data-bs-theme="light"] .mention:hover {
+  background-color: var(--mention-hover-bg); /* Background color on hover */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+[data-bs-theme="light"] #main-container {
+  background-color: #ffffff; /* New background color */
+}
+[data-bs-theme="light"] .audio-badge {
+  background-color: #4a90e2; /* Blue for audio tags */
+}
+
+[data-bs-theme="light"] .video-badge {
+  background-color: #50c878; /* Green for video tags */
+}
+
+[data-bs-theme="light"] .image-badge {
+  background-color: #ffa500; /* Orange for image tags */
+}
+[data-bs-theme="light"] .badge {
+  color: var(--text-color); /* Black text for dark theme */
+}
 
 /* Dark Theme Colors */
 [data-bs-theme="dark"] body {
-  --bg-color: #222222; /* Dark Gray */
   --content-h1: #31b1ff; /* Lighter Blue for Dark Mode */
   --content-h2: #fa523f; /* Softer Red for Dark Mode */
   --content-h3: #e0e0e0; /* Light Gray for H3 and Paragraph Text */
@@ -309,41 +309,27 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   color: var(--footer-link-color);
 }
 
-/* Dark Mode Accordion Styling */
-[data-bs-theme="dark"] .accordion-item {
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-bottom: 1rem;
-  background-color: #2c2c2c; /* Dark Background for Accordion */
-}
-
-[data-bs-theme="dark"] .accordion-button {
-  background-color: #3a3a3a; /* Slightly Lighter than the Item Background */
-  color: #ffffff; /* White Text for Better Contrast */
-  font-weight: bold;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-[data-bs-theme="dark"] .accordion-button:not(.collapsed) {
-  background-color: #4a4a4a; /* Even Lighter when Expanded */
-  color: #ffcc00; /* Accent Color for Active State */
-}
-
-[data-bs-theme="dark"] .accordion-button:focus {
-  box-shadow: 0 0 0 0.2rem rgba(255, 204, 0, 0.25); /* Accent Outline on Focus */
-}
-
-[data-bs-theme="dark"] .accordion-body {
-  background-color: var(--gray-100); /* Dark Body for Contrast with Button */
-  color: var(--text-color); /* White Text */
-  padding: 15px;
-  border-top: 1px solid var(--gray-300); /* Subtle Border for Separation */
-}
 /* Dark mode hover styles for custom search item */
 [data-bs-theme="dark"] .custom-search-item:hover {
   background-color: #5c6269; /* Deep blue-gray background for dark mode hover */
   color: #ffdd57; /* Vibrant yellow-orange text color for dark mode hover */
+}
+[data-bs-theme="dark"] #main-container {
+  background-color: #333333; /* New background color */
+}
+[data-bs-theme="dark"] .audio-badge {
+  background-color: #3498db; /* Dark blue for audio tags */
+}
+
+[data-bs-theme="dark"] .video-badge {
+  background-color: #2ecc71; /* Dark green for video tags */
+}
+
+[data-bs-theme="dark"] .image-badge {
+  background-color: #ff9900; /* Dark orange for image tags */
+}
+[data-bs-theme="dark"] .badge {
+  color: var(--text-color); /* White text for dark theme */
 }
 
 /* Icon Color */
@@ -548,7 +534,6 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Offcanvas Styling */
 .offcanvas {
-  background-color: var(--bg-color); /* Background color */
   color: var(--text-color); /* Text color */
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; /* Smooth transitions */
 }
@@ -566,7 +551,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 .offcanvas-body {
   padding: 0.2rem; /* Padding for body */
-  background-color: var(--bg-color); /* Body background color */
+
   color: var(--text-color); /* Body text color */
   font-size: 1rem; /* Body font size */
   line-height: 1.5; /* Line height for readability */
@@ -683,27 +668,6 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 .bi-arrow-right {
   color: var(--content-bullet); /* Color for right arrow icon */
 }
-
-/* Light Mode Styles */
-.mention {
-  color: var(--mention-color-light); /* Color for mentions */
-  background-color: var(--mention-bg); /* Background color for mentions */
-  transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
-}
-
-.mention .at {
-  color: var(--at-color-light); /* Color for '@' symbol */
-}
-
-.mention .username {
-  color: var(--username-color-light); /* Color for username */
-}
-
-.mention:hover {
-  background-color: var(--mention-hover-bg); /* Background color on hover */
-  cursor: pointer; /* Change cursor to pointer on hover */
-}
-
 /* Row Styles */
 .row {
   margin-left: 0; /* Reset left margin */
@@ -723,19 +687,6 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   letter-spacing: 0.5px; /* Spacing between letters */
   vertical-align: middle; /* Align vertically */
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-/* Specific Media Tag Colors */
-.audio-tag {
-  background-color: #4a90e2; /* Blue for audio tags */
-}
-
-.video-tag {
-  background-color: #50c878; /* Green for video tags */
-}
-
-.image-tag {
-  background-color: #ffa500; /* Orange for image tags */
 }
 
 /* Navbar Logo Styles */
@@ -881,7 +832,6 @@ button {
 
 /* Footer Styles */
 footer {
-  background-color: var(--bg-color); /* Background color */
   color: var(--text-color); /* Text color */
   padding: 2rem 0; /* Padding */
   border-top: 1px solid var(--border-color); /* Top border */

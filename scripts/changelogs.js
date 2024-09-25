@@ -942,9 +942,9 @@ $(document).ready(function () {
         const hasVideo = changelog.sections.includes("(video)");
         const hasImage = changelog.sections.includes("(image)");
         const mediaLabels = [
-          hasAudio ? '<span class="badge bg-primary me-1">Audio</span>' : "",
-          hasVideo ? '<span class="badge bg-success me-1">Video</span>' : "",
-          hasImage ? '<span class="badge bg-info me-1">Image</span>' : "",
+          hasAudio ? '<span class="badge audio-badge me-1">Audio</span>' : "",
+          hasVideo ? '<span class="badge video-badge me-1">Video</span>' : "",
+          hasImage ? '<span class="badge image-badge me-1">Image</span>' : "",
         ].join("");
 
         $listItem.html(`
