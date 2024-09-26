@@ -1094,9 +1094,9 @@ $(document).ready(function () {
   // Function to display the selected changelog
   function displayChangelog(changelog) {
     localStorage.setItem("selectedChangelogId", changelog.id); // Store selected changelog ID in local storage
-    
+
     document.title = changelog.title; // Set document title to just the changelog title
-    reloadcomments()
+    reloadcomments();
 
     if (titleElement) {
       titleElement.textContent = changelog.title; // Update title element
@@ -1144,7 +1144,6 @@ $(document).ready(function () {
     );
     // Check if the currently displayed changelog is the latest one
     const isLatestChangelog = changelog.id === changelogsData[0].id;
-    
 
     // Hide the "Latest Changelog" buttons if we're already showing the latest changelog
     if (isLatestChangelog) {
@@ -1242,6 +1241,10 @@ $(document).ready(function () {
     commentbutton.disabled = false;
     commentbutton.textContent = "Log in";
     commentbutton.addEventListener("click", function (event) {
+      localStorage.setItem(
+        "redirectAfterLogin",
+        "/changelog.html?id=" + localStorage.getItem("selectedChangelogId")
+      ); // Store the redirect URL in local storage
       window.location.href = "/login.html"; // Redirect to login page
     });
   }
@@ -1266,7 +1269,7 @@ $(document).ready(function () {
     commentTextElement.textContent = comment.value;
     commentTextElement.classList.add("mb-0"); // Remove default margin from <p>
 
-    const date = Math.floor(Date.now() / 1000)
+    const date = Math.floor(Date.now() / 1000);
     const formattedDate = formatDate(date); // Assuming comment.date contains the date string
     const dateElement = document.createElement("small");
     dateElement.textContent = formattedDate; // Add the formatted date
@@ -1305,7 +1308,7 @@ $(document).ready(function () {
   function formatDate(unixTimestamp) {
     // Convert UNIX timestamp to milliseconds by multiplying by 1000
     const date = new Date(unixTimestamp * 1000);
-  
+
     const options = {
       month: "long",
       day: "numeric",
@@ -1313,15 +1316,15 @@ $(document).ready(function () {
       minute: "2-digit",
     };
     let formattedDate = date.toLocaleString("en-US", options);
-  
+
     // Get the day of the month with the appropriate ordinal suffix
     const day = date.getDate();
     const ordinalSuffix = getOrdinalSuffix(day);
     formattedDate = formattedDate.replace(day, `${day}${ordinalSuffix}`);
-  
+
     return formattedDate;
   }
-  
+
   function getOrdinalSuffix(day) {
     if (day > 3 && day < 21) return "th"; // Covers 11th to 19th
     switch (day % 10) {
@@ -1391,7 +1394,6 @@ $(document).ready(function () {
 
           // Append the list item to the comments list
           commentsList.appendChild(listItem);
-          CommentHeader.textContent = "Comments For Changelog " + localStorage.getItem("selectedChangelogId");
         })
         .catch((error) => {
           console.error("Error fetching user data:", error);
@@ -1400,6 +1402,8 @@ $(document).ready(function () {
   }
 
   function reloadcomments() {
+    CommentHeader.textContent =
+      "Comments For Changelog " + localStorage.getItem("selectedChangelogId");
     fetch(
       "https://api.jailbreakchangelogs.xyz/get_comments?type=changelog&id=" +
         localStorage.getItem("selectedChangelogId")
@@ -1413,14 +1417,14 @@ $(document).ready(function () {
       })
       .then((data) => {
         if (!data) return; // Prevent further execution if the response was not OK
-  
+
         // Check if data contains a message like "No comments found"
         if (data.message && data.message === "No comments found") {
           console.log(data.message);
           commentsList.innerHTML = "";
           return;
         }
-  
+
         // Check if data contains the comments as an array
         if (Array.isArray(data)) {
           loadComments(data); // Load the comments if data is an array

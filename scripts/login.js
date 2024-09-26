@@ -23,8 +23,13 @@ $(document).ready(function () {
         sessionStorage.setItem("user", JSON.stringify(userData));
         sessionStorage.setItem("avatar", avatarURL);
         sessionStorage.setItem("userid", userData.id);
-        window.location.href = "/";
+        redirect = localStorage.getItem("redirectAfterLogin");
+        if (redirect === null) {
+          window.location.href = "/";
+        } else {
+          window.location.href = redirect;
+          localStorage.removeItem("redirectAfterLogin");
+        }
       });
   }
 });
-
