@@ -435,30 +435,27 @@
         </div>
       </div>
       <div class="container my-5">
-        <h2 class="text-center mb-4">Comments</h2>
-        <div class="row">
-          <!-- Comment submission form -->
-           <form id="comment-form" class="mb-4">
-            <div class="mb3">
-              <input type="text" name="form-control" id="commenter-text" disabled="True" placeholder="Login to comment" required>
-              <button type="submit" class="btn btn-primary" id="submit-comment" disabled="True">Submit </button>
-            </div>
-            
-           </form>
-          
-
-           <!-- Comment List -->
-            <ul id="comments-list" class="list-group">
-              <!-- Test comments idk -->
+        <h2 class="text-center mb-4 text-primary">Comments</h2>
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <!-- Comment submission form -->
+            <form id="comment-form" class="mb-4">
+              <div class="input-group">
+                <input type="text" class="form-control" id="commenter-text" disabled placeholder="Login to comment" required>
+                <button type="submit" class="btn btn-primary" id="submit-comment" disabled>
+                  <i class="bi bi-send-fill me-1"></i> Submit
+                </button>
+              </div>
+            </form>
+      
+            <!-- Comment List -->
+            <ul id="comments-list" class="list-group shadow-sm">
+              <!-- Comments will be dynamically added here -->
             </ul>
+          </div>
         </div>
       </div>
-      <style>
-        .list-group-item {
-          word-wrap: break-word;
-          overflow-wrap: break-word;
-        }
-      </style>
+      </div>
     </div>
   </div>
 </div>

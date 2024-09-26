@@ -36,12 +36,19 @@ $(document).ready(function () {
           });
         } else {
           console.error("No access token received");
-          dashboard.style.display = "none";
         }
       })
       .then((response) => response.json())
       .then((userData) => {
+        // Update the user info in the database
+        fetch("https://api.jailbreakchangelogs.xyz/add_user", {
+          method: "POST",
+          body: JSON.stringify(userData),
+        });
         const avatarURL = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+        sessionStorage.removeItem("user");
+        sessionStorage.removeItem("avatar");
+        sessionStorage.removeItem("userid");
         sessionStorage.setItem("user", JSON.stringify(userData));
         sessionStorage.setItem("avatar", avatarURL);
         sessionStorage.setItem("userid", userData.id);

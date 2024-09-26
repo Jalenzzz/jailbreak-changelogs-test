@@ -1245,7 +1245,7 @@ $(document).ready(function () {
 
   function addComment(comment) {
     const listItem = document.createElement("li");
-    listItem.classList.add("list-group-item", "d-flex", "align-items-start"); // Use flexbox for alignment
+    listItem.classList.add("list-group-item", "d-flex", "align-items-start");
 
     const avatarElement = document.createElement("img");
     avatarElement.src = avatarUrl;
@@ -1263,22 +1263,160 @@ $(document).ready(function () {
     commentTextElement.textContent = comment.value;
     commentTextElement.classList.add("mb-0"); // Remove default margin from <p>
 
-    const divider = document.createElement("hr");
+    const date = new Date().toISOString();
+    const formattedDate = formatDate(date); // Assuming comment.date contains the date string
+    const dateElement = document.createElement("small");
+    dateElement.textContent = formattedDate; // Add the formatted date
+    dateElement.classList.add("text-muted"); // Optional: Add a class for styling
 
     // Append elements to the comment container
     commentContainer.appendChild(usernameElement);
     commentContainer.appendChild(commentTextElement);
+    commentContainer.appendChild(dateElement);
 
     // Append avatar and comment container to the list item
     listItem.appendChild(avatarElement);
     listItem.appendChild(commentContainer);
 
+    // Prepend the new comment to the comments list
     commentsList.prepend(listItem);
+
+    // Post the comment to the server
+    fetch("https://api.jailbreakchangelogs.xyz/add_comment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        author: userid,
+        content: comment.value,
+        item_id: localStorage.getItem("selectedChangelogId"),
+        item_type: "changelog",
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log("Comment added:", data))
+      .catch((error) => console.error("Error adding comment:", error));
   }
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+
+    const options = {
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    let formattedDate = date.toLocaleString("en-US", options);
+
+    // Get the day of the month with the appropriate ordinal suffix
+    const day = date.getDate();
+    const ordinalSuffix = getOrdinalSuffix(day);
+    formattedDate = formattedDate.replace(day, `${day}${ordinalSuffix}`);
+
+    return formattedDate;
+  }
+
+  function getOrdinalSuffix(day) {
+    if (day > 3 && day < 21) return "th"; // Covers 11th to 19th
+    switch (day % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  }
+
+  function loadComments(comments) {
+    commentsList.innerHTML = ""; // Clear existing comments
+
+    comments.forEach((comment) => {
+      // Fetch the user data for each comment's author
+      fetch("https://api.jailbreakchangelogs.xyz/get_user?id=" + comment.author)
+        .then((response) => response.json()) // Parse the JSON response
+        .then((userData) => {
+          const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+
+          // Create comment list item
+          const listItem = document.createElement("li");
+          listItem.classList.add(
+            "list-group-item",
+            "d-flex",
+            "align-items-start"
+          );
+
+          // Create avatar element
+          const avatarElement = document.createElement("img");
+          avatarElement.src = avatarUrl;
+          avatarElement.classList.add("rounded-circle", "m-1");
+          avatarElement.width = 32;
+          avatarElement.height = 32;
+
+          // Create comment container
+          const commentContainer = document.createElement("div");
+          commentContainer.classList.add("ms-2");
+
+          // Add username and comment text
+          const usernameElement = document.createElement("strong");
+          usernameElement.textContent = userData.global_name;
+
+          const commentTextElement = document.createElement("p");
+          commentTextElement.textContent = comment.content;
+          commentTextElement.classList.add("mb-0");
+
+          const formattedDate = formatDate(comment.date); // Assuming comment.date contains the date string
+          const dateElement = document.createElement("small");
+          dateElement.textContent = formattedDate; // Add the formatted date
+          dateElement.classList.add("text-muted"); // Optional: Add a class for styling
+
+          const divider = document.createElement("hr");
+
+          // Append elements to comment container
+          commentContainer.appendChild(usernameElement);
+          commentContainer.appendChild(commentTextElement);
+          commentContainer.appendChild(dateElement);
+
+          // Append avatar and comment container to the list item
+          listItem.appendChild(avatarElement);
+          listItem.appendChild(commentContainer);
+
+          // Append the list item to the comments list
+          commentsList.appendChild(listItem);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    });
+  }
+
+  fetch(
+    "https://api.jailbreakchangelogs.xyz/get_comments?type=changelog&id=" +
+      localStorage.getItem("selectedChangelogId")
+  )
+    .then((response) => response.json()) // Parse the JSON response
+    .then((data) => {
+      // Check if data contains the comments as an array
+      if (Array.isArray(data)) {
+        // If it's an array, iterate over it
+        loadComments(data);
+      } else if (data.comments && Array.isArray(data.comments)) {
+        // If comments are nested under a key
+        loadComments(data.comments);
+      } else {
+        console.error("Unexpected response format:", data); // Handle unexpected format
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching comments:", error); // Handle any errors
+    });
 
   CommentForm.addEventListener("submit", function (event) {
     event.preventDefault();
-
     const comment = document.getElementById("commenter-text");
     console.log(comment.value);
     addComment(comment);

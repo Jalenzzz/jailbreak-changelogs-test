@@ -45,6 +45,15 @@
         align-items: center; /* Centers icon and text vertically */
         justify-content: center; /* Centers content horizontally */
       }
+      .navbar-logo {
+        height: 70px;
+        width: auto;
+      }
+      @media (max-width: 768px) {
+        .navbar-logo {
+          height: 50px;
+        }
+      }
     </style>
   </head>
 
@@ -53,10 +62,9 @@
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
           <img
-            class="navbar-logo mx-auto"
+            class="navbar-logo"
             src="https://res.cloudinary.com/dsvlphknq/image/upload/v1727140252/logo/jailbreak_changelogs_discord_bot.png"
             alt="Jailbreak Changelogs Home Logo"
-            height="70"
           />
         </a>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -126,10 +134,16 @@
       <div class="row">
         <div class="col-md-4 mb-4">
           <div class="feature-card text-center p-4">
-            <div class="feature-icon text-primary">
+            <div class="feature-icon text-primary position-relative">
               <i class="bi bi-people-fill"></i>
+              <i
+                class="bi bi-cone-striped text-warning position-absolute"
+                style="top: -10px; right: -10px; font-size: 1.2rem"
+              ></i>
             </div>
-            <h3>Crew Tracking</h3>
+            <h3>
+              Crew Tracking <small class="text-muted">(Coming Soon)</small>
+            </h3>
             <p>
               View the stats of your jailbreak crew as well as other players'
               crews directly from the bot, making it easy to keep track of

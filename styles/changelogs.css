@@ -648,6 +648,35 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 .responsive-text {
   font-size: 1rem; /* Standard font size for text */
 }
+/* Ensure long words in comments don't overflow their container */
+.list-group-item {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Style the main container for the comment section */
+.container {
+  border-radius: 15px; /* Rounded corners for the container */
+  padding: 30px; /* Add space inside the container */
+  box-shadow: 0 0 20px #0000001a; /* Subtle shadow for depth */
+}
+
+/* Add a subtle shadow to the comment input form */
+#comment-form .input-group {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the comments list */
+#comments-list {
+  min-height: 100px; /* Ensures the list area is visible even when empty */
+  max-height: 400px; /* Limit the height to prevent excessive scrolling */
+  overflow-y: auto; /* Enable vertical scrolling if content exceeds max-height */
+}
+
+/* Style individual comment items */
+#comments-list .list-group-item {
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
 
 /* Content Wrapper Styles */
 #content-wrapper {
