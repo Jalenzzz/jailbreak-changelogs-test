@@ -1435,27 +1435,6 @@ $(document).ready(function () {
       });
   }
 
-  fetch(
-    "https://api.jailbreakchangelogs.xyz/get_comments?type=changelog&id=" +
-      localStorage.getItem("selectedChangelogId")
-  )
-    .then((response) => response.json()) // Parse the JSON response
-    .then((data) => {
-      // Check if data contains the comments as an array
-      if (Array.isArray(data)) {
-        // If it's an array, iterate over it
-        loadComments(data);
-      } else if (data.comments && Array.isArray(data.comments)) {
-        // If comments are nested under a key
-        loadComments(data.comments);
-      } else {
-        console.error("Unexpected response format:", data); // Handle unexpected format
-      }
-    })
-    .catch((error) => {
-      console.error("Error fetching comments:", error); // Handle any errors
-    });
-
   CommentForm.addEventListener("submit", function (event) {
     event.preventDefault();
     const comment = document.getElementById("commenter-text");
