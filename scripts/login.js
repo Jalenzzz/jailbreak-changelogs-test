@@ -16,11 +16,6 @@ $(document).ready(function () {
     })
       .then((response) => response.json())
       .then((userData) => {
-        // Update the user info in the database
-        fetch("https://api.jailbreakchangelogs.xyz/add_user", {
-          method: "POST",
-          body: JSON.stringify(userData),
-        });
         const avatarURL = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
         sessionStorage.removeItem("user");
         sessionStorage.removeItem("avatar");
