@@ -106,18 +106,12 @@ footer a:hover::after {
   transform: scaleX(1);
 }
 
-@media (max-width: 991px) {
+@media (max-width: 768px) {
   .navbar-brand {
     margin-right: auto;
   }
 
   .navbar-logo {
     height: 40px;
-  }
-}
-
-@media (max-width: 575px) {
-  .navbar-logo {
-    height: 35px;
   }
 }

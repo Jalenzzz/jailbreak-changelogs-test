@@ -372,7 +372,12 @@ body {
 .responsive-text {
   font-size: 1rem;
 }
-
+.timeline-logo {
+  height: 50px; /* Default height for larger screens */
+  width: auto; /* Maintain aspect ratio */
+  object-fit: contain;
+  max-width: 100%; /* Ensure it doesn't overflow its container */
+}
 #content-wrapper {
   display: flex;
   flex-wrap: wrap;
@@ -700,6 +705,9 @@ button {
 }
 
 @media (max-width: 768px) {
+  .timeline-logo {
+    height: 40px; /* Smaller height for mobile devices */
+  }
   .timeline {
     width: 100%;
     padding: 10px 0;

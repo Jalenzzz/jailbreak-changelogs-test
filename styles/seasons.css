@@ -448,7 +448,10 @@ footer.hide {
 #backToTop:hover {
   background-color: var(--button-primary-hover-bg);
 }
-
+.list-group-item {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
 /* Admin Links */
 .admin-link-v3 {
   color: var(--heading-color);
@@ -505,6 +508,14 @@ footer.hide {
   background-color: #000000; /* True black background */
   transform: scale(1.05); /* Slightly larger */
 }
+.seasons-logo {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
 /* Responsive Styles */
 @media (max-width: 576px) {
   .season-rewards .badge {
@@ -515,8 +526,7 @@ footer.hide {
     flex-direction: row;
     flex-wrap: nowrap;
   }
-  .header-logo {
-    height: 50px !important;
-    width: auto !important;
+  .seasons-logo {
+    height: 40px;
   }
 }

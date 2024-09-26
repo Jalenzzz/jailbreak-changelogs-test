@@ -743,7 +743,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Navbar Logo Styles */
 .navbar-logo {
-  height: 70px; /* Default height for large screens */
+  height: 50px; /* Default height for large screens */
   width: auto; /* Auto width */
   object-fit: contain; /* Maintain aspect ratio */
 }
@@ -933,7 +933,7 @@ footer.hide {
   }
 
   .navbar-logo {
-    height: 50px; /* Smaller height for logos on small screens */
+    height: 40px; /* Smaller height for logos on small screens */
   }
 
   .quick-links .btn-link {

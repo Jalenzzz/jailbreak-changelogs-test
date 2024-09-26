@@ -1,9 +1,49 @@
+.hero {
+  padding: 80px 0;
+  text-align: center;
+  background-image: url("https://res.cloudinary.com/dsvlphknq/image/upload/v1727358372/backgrounds/1.png");
+  background-size: cover;
+  background-position: center 40%;
+  background-repeat: no-repeat;
+  position: relative;
+  color: white;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+.feature-icon {
+  font-size: 50px;
+  margin-bottom: 15px;
+}
+.feature-card {
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 20px;
+  transition: transform 0.2s;
+}
+.feature-card:hover {
+  transform: scale(1.05);
+}
+.btn-custom {
+  width: 200px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 .navbar-logo {
-  height: 70px; /* Fixed height */
-  width: 100%; /* Set a specific width */
-  object-fit: contain; /* Ensures the image maintains its aspect ratio */
-  display: block;
-  margin: 0 auto;
+  height: 50px;
+  width: auto;
 }
 footer a {
   position: relative;
@@ -43,6 +83,9 @@ footer a:hover::after {
   color: white; /* Keep text color white */
 }
 @media (max-width: 576px) {
+  .navbar-logo {
+    height: 40px;
+  }
   .alert {
     font-size: 0.9rem;
   }
