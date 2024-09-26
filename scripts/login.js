@@ -1,5 +1,4 @@
 $(document).ready(function () {
-  const RedirectURI = "https://testing.jailbreakchangelogs.xyz/";
   const OauthRedirect =
     "https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=https%3A%2F%2Ftesting.jailbreakchangelogs.xyz%2Flogin&scope=identify";
   const DiscordLoginButton = document.getElementById("login-button");
@@ -9,35 +8,12 @@ $(document).ready(function () {
   });
   if (window.location.search.includes("code=")) {
     const code = new URLSearchParams(window.location.search).get("code");
-    fetch("https://discord.com/api/oauth2/token", {
+    fetch("https://api.jailbreakchangelogs.xyz/auth?code=" + code, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams({
-        grant_type: "authorization_code",
-        client_id: "1281308669299920907",
-        client_secret: "fXzm515uf2e_nfRPNVvvjkRpWgfN6wkt",
-        redirect_uri: RedirectURI, // Ensure this matches your registered redirect URI
-        code: code,
-      }).toString(),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.access_token) {
-          console.log("Access token received:", data.access_token);
-          // Store the access token in sessionStorage
-          sessionStorage.setItem("token", data.access_token);
-          // Fetch user data
-          return fetch("https://discord.com/api/users/@me", {
-            headers: {
-              Authorization: `Bearer ${data.access_token}`,
-            },
-          });
-        } else {
-          console.error("No access token received");
-        }
-      })
       .then((response) => response.json())
       .then((userData) => {
         // Update the user info in the database
@@ -56,3 +32,4 @@ $(document).ready(function () {
       });
   }
 });
+
