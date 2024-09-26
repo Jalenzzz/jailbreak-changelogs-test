@@ -1219,6 +1219,72 @@ $(document).ready(function () {
     }
   });
 
+  const userid = sessionStorage.getItem("userid");
+  const CommentForm = document.getElementById("comment-form");
+  const commentinput = document.getElementById("commenter-text");
+  const commentbutton = document.getElementById("submit-comment");
+  const profilepicture = document.getElementById("profile-picture");
+  const mobileprofile = document.getElementById("profile-picture-mobile");
+  const avatarUrl = sessionStorage.getItem("avatar");
+  const userdata = JSON.parse(sessionStorage.getItem("user"));
+  const commentsList = document.getElementById("comments-list");
+  if (userid) {
+    console.log(avatarUrl);
+    profilepicture.src = avatarUrl;
+    mobileprofile.src = avatarUrl;
+    commentinput.placeholder = "Commenting as " + userdata.global_name;
+    commentbutton.disabled = false;
+    commentinput.disabled = false;
+  } else {
+    commentbutton.disabled = false;
+    commentbutton.textContent = "Log in";
+    commentbutton.addEventListener("click", function (event) {
+      window.location.href = "/login.html"; // Redirect to login page
+    });
+  }
+
+  function addComment(comment) {
+    const listItem = document.createElement("li");
+    listItem.classList.add("list-group-item", "d-flex", "align-items-start"); // Use flexbox for alignment
+
+    const avatarElement = document.createElement("img");
+    avatarElement.src = avatarUrl;
+    avatarElement.classList.add("rounded-circle", "m-1");
+    avatarElement.width = 32;
+    avatarElement.height = 32;
+
+    const commentContainer = document.createElement("div");
+    commentContainer.classList.add("ms-2"); // Add margin to the left of the comment
+
+    const usernameElement = document.createElement("strong");
+    usernameElement.textContent = userdata.global_name;
+
+    const commentTextElement = document.createElement("p");
+    commentTextElement.textContent = comment.value;
+    commentTextElement.classList.add("mb-0"); // Remove default margin from <p>
+
+    const divider = document.createElement("hr");
+
+    // Append elements to the comment container
+    commentContainer.appendChild(usernameElement);
+    commentContainer.appendChild(commentTextElement);
+
+    // Append avatar and comment container to the list item
+    listItem.appendChild(avatarElement);
+    listItem.appendChild(commentContainer);
+
+    commentsList.prepend(listItem);
+  }
+
+  CommentForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const comment = document.getElementById("commenter-text");
+    console.log(comment.value);
+    addComment(comment);
+    comment.value = ""; // Clear the comment input field
+  });
+
   // Initialize Bootstrap dropdowns
   bootstrap.Dropdown.getOrCreateInstance($("#mobileChangelogDropdown")[0]);
   bootstrap.Dropdown.getOrCreateInstance($("#desktopChangelogDropdown")[0]);

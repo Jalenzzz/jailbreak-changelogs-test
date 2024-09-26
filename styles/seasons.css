@@ -472,7 +472,39 @@ footer.hide {
   background-color: var(--reddit-color); /* Reddit Orange background */
   transform: scale(1.05); /* Slightly larger */
 }
+/* Discord Link Styles */
+.discord-link {
+  color: var(--discord-color);
+  text-decoration: none;
+}
 
+.discord-link:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: var(--discord-color); /* Discord Blurple background */
+  transform: scale(1.05); /* Slightly larger */
+}
+/* Wiki Link Styles */
+.wiki-link {
+  color: var(--wiki-color);
+  text-decoration: none;
+}
+
+.wiki-link:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: var(--wiki-color); /* Wiki Blue background */
+  transform: scale(1.05); /* Slightly larger */
+}
+/* GitHub Link Styles */
+.github-link {
+  color: var(--github-color);
+  text-decoration: none;
+}
+
+.github-link:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: #000000; /* True black background */
+  transform: scale(1.05); /* Slightly larger */
+}
 /* Responsive Styles */
 @media (max-width: 576px) {
   .season-rewards .badge {
@@ -482,5 +514,9 @@ footer.hide {
   .season-rewards .d-flex {
     flex-direction: row;
     flex-wrap: nowrap;
+  }
+  .header-logo {
+    height: 50px !important;
+    width: auto !important;
   }
 }

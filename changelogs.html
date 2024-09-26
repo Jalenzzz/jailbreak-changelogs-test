@@ -154,7 +154,6 @@
     </div>
   </div>
 
-  <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg navbar-dark custom-navbar-color sticky-top">
     <div class="container-fluid">
       <div class="d-flex align-items-center w-100">
@@ -166,6 +165,22 @@
           />
         </a>
         <div class="d-flex align-items-center ms-auto">
+          <!-- Profile Picture (Mobile) -->
+          <div class="d-lg-none me-2">
+            <img src="https://via.placeholder.com/32" alt="Profile" id="profile-picture-mobile" class="rounded-circle" width="32" height="32">
+          </div>
+          <!-- Mobile Search Icon -->
+          <button
+            id="mobile-search-toggle"
+            class="btn btn-outline-none d-lg-none p-2 me-2"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#searchCollapse"
+            aria-expanded="false"
+            aria-controls="searchCollapse"
+          >
+            <i class="bi bi-search text-light" style="font-size: 1.5rem"></i>
+          </button>
           <!-- Mobile Theme Toggle -->
           <button
             id="theme-toggle-mobile"
@@ -177,34 +192,25 @@
           >
             <i class="bi bi-moon-stars-fill" style="font-size: 1.5rem"></i>
           </button>
-          <button
-            class="navbar-toggler custom-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarContent"
-            aria-controls="navbarContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
+        
         </div>
       </div>
-
-      <div class="collapse navbar-collapse" id="navbarContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <!-- Other nav items if needed -->
-        </ul>
-
-        <!-- Search Form -->
-        <form class="d-flex me-2 position-relative" role="search">
+      <div class="d-flex align-items-center">
+        <!-- Profile Picture Desktop -->
+        <div class="d-none d-lg-block me-2">
+          <img src="https://via.placeholder.com/32" alt="Profile Picture" id="profile-picture" class="rounded-circle" width="32" height="32">
+        </div>
+      </div>
+      <!-- Search Collapse (visible on mobile when toggled, always visible on desktop) -->
+      <div class="collapse navbar-collapse mt-2 d-lg-block" id="searchCollapse">
+        <form class="d-flex position-relative w-100" role="search">
           <div class="input-group">
             <span class="input-group-text bg-transparent border-0">
               <i class="bi bi-search text-light"></i>
             </span>
             <input
               id="search-input"
-              class="form-control bg-gray border-0"
+              class="form-control bg-gray border-0 custom-search-input"
               type="text"
               placeholder="Search..."
               aria-label="Search changelogs"
@@ -220,19 +226,26 @@
             </button>
           </div>
           <div
-          id="exampleQueries"
-          class="position-absolute w-100 rounded mt-1"
-          :data-bs-theme="theme === 'light' ? 'light' : 'dark'"
-          style="top: 100%; left: 0"
-        >
-          <div class="example-queries">
-            <a href="#" class="example-query d-block px-2 py-1">has: audio</a>
-            <a href="#" class="example-query d-block px-2 py-1">has: video</a>
-            <a href="#" class="example-query d-block px-2 py-1">has: image</a>
+            id="exampleQueries"
+            class="position-absolute w-100 rounded mt-1"
+            :data-bs-theme="theme === 'light' ? 'light' : 'dark'"
+            style="top: 100%; left: 0"
+          >
+            <div class="example-queries">
+              <a href="#" class="example-query d-block px-2 py-1">has: audio</a>
+              <a href="#" class="example-query d-block px-2 py-1">has: video</a>
+              <a href="#" class="example-query d-block px-2 py-1">has: image</a>
+            </div>
           </div>
-        </div>
         </form>
-
+      </div>
+  
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <!-- Other nav items if needed -->
+        </ul>
+  
+      
         <div class="d-flex align-items-center">
           <!-- Desktop Theme Toggle -->
           <button
@@ -248,6 +261,7 @@
         </div>
       </div>
     </div>
+    
   </nav>
 </body>
 
@@ -338,7 +352,7 @@
     <div class="row justify-content-center g-3">
       <!-- Home Button -->
       <div class="col-auto">
-        <a class="btn btn-custom" href="index.html" title="Home">
+        <a class="btn btn-custom" href="/" title="Home">
           <i class="bi bi-house-door-fill me-2"></i> Home
         </a>
       </div>
@@ -420,6 +434,31 @@
           </div>
         </div>
       </div>
+      <div class="container my-5">
+        <h2 class="text-center mb-4">Comments</h2>
+        <div class="row">
+          <!-- Comment submission form -->
+           <form id="comment-form" class="mb-4">
+            <div class="mb3">
+              <input type="text" name="form-control" id="commenter-text" disabled="True" placeholder="Login to comment" required>
+              <button type="submit" class="btn btn-primary" id="submit-comment" disabled="True">Submit </button>
+            </div>
+            
+           </form>
+          
+
+           <!-- Comment List -->
+            <ul id="comments-list" class="list-group">
+              <!-- Test comments idk -->
+            </ul>
+        </div>
+      </div>
+      <style>
+        .list-group-item {
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
+      </style>
     </div>
   </div>
 </div>
@@ -504,13 +543,13 @@
               <div class="col-sm-4">
                 <p class="mb-0">
                   <strong>Version:</strong>
-                  <span id="version-number">a7b3f1d</span>
+                  <span id="version-number">3c2ebd5</span>
                 </p>
               </div>
               <div class="col-sm-4">
                 <p class="mb-0">
                   <strong>Last Updated:</strong>
-                  <span id="last-updated">September 24th 2024</span>
+                  <span id="last-updated">September 26th 2024</span>
                 </p>
               </div>
               <div class="col-sm-4">

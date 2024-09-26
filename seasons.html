@@ -170,8 +170,19 @@
             "
           />
         </a>
-        <!-- Theme Toggle Buttons -->
+        <!-- Theme Toggle Buttons and Profile Picture -->
         <div class="d-flex align-items-center">
+          <!-- Profile Picture (visible on all screen sizes) -->
+          <div class="me-2">
+            <img
+              src="https://via.placeholder.com/32"
+              alt="Profile Picture"
+              id="profile-picture"
+              class="rounded-circle"
+              width="32"
+              height="32"
+            />
+          </div>
           <!-- Mobile Theme Toggle -->
           <button
             id="theme-toggle-mobile"
@@ -274,6 +285,48 @@
               <span class="visually-hidden">Next</span>
             </button>
           </div>
+          <div class="container my-5">
+            <h2 class="text-center mb-4">Comments</h2>
+            <div class="row">
+              <!-- Comment submission form -->
+              <form id="comment-form" class="mb-4">
+                <div class="mb3">
+                  <input
+                    type="text"
+                    name="form-control"
+                    id="commenter-text"
+                    disabled="True"
+                    placeholder="Login to comment"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="submit-comment"
+                    disabled="True"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </form>
+
+              <!-- Comment List -->
+              <ul id="comments-list" class="list-group">
+                <!-- Test comments idk -->
+                <li class="list-group-item">
+                  AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                </li>
+                <li class="list-group-item">BBBBBBBBBBBBBBBBBBBB</li>
+                <li class="list-group-item">CCCCCCCCCCCCCCCCCCCCCCCCC</li>
+              </ul>
+            </div>
+          </div>
+          <style>
+            .list-group-item {
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+            }
+          </style>
         </div>
       </div>
     </div>
@@ -358,13 +411,13 @@
                   <div class="col-sm-4">
                     <p class="mb-0">
                       <strong>Version:</strong>
-                      <span id="version-number">a7b3f1d</span>
+                      <span id="version-number">3c2ebd5</span>
                     </p>
                   </div>
                   <div class="col-sm-4">
                     <p class="mb-0">
                       <strong>Last Updated:</strong>
-                      <span id="last-updated">September 24th 2024</span>
+                      <span id="last-updated">September 26th 2024</span>
                     </p>
                   </div>
                   <div class="col-sm-4">

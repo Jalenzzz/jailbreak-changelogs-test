@@ -335,7 +335,26 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 [data-bs-theme="dark"] .badge {
   color: var(--text-color); /* White text for dark theme */
 }
+.custom-search-input {
+  transition: none;
+  box-shadow: none !important;
+}
 
+.custom-search-input:focus {
+  border: none;
+  outline: none;
+  box-shadow: none !important;
+}
+
+/* Optionally, if you want a subtle indication of focus without size change */
+.custom-search-input:focus {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* Slight highlight when focused */
+}
 /* Icon Color */
 .bi-moon-stars-fill {
   color: #ffffffaf; /* Semi-transparent white for moon icon */
