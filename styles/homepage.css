@@ -1,39 +1,33 @@
 .hero {
-  position: relative;
-  background: url("https://cdn.jailbreakchangelogs.xyz/meta/thumbnail.png")
-    no-repeat center center;
+  background-image: url("https://res.cloudinary.com/dsvlphknq/image/upload/v1727358371/backgrounds/3.png");
   background-size: cover;
-  height: 50vh;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 100px 0;
+  position: relative;
 }
 .hero::before {
   content: "";
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
-  z-index: 1;
-}
-.hero::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* Dark overlay */
-  z-index: 1;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
 }
-.hero h1,
+.hero-content {
+  position: relative;
+  z-index: 1;
+  color: white;
+  text-align: center;
+}
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
 .hero p {
-  position: relative; /* Position text above the overlay */
-  z-index: 2;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
 }
 .feature-icon {
   font-size: 3rem;

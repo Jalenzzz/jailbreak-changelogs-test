@@ -19,8 +19,25 @@
       .hero {
         padding: 80px 0;
         text-align: center;
-        background-color: #f8f9fa;
-        border-bottom: 2px solid #e9ecef;
+        background-image: url("https://res.cloudinary.com/dsvlphknq/image/upload/v1727358372/backgrounds/1.png");
+        background-size: cover;
+        background-position: center 40%;
+        background-repeat: no-repeat;
+        position: relative;
+        color: white;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .hero-content {
+        position: relative;
+        z-index: 1;
       }
       .feature-icon {
         font-size: 50px;
@@ -39,14 +56,14 @@
         background-color: #343a40;
       }
       .btn-custom {
-        width: 200px; /* Set the same width for both buttons */
-        height: 50px; /* Set a fixed height for both buttons */
-        display: inline-flex; /* Aligns content vertically */
-        align-items: center; /* Centers icon and text vertically */
-        justify-content: center; /* Centers content horizontally */
+        width: 200px;
+        height: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
       .navbar-logo {
-        height: 70px;
+        height: 50px;
         width: auto;
       }
       @media (max-width: 768px) {
@@ -106,27 +123,28 @@
     </div>
 
     <div class="hero">
-      <h1>
-        <i class="bi bi-discord me-2" style="font-size: 2rem"></i>
-        Welcome to our Discord Bot Page
-      </h1>
-      <p class="lead">
-        Your go-to resource for information and updates about our Discord bot!
-      </p>
-      <!-- Updated button text -->
-      <a
-        class="btn btn-primary btn-custom"
-        href="botinvite.html"
-        title="Invite to Your Server"
-      >
-        <i class="bi bi-person-plus-fill me-2"></i> Invite to Your Server
-      </a>
-      <div class="my-3">
-        <span class="text-muted">OR</span>
+      <div class="hero-content">
+        <h1>
+          <i class="bi bi-discord me-2" style="font-size: 2rem"></i>
+          Welcome to our Discord Bot Page
+        </h1>
+        <p class="lead">
+          Your go-to resource for information and updates about our Discord bot!
+        </p>
+        <a
+          class="btn btn-primary btn-custom"
+          href="botinvite.html"
+          title="Invite to Your Server"
+        >
+          <i class="bi bi-person-plus-fill me-2"></i> Invite to Your Server
+        </a>
+        <div class="my-3">
+          <span class="text-white">OR</span>
+        </div>
+        <a href="/" class="btn btn-primary btn-lg btn-custom">
+          <i class="bi bi-house-door-fill me-2"></i> Home
+        </a>
       </div>
-      <a href="index.html" class="btn btn-primary btn-lg btn-custom">
-        <i class="bi bi-house-door-fill me-2"></i> Home
-      </a>
     </div>
 
     <div class="container my-5">
