@@ -838,7 +838,7 @@ $(document).ready(function () {
           return `<audio class="w-100 mt-2 mb-2" controls><source src="${audioUrl}" type="${audioType}"></audio>`; // Create audio element
         } else if (line.startsWith("(image)")) {
           const imageUrl = line.substring(7).trim(); // Extract image URL
-          return `<img src="${imageUrl}" alt="Image" class="img-fluid mt-2 mb-2 rounded" style="max-height: 500px;">`; // Create image element
+          return `<img src="${imageUrl}" alt="Image" class="img-fluid mt-2 mb-2 rounded" style="max-height: 270px;">`; // Create image element
         } else if (line.startsWith("(video)")) {
           const videoUrl = line.substring(7).trim(); // Extract video URL
           return `<video class="w-100 mt-2 mb-2 rounded" style="max-height: 500px;" controls><source src="${videoUrl}" type="video/mp4"></video>`; // Create video element
