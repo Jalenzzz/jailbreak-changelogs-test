@@ -35,9 +35,18 @@ footer a:hover::after {
   background-color: #007bff; /* Light theme background color */
   color: white; /* Light theme text color */
   border: none; /* Remove default border if needed */
+  font-size: 1rem;
 }
 
 .btn-custom:hover {
   background-color: #0056b3; /* Darker blue on hover for light mode */
   color: white; /* Keep text color white */
+}
+@media (max-width: 576px) {
+  .alert {
+    font-size: 0.9rem;
+  }
+  .bi-exclamation-triangle-fill {
+    font-size: 1rem;
+  }
 }

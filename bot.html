@@ -90,7 +90,7 @@
     </nav>
 
     <div
-      class="alert alert-dark text-center"
+      class="alert alert-dark text-center p-2 p-sm-3"
       role="alert"
       style="
         margin-bottom: 0;
@@ -100,12 +100,17 @@
         border-radius: 0px;
       "
     >
-      <i
-        class="bi bi-exclamation-triangle-fill me-2"
-        style="color: #ffc107"
-      ></i>
-      <strong>Beta Version:</strong> Our Discord bot is currently under
-      development and not yet online. Stay Tuned!
+      <div class="d-flex align-items-center justify-content-center flex-wrap">
+        <i
+          class="bi bi-exclamation-triangle-fill me-2"
+          style="color: #ffc107"
+        ></i>
+        <strong class="me-1">Beta Version:</strong>
+        <span class="d-inline-block">
+          Our Discord bot is currently under development and not yet online.
+        </span>
+        <span class="ms-1">Stay Tuned!</span>
+      </div>
     </div>
 
     <div class="hero">
@@ -130,7 +135,7 @@
         <div class="my-3">
           <span class="text-white">OR</span>
         </div>
-        <a href="/" class="btn btn-primary btn-lg btn-custom">
+        <a href="/" class="btn btn-primary btn-custom">
           <i class="bi bi-house-door-fill me-2"></i> Home
         </a>
       </div>
