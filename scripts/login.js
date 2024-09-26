@@ -1,7 +1,7 @@
 $(document).ready(function () {
   const RedirectURI = "https://testing.jailbreakchangelogs.xyz/";
   const OauthRedirect =
-    "https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5500%2Flogin.html&scope=identify";
+    "https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=https%3A%2F%2Ftesting.jailbreakchangelogs.xyz%2Flogin&scope=identify";
   const DiscordLoginButton = document.getElementById("login-button");
   DiscordLoginButton.addEventListener("click", () => {
     console.log("Redirecting to Discord OAuth...");
