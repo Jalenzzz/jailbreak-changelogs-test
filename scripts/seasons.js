@@ -228,7 +228,7 @@ $(document).ready(function () {
       commentbutton.addEventListener("click", function (event) {
         localStorage.setItem(
           "redirectAfterLogin",
-          "/changelog.html?id=" + localStorage.getItem("selectedSeason")
+          "/seasons.html?id=" + localStorage.getItem("selectedSeason")
         ); // Store the redirect URL in local storage
         window.location.href = "/login.html"; // Redirect to login page
       });
