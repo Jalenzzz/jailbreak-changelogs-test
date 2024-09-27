@@ -1,17 +1,19 @@
 body {
-  background-color: #f0f2f5;
   font-family: "Poppins", sans-serif;
-  color: #333;
+  background-image: url("https://res.cloudinary.com/dsvlphknq/image/upload/v1727358369/backgrounds/8.png");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  color: #e0e0e0;
 }
 .privacy-container {
-  background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  background-color: rgba(33, 37, 41, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
-
 h1,
 h2 {
-  color: #2c3e50;
+  color: #ffffff;
 }
 h1 {
   border-bottom: 2px solid #3498db;
@@ -24,47 +26,38 @@ h2 {
   border-left: 4px solid #3498db;
 }
 .lead {
-  font-weight: 300;
-  color: #34495e;
+  color: #cccccc;
 }
 .text-muted {
   color: #7f8c8d !important;
 }
 a {
-  color: #3498db;
-  text-decoration: none;
-  transition: color 0.3s ease;
+  color: #17a2b8;
 }
 a:hover {
-  color: #2980b9;
+  color: #138496;
+}
+.last-updated {
+  color: #ffc107; /* Bright yellow for better visibility */
+  font-weight: 600;
 }
 .section {
-  background-color: #f8f9fa;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  transition: transform 0.3s ease;
+  margin-bottom: 2rem;
 }
 .section:hover {
   transform: translateY(-5px);
 }
 .home-button {
-  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  border: none;
   padding: 10px 20px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #fff;
-  background-color: #3498db;
-  border-radius: 30px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 .home-button:hover {
-  background-color: #2980b9;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-  color: #fff;
+  background-color: #0056b3;
 }
 .home-button-container {
   text-align: center;
