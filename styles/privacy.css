@@ -59,10 +59,6 @@ a:hover {
 .home-button:hover {
   background-color: #0056b3;
 }
-.home-button-container {
-  text-align: center;
-  margin-top: 2rem;
-}
 .navbar-logo {
   height: 50px;
   width: auto;
