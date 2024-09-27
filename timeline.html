@@ -122,45 +122,6 @@
       href="https://unpkg.com/locomotive-scroll/dist/locomotive-scroll.min.css"
     />
     <script src="https://unpkg.com/locomotive-scroll/dist/locomotive-scroll.min.js"></script>
-    <style>
-      /* Button styles */
-      .btn-custom-primary {
-        background-color: var(--button-primary-bg) !important;
-        color: var(--button-primary-text) !important;
-        border: none;
-        transition: background-color 0.3s, transform 0.3s;
-        font-size: 0.875rem; /* Smaller font size for mobile */
-        padding: 0.375rem 0.75rem; /* Smaller padding for mobile */
-      }
-
-      .btn-custom-primary:hover {
-        background-color: var(--button-primary-hover-bg) !important;
-        transform: scale(1.05);
-      }
-
-      [data-bs-theme="dark"] .btn-custom-primary {
-        background-color: #8b0000 !important; /* Dark Red for dark mode */
-        color: #ffffff !important; /* Ensuring text is white for readability */
-      }
-
-      [data-bs-theme="dark"] .btn-custom-primary:hover {
-        background-color: #a50000 !important; /* Slightly lighter red on hover */
-      }
-
-      /* Container for the button */
-      .back-button-container {
-        text-align: left;
-        padding-left: 0;
-      }
-
-      /* Media query for larger screens */
-      @media (min-width: 768px) {
-        .btn-custom-primary {
-          font-size: 1rem; /* Standard size for larger screens */
-          padding: 0.5rem 1rem; /* Standard padding for larger screens */
-        }
-      }
-    </style>
   </head>
 
   <body data-scroll-container>
