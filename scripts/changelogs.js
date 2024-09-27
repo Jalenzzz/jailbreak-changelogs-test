@@ -1206,7 +1206,7 @@ $(document).ready(function () {
     commentbutton.addEventListener("click", function (event) {
       localStorage.setItem(
         "redirectAfterLogin",
-        "/changelog.html?id=" + localStorage.getItem("selectedChangelogId")
+        "/changelogs.html?id=" + localStorage.getItem("selectedChangelogId")
       ); // Store the redirect URL in local storage
       window.location.href = "/login.html"; // Redirect to login page
     });
