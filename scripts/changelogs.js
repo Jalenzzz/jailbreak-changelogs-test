@@ -1189,14 +1189,12 @@ $(document).ready(function () {
   const commentinput = document.getElementById("commenter-text");
   const commentbutton = document.getElementById("submit-comment");
   const profilepicture = document.getElementById("profile-picture");
-  const mobileprofile = document.getElementById("profile-picture-mobile");
   const avatarUrl = sessionStorage.getItem("avatar");
   const userdata = JSON.parse(sessionStorage.getItem("user"));
   const commentsList = document.getElementById("comments-list");
   if (userid) {
     console.log(avatarUrl);
     profilepicture.src = avatarUrl;
-    mobileprofile.src = avatarUrl;
     commentinput.placeholder = "Commenting as " + userdata.global_name;
     commentbutton.disabled = false;
     commentinput.disabled = false;
