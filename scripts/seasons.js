@@ -50,6 +50,8 @@ $(document).ready(function () {
   function displaySeasonDetails(season, descriptionData, rewardsData) {
     // Find the season data from the description data
     const seasonData = descriptionData.find((desc) => desc.season === season);
+    localStorage.setItem("selectedSeason", season);
+    reloadcomments();
     // Filter rewards for the current season
     const rewards = rewardsData.filter(
       (reward) => reward.season_number === season
@@ -201,5 +203,232 @@ $(document).ready(function () {
     })
     .always(() => {
       $loadingOverlay.hide(); // Hide loading overlay
+    });
+
+    const userid = sessionStorage.getItem("userid");
+    const CommentForm = document.getElementById("comment-form");
+    const CommentHeader = document.getElementById("comment-header");
+    const commentinput = document.getElementById("commenter-text");
+    const commentbutton = document.getElementById("submit-comment");
+    const profilepicture = document.getElementById("profile-picture");
+    const mobileprofile = document.getElementById("profile-picture-mobile");
+    const avatarUrl = sessionStorage.getItem("avatar");
+    const userdata = JSON.parse(sessionStorage.getItem("user"));
+    const commentsList = document.getElementById("comments-list");
+    if (userid) {
+      console.log(avatarUrl);
+      profilepicture.src = avatarUrl;
+      mobileprofile.src = avatarUrl;
+      commentinput.placeholder = "Commenting as " + userdata.global_name;
+      commentbutton.disabled = false;
+      commentinput.disabled = false;
+    } else {
+      commentbutton.disabled = false;
+      commentbutton.textContent = "Log in";
+      commentbutton.addEventListener("click", function (event) {
+        localStorage.setItem(
+          "redirectAfterLogin",
+          "/changelog.html?id=" + localStorage.getItem("selectedSeason")
+        ); // Store the redirect URL in local storage
+        window.location.href = "/login.html"; // Redirect to login page
+      });
+    }
+  
+    function addComment(comment) {
+      const listItem = document.createElement("li");
+      listItem.classList.add("list-group-item", "d-flex", "align-items-start");
+  
+      const avatarElement = document.createElement("img");
+      avatarElement.src = avatarUrl;
+      avatarElement.classList.add("rounded-circle", "m-1");
+      avatarElement.width = 32;
+      avatarElement.height = 32;
+  
+      const commentContainer = document.createElement("div");
+      commentContainer.classList.add("ms-2"); // Add margin to the left of the comment
+  
+      const usernameElement = document.createElement("strong");
+      usernameElement.textContent = userdata.global_name;
+  
+      const commentTextElement = document.createElement("p");
+      commentTextElement.textContent = comment.value;
+      commentTextElement.classList.add("mb-0"); // Remove default margin from <p>
+  
+      const date = Math.floor(Date.now() / 1000);
+      const formattedDate = formatDate(date); // Assuming comment.date contains the date string
+      const dateElement = document.createElement("small");
+      dateElement.textContent = formattedDate; // Add the formatted date
+      dateElement.classList.add("text-muted"); // Optional: Add a class for styling
+  
+      // Append elements to the comment container
+      commentContainer.appendChild(usernameElement);
+      commentContainer.appendChild(commentTextElement);
+      commentContainer.appendChild(dateElement);
+  
+      // Append avatar and comment container to the list item
+      listItem.appendChild(avatarElement);
+      listItem.appendChild(commentContainer);
+  
+      // Prepend the new comment to the comments list
+      commentsList.prepend(listItem);
+  
+      // Post the comment to the server
+      fetch("https://api.jailbreakchangelogs.xyz/add_comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          author: userid,
+          content: comment.value,
+          item_id: localStorage.getItem("selectedSeason"),
+          item_type: "season",
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => console.log("Comment added:", data))
+        .catch((error) => console.error("Error adding comment:", error));
+    }
+  
+    function formatDate(unixTimestamp) {
+      // Convert UNIX timestamp to milliseconds by multiplying by 1000
+      const date = new Date(unixTimestamp * 1000);
+  
+      const options = {
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      };
+      let formattedDate = date.toLocaleString("en-US", options);
+  
+      // Get the day of the month with the appropriate ordinal suffix
+      const day = date.getDate();
+      const ordinalSuffix = getOrdinalSuffix(day);
+      formattedDate = formattedDate.replace(day, `${day}${ordinalSuffix}`);
+  
+      return formattedDate;
+    }
+  
+    function getOrdinalSuffix(day) {
+      if (day > 3 && day < 21) return "th"; // Covers 11th to 19th
+      switch (day % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    }
+  
+    function loadComments(comments) {
+      commentsList.innerHTML = ""; // Clear existing comments
+  
+      comments.forEach((comment) => {
+        // Fetch the user data for each comment's author
+        fetch("https://api.jailbreakchangelogs.xyz/get_user?id=" + comment.author)
+          .then((response) => response.json()) // Parse the JSON response
+          .then((userData) => {
+            const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+  
+            // Create comment list item
+            const listItem = document.createElement("li");
+            listItem.classList.add(
+              "list-group-item",
+              "d-flex",
+              "align-items-start"
+            );
+  
+            // Create avatar element
+            const avatarElement = document.createElement("img");
+            avatarElement.src = avatarUrl;
+            avatarElement.classList.add("rounded-circle", "m-1");
+            avatarElement.width = 32;
+            avatarElement.height = 32;
+  
+            // Create comment container
+            const commentContainer = document.createElement("div");
+            commentContainer.classList.add("ms-2");
+  
+            // Add username and comment text
+            const usernameElement = document.createElement("strong");
+            usernameElement.textContent = userData.global_name;
+  
+            const commentTextElement = document.createElement("p");
+            commentTextElement.textContent = comment.content;
+            commentTextElement.classList.add("mb-0");
+  
+            const formattedDate = formatDate(comment.date); // Assuming comment.date contains the date string
+            const dateElement = document.createElement("small");
+            dateElement.textContent = formattedDate; // Add the formatted date
+            dateElement.classList.add("text-muted"); // Optional: Add a class for styling
+  
+            const divider = document.createElement("hr");
+  
+            // Append elements to comment container
+            commentContainer.appendChild(usernameElement);
+            commentContainer.appendChild(commentTextElement);
+            commentContainer.appendChild(dateElement);
+  
+            // Append avatar and comment container to the list item
+            listItem.appendChild(avatarElement);
+            listItem.appendChild(commentContainer);
+  
+            // Append the list item to the comments list
+            commentsList.appendChild(listItem);
+          })
+          .catch((error) => {
+            console.error("Error fetching user data:", error);
+          });
+      });
+    }
+  
+    function reloadcomments() {
+      CommentHeader.textContent =
+        "Comments For Season " + localStorage.getItem("selectedSeason");
+      fetch(
+        "https://api.jailbreakchangelogs.xyz/get_comments?type=season&id=" +
+          localStorage.getItem("selectedSeason")
+      )
+        .then((response) => {
+          if (!response.ok) {
+            console.error("Unexpected response status:", response.status);
+            return null; // Exit early if the response is not OK
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (!data) return; // Prevent further execution if the response was not OK
+  
+          // Check if data contains a message like "No comments found"
+          if (data.message && data.message === "No comments found") {
+            console.log(data.message);
+            commentsList.innerHTML = "";
+            return;
+          }
+  
+          // Check if data contains the comments as an array
+          if (Array.isArray(data)) {
+            loadComments(data); // Load the comments if data is an array
+          } else if (data.comments && Array.isArray(data.comments)) {
+            loadComments(data.comments); // Load nested comments if available
+          } else {
+            console.error("Unexpected response format:", data); // Handle unexpected format
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching comments:", error); // Handle any errors
+        });
+    }
+  
+    CommentForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const comment = document.getElementById("commenter-text");
+      console.log(comment.value);
+      addComment(comment);
+      comment.value = ""; // Clear the comment input field
     });
 });
