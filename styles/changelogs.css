@@ -1,5 +1,6 @@
 /* Light Theme Colors */
 [data-bs-theme="light"] body {
+  --common-bg-color: #e7e7e7;
   --content-h1: #31b1ff; /* Light Blue for H1 */
   --content-h2: #ff341c; /* Light Red for H2 */
   --content-h3: #333333; /* Dark Gray for H3 and Paragraph Text */
@@ -76,7 +77,10 @@ html[data-bs-theme="light"] .changelog-dropdown-item:hover {
   background-color: #cce7ff; /* Slightly Darker Blue on Hover */
   color: #0056b3; /* Text Color on Hover */
 }
-
+/* Light Theme */
+[data-bs-theme="light"] body {
+  background-color: var(--common-bg-color);
+}
 /* Light Mode Offcanvas Body Gradient */
 [data-bs-theme="light"] .offcanvas-body {
   background: linear-gradient(
@@ -86,7 +90,9 @@ html[data-bs-theme="light"] .changelog-dropdown-item:hover {
   ); /* Warm Gradient from Light Peach to Soft Coral */
   color: var(--text-color); /* Ensure Text Color Remains Readable */
 }
-
+[data-bs-theme="light"] footer {
+  background-color: var(--common-bg-color);
+}
 [data-bs-theme="light"] #loading-overlay {
   background-color: #ffffff; /* Light Background for Loading Overlay */
 }
@@ -144,7 +150,7 @@ html[data-bs-theme="light"] .changelog-dropdown-item:hover {
   cursor: pointer; /* Change cursor to pointer on hover */
 }
 [data-bs-theme="light"] #main-container {
-  background-color: #ffffff; /* New background color */
+  background-color: var(--common-bg-color);
 }
 [data-bs-theme="light"] .audio-badge {
   background-color: #4a90e2; /* Blue for audio tags */
@@ -163,6 +169,7 @@ html[data-bs-theme="light"] .changelog-dropdown-item:hover {
 
 /* Dark Theme Colors */
 [data-bs-theme="dark"] body {
+  --common-bg-color: #333333; /* Dark background */
   --content-h1: #31b1ff; /* Lighter Blue for Dark Mode */
   --content-h2: #fa523f; /* Softer Red for Dark Mode */
   --content-h3: #e0e0e0; /* Light Gray for H3 and Paragraph Text */
@@ -252,7 +259,9 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 [data-bs-theme="dark"] #loading-overlay {
   background-color: #000000; /* Dark Background for Loading Overlay */
 }
-
+[data-bs-theme="dark"] body {
+  background-color: var(--common-bg-color);
+}
 /* Dark Mode Mentions */
 [data-bs-theme="dark"] .mention {
   color: var(--mention-color); /* Bright Orange for Mentions */
@@ -307,7 +316,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 /* Dark Theme Adjustments */
 [data-bs-theme="dark"] footer {
-  background-color: var(--gray-100);
+  background-color: var(--common-bg-color);
 }
 
 [data-bs-theme="dark"] .footer-section h3 {
@@ -320,7 +329,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   color: #ffdd57; /* Vibrant yellow-orange text color for dark mode hover */
 }
 [data-bs-theme="dark"] #main-container {
-  background-color: #333333; /* New background color */
+  background-color: var(--common-bg-color);
 }
 [data-bs-theme="dark"] .audio-badge {
   background-color: #3498db; /* Dark blue for audio tags */
@@ -979,7 +988,6 @@ button {
   background-color: var(--button-primary-hover-bg); /* Hover background color */
 }
 footer {
-  background-color: var(--bg-color);
   color: var(--text-color);
   padding: 2rem 0;
   border-top: 1px solid var(--border-color);
@@ -1049,6 +1057,7 @@ footer.hide {
   max-width: 100%;
   object-fit: contain;
 }
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   #comment-form input,
