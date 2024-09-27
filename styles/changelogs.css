@@ -19,7 +19,7 @@
   --mention-bg: #e0e0e0; /* Light Gray Background for Mentions */
   --at-color: #007bff; /* Blue for '@' Symbol */
   --username-color: #ff341c; /* Light Red for Username */
-  --mention-hover-bg: #d0d0d0; /* Hover Background Color for Mentions */
+  --mention-hover-bg: #e6f7ff; /* Hover Background Color for Mentions */
 
   --highlight-bg: rgba(
     255,
@@ -181,10 +181,11 @@ html[data-bs-theme="light"] .changelog-dropdown-item:hover {
   --button-secondary-hover-bg: #006400; /* Dark Green for Secondary Button Hover */
 
   /* Mention Colors */
-  --mention-color: #ff6f61; /* Bright Orange for Mentions */
-  --mention-bg: #1e1e1e; /* Dark Slate Blue for Mention Background */
-  --at-color: #ffd700; /* Bright Yellow for '@' Symbol */
-  --username-color: #ff4500; /* Bright Orange Red for Username */
+  --mention-color: #4db6ac; /* Teal color for Mentions */
+  --mention-bg: #263238; /* Dark blue-gray for Mention Background */
+  --at-color: #1de9b6; /* Bright teal for '@' Symbol */
+  --username-color: #00bcd4; /* Soft cyan for Username */
+  --mention-hover-bg: #1c4966; /* Hover Background Color for Mentions */
 
   --highlight-bg: rgba(
     255,
@@ -270,7 +271,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 
 [data-bs-theme="dark"] .mention:hover {
-  background-color: #9662006c; /* Custom Hover Background */
+  background-color: var(--mention-hover-bg); /* Custom Hover Background */
   cursor: pointer; /* Change Cursor to Pointer on Hover */
 }
 
