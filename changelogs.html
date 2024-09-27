@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en" data-bs-theme="dark">
   <head>
     <!-- Character encoding -->
     <meta charset="UTF-8" />
@@ -90,53 +90,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const themeToggleMobile = document.getElementById("theme-toggle-mobile");
-    const themeToggleDesktop = document.getElementById("theme-toggle-desktop");
-    const htmlElement = document.documentElement;
-
-    // Function to set the theme
-    function setTheme(theme) {
-      htmlElement.setAttribute("data-bs-theme", theme);
-      localStorage.setItem("theme", theme);
-      updateThemeIcon(themeToggleMobile, theme);
-      updateThemeIcon(themeToggleDesktop, theme);
-    }
-
-    // Function to update theme icon
-    function updateThemeIcon(button, theme) {
-      const iconElement = button.querySelector("i");
-      if (theme === "dark") {
-        iconElement.classList.replace("bi-moon-stars-fill", "bi-sun-fill");
-      } else {
-        iconElement.classList.replace("bi-sun-fill", "bi-moon-stars-fill");
-      }
-    }
-
-    // Check for saved theme preference or use device preference
-    const savedTheme = localStorage.getItem("theme");
-    const prefersDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else if (prefersDarkMode) {
-      setTheme("dark");
-    } else {
-      setTheme("light");
-    }
-
-    // Theme toggle button event listeners
-    function toggleTheme() {
-      const currentTheme = htmlElement.getAttribute("data-bs-theme");
-      setTheme(currentTheme === "light" ? "dark" : "light");
-    }
-
-    themeToggleMobile.addEventListener("click", toggleTheme);
-    themeToggleDesktop.addEventListener("click", toggleTheme);
-  });
-</script>
-
 <body>
   <!-- Loading Overlay -->
   <div id="loading-overlay" class="show">
@@ -155,105 +108,191 @@
   </div>
   <nav class="navbar navbar-expand-lg navbar-dark custom-navbar-color sticky-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">
+      <a class="navbar-brand d-flex align-items-center" href="/">
         <img
           src="https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs.png"
           alt="Changelogs Page Logo"
           class="navbar-logo"
         />
       </a>
-      
-      <!-- Navbar Toggler -->
-      <button class="navbar-toggler order-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
   
-      <!-- Search bar (visible on all screen sizes) -->
-      <div class="d-flex align-items-center position-relative order-lg-2 ms-auto">
-        <form class="d-flex position-relative" role="search" id="searchForm">
-          <div class="input-group">
-            <span class="input-group-text bg-transparent border-0">
-              <i class="bi bi-search text-light"></i>
-            </span>
-            <input
-              id="search-input"
-              class="form-control bg-gray border-0 custom-search-input"
-              type="text"
-              placeholder="Search changelogs..."
-              aria-label="Search changelogs"
-              autocomplete="off"
-            />
-            <button
-              id="clear-search-button"
-              class="btn btn-outline-light"
-              type="button"
-              aria-label="Clear search"
-            >
-              <i class="bi bi-x-circle-fill"></i>
-            </button>
-          </div>
-        </form>
-      </div>
+      <!-- Container for navbar toggler and profile picture on mobile -->
+      <div class="d-flex d-lg-none align-items-center">
+        <!-- Navbar toggler -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
   
-      <!-- Profile Picture and Theme Toggle -->
-      <div class="d-flex align-items-center order-lg-3">
-        <div class="me-2">
-          <img src="https://jailbreakchangelogs.xyz/favicon.ico" alt="Profile" id="profile-picture" class="rounded-circle" width="32" height="32">
+        <!-- Profile picture icon (visible on mobile) -->
+        <div class="ms-2 d-lg-none">
+          <img src="https://via.placeholder.com/32" alt="Profile" id="profile-picture" class="rounded-circle" width="32" height="32">
         </div>
-        <!-- Mobile Theme Toggle -->
-        <button
-          id="theme-toggle-mobile"
-          class="btn btn-outline-none d-lg-none theme-toggle p-2"
-          data-bs-toggle="tooltip"
-          data-bs-placement="bottom"
-          title="Toggle theme"
-        >
-          <i class="bi bi-moon-stars-fill"></i>
-        </button>
-        <!-- Desktop Theme Toggle -->
-        <button
-          id="theme-toggle-desktop"
-          class="btn btn-outline-none d-none d-lg-block theme-toggle p-2"
-          data-bs-toggle="tooltip"
-          data-bs-placement="bottom"
-          title="Toggle theme"
-        >
-          <i class="bi bi-moon-stars-fill"></i>
-        </button>
       </div>
   
-      <!-- Collapsible Navbar Content -->
-      <div class="collapse navbar-collapse order-lg-1" id="navbarContent">
-        <!-- Your existing navbar content -->
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item d-lg-none mb-2">
-            <a class="btn btn-info w-100" href="/" title="Home">
-              <i class="bi bi-house-door-fill me-2"></i> Home
-            </a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item">
+            <a class="nav-link" href="seasons.html">Seasons</a>
           </li>
-          <!-- Mobile Filter Options (moved from accordion) -->
-          <li class="nav-item d-lg-none">
-            <button id="mobileLatestChangelogBtn" class="btn btn-info w-100 mb-2">
-              <i class="bi bi-rocket-takeoff me-2"></i> Jump to Latest
+          <li class="nav-item">
+            <a class="nav-link" href="timeline.html">Timeline</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="bot.html">Our Discord Bot</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="faq.html">FAQ</a>
+          </li>
+          <li class="nav-item">
+            <button
+              class="nav-link btn btn-primary"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#discordOffcanvas"
+              aria-controls="discordOffcanvas"
+            >
+              Join the Discord
             </button>
           </li>
-          <li class="nav-item d-lg-none">
-            <div class="dropdown w-100 mb-2">
-              <button class="btn btn-primary dropdown-toggle w-100" id="mobileChangelogDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <!-- Profile picture icon (visible on desktop) -->
+          <li class="nav-item d-none d-lg-block ms-2">
+            <img src="https://via.placeholder.com/32" alt="Profile" id="profile-picture" class="rounded-circle" width="32" height="32">
+          </div>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+
+  <div class="container-fluid mt-3">
+    <div class="row">
+      <div class="col-12 col-lg-8"> <!-- This aligns with the content wrapper width -->
+        <div class="row">
+          <!-- Options Dropdown (hidden on mobile) -->
+          <div class="col-auto d-none d-lg-block me-2">
+            <div class="dropdown me-2">
+              <button class="btn btn-primary dropdown-toggle" type="button" id="desktopButtonsToggler" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-gear-fill me-2"></i> Options
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="desktopButtonsToggler">
+      
+                <li>
+                  <button class="dropdown-item" type="button" id="desktopOpenDateFilterModal">
+                    <i class="bi bi-calendar-event me-2"></i> Select Date Range
+                  </button>
+                </li>
+                <li>
+                  <button class="dropdown-item" type="button" id="desktopClearDateFilter">
+                    <i class="bi bi-x-circle me-2"></i> Clear Filter
+                  </button>
+                </li>
+                <li>
+                  <button class="dropdown-item" type="button" id="desktopCopyChangelog">
+                    <i class="bi bi-clipboard me-2"></i> Copy Changelog
+                  </button>
+                </li>
+                <li>
+                  <button class="dropdown-item" type="button" id="desktopLatestChangelogBtn">
+                    <i class="bi bi-rocket-takeoff me-2"></i> Jump to Latest
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- View Changelogs Dropdown (hidden on mobile) -->
+          <div class="col-auto d-none d-lg-block me-2">
+            <div class="dropdown changelog-dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" id="desktopChangelogDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-calendar-event me-2"></i> View Changelogs
               </button>
-              <ul class="dropdown-menu changelog-dropdown w-100" id="mobileChangelogList" aria-labelledby="mobileChangelogDropdown">
+              <ul class="dropdown-menu" aria-labelledby="desktopChangelogDropdown" id="desktopChangelogList">
                 <!-- Dropdown items will be populated dynamically -->
               </ul>
             </div>
-          </li>
-          <li class="nav-item d-lg-none">
-            <button id="mobileCopyChangelog" class="btn btn-primary w-100 mb-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Changelog">
+          </div>
+          
+          <!-- Search Bar and Menu Toggler -->
+          <div class="col-12 col-lg">
+            <div class="d-flex align-items-center">
+              <!-- Menu Toggler (visible only on mobile) -->
+              <button class="btn btn-light navbar-toggler d-lg-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenuItems" aria-controls="mobileMenuItems" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="bi bi-menu-button-wide"></i>
+              </button>
+              
+              
+              
+              <!-- Search Bar -->
+              <div class="search-container flex-grow-1">
+                <form class="d-flex position-relative" role="search" id="searchForm">
+                  <div class="input-group w-100">
+                    <span class="input-group-text bg-transparent border-0 search-icon">
+                      <i class="bi bi-search"></i>
+                    </span>
+                    <div class="position-relative w-100">
+                      <input
+                        id="search-input"
+                        class="form-control custom-search-input pe-5"
+                        type="text"
+                        placeholder="Search changelogs..."
+                        aria-label="Search changelogs"
+                        autocomplete="off"
+                      />
+                      <button
+                        id="clear-search-button"
+                        class="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+                        type="button"
+                        aria-label="Clear search"
+                      >
+                        <i class="bi bi-x-circle-fill"></i>
+                      </button>
+                    </div>
+                  </div>
+                </form>
+                <div id="exampleQueries" class="mt-2 d-none">
+                  <small class="text-muted">Example queries:</small>
+                  <div class="d-flex flex-wrap gap-2 mt-1">
+                    <a href="#" class="example-query badge bg-secondary text-decoration-none">has:audio</a>
+                    <a href="#" class="example-query badge bg-secondary text-decoration-none">has:video</a>
+                    <a href="#" class="example-query badge bg-secondary text-decoration-none">has:image</a>
+                    <a href="#" class="example-query badge bg-secondary text-decoration-none">has:mention</a>
+                  </div>
+                </div>
+                <div id="search-results" class="dropdown-menu w-100">
+                  <!-- Search results will be populated here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Mobile Menu Items (Collapsible) -->
+        <div class="collapse mt-3 d-lg-none" id="mobileMenuItems">
+          <div class="d-grid gap-2">
+            
+            <button id="mobileLatestChangelogBtn" class="btn btn-info">
+              <i class="bi bi-rocket-takeoff me-2"></i> Jump to Latest
+            </button>
+            <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle w-100" id="mobileChangelogDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-calendar-event me-2"></i> View Changelogs
+              </button>
+              <ul class="dropdown-menu w-100" aria-labelledby="mobileChangelogDropdown" id="mobileChangelogList">
+                <!-- Dropdown items will be populated dynamically -->
+              </ul>
+            </div>
+            <button id="mobileCopyChangelog" class="btn btn-primary">
               <i class="bi bi-clipboard me-2"></i> Copy Changelog
             </button>
-          </li>
-          <li class="nav-item d-lg-none">
-            <div class="btn-group w-100 mb-2" role="group" aria-label="Date Filter Options">
+            <div class="btn-group" role="group" aria-label="Date Filter Options">
               <button class="btn btn-secondary" id="mobileOpenDateFilterModal">
                 <i class="bi bi-calendar-event me-2"></i> Select Date
               </button>
@@ -261,72 +300,11 @@
                 <i class="bi bi-x-circle me-2"></i> Clear
               </button>
             </div>
-          </li>
-
-        </ul>
-      </div>
-    </div>
-  </nav>
-  
-</body>
-
-
-  <!-- Desktop layout (hidden on mobile) -->
-  <div class="d-none d-lg-block">
-    <div class="row justify-content-center g-3">
-      <!-- Home Button -->
-      <div class="col-auto">
-        <a class="btn btn-custom" href="/" title="Home">
-          <i class="bi bi-house-door-fill me-2"></i> Home
-        </a>
-      </div>
-
-      <!-- Dropdown to View Changelogs -->
-      <div class="col-auto">
-        <div class="dropdown">
-          <button class="btn btn-primary dropdown-toggle" id="desktopChangelogDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-calendar-event me-2"></i> View Changelogs
-          </button>
-          <ul class="dropdown-menu changelog-dropdown" id="desktopChangelogList" aria-labelledby="desktopChangelogDropdown">
-            <!-- Dropdown items will be populated dynamically -->
-          </ul>
+          </div>
         </div>
-      </div>
-
-      <!-- Date Filter Options -->
-      <div class="col-auto">
-        <div class="btn-group" role="group" aria-label="Filter Options">
-          <button class="btn btn-secondary" id="desktopOpenDateFilterModal">
-            <i class="bi bi-calendar-event me-2"></i> Select Date Range
-          </button>
-          <button class="btn btn-danger" id="desktopClearDateFilter">
-            <i class="bi bi-x-circle me-2"></i> Clear Filter
-          </button>
-        </div>
-      </div>
-
-      <!-- Copy Changelog Button -->
-      <div class="col-auto">
-        <button id="desktopCopyChangelog" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Changelog">
-          <i class="bi bi-clipboard me-2"></i> Copy Changelog
-        </button>
-      </div>
-
-      <!-- Latest Changelog Button -->
-      <div class="col-auto">
-        <button id="desktopLatestChangelogBtn" class="btn btn-info">
-          <i class="bi bi-rocket-takeoff me-2"></i> Jump to Latest
-        </button>
       </div>
     </div>
   </div>
-</div>
-
-<!-- Dropdown Menu for Search Results -->
-<div id="search-results" class="dropdown-menu w-100 w-lg-50">
-  <!-- Placeholder for search results content -->
-  Search Results
-</div>
 
 <div id="main-container" class="container-fluid">
   <div id="content-wrapper" class="row mt-3">
@@ -349,7 +327,7 @@
         </div>
       </div>
       <div class="container my-5">
-        <h2 class="text-center mb-4 text-primary" id="comment-header">Comments</h2>
+        <h2 class="comment-header" id="comment-header">Comments</h2>
         <div class="row justify-content-center">
           <div class="col-md-8">
             <!-- Comment submission form -->

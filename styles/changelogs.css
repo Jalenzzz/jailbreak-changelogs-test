@@ -1,175 +1,6 @@
-/* Light Theme Colors */
-[data-bs-theme="light"] body {
-  --common-bg-color: #e7e7e7;
-  --content-h1: #31b1ff; /* Light Blue for H1 */
-  --content-h2: #ff341c; /* Light Red for H2 */
-  --content-h3: #333333; /* Dark Gray for H3 and Paragraph Text */
-  --content-paragraph: #333333; /* Dark Gray for Paragraphs */
-  --content-bullet: #31b1ff; /* Light Blue for Bullet Points */
-  --content-sub-bullet: #ff341c; /* Light Red for Sub-Bullets */
-  --text-color: #2e2e2e; /* Dark Charcoal */
-  --header-text: #ffffff; /* White for Header Text */
-  --footer-link-color: #ff6347; /* Tomato for Footer Links */
-  --footer-link-hover-color: #ff7f50; /* Coral for Footer Link Hover */
-  --button-primary-bg: #4b4b4b; /* Dark Gray for Primary Button Background */
-  --button-primary-text: #ffffff; /* White for Primary Button Text */
-  --button-primary-hover-bg: #5a5a5a; /* Darker Gray for Hover */
-  --button-secondary-bg: #32cd32; /* Lime Green for Secondary Button */
-  --button-secondary-hover-bg: #006400; /* Dark Green for Secondary Button Hover */
-  --mention-color: #000000; /* Default Text Color for Mentions */
-  --mention-bg: #e0e0e0; /* Light Gray Background for Mentions */
-  --at-color: #007bff; /* Blue for '@' Symbol */
-  --username-color: #ff341c; /* Light Red for Username */
-  --mention-hover-bg: #e6f7ff; /* Hover Background Color for Mentions */
-
-  --highlight-bg: rgba(
-    255,
-    165,
-    0,
-    0.5
-  ); /* Semi-transparent Orange for Highlights */
-  --highlight-text: #000000; /* Black for Highlighted Text */
-  --no-results-color: #2e2e2e; /* Dark Charcoal for No Results */
-  --news-ticker-bg: #ff4500; /* Orange Red for News Ticker Background */
-  --news-ticker-text: #ffffff; /* White for News Ticker Text */
-  --selection-bg: #b0e0e6; /* Powder Blue for Selection Background */
-  --selection-text: #000000; /* Black for Selection Text */
-  --glow-color: #ffc107; /* Gold for Glow Effects */
-  --custom-header-color: #ffcc00; /* Goldenrod Yellow for Custom Headers */
-  --custom-subheader-color: #ffaa00; /* Amber for Custom Subheaders */
-  --custom-icon-color: #ff8800; /* Dark Orange for Custom Icons */
-
-  /* Social Media Colors */
-  --reddit-color: #ff4500; /* Reddit Orange */
-  --discord-color: #7289da; /* Discord Blurple */
-  --wiki-color: #1a73e8; /* Wiki Blue */
-  --github-color: #333333; /* GitHub Black */
-
-  /* Gray Scale */
-  --gray-100: #f9f9f9; /* Very Light Gray */
-  --gray-200: #eeeeee; /* Lighter Gray */
-  --gray-300: #dddddd; /* Light Gray */
-  --gray-400: #cccccc; /* Gray */
-  --gray-500: #bbbbbb; /* Medium Gray */
-  --gray-600: #aaaaaa; /* Slate Gray */
-  --gray-700: #999999; /* Dark Gray */
-  --gray-800: #888888; /* Darker Gray */
-  --gray-900: #777777; /* Very Dark Gray */
-}
-
-/* Light Theme Styles */
-html[data-bs-theme="light"] .changelog-dropdown-item {
-  color: #000000; /* Black for Dropdown Items */
-  padding: 10px 15px;
-  white-space: normal; /* Allow Text to Wrap */
-  transition: background-color 0.3s, color 0.3s;
-}
-
-html[data-bs-theme="light"] .changelog-dropdown-item:nth-child(odd) {
-  background-color: #f9f9f9; /* Light Gray for Odd Items */
-}
-
-html[data-bs-theme="light"] .changelog-dropdown-item:nth-child(even) {
-  background-color: #e6f7ff; /* Light Blue for Even Items */
-}
-
-html[data-bs-theme="light"] .changelog-dropdown-item:hover {
-  background-color: #cce7ff; /* Slightly Darker Blue on Hover */
-  color: #0056b3; /* Text Color on Hover */
-}
-/* Light Theme */
-[data-bs-theme="light"] body {
-  background-color: var(--common-bg-color);
-}
-/* Light Mode Offcanvas Body Gradient */
-[data-bs-theme="light"] .offcanvas-body {
-  background: linear-gradient(
-    135deg,
-    #ffecd2,
-    #fcb69f
-  ); /* Warm Gradient from Light Peach to Soft Coral */
-  color: var(--text-color); /* Ensure Text Color Remains Readable */
-}
-[data-bs-theme="light"] footer {
-  background-color: var(--common-bg-color);
-}
-[data-bs-theme="light"] #loading-overlay {
-  background-color: #ffffff; /* Light Background for Loading Overlay */
-}
-/* Light theme custom navbar color */
-[data-bs-theme="light"] .custom-navbar-color {
-  background-color: #333333; /* Dark background for navbar in light theme */
-}
-
-/* Light Theme Styles for Example Queries */
-[data-bs-theme="light"] .example-queries {
-  background-color: #f7f7f9; /* Match the main background color */
-  border: 1px solid #cccccc; /* Softer gray border */
-  padding: 15px; /* Add some padding for better readability */
-  border-radius: 10px; /* Add a subtle border radius */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-}
-
-[data-bs-theme="light"] .example-queries p {
-  color: #333333; /* Use a darker gray for better contrast */
-  font-size: 1rem; /* Use a standard font size */
-  margin-bottom: 10px; /* Add some margin for better spacing */
-}
-
-[data-bs-theme="light"] .example-query {
-  color: #ff341c; /* Use a brighter color for links */
-  text-decoration: none; /* Remove the default underline */
-  transition: color 0.3s; /* Add a smooth transition for hover effects */
-}
-
-[data-bs-theme="light"] .example-query:hover {
-  color: #ff7f50; /* Use a slightly darker color on hover */
-  background-color: #e6f7ff; /* Add a light blue background on hover */
-}
-
-[data-bs-theme="light"] .custom-search-item:hover {
-  background-color: #f8f9fa; /* Light background on hover */
-  color: #0056b3; /* Text color on hover */
-}
-[data-bs-theme="light"] .mention {
-  color: var(--mention-color); /* Color for mentions */
-  background-color: var(--mention-bg); /* Background color for mentions */
-  transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
-}
-
-[data-bs-theme="light"] .mention .at {
-  color: var(--at-color); /* Color for '@' symbol */
-}
-
-[data-bs-theme="light"] .mention .username {
-  color: var(--username-color); /* Color for username */
-}
-
-[data-bs-theme="light"] .mention:hover {
-  background-color: var(--mention-hover-bg); /* Background color on hover */
-  cursor: pointer; /* Change cursor to pointer on hover */
-}
-[data-bs-theme="light"] #main-container {
-  background-color: var(--common-bg-color);
-}
-[data-bs-theme="light"] .audio-badge {
-  background-color: #4a90e2; /* Blue for audio tags */
-}
-
-[data-bs-theme="light"] .video-badge {
-  background-color: #50c878; /* Green for video tags */
-}
-
-[data-bs-theme="light"] .image-badge {
-  background-color: #ffa500; /* Orange for image tags */
-}
-[data-bs-theme="light"] .badge {
-  color: var(--text-color); /* Black text for dark theme */
-}
-
 /* Dark Theme Colors */
 [data-bs-theme="dark"] body {
-  --common-bg-color: #333333; /* Dark background */
+  --common-bg-color: #212529; /* Dark background */
   --content-h1: #31b1ff; /* Lighter Blue for Dark Mode */
   --content-h2: #fa523f; /* Softer Red for Dark Mode */
   --content-h3: #e0e0e0; /* Light Gray for H3 and Paragraph Text */
@@ -285,7 +116,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 
 [data-bs-theme="dark"] .custom-navbar-color {
-  background-color: #032b44; /* Darker Blue for Navbar */
+  background-color: #2d2d2d; /* Darker Blue for Navbar */
   color: #ffffff; /* White Text Color */
 }
 
@@ -345,17 +176,64 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 [data-bs-theme="dark"] .badge {
   color: var(--text-color); /* White text for dark theme */
 }
+/* Dark theme adjustments */
+[data-bs-theme="dark"] .custom-search-input {
+  background-color: #4a4a4a; /* Darker background for dark theme */
+  color: #f0f0f0; /* Lighter text for dark theme */
+  border-color: #555;
+}
+
+[data-bs-theme="dark"] .custom-search-input::placeholder {
+  color: #aaa; /* Lighter placeholder text for dark theme */
+}
+
+[data-bs-theme="dark"] #search-results {
+  background-color: #4a4a4a;
+  border-color: #555;
+}
+
+[data-bs-theme="dark"] #search-results .dropdown-item {
+  color: #f0f0f0;
+}
+
+[data-bs-theme="dark"] #search-results .dropdown-item:hover,
+[data-bs-theme="dark"] #search-results .dropdown-item:focus {
+  background-color: #555;
+}
+.search-container {
+  position: relative;
+  width: 100%;
+}
+
 .custom-search-input {
-  transition: none;
-  box-shadow: none !important;
+  background-color: #f0f0f0; /* Light gray background */
+  color: #333; /* Dark text color */
+  border: 1px solid #ccc;
+  border-radius: 20px; /* Rounded corners */
+  padding-left: 40px; /* Space for the search icon */
 }
-
-.custom-search-input:focus {
+.custom-search-input::placeholder {
+  color: #777; /* Placeholder text color */
+}
+.search-icon {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  color: #777; /* Icon color */
+}
+#clear-search-button {
+  background: none;
   border: none;
-  outline: none;
-  box-shadow: none !important;
+  color: #6c757d; /* Bootstrap's secondary color */
+  line-height: 1;
+  z-index: 5;
 }
 
+#clear-search-button:hover {
+  color: #495057; /* Darken on hover */
+}
 /* Optionally, if you want a subtle indication of focus without size change */
 .custom-search-input:focus {
   background-color: rgba(
@@ -365,9 +243,28 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
     0.1
   ); /* Slight highlight when focused */
 }
-/* Icon Color */
-.bi-moon-stars-fill {
-  color: #ffffffaf; /* Semi-transparent white for moon icon */
+.navbar-toggler.btn-light {
+  padding: 0.375rem 0.75rem;
+  background-color: #f8f9fa;
+  border-color: #e2e6ea;
+  transition: all 0.15s ease-in-out;
+}
+
+.navbar-toggler.btn-light:active,
+.navbar-toggler.btn-light[aria-expanded="true"] {
+  background-color: #dae0e5;
+  border-color: #d3d9df;
+  transform: translateY(1px);
+}
+
+.navbar-toggler.btn-light:focus {
+  box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.navbar-toggler.btn-light .bi-menu-button-wide {
+  color: #212529;
+  font-size: 1.25rem;
 }
 
 /* Custom Header Styles */
@@ -435,14 +332,17 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   background-color: #727272; /* Slightly darker background on hover */
 }
 
-/* Changelog Dropdown Styles */
-.changelog-dropdown {
-  min-width: 500px; /* Minimum width for dropdown */
+.changelog-dropdown .dropdown-menu {
+  width: auto;
+  min-width: 400px; /* Adjusted to be less than or equal to max-width */
+  max-width: 450px; /* Increased to match your intended width */
   max-height: 400px; /* Maximum height for dropdown */
   overflow-y: auto; /* Enable vertical scrolling */
-  border-radius: 8px; /* Rounded corners */
-  padding: 0; /* No padding */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.changelog-dropdown .dropdown-item {
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 /* Dropdown Item Styles */
@@ -519,20 +419,19 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   padding: 0 2px; /* Padding for mention highlights */
 }
 
-/* Search Results Styles */
+/* Search results dropdown */
 #search-results {
-  position: sticky; /* Sticky positioning */
-  top: 0; /* Stick to the top */
-  max-height: 400px; /* Maximum height */
-  overflow-y: auto; /* Vertical scrolling */
-  overflow-x: hidden; /* No horizontal scrolling */
-  border: 1px solid #ccc; /* Light gray border */
-  border-radius: 4px; /* Rounded corners */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  width: 100%; /* Full width */
-  z-index: 1000; /* High stacking context */
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 0 0 20px 20px;
+  border-top: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
 /* Custom Search Item Styles */
 .custom-search-item {
   cursor: pointer; /* Pointer cursor on hover */
@@ -668,7 +567,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 .container {
   border-radius: 15px; /* Rounded corners for the container */
   padding: 30px; /* Add space inside the container */
-  box-shadow: 0 0 20px #0000001a; /* Subtle shadow for depth */
+  box-shadow: 0 0 20px #000000c7; /* Subtle shadow for depth */
 }
 /* Comments Section Styling */
 
@@ -676,7 +575,8 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 #comment-header {
   font-family: "Bangers", Arial, Helvetica, sans-serif; /* Custom font with fallbacks */
   letter-spacing: 1px; /* Increase letter spacing for better readability */
-  color: var(--content-h2); /* Use theme variable for color */
+  color: var(--content-h1); /* Use theme variable for color */
+  text-align: center;
   border-bottom: 2px solid var(--content-h2); /* Underline effect */
   padding-bottom: 10px;
   margin-bottom: 20px;
@@ -862,28 +762,6 @@ span {
 
 .navbar .input-group-text {
   color: rgba(255, 255, 255, 0.7); /* Color for input group text */
-}
-
-/* Clear Search Button Styles */
-#clear-search-button {
-  display: none; /* Initially hidden */
-  background: transparent; /* Transparent background */
-  cursor: pointer; /* Pointer cursor */
-  border: none; /* No border */
-  padding: 0; /* No padding */
-  margin-left: -30px; /* Adjust as needed */
-  position: relative; /* Relative positioning */
-  z-index: 1000; /* High stacking context */
-  pointer-events: auto; /* Enable pointer events */
-}
-
-#clear-search-button i {
-  font-size: 1.2rem; /* Icon size */
-  transition: color 0.3s; /* Smooth color transition */
-}
-
-#clear-search-button:hover i {
-  color: #333; /* Darker color on hover */
 }
 
 /* Header Styles */
@@ -1083,6 +961,6 @@ footer.hide {
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 50px;
+    height: 40px;
   }
 }

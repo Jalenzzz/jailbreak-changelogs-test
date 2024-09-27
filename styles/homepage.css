@@ -29,8 +29,23 @@
   font-size: 1.2rem;
   margin-bottom: 1.5rem;
 }
+.hero div {
+  position: relative;
+  z-index: 2; /* Ensures text is on top of the overlay */
+}
 .feature-icon {
   font-size: 3rem;
+}
+.btn-primary {
+  background-color: #032b44;
+  color: #ffffff;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active {
+  background-color: #054b6e; /* Hover state for primary button */
+  border-color: #054b6e; /* Border color on hover */
 }
 body {
   background-color: #f8f9fa;
@@ -57,10 +72,6 @@ body {
   box-shadow: none;
 }
 
-.hero div {
-  position: relative;
-  z-index: 2; /* Ensures text is on top of the overlay */
-}
 .cursive {
   font-size: 0.8rem; /* make the text smaller */
   font-style: italic; /* make the text cursive */
@@ -109,12 +120,12 @@ footer a:hover::after {
 }
 @media (max-width: 576px) {
   .navbar-logo {
-    height: 50px;
+    height: 40px;
   }
 }
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 50px;
+    height: 30px;
   }
 }

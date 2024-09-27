@@ -445,13 +445,13 @@ $(document).ready(function () {
         const text = $elem.find(".lead").text().trim();
         if ($elem.find(".bi-arrow-return-right").length > 0) {
           // Inline item indicator
-          processedContent.push("• • " + text);
+          processedContent.push("  - " + text);
         } else if ($elem.find(".bi-arrow-right").length > 0) {
           // Regular item indicator
-          processedContent.push("• " + text);
+          processedContent.push("- " + text);
         } else {
           // Fallback for any items without hyphens
-          processedContent.push("• " + text);
+          processedContent.push("- " + text);
         }
       }
     });
@@ -1262,13 +1262,15 @@ $(document).ready(function () {
       }),
     })
       .then((response) => response.json())
-      .then((data) => console.log("Comment added:", data))
       .catch((error) => console.error("Error adding comment:", error));
   }
 
   function formatDate(unixTimestamp) {
-    // Convert UNIX timestamp to milliseconds by multiplying by 1000
-    const date = new Date(unixTimestamp * 1000);
+    // Check if timestamp is in seconds or milliseconds
+    const isMilliseconds = unixTimestamp.toString().length > 10;
+    const timestamp = isMilliseconds ? unixTimestamp : unixTimestamp * 1000;
+
+    const date = new Date(timestamp);
 
     const options = {
       month: "long",
@@ -1276,6 +1278,7 @@ $(document).ready(function () {
       hour: "2-digit",
       minute: "2-digit",
     };
+
     let formattedDate = date.toLocaleString("en-US", options);
 
     // Get the day of the month with the appropriate ordinal suffix
@@ -1302,63 +1305,65 @@ $(document).ready(function () {
 
   function loadComments(comments) {
     commentsList.innerHTML = ""; // Clear existing comments
+    comments.sort((a, b) => b.date - a.date);
 
-    comments.forEach((comment) => {
-      // Fetch the user data for each comment's author
-      fetch("https://api.jailbreakchangelogs.xyz/get_user?id=" + comment.author)
-        .then((response) => response.json()) // Parse the JSON response
-        .then((userData) => {
-          const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-
-          // Create comment list item
-          const listItem = document.createElement("li");
-          listItem.classList.add(
-            "list-group-item",
-            "d-flex",
-            "align-items-start"
-          );
-
-          // Create avatar element
-          const avatarElement = document.createElement("img");
-          avatarElement.src = avatarUrl;
-          avatarElement.classList.add("rounded-circle", "m-1");
-          avatarElement.width = 32;
-          avatarElement.height = 32;
-
-          // Create comment container
-          const commentContainer = document.createElement("div");
-          commentContainer.classList.add("ms-2");
-
-          // Add username and comment text
-          const usernameElement = document.createElement("strong");
-          usernameElement.textContent = userData.global_name;
-
-          const commentTextElement = document.createElement("p");
-          commentTextElement.textContent = comment.content;
-          commentTextElement.classList.add("mb-0");
-
-          const formattedDate = formatDate(comment.date); // Assuming comment.date contains the date string
-          const dateElement = document.createElement("small");
-          dateElement.textContent = formattedDate; // Add the formatted date
-          dateElement.classList.add("text-muted"); // Optional: Add a class for styling
-
-          const divider = document.createElement("hr");
-
-          // Append elements to comment container
-          commentContainer.appendChild(usernameElement);
-          commentContainer.appendChild(commentTextElement);
-          commentContainer.appendChild(dateElement);
-
-          // Append avatar and comment container to the list item
-          listItem.appendChild(avatarElement);
-          listItem.appendChild(commentContainer);
-
-          // Append the list item to the comments list
-          commentsList.appendChild(listItem);
-        })
+    const userDataPromises = comments.map((comment) => {
+      return fetch(
+        "https://api.jailbreakchangelogs.xyz/get_user?id=" + comment.author
+      )
+        .then((response) => response.json())
+        .then((userData) => ({ comment, userData }))
         .catch((error) => {
           console.error("Error fetching user data:", error);
+          return null;
         });
+    });
+
+    Promise.all(userDataPromises).then((results) => {
+      const validResults = results.filter((result) => result !== null);
+
+      validResults.forEach(({ comment, userData }) => {
+        const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+
+        const listItem = document.createElement("li");
+        listItem.classList.add(
+          "list-group-item",
+          "d-flex",
+          "align-items-start"
+        );
+
+        const avatarElement = document.createElement("img");
+        avatarElement.src = avatarUrl;
+        avatarElement.classList.add("rounded-circle", "m-1");
+        avatarElement.width = 32;
+        avatarElement.height = 32;
+
+        const commentContainer = document.createElement("div");
+        commentContainer.classList.add("ms-2");
+
+        const usernameElement = document.createElement("strong");
+        usernameElement.textContent = userData.global_name;
+
+        const commentTextElement = document.createElement("p");
+        commentTextElement.textContent = comment.content;
+        commentTextElement.classList.add("mb-0");
+
+        const formattedDate = formatDate(comment.date);
+        const dateElement = document.createElement("small");
+        dateElement.textContent = formattedDate;
+        dateElement.classList.add("text-muted");
+
+        const divider = document.createElement("hr");
+
+        commentContainer.appendChild(usernameElement);
+        commentContainer.appendChild(commentTextElement);
+        commentContainer.appendChild(dateElement);
+
+        listItem.appendChild(avatarElement);
+        listItem.appendChild(commentContainer);
+
+        commentsList.appendChild(listItem);
+      });
     });
   }
 
