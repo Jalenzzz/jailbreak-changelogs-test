@@ -153,57 +153,24 @@
       </div>
     </div>
   </div>
-
   <nav class="navbar navbar-expand-lg navbar-dark custom-navbar-color sticky-top">
     <div class="container-fluid">
-      <div class="d-flex align-items-center w-100">
-        <a class="navbar-brand" href="#">
-          <img
-            src="https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs.png"
-            alt="Changelogs Page Logo"
-            class="navbar-logo"
-          />
-        </a>
-        <div class="d-flex align-items-center ms-auto">
-          <!-- Profile Picture (Mobile) -->
-          <div class="d-lg-none me-2">
-            <img src="https://via.placeholder.com/32" alt="Profile" id="profile-picture-mobile" class="rounded-circle" width="32" height="32">
-          </div>
-          <!-- Mobile Search Icon -->
-          <button
-            id="mobile-search-toggle"
-            class="btn btn-outline-none d-lg-none p-2 me-2"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#searchCollapse"
-            aria-expanded="false"
-            aria-controls="searchCollapse"
-          >
-            <i class="bi bi-search text-light" style="font-size: 1.5rem"></i>
-          </button>
-          <!-- Mobile Theme Toggle -->
-          <button
-            id="theme-toggle-mobile"
-            class="btn btn-outline-none d-lg-none p-2"
-            data-bs-toggle="tooltip"
-            data-bs-placement="bottom"
-            title="Toggle theme"
-            style="font-size: 1.5rem"
-          >
-            <i class="bi bi-moon-stars-fill" style="font-size: 1.5rem"></i>
-          </button>
-        
-        </div>
-      </div>
-      <div class="d-flex align-items-center">
-        <!-- Profile Picture Desktop -->
-        <div class="d-none d-lg-block me-2">
-          <img src="https://via.placeholder.com/32" alt="Profile Picture" id="profile-picture" class="rounded-circle" width="32" height="32">
-        </div>
-      </div>
-      <!-- Search Collapse (visible on mobile when toggled, always visible on desktop) -->
-      <div class="collapse navbar-collapse mt-2 d-lg-block" id="searchCollapse">
-        <form class="d-flex position-relative w-100" role="search">
+      <a class="navbar-brand" href="#">
+        <img
+          src="https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs.png"
+          alt="Changelogs Page Logo"
+          class="navbar-logo"
+        />
+      </a>
+      
+      <!-- Navbar Toggler -->
+      <button class="navbar-toggler order-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+  
+      <!-- Search bar (visible on all screen sizes) -->
+      <div class="d-flex align-items-center position-relative order-lg-2 ms-auto">
+        <form class="d-flex position-relative" role="search" id="searchForm">
           <div class="input-group">
             <span class="input-group-text bg-transparent border-0">
               <i class="bi bi-search text-light"></i>
@@ -212,7 +179,7 @@
               id="search-input"
               class="form-control bg-gray border-0 custom-search-input"
               type="text"
-              placeholder="Search..."
+              placeholder="Search changelogs..."
               aria-label="Search changelogs"
               autocomplete="off"
             />
@@ -225,131 +192,87 @@
               <i class="bi bi-x-circle-fill"></i>
             </button>
           </div>
-          <div
-            id="exampleQueries"
-            class="position-absolute w-100 rounded mt-1"
-            :data-bs-theme="theme === 'light' ? 'light' : 'dark'"
-            style="top: 100%; left: 0"
-          >
-            <div class="example-queries">
-              <a href="#" class="example-query d-block px-2 py-1">has: audio</a>
-              <a href="#" class="example-query d-block px-2 py-1">has: video</a>
-              <a href="#" class="example-query d-block px-2 py-1">has: image</a>
-              <a href="#" class="example-query d-block px-2 py-1">has: mention</a>
-            </div>
-          </div>
         </form>
       </div>
   
-      <div class="collapse navbar-collapse" id="navbarContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <!-- Other nav items if needed -->
-        </ul>
-  
-      
-        <div class="d-flex align-items-center">
-          <!-- Desktop Theme Toggle -->
-          <button
-            id="theme-toggle-desktop"
-            class="btn btn-outline-none d-none d-lg-block p-2"
-            data-bs-toggle="tooltip"
-            data-bs-placement="bottom"
-            title="Toggle theme"
-            style="font-size: 1.5rem"
-          >
-            <i class="bi bi-moon-stars-fill" style="font-size: 1.5rem"></i>
-          </button>
+      <!-- Profile Picture and Theme Toggle -->
+      <div class="d-flex align-items-center order-lg-3">
+        <div class="me-2">
+          <img src="https://via.placeholder.com/32" alt="Profile" id="profile-picture" class="rounded-circle" width="32" height="32">
         </div>
+        <!-- Mobile Theme Toggle -->
+        <button
+          id="theme-toggle-mobile"
+          class="btn btn-outline-none d-lg-none theme-toggle p-2"
+          data-bs-toggle="tooltip"
+          data-bs-placement="bottom"
+          title="Toggle theme"
+        >
+          <i class="bi bi-moon-stars-fill"></i>
+        </button>
+        <!-- Desktop Theme Toggle -->
+        <button
+          id="theme-toggle-desktop"
+          class="btn btn-outline-none d-none d-lg-block theme-toggle p-2"
+          data-bs-toggle="tooltip"
+          data-bs-placement="bottom"
+          title="Toggle theme"
+        >
+          <i class="bi bi-moon-stars-fill"></i>
+        </button>
+      </div>
+  
+      <!-- Collapsible Navbar Content -->
+      <div class="collapse navbar-collapse order-lg-1" id="navbarContent">
+        <!-- Your existing navbar content -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item d-lg-none mb-2">
+            <a class="btn btn-info w-100" href="/" title="Home">
+              <i class="bi bi-house-door-fill me-2"></i> Home
+            </a>
+          </li>
+          <!-- Mobile Filter Options (moved from accordion) -->
+          <li class="nav-item d-lg-none">
+            <button id="mobileLatestChangelogBtn" class="btn btn-info w-100 mb-2">
+              <i class="bi bi-rocket-takeoff me-2"></i> Jump to Latest
+            </button>
+          </li>
+          <li class="nav-item d-lg-none">
+            <div class="dropdown w-100 mb-2">
+              <button class="btn btn-primary dropdown-toggle w-100" id="mobileChangelogDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-calendar-event me-2"></i> View Changelogs
+              </button>
+              <ul class="dropdown-menu changelog-dropdown w-100" id="mobileChangelogList" aria-labelledby="mobileChangelogDropdown">
+                <!-- Dropdown items will be populated dynamically -->
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item d-lg-none">
+            <button id="mobileCopyChangelog" class="btn btn-primary w-100 mb-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Changelog">
+              <i class="bi bi-clipboard me-2"></i> Copy Changelog
+            </button>
+          </li>
+          <li class="nav-item d-lg-none">
+            <div class="btn-group w-100 mb-2" role="group" aria-label="Date Filter Options">
+              <button class="btn btn-secondary" id="mobileOpenDateFilterModal">
+                <i class="bi bi-calendar-event me-2"></i> Select Date
+              </button>
+              <button class="btn btn-danger" id="mobileClearDateFilter">
+                <i class="bi bi-x-circle me-2"></i> Clear
+              </button>
+            </div>
+          </li>
+
+        </ul>
       </div>
     </div>
-    
   </nav>
+  
 </body>
 
-<!-- Container for Filter Options -->
-<div class="container mt-3">
-  <!-- Accordion for Filter Options (Visible on Mobile Only) -->
-  <div class="accordion d-md-none" id="filterAccordion">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="filterAccordionHeading">
-        <button
-          class="accordion-button collapsed"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#filterAccordionCollapse"
-          aria-expanded="false"
-          aria-controls="filterAccordionCollapse"
-        >
-          Filter Options
-        </button>
-      </h2>
-      <div
-        id="filterAccordionCollapse"
-        class="accordion-collapse collapse"
-        aria-labelledby="filterAccordionHeading"
-        data-bs-parent="#filterAccordion"
-      >
-        <div class="accordion-body">
-          <!-- Mobile Filter Options -->
-          <div class="row g-3">
-            <!-- Primary Actions -->
-            <div class="col-12 mb-2">
-              <a class="btn btn-custom w-100" href="/" title="Home">
-                <i class="bi bi-house-door-fill me-2"></i> Home
-              </a>
-            </div>
-            <div class="col-12">
-              <button id="mobileLatestChangelogBtn" class="btn btn-info w-100">
-                <i class="bi bi-rocket-takeoff me-2"></i> Jump to Latest
-              </button>
-            </div>
-
-            <!-- Changelog Actions -->
-            <div class="col-12">
-              <div class="dropdown w-100">
-                <button class="btn btn-primary dropdown-toggle w-100" id="mobileChangelogDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-calendar-event me-2"></i> View Changelogs
-                </button>
-                <ul class="dropdown-menu changelog-dropdown w-100" id="mobileChangelogList" aria-labelledby="mobileChangelogDropdown">
-                  <!-- Dropdown items will be populated dynamically -->
-                </ul>
-              </div>
-            </div>
-            <div class="col-12">
-              <button id="mobileCopyChangelog" class="btn btn-primary w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Changelog">
-                <i class="bi bi-clipboard me-2"></i> Copy Changelog
-              </button>
-            </div>
-
-            <!-- Date Filter Options -->
-            <div class="col-12">
-              <div class="btn-group w-100" role="group" aria-label="Date Filter Options">
-                <button class="btn btn-secondary" id="mobileOpenDateFilterModal">
-                  <i class="bi bi-calendar-event me-2"></i> Select Date
-                </button>
-                <button class="btn btn-danger" id="mobileClearDateFilter">
-                  <i class="bi bi-x-circle me-2"></i> Clear
-                </button>
-              </div>
-            </div>
-
-            <!-- Additional Actions -->
-            <div class="col-12">
-              <button class="btn btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#twitterFeedOffcanvas" aria-controls="twitterFeedOffcanvas">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x me-2" viewBox="0 0 16 16">
-                  <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
-                </svg>
-                Badimo Feed
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Desktop layout (hidden on mobile) -->
-  <div class="d-none d-md-block">
+  <div class="d-none d-lg-block">
     <div class="row justify-content-center g-3">
       <!-- Home Button -->
       <div class="col-auto">
@@ -380,16 +303,6 @@
             <i class="bi bi-x-circle me-2"></i> Clear Filter
           </button>
         </div>
-      </div>
-
-      <!-- Badimo Feed Button -->
-      <div class="col-auto">
-        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#twitterFeedOffcanvas" aria-controls="twitterFeedOffcanvas">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x me-2" viewBox="0 0 16 16">
-            <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
-          </svg>
-          Badimo Feed
-        </button>
       </div>
 
       <!-- Copy Changelog Button -->
@@ -721,45 +634,5 @@
     </div>
   </div>
 </div>
-
-<!-- Twitter Feed Offcanvas Component -->
-<div
-  class="offcanvas offcanvas-end w-100 w-md-50"
-  tabindex="-1"
-  id="twitterFeedOffcanvas"
-  aria-labelledby="twitterFeedOffcanvasLabel"
->
-  <div class="offcanvas-header">
-    <h5
-      class="offcanvas-title d-flex align-items-center"
-      id="twitterFeedOffcanvasLabel"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        fill="currentColor"
-        class="bi bi-twitter-x me-2"
-        viewBox="0 0 16 16"
-      >
-        <path
-          d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"
-        />
-      </svg>
-      <span class="fw-bold">Badimo Feed</span>
-    </h5>
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="offcanvas"
-      aria-label="Close"
-    ></button>
-  </div>
-
-  <div class="offcanvas-body">
-    <div style="max-width: 100%; overflow: hidden;">
-      <script type="text/javascript" src="https://www.juicer.io/embed/badimo/embed-code.js" async defer></script>
-    </div>
-  </div>
 </body>
 </html>

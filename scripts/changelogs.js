@@ -87,35 +87,14 @@ $(document).ready(function () {
 
     displayLatestChangelog(); // Show the latest changelog
 
-    // Mobile-specific behavior: Collapse the filter options accordion if on a mobile device
-    if (window.innerWidth < 768) {
-      // Check if screen width is less than 768px (mobile breakpoint)
-      const accordion = document.getElementById("filterAccordion");
-      if (accordion) {
-        // Find all collapsible elements within the accordion
-        const collapsibleElements = accordion.querySelectorAll(
-          '[data-bs-toggle="collapse"]'
-        );
-
-        // Iterate through each collapsible element
-        collapsibleElements.forEach((element) => {
-          // Get the target element's ID (from data-bs-target or href attribute)
-          const targetId =
-            element.getAttribute("data-bs-target") ||
-            element.getAttribute("href");
-
-          if (targetId) {
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-              // Get the Bootstrap Collapse instance for the target element
-              const bsCollapse = bootstrap.Collapse.getInstance(targetElement);
-              // If the collapse is currently shown, hide it
-              if (bsCollapse && bsCollapse._isShown()) {
-                bsCollapse.hide();
-              }
-            }
-          }
-        });
+    // Close the navbar toggler on mobile
+    if (window.innerWidth < 992) {
+      // Using Bootstrap's default lg breakpoint
+      const navbarToggler = document.querySelector(".navbar-toggler");
+      const navbarCollapse = document.querySelector(".navbar-collapse");
+      if (navbarToggler && navbarCollapse) {
+        navbarCollapse.classList.remove("show");
+        navbarToggler.setAttribute("aria-expanded", "false");
       }
     }
   });
@@ -1181,30 +1160,14 @@ $(document).ready(function () {
     if (selectedChangelog) {
       displayChangelog(selectedChangelog); // Display the selected changelog
 
-      // Check if we're on a mobile device
-      if (window.innerWidth < 768) {
-        // Adjust this breakpoint as needed
-        const accordion = document.getElementById("filterAccordion");
-        if (accordion) {
-          // Find all elements that could be collapsible within the accordion
-          const collapsibleElements = accordion.querySelectorAll(
-            '[data-bs-toggle="collapse"]'
-          );
-          collapsibleElements.forEach((element) => {
-            const targetId =
-              element.getAttribute("data-bs-target") ||
-              element.getAttribute("href");
-            if (targetId) {
-              const targetElement = document.querySelector(targetId);
-              if (targetElement) {
-                const bsCollapse =
-                  bootstrap.Collapse.getInstance(targetElement);
-                if (bsCollapse && bsCollapse._isShown()) {
-                  bsCollapse.hide(); // Only hide if it's currently shown
-                }
-              }
-            }
-          });
+      // Close the navbar toggler on mobile
+      if (window.innerWidth < 992) {
+        // Using Bootstrap's default lg breakpoint
+        const navbarToggler = document.querySelector(".navbar-toggler");
+        const navbarCollapse = document.querySelector(".navbar-collapse");
+        if (navbarToggler && navbarCollapse) {
+          navbarCollapse.classList.remove("show");
+          navbarToggler.setAttribute("aria-expanded", "false");
         }
       }
 
