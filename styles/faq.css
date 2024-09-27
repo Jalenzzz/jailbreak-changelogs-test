@@ -78,13 +78,20 @@ footer a:hover {
 footer a:hover::after {
   transform: scaleX(1);
 }
-@media (max-width: 768px) {
-  .logo-image {
-    height: 40px; /* Smaller height for mobile devices */
+.navbar-logo {
+  height: 50px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+@media (max-width: 576px) {
+  .navbar-logo {
+    height: 50px;
   }
 }
-@media (max-width: 768px) {
-  .logo-image {
-    height: 40px; /* Smaller height for mobile devices */
+
+@media (max-width: 400px) {
+  .navbar-logo {
+    height: 50px;
   }
 }
