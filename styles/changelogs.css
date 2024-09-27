@@ -988,17 +988,60 @@ footer {
 footer.hide {
   transform: translateY(100%);
 }
-
-/* Version Info Styling */
-.version-info {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 1rem;
-  font-size: 0.9rem;
+/* Admin Links */
+.admin-link-v3 {
+  color: var(--content-h1);
+  font-weight: bold;
+  transition: color 0.3s;
+}
+.admin-link-jz {
+  color: var(--content-h2);
+  font-weight: bold;
+  transition: color 0.3s;
+}
+/* Reddit Link Styles */
+.reddit-link {
+  color: var(--reddit-color);
+  text-decoration: none;
 }
 
-.version-info p {
-  margin: 0;
+.reddit-link:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: var(--reddit-color); /* Reddit Orange background */
+  transform: scale(1.05); /* Slightly larger */
+}
+/* Discord Link Styles */
+.discord-link {
+  color: var(--discord-color);
+  text-decoration: none;
+}
+
+.discord-link:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: var(--discord-color); /* Discord Blurple background */
+  transform: scale(1.05); /* Slightly larger */
+}
+/* Wiki Link Styles */
+.wiki-link {
+  color: var(--wiki-color);
+  text-decoration: none;
+}
+
+.wiki-link:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: var(--wiki-color); /* Wiki Blue background */
+  transform: scale(1.05); /* Slightly larger */
+}
+/* GitHub Link Styles */
+.github-link {
+  color: var(--github-color);
+  text-decoration: none;
+}
+
+.github-link:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: #000000; /* True black background */
+  transform: scale(1.05); /* Slightly larger */
 }
 .navbar-logo {
   height: 50px;
@@ -1006,7 +1049,6 @@ footer.hide {
   max-width: 100%;
   object-fit: contain;
 }
-
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   #comment-form input,
