@@ -31,9 +31,6 @@
   padding: 20px;
   transition: transform 0.2s;
 }
-.feature-card:hover {
-  transform: scale(1.05);
-}
 .btn-custom {
   width: 200px;
   height: 50px;
@@ -68,15 +65,15 @@ footer a:hover::after {
 }
 
 .btn-custom {
-  background-color: #007bff; /* Light theme background color */
+  background-color: #032b44 !important; /* Light theme background color */
   color: white; /* Light theme text color */
   border: none; /* Remove default border if needed */
   font-size: 1rem;
 }
 
 .btn-custom:hover {
-  background-color: #0056b3; /* Darker blue on hover for light mode */
-  color: white; /* Keep text color white */
+  background-color: #212a31 !important; /* Darker blue on hover for light mode */
+  color: #ffffff; /* Keep text color white */
 }
 .navbar-logo {
   height: 50px;

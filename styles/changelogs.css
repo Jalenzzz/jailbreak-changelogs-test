@@ -171,6 +171,11 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   position: relative;
   width: 100%;
 }
+.nav-link {
+  color: #d3d9d4; /* Light color for button text */
+  border: none;
+  transition: background-color 0.3s ease;
+}
 
 .custom-search-input {
   background-color: #f0f0f0; /* Light gray background */
@@ -450,9 +455,6 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   color: #ffffff; /* Close button text color */
 }
 
-.btn-close:hover {
-  color: #ff6347; /* Close button hover color */
-}
 /* SVG Icon Styles */
 .svg-icon {
   fill: var(--text-color) !important; /* Fill color for SVG icons */

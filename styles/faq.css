@@ -13,7 +13,7 @@ body {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 .navbar {
-  background-color: rgba(18, 20, 22, 0.9) !important;
+  background-color: #212a31 !important;
 }
 .accordion-item {
   background-color: rgba(48, 52, 57, 0.8);
@@ -31,12 +31,12 @@ body {
   filter: invert(1);
 }
 .btn-primary {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+  background-color: #124e66 !important;
+  border-color: #124e66 !important;
 }
 .btn-primary:hover {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
+  background-color: #212a31 !important;
+  border-color: #212a31 !important;
 }
 .card {
   background-color: rgba(33, 37, 41, 0.9);

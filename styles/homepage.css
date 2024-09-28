@@ -38,14 +38,15 @@
 }
 .btn-primary {
   background-color: #032b44;
+  border-color: #032b44; /* Border color on hover */
   color: #ffffff;
 }
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active,
 .btn-primary.active {
-  background-color: #054b6e; /* Hover state for primary button */
-  border-color: #054b6e; /* Border color on hover */
+  background-color: #212a31 !important; /* Hover state for primary button */
+  border-color: #212a31 !important; /* Border color on hover */
 }
 body {
   background-color: #f8f9fa;
@@ -53,23 +54,24 @@ body {
 .offcanvas-header {
   display: flex; /* Keep the header visible */
   justify-content: space-between; /* Align items properly */
-  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+  background-color: #212a31; /* Semi-transparent background */
+  color: #ffffff;
 }
-
+.offcanvas-title {
+  font-weight: bold; /* Bold title */
+  font-size: 1.25rem; /* Title font size */
+}
 .offcanvas-body {
   background-color: transparent;
   padding: 0;
 }
 
 .offcanvas {
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.9
-  ); /* Slightly opaque to ensure visibility */
   border: none;
   box-shadow: none;
+}
+.white-close-button {
+  filter: invert(1) grayscale(100%) brightness(200%);
 }
 
 .cursive {
@@ -82,15 +84,43 @@ body {
   max-width: 100%;
   object-fit: contain;
 }
+/* Custom Navbar Color */
+.custom-navbar-color {
+  background-color: #212a31; /* This is the dark blue-gray color from your theme */
+  color: #ffffff; /* White text color */
+}
+/* Custom styles for navbar items */
+.custom-navbar-color .navbar-nav .nav-link {
+  color: #d3d9d4; /* Light gray color for nav links */
+  transition: color 0.3s ease;
+}
+
+.custom-navbar-color .navbar-nav .nav-link:hover,
+.custom-navbar-color .navbar-nav .nav-link:focus {
+  color: #ffffff; /* White color on hover/focus */
+}
+
+/* Custom style for the active nav item */
+.custom-navbar-color .navbar-nav .nav-item.active .nav-link {
+  color: #748d92; /* Highlight color for active link */
+}
+/* Custom style for the navbar toggler */
+.custom-navbar-color .navbar-toggler {
+  border-color: #748d92; /* Border color for the toggler */
+}
+
+.custom-navbar-color .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+/* Custom style for the "Join the Discord" button */
+.nav-link {
+  color: #d3d9d4; /* Light color for button text */
+  border: none;
+  transition: background-color 0.3s ease;
+}
 
 .navbar-brand {
   margin-right: 0;
-}
-.disclaimer {
-  font-size: 0.9rem;
-  color: #6c757d;
-  text-align: center;
-  margin-top: 10px;
 }
 
 footer a {
