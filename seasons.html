@@ -167,15 +167,18 @@
         <div class="d-flex align-items-center">
           <!-- Profile Picture (visible on all screen sizes) -->
           <div class="me-2">
-            <img
-              src="https://jailbreakchangelogs.xyz/favicon.ico"
-              alt="Profile Picture"
-              id="profile-picture"
-              class="rounded-circle"
-              width="32"
-              height="32"
-            />
+            <a href="login.html" title="Go to login page" class="profile-link">
+              <img
+                src="https://jailbreakchangelogs.xyz/favicon.ico"
+                alt="Profile Picture"
+                id="profile-picture"
+                class="rounded-circle"
+                width="32"
+                height="32"
+              />
+            </a>
           </div>
+
           <!-- Mobile Theme Toggle -->
           <button
             id="theme-toggle-mobile"
@@ -279,19 +282,33 @@
             </button>
           </div>
           <div class="container my-5">
-            <h2 class="text-center mb-4 text-primary" id="comment-header">Comments</h2>
+            <h2 class="text-center mb-4 text-primary" id="comment-header">
+              Comments
+            </h2>
             <div class="row justify-content-center">
               <div class="col-md-8">
                 <!-- Comment submission form -->
                 <form id="comment-form" class="mb-4">
                   <div class="input-group">
-                    <input type="text" class="form-control" id="commenter-text" disabled placeholder="Login to comment" required>
-                    <button type="submit" class="btn btn-primary" id="submit-comment" disabled>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="commenter-text"
+                      disabled
+                      placeholder="Login to comment"
+                      required
+                    />
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                      id="submit-comment"
+                      disabled
+                    >
                       <i class="bi bi-send-fill me-1"></i> Submit
                     </button>
                   </div>
                 </form>
-          
+
                 <!-- Comment List -->
                 <ul id="comments-list" class="list-group shadow-sm">
                   <!-- Comments will be dynamically added here -->

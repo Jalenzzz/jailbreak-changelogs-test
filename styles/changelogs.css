@@ -215,6 +215,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
     0.1
   ); /* Slight highlight when focused */
 }
+
 .navbar-toggler.btn-light {
   padding: 0.375rem 0.75rem;
   background-color: #f8f9fa;

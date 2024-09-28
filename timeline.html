@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -59,64 +59,13 @@
 
     <link rel="stylesheet" href="styles/timeline.css" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bangers&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=Luckiest+Guy&display=swap"
       rel="stylesheet"
     />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const themeToggleMobile = document.getElementById(
-          "theme-toggle-mobile"
-        );
-        const themeToggleDesktop = document.getElementById(
-          "theme-toggle-desktop"
-        );
-        const htmlElement = document.documentElement;
-
-        // Function to set theme
-        function setTheme(theme) {
-          htmlElement.setAttribute("data-bs-theme", theme);
-          localStorage.setItem("theme", theme);
-          updateThemeIcon(themeToggleMobile, theme);
-          updateThemeIcon(themeToggleDesktop, theme);
-        }
-
-        // Function to update theme icon
-        function updateThemeIcon(button, theme) {
-          const iconElement = button.querySelector("i");
-          if (theme === "dark") {
-            iconElement.classList.replace("bi-moon-stars-fill", "bi-sun-fill");
-          } else {
-            iconElement.classList.replace("bi-sun-fill", "bi-moon-stars-fill");
-          }
-        }
-
-        // Check for saved theme preference or use device preference
-        const savedTheme = localStorage.getItem("theme");
-        const prefersDarkMode = window.matchMedia(
-          "(prefers-color-scheme: dark)"
-        ).matches;
-
-        if (savedTheme) {
-          setTheme(savedTheme);
-        } else if (prefersDarkMode) {
-          setTheme("dark");
-        } else {
-          setTheme("light");
-        }
-
-        // Theme toggle button event listeners
-        function toggleTheme() {
-          const currentTheme = htmlElement.getAttribute("data-bs-theme");
-          setTheme(currentTheme === "light" ? "dark" : "light");
-        }
-
-        themeToggleMobile.addEventListener("click", toggleTheme);
-        themeToggleDesktop.addEventListener("click", toggleTheme);
-      });
-    </script>
     <link
       rel="stylesheet"
       href="https://unpkg.com/locomotive-scroll/dist/locomotive-scroll.min.css"
@@ -142,40 +91,119 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark custom-navbar-color">
       <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="#">
+        <a class="navbar-brand d-flex align-items-center" href="/">
           <img
             src="https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs_timeline.png"
             alt="Timeline Page Logo"
             class="header-logo timeline-logo me-2"
           />
         </a>
-        <div class="d-flex align-items-center">
-          <!-- Mobile theme toggle -->
+
+        <!-- Container for navbar toggler and profile picture on mobile -->
+        <div class="d-flex d-lg-none align-items-center">
+          <!-- Navbar toggler -->
           <button
-            id="theme-toggle-mobile"
-            class="btn btn-outline-none me-2 d-lg-none p-2"
-            data-bs-toggle="tooltip"
-            data-bs-placement="bottom"
-            title="Toggle theme"
-            style="font-size: 1.5rem"
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
           >
-            <i class="bi bi-moon-stars-fill" style="font-size: 1.5rem"></i>
+            <span class="navbar-toggler-icon"></span>
           </button>
 
-          <!-- Desktop theme toggle -->
-          <button
-            id="theme-toggle-desktop"
-            class="btn btn-outline-none d-none d-lg-block p-2"
-            data-bs-toggle="tooltip"
-            data-bs-placement="bottom"
-            title="Toggle theme"
-            style="font-size: 1.5rem"
-          >
-            <i class="bi bi-moon-stars-fill" style="font-size: 1.5rem"></i>
-          </button>
+          <!-- Profile picture icon (visible on mobile) -->
+          <div class="ms-2 d-lg-none">
+            <a href="login.html" title="Go to login page" class="profile-link">
+              <img
+                src="https://via.placeholder.com/32"
+                alt="Profile"
+                id="profile-picture"
+                class="rounded-circle"
+                width="32"
+                height="32"
+              />
+            </a>
+          </div>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" href="changelogs.html">Changelogs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="seasons.html">Seasons</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="bot.html">Our Discord Bot</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="faq.html">FAQ</a>
+            </li>
+            <li class="nav-item">
+              <button
+                class="nav-link btn"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#discordOffcanvas"
+                aria-controls="discordOffcanvas"
+              >
+                Join the Discord
+              </button>
+            </li>
+            <!-- Profile picture icon (visible on desktop) -->
+            <li class="nav-item d-none d-lg-block ms-2">
+              <a
+                href="login.html"
+                title="Go to login page"
+                class="profile-link"
+              >
+                <img
+                  src="https://via.placeholder.com/32"
+                  alt="Profile"
+                  id="profile-picture"
+                  class="rounded-circle"
+                  width="32"
+                  height="32"
+                />
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
+    <div
+      class="offcanvas offcanvas-end"
+      tabindex="-1"
+      id="discordOffcanvas"
+      aria-labelledby="discordOffcanvasLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="discordOffcanvasLabel">
+          Join Our Discord
+        </h5>
+        <button
+          type="button"
+          class="btn-close text-reset"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body">
+        <iframe
+          src="https://discord.com/widget?id=1286064050135896064&theme=dark"
+          width="100%"
+          height="100%"
+          allowtransparency="true"
+          frameborder="0"
+          sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+        >
+        </iframe>
+      </div>
+    </div>
 
     <div class="text-center mt-3">
       <div class="nav-item dropdown button-group">
@@ -312,13 +340,13 @@
                   <div class="col-sm-4">
                     <p class="mb-0">
                       <strong>Version:</strong>
-                      <span id="version-number">3c2ebd5</span>
+                      <span id="version-number">e39c148</span>
                     </p>
                   </div>
                   <div class="col-sm-4">
                     <p class="mb-0">
                       <strong>Last Updated:</strong>
-                      <span id="last-updated">September 26th 2024</span>
+                      <span id="last-updated">September 28th 2024</span>
                     </p>
                   </div>
                   <div class="col-sm-4">
