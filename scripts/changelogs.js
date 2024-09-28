@@ -1174,7 +1174,7 @@ $(document).ready(function () {
   if (userid) {
     console.log(avatarUrl);
     profilepicture.src = avatarUrl;
-    commentinput.placeholder = "Commenting as " + userdata.global_name;
+    commentinput.placeholder = "Comment as " + userdata.global_name;
     commentbutton.disabled = false;
     commentinput.disabled = false;
   } else {

@@ -98,14 +98,38 @@ $(document).ready(function () {
       `<ul class="list-group season-rewards">${rewardsHTML}</ul>`
     );
   }
+  // Helper function to format the description
+  function formatDescription(description) {
+    // Split the description into paragraphs
+    const paragraphs = description.split("\n\n");
+
+    // Process each paragraph
+    const formattedParagraphs = paragraphs.map((paragraph) => {
+      // Regular paragraph
+      return `<p class="season-description-paragraph">${paragraph}</p>`;
+    });
+
+    // Join the formatted paragraphs and return
+    return formattedParagraphs.join("");
+  }
 
   // Function to update the carousel with reward images
   function updateCarousel(rewards) {
     // Clear any existing carousel items
     $carouselInner.empty();
 
-    // Iterate through each reward in the rewards array
-    rewards.forEach((reward, index) => {
+    // Filter rewards based on the new criteria
+    const filteredRewards = rewards.filter((reward) => {
+      // Check if the reward should be excluded
+      const isLevelRequirement = reward.requirement.startsWith("Level");
+      const isBonus = reward.bonus === "True";
+
+      // Include the reward if it's not a level requirement or not a bonus
+      return !(isLevelRequirement && isBonus);
+    });
+
+    // Iterate through each filtered reward
+    filteredRewards.forEach((reward, index) => {
       // Determine if this is the first (active) carousel item
       const isActive = index === 0 ? "active" : "";
 
@@ -217,7 +241,7 @@ $(document).ready(function () {
   if (userid) {
     console.log(avatarUrl);
     profilepicture.src = avatarUrl;
-    commentinput.placeholder = "Commenting as " + userdata.global_name;
+    commentinput.placeholder = "Comment as " + userdata.global_name;
     commentbutton.disabled = false;
     commentinput.disabled = false;
   } else {
