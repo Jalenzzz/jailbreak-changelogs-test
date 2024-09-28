@@ -100,17 +100,7 @@ $(document).ready(function () {
   }
   // Helper function to format the description
   function formatDescription(description) {
-    // Split the description into paragraphs
-    const paragraphs = description.split("\n\n");
-
-    // Process each paragraph
-    const formattedParagraphs = paragraphs.map((paragraph) => {
-      // Regular paragraph
-      return `<p class="season-description-paragraph">${paragraph}</p>`;
-    });
-
-    // Join the formatted paragraphs and return
-    return formattedParagraphs.join("");
+    return `<p class="season-description-paragraph">${description}</p>`;
   }
 
   // Function to update the carousel with reward images
