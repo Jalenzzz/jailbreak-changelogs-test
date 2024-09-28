@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -81,55 +81,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
     <script src="scripts/seasons.js" defer></script>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const themeToggleMobile = document.getElementById(
-          "theme-toggle-mobile"
-        );
-        const themeToggleDesktop = document.getElementById(
-          "theme-toggle-desktop"
-        );
-        const htmlElement = document.documentElement;
-
-        function setTheme(theme) {
-          htmlElement.setAttribute("data-bs-theme", theme);
-          localStorage.setItem("theme", theme);
-          updateThemeIcon(themeToggleMobile, theme);
-          updateThemeIcon(themeToggleDesktop, theme);
-        }
-
-        function updateThemeIcon(button, theme) {
-          const iconElement = button.querySelector("i");
-          if (theme === "dark") {
-            iconElement.classList.replace("bi-moon-stars-fill", "bi-sun-fill");
-          } else {
-            iconElement.classList.replace("bi-sun-fill", "bi-moon-stars-fill");
-          }
-        }
-
-        const savedTheme = localStorage.getItem("theme");
-        const prefersDarkMode = window.matchMedia(
-          "(prefers-color-scheme: dark)"
-        ).matches;
-
-        if (savedTheme) {
-          setTheme(savedTheme);
-        } else if (prefersDarkMode) {
-          setTheme("dark");
-        } else {
-          setTheme("light");
-        }
-
-        function toggleTheme() {
-          const currentTheme = htmlElement.getAttribute("data-bs-theme");
-          setTheme(currentTheme === "light" ? "dark" : "light");
-        }
-
-        themeToggleMobile.addEventListener("click", toggleTheme);
-        themeToggleDesktop.addEventListener("click", toggleTheme);
-      });
-    </script>
   </head>
 
   <body data-scroll-container>
@@ -152,25 +103,39 @@
 
     <!-- Navigation Bar -->
     <!-- This navbar contains the logo and theme toggle buttons -->
-    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar-color">
+    <nav
+      class="navbar navbar-expand-lg navbar-dark custom-navbar-color sticky-top"
+    >
       <div class="container-fluid">
-        <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center" href="/">
           <img
             src="https://res.cloudinary.com/dsvlphknq/image/upload/v1727392623/logos/changelogs_seasons.png"
-            alt="Seasons Page Logo"
-            id="logo"
+            alt="Changelogs Page Logo"
             class="header-logo seasons-logo"
           />
         </a>
-        <!-- Theme Toggle Buttons and Profile Picture -->
-        <div class="d-flex align-items-center">
-          <!-- Profile Picture (visible on all screen sizes) -->
-          <div class="me-2">
+
+        <!-- Container for navbar toggler and profile picture on mobile -->
+        <div class="d-flex d-lg-none align-items-center">
+          <!-- Navbar toggler -->
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <!-- Profile picture icon (visible on mobile) -->
+          <div class="ms-2 d-lg-none">
             <a href="login.html" title="Go to login page" class="profile-link">
               <img
-                src="https://jailbreakchangelogs.xyz/favicon.ico"
-                alt="Profile Picture"
+                src="https://via.placeholder.com/32"
+                alt="Profile"
                 id="profile-picture"
                 class="rounded-circle"
                 width="32"
@@ -178,60 +143,112 @@
               />
             </a>
           </div>
+        </div>
 
-          <!-- Mobile Theme Toggle -->
-          <button
-            id="theme-toggle-mobile"
-            class="btn btn-outline-none me-2 d-lg-none p-2"
-            data-bs-toggle="tooltip"
-            data-bs-placement="bottom"
-            title="Toggle theme"
-            style="font-size: 1.5rem"
-          >
-            <i class="bi bi-moon-stars-fill" style="font-size: 1.5rem"></i>
-          </button>
-          <!-- Desktop Theme Toggle -->
-          <button
-            id="theme-toggle-desktop"
-            class="btn btn-outline-none d-none d-lg-block p-2"
-            data-bs-toggle="tooltip"
-            data-bs-placement="bottom"
-            title="Toggle theme"
-            style="font-size: 1.5rem"
-          >
-            <i class="bi bi-moon-stars-fill" style="font-size: 1.5rem"></i>
-          </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" href="changelogs.html">Changelogs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="timeline.html">Timeline</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="bot.html">Our Discord Bot</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="faq.html">FAQ</a>
+            </li>
+            <li class="nav-item">
+              <button
+                class="nav-link btn"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#discordOffcanvas"
+                aria-controls="discordOffcanvas"
+              >
+                Join the Discord
+              </button>
+            </li>
+            <!-- Profile picture icon (visible on desktop) -->
+            <li class="nav-item d-none d-lg-block ms-2">
+              <a
+                href="login.html"
+                title="Go to login page"
+                class="profile-link"
+              >
+                <img
+                  src="https://jailbreakchangelogs.xyz/favicon.ico"
+                  alt="Profile"
+                  id="profile-picture"
+                  class="rounded-circle"
+                  width="32"
+                  height="32"
+                />
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
-
-    <!-- Navigation Buttons -->
-    <!-- This section contains the Home button and the Seasons dropdown -->
-    <div class="text-center mt-3">
-      <div class="nav-item dropdown button-group">
-        <!-- Home Button -->
-        <a class="btn btn-custom" href="/" title="Home">
-          <i class="bi bi-house-door-fill me-2"></i> Home
-        </a>
-        <!-- Seasons Dropdown -->
-        <a
-          class="nav-link dropdown-toggle btn btn-primary custom-dropdown-btn"
-          href="#"
-          id="changelogDropdown"
-          role="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
+    <div
+      class="offcanvas offcanvas-end"
+      tabindex="-1"
+      id="discordOffcanvas"
+      aria-labelledby="discordOffcanvasLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="discordOffcanvasLabel">
+          Join Our Discord
+        </h5>
+        <button
+          type="button"
+          class="btn-close text-reset"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body">
+        <iframe
+          src="https://discord.com/widget?id=1286064050135896064&theme=dark"
+          width="100%"
+          height="100%"
+          allowtransparency="true"
+          frameborder="0"
+          sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
         >
-          <i class="bi bi-calendar-event me-2"></i>View Seasons
-        </a>
-        <!-- Dropdown Menu for Seasons -->
-        <ul
-          class="dropdown-menu changelog-dropdown w-100 text-center"
-          id="seasonList"
-          aria-labelledby="changelogDropdown"
-        >
-          <!-- Dropdown items will be populated dynamically by JavaScript -->
-        </ul>
+        </iframe>
+      </div>
+    </div>
+    <!-- Seasons Button Container -->
+    <div class="container-fluid mt-3">
+      <div class="row">
+        <div class="col-12 col-lg-8">
+          <!-- This aligns with the content wrapper width -->
+          <div class="row">
+            <div class="col-auto">
+              <div class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle btn btn-primary custom-dropdown-btn"
+                  href="#"
+                  id="changelogDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i class="bi bi-calendar-event me-2"></i>View Seasons
+                </a>
+                <ul
+                  class="dropdown-menu changelog-dropdown w-100"
+                  id="seasonList"
+                  aria-labelledby="changelogDropdown"
+                >
+                  <!-- Dropdown items will be populated dynamically by JavaScript -->
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -282,11 +299,9 @@
             </button>
           </div>
           <div class="container my-5">
-            <h2 class="text-center mb-4 text-primary" id="comment-header">
-              Comments
-            </h2>
+            <h2 class="comment-header" id="comment-header">Comments</h2>
             <div class="row justify-content-center">
-              <div class="col-md-8">
+              <div class="col-md-12">
                 <!-- Comment submission form -->
                 <form id="comment-form" class="mb-4">
                   <div class="input-group">

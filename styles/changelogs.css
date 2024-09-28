@@ -261,7 +261,6 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   color: var(--custom-icon-color); /* Custom color for icons */
 }
 
-/* Override Bootstrap's btn-primary Class */
 .btn-primary {
   background-color: var(
     --button-primary-bg

@@ -64,14 +64,14 @@ $(document).ready(function () {
 
     // Populate the season details container
     $seasonDetailsContainer.html(`
-      <h2 class="season-title display-4 text-custom-header mb-3">Season ${season} / ${seasonData.title}</h2>
-      <div class="card mb-5 shadow">
-        <div class="card-body py-4">
-          <p class="card-text lead">${seasonData.description}</p>
-        </div>
-      </div>
-      <h3 class="prizes-title display-5 custom-prizes-title mb-4">Season Rewards</h3>
-    `);
+  <h2 class="season-title display-4 text-custom-header mb-3">Season ${season} / ${seasonData.title}</h2>
+  <div class="season-description-container">
+    <div class="season-description-body">
+      <p class="season-description-text">${seasonData.description}</p>
+    </div>
+  </div>
+  <h3 class="prizes-title display-5 custom-prizes-title mb-4">Season Rewards</h3>
+`);
 
     // Generate HTML for season rewards
     const rewardsHTML = rewards
