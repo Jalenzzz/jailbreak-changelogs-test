@@ -84,19 +84,7 @@ $(document).ready(function () {
   // Event listener for the mobile version of the "Latest Changelog" button
   mobileLatestChangelogBtn.addEventListener("click", function (e) {
     e.preventDefault(); // Prevent default action if the button is a link
-
     displayLatestChangelog(); // Show the latest changelog
-
-    // Close the navbar toggler on mobile
-    if (window.innerWidth < 992) {
-      // Using Bootstrap's default lg breakpoint
-      const navbarToggler = document.querySelector(".navbar-toggler");
-      const navbarCollapse = document.querySelector(".navbar-collapse");
-      if (navbarToggler && navbarCollapse) {
-        navbarCollapse.classList.remove("show");
-        navbarToggler.setAttribute("aria-expanded", "false");
-      }
-    }
   });
 
   // Function to show the loading overlay
@@ -209,44 +197,42 @@ $(document).ready(function () {
 
   // Function to populate the changelog dropdowns for mobile and desktop
   function populateChangelogDropdown(changelogs) {
-    const $mobileDropdown = $("#mobileChangelogList"); // Reference to mobile dropdown
-    const $desktopDropdown = $("#desktopChangelogList"); // Reference to desktop dropdown
+    const $mobileDropdown = $("#mobileChangelogList");
+    const $desktopDropdown = $("#desktopChangelogList");
 
-    $mobileDropdown.empty(); // Clear existing items in mobile dropdown
-    $desktopDropdown.empty(); // Clear existing items in desktop dropdown
+    $mobileDropdown.empty();
+    $desktopDropdown.empty();
 
-    // Check if there are no changelogs to display
     if (changelogs.length === 0) {
-      $mobileDropdown.append(`
-          <li>
-              <span class="dropdown-item-text">No data for selected dates</span>
-          </li>
-      `);
-      $desktopDropdown.append(`
-          <li>
-              <span class="dropdown-item-text">No data for selected dates</span>
-          </li>
-      `);
+      const noDataItem = `
+        <li>
+            <span class="dropdown-item-text">No data for selected dates</span>
+        </li>
+      `;
+      $mobileDropdown.append(noDataItem);
+      $desktopDropdown.append(noDataItem);
     } else {
-      // Sort changelogs by ID in descending order
       const sortedChangelogs = changelogs.sort((a, b) => b.id - a.id);
 
-      // Populate dropdowns with sorted changelogs
       sortedChangelogs.forEach((changelog) => {
+        const fullTitle = changelog.title;
+        const truncatedTitle = truncateText(fullTitle, 37);
+
         $mobileDropdown.append(`
-              <li class="w-100">
-                  <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
-                      <span class="changelog-title">${changelog.title}</span>
-                  </a>
-              </li>
-          `);
+          <li class="w-100">
+              <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}" title="${fullTitle}">
+                  <span class="changelog-title">${truncatedTitle}</span>
+              </a>
+          </li>
+        `);
+
         $desktopDropdown.append(`
-              <li class="w-100">
-                  <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
-                      <span class="changelog-title">${changelog.title}</span>
-                  </a>
-              </li>
-          `);
+          <li class="w-100">
+              <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
+                  <span class="changelog-title">${fullTitle}</span>
+              </a>
+          </li>
+        `);
       });
     }
   }
@@ -1051,6 +1037,10 @@ $(document).ready(function () {
   $searchResultsContainer.on("touchstart touchmove", function (event) {
     event.stopPropagation(); // Prevent body scrolling on touch devices
   });
+  function truncateText(text, maxLength) {
+    if (text.length <= maxLength) return text;
+    return text.substr(0, maxLength) + "...";
+  }
 
   // Function to clean content for search
   function cleanContentForSearch(content) {
@@ -1159,17 +1149,6 @@ $(document).ready(function () {
 
     if (selectedChangelog) {
       displayChangelog(selectedChangelog); // Display the selected changelog
-
-      // Close the navbar toggler on mobile
-      if (window.innerWidth < 992) {
-        // Using Bootstrap's default lg breakpoint
-        const navbarToggler = document.querySelector(".navbar-toggler");
-        const navbarCollapse = document.querySelector(".navbar-collapse");
-        if (navbarToggler && navbarCollapse) {
-          navbarCollapse.classList.remove("show");
-          navbarToggler.setAttribute("aria-expanded", "false");
-        }
-      }
 
       // Close the dropdown after selection
       const dropdown = bootstrap.Dropdown.getInstance(

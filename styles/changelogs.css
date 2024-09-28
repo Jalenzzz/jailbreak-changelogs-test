@@ -1,29 +1,24 @@
 /* Dark Theme Colors */
 [data-bs-theme="dark"] body {
-  --common-bg-color: #212529; /* Dark background */
-  --content-h1: #31b1ff; /* Lighter Blue for Dark Mode */
-  --content-h2: #fa523f; /* Softer Red for Dark Mode */
-  --content-h3: #e0e0e0; /* Light Gray for H3 and Paragraph Text */
-  --content-paragraph: #e0e0e0; /* Light Gray for Paragraphs */
-  --content-bullet: #31b1ff; /* Lighter Blue for Bullets */
-  --content-sub-bullet: #fa523f; /* Softer Red for Bullets */
+  --common-bg-color: #2e3944; /* Dark background */
+  --content-h1: #d3d9d4; /* Lighter Blue for Dark Mode */
+  --content-h2: #748d92; /* Softer Red for Dark Mode */
+  --content-h3: #748d92; /* Light Gray for H3 and Paragraph Text */
+  --content-paragraph: #d3d9d4; /* Light Gray for Paragraphs */
+  --content-bullet: #748d92; /* Lighter Blue for Bullets */
+  --content-sub-bullet: #748d92; /* Softer Red for Bullets */
   --text-color: #ffffff; /* White Text */
 
   --header-text: #ffffff; /* White for Header Text */
-  --footer-link-color: #ff6347; /* Tomato for Footer Links */
-  --footer-link-hover-color: #ff7f50; /* Coral for Footer Link Hover */
-  --button-primary-bg: #032b44; /* Dark Blue for Primary Button Background */
-  --button-primary-text: #ffffff; /* White for Primary Button Text */
-  --button-primary-hover-bg: #054b6e; /* Darker Blue for Hover */
-  --button-secondary-bg: #32cd32; /* Lime Green for Secondary Button */
-  --button-secondary-hover-bg: #006400; /* Dark Green for Secondary Button Hover */
-
+  --button-primary-bg: #124e66; /* Dark Blue for Primary Button Background */
+  --button-primary-text: #eeeeee; /* White for Primary Button Text */
+  --button-primary-hover-bg: #212a31; /* Darker Blue for Hover */
   /* Mention Colors */
-  --mention-color: #4db6ac; /* Teal color for Mentions */
-  --mention-bg: #263238; /* Dark blue-gray for Mention Background */
-  --at-color: #1de9b6; /* Bright teal for '@' Symbol */
-  --username-color: #00bcd4; /* Soft cyan for Username */
-  --mention-hover-bg: #1c4966; /* Hover Background Color for Mentions */
+  --mention-color: #748d92; /* Teal color for Mentions */
+  --mention-bg: #212a31; /* Dark blue-gray for Mention Background */
+  --at-color: #d3d9d4; /* Bright teal for '@' Symbol */
+  --username-color: #76abae; /* Soft cyan for Username */
+  --mention-hover-bg: #124e66; /* Hover Background Color for Mentions */
 
   --highlight-bg: rgba(
     255,
@@ -32,8 +27,6 @@
     0.4
   ); /* Semi-transparent Orange for Highlights */
   --highlight-text: #ffffff; /* White for Highlighted Text */
-  --news-ticker-bg: #ff4500; /* Orange Red for News Ticker Background */
-  --news-ticker-text: #ffffff; /* White for News Ticker Text */
   --selection-bg: #4682b4; /* Steel Blue for Selection Background */
   --selection-text: #ffffff; /* White for Selection Text */
   --glow-color: #4b4b4b; /* Dark Gray for Glow Effects */
@@ -56,39 +49,17 @@
   --gray-900: #bbbbbb; /* Very Light Gray */
 }
 
-/* Dark Theme Styles */
-html[data-bs-theme="dark"] .btn-custom {
-  background-color: #0056b3; /* Dark Theme Background Color */
-  color: #fff; /* White Text Color */
-}
-
-html[data-bs-theme="dark"] .btn-custom:hover {
-  background-color: #004494; /* Darker Color on Hover */
-  color: #fff; /* Keep Text Color Visible */
-}
-
-html[data-bs-theme="dark"] .changelog-dropdown-item {
-  color: #ffffff; /* White for Dropdown Items */
-  padding: 10px 15px;
-  white-space: normal; /* Allow Text to Wrap */
-  transition: background-color 0.3s, color 0.3s;
-}
-
 html[data-bs-theme="dark"] .changelog-dropdown-item:nth-child(odd) {
-  background-color: #3a3f45; /* Dark Gray for Odd Items */
-}
-
-html[data-bs-theme="dark"] .changelog-dropdown-item:nth-child(even) {
-  background-color: #4a4f55; /* Slightly Lighter Gray for Even Items */
+  background-color: #212a31; /* Dark Gray for Odd Items */
 }
 
 html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
-  background-color: #5c6269; /* Darker Background on Hover */
-  color: #ffdd57; /* Gold Text Color on Hover */
+  background-color: #2e3944; /* Darker Background on Hover */
+  color: #2e3944; /* Gold Text Color on Hover */
 }
 
 [data-bs-theme="dark"] #loading-overlay {
-  background-color: #000000; /* Dark Background for Loading Overlay */
+  background-color: #2e3944; /* Dark Background for Loading Overlay */
 }
 [data-bs-theme="dark"] body {
   background-color: var(--common-bg-color);
@@ -116,7 +87,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 
 [data-bs-theme="dark"] .custom-navbar-color {
-  background-color: #2d2d2d; /* Darker Blue for Navbar */
+  background-color: #212a31; /* Darker Blue for Navbar */
   color: #ffffff; /* White Text Color */
 }
 
@@ -148,10 +119,6 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 /* Dark Theme Adjustments */
 [data-bs-theme="dark"] footer {
   background-color: var(--common-bg-color);
-}
-
-[data-bs-theme="dark"] .footer-section h3 {
-  color: var(--footer-link-color);
 }
 
 /* Dark mode hover styles for custom search item */
@@ -290,9 +257,11 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Override Bootstrap's btn-primary Class */
 .btn-primary {
-  background-color: var(--button-primary-bg); /* Primary button background */
-  border-color: var(--button-primary-bg); /* Primary button border */
-  color: var(--button-primary-text); /* Primary button text color */
+  background-color: var(
+    --button-primary-bg
+  ) !important; /* Primary button background */
+  border-color: var(--button-primary-bg) !important; /* Primary button border */
+  color: var(--button-primary-text) !important; /* Primary button text color */
 }
 
 .btn-primary:hover,
@@ -301,35 +270,14 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 .btn-primary.active {
   background-color: var(
     --button-primary-hover-bg
-  ); /* Hover state for primary button */
-  border-color: var(--button-primary-hover-bg); /* Border color on hover */
+  ) !important; /* Hover state for primary button */
+  border-color: var(
+    --button-primary-hover-bg
+  ) !important; /* Border color on hover */
 }
 
 .btn-primary:focus {
   box-shadow: 0 0 0 0.2rem rgba(var(--glow-color), 0.5); /* Glow effect on focus */
-}
-
-/* Custom Button Styles */
-.btn-custom {
-  background-color: #007bff; /* Light theme background color */
-  color: white; /* Light theme text color */
-  border: none; /* Remove default border */
-}
-
-.btn-custom:hover {
-  background-color: #0056b3; /* Darker blue on hover for light mode */
-  color: white; /* Keep text color white */
-}
-
-/* Dropdown Toggle Link Styles */
-.nav-link.dropdown-toggle {
-  color: #ffffff; /* White text for dropdown toggle */
-  transition: color 0.3s, background-color 0.3s; /* Smooth transition for hover effects */
-}
-
-.nav-link.dropdown-toggle:hover {
-  color: #ffd700; /* Gold color on hover */
-  background-color: #727272; /* Slightly darker background on hover */
 }
 
 .changelog-dropdown .dropdown-menu {
@@ -352,14 +300,22 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 
 .dropdown-item:hover {
-  background-color: #f8f9fa; /* Light background on hover */
-  color: #0056b3; /* Text color on hover */
+  background-color: #2e3944; /* Light background on hover */
+
   font-weight: bold; /* Bold text on hover */
 }
 
 /* Ensure Full Width for Each Dropdown Item */
 .changelog-dropdown-item {
   width: 100%; /* Full width for dropdown items */
+}
+#mobileChangelogList {
+  height: auto;
+  max-height: 300px; /* Adjust this value as needed */
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
 }
 
 /* Sidebar Image Wrapper Styles */
@@ -471,7 +427,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 
 .offcanvas-header {
-  background-color: rgb(187, 94, 0);
+  background-color: #212a31;
   color: var(--text-color);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
 }
@@ -483,7 +439,6 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 .offcanvas-body {
   padding: 0.2rem; /* Padding for body */
-
   color: var(--text-color); /* Body text color */
   font-size: 1rem; /* Body font size */
   line-height: 1.5; /* Line height for readability */
@@ -569,96 +524,72 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   padding: 30px; /* Add space inside the container */
   box-shadow: 0 0 20px #000000c7; /* Subtle shadow for depth */
 }
-/* Comments Section Styling */
-
-/* Header styling for the comments section */
+/* Header styling */
 #comment-header {
-  font-family: "Bangers", Arial, Helvetica, sans-serif; /* Custom font with fallbacks */
-  letter-spacing: 1px; /* Increase letter spacing for better readability */
-  color: var(--content-h1); /* Use theme variable for color */
+  font-family: "Luckiest Guy", Arial, sans-serif;
+  letter-spacing: 1px;
+  color: var(--content-h1);
   text-align: center;
-  border-bottom: 2px solid var(--content-h2); /* Underline effect */
+  border-bottom: 2px solid var(--content-h2);
   padding-bottom: 10px;
   margin-bottom: 20px;
 }
 
-/* Styling for the comment submission form */
+/* Comment form styling */
 #comment-form {
   margin-bottom: 30px;
 }
 
-/* Input group styling to create a cohesive look */
 #comment-form .input-group {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  border-radius: 25px; /* Rounded corners */
-  overflow: hidden; /* Ensure child elements respect the border-radius */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 25px;
+  overflow: hidden;
 }
 
-/* Input field styling within the form */
-#comment-form input {
+#comment-form input,
+#comment-form button {
   border: none;
   padding: 15px 20px;
   font-size: 16px;
 }
 
-/* Submit button styling */
 #comment-form button {
-  border: none;
-  padding: 0 25px;
-  font-size: 16px;
-  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  transition: background-color 0.3s ease;
 }
 
-/* Styling for the list of comments */
+/* Comments list styling */
 #comments-list {
-  max-height: 500px; /* Limit height and enable scrolling for many comments */
+  max-height: 500px;
   overflow-y: auto;
-  padding-right: 10px; /* Space for scrollbar */
-}
-
-/* Custom scrollbar styling for webkit browsers */
-#comments-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-#comments-list::-webkit-scrollbar-track {
-  background: var(--gray-200);
-  border-radius: 10px;
-}
-
-#comments-list::-webkit-scrollbar-thumb {
-  background: var(--gray-400);
-  border-radius: 10px;
-}
-
-#comments-list::-webkit-scrollbar-thumb:hover {
-  background: var(--gray-500);
+  padding-right: 10px;
 }
 
 /* Individual comment styling */
 #comments-list .list-group-item {
-  background-color: var(--gray-100);
-  border: 1px solid var(--gray-300);
+  background-color: #212a31;
+  border: 1px solid #748d92;
   border-radius: 15px;
   padding: 15px;
   margin-bottom: 15px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transition for hover effects */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
-/* Hover effect for individual comments */
 #comments-list .list-group-item:hover {
-  transform: translateY(-3px); /* Slight lift effect */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Enhanced shadow on hover */
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Styling for the commenter's name */
+/* Commenter name styling */
 #comments-list .list-group-item strong {
   color: var(--content-h3);
   display: block;
   margin-bottom: 5px;
 }
 
-/* Styling for the comment timestamp */
+/* Comment timestamp styling */
 #comments-list .list-group-item .text-muted {
   font-size: 0.85em;
   color: var(--gray-600) !important;
@@ -666,13 +597,14 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   margin-bottom: 10px;
 }
 
-/* Styling for the comment text */
+/* Comment text styling */
 #comments-list .list-group-item p {
   color: var(--text-color);
-  line-height: 1.6; /* Improve readability with increased line height */
+  line-height: 1.6;
   margin-bottom: 0;
+  word-break: break-word;
+  hyphens: auto;
 }
-
 /* Content Wrapper Styles */
 #content-wrapper {
   display: flex; /* Flexbox layout */
@@ -688,13 +620,13 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 /* Heading Styles within Content */
 #content h1 {
   color: var(--content-h1); /* Color for h1 headings */
-  font-family: "Bangers", Arial, Helvetica, sans-serif; /* Font family for h1 */
+  font-family: "Luckiest Guy", Arial, Helvetica, sans-serif; /* Font family for h1 */
   border-bottom: 2px solid var(--content-h1); /* Bottom border for h1 */
 }
 
 #content h2 {
   color: var(--content-h2); /* Color for h2 headings */
-  font-family: "Bangers", Arial, Helvetica, sans-serif; /* Font family for h2 */
+  font-family: "Luckiest Guy", Arial, Helvetica, sans-serif; /* Font family for h2 */
 }
 
 #content h3 {
@@ -775,13 +707,6 @@ header {
   to {
     opacity: 1; /* Final opacity */
   }
-}
-
-/* Main Title Styles */
-#main-title {
-  font-family: "Bangers", Arial, Helvetica, sans-serif; /* Font family */
-  letter-spacing: 1px; /* Spacing between letters */
-  font-size: 2rem; /* Font size */
 }
 
 /* Theme Toggle Button Styles */
@@ -870,12 +795,12 @@ footer.hide {
 }
 /* Admin Links */
 .admin-link-v3 {
-  color: var(--content-h1);
+  color: var(--username-color);
   font-weight: bold;
   transition: color 0.3s;
 }
 .admin-link-jz {
-  color: var(--content-h2);
+  color: var(--username-color);
   font-weight: bold;
   transition: color 0.3s;
 }
@@ -923,6 +848,34 @@ footer.hide {
   background-color: #000000; /* True black background */
   transform: scale(1.05); /* Slightly larger */
 }
+/* Quick Links background */
+.card-header.bg-secondary {
+  background-color: #212a31 !important; /* Dark blue-gray background */
+  color: #ffffff; /* White text */
+}
+
+/* Quick Links card body */
+.card-body {
+  background-color: #2e3944; /* Darker background for the body */
+  color: #d3d9d4; /* Light gray text */
+}
+/* Accordion headers */
+.accordion-button {
+  background-color: #212a31 !important; /* Dark blue-gray background */
+  color: #ffffff !important; /* White text */
+}
+
+/* Accordion bodies */
+.accordion-body {
+  background-color: #2e3944; /* Darker background for the body */
+  color: #d3d9d4; /* Light gray text */
+}
+
+/* Accordion item borders */
+.accordion-item {
+  border-color: #4a4a4a; /* Darker border color */
+}
+
 .navbar-logo {
   height: 50px;
   width: auto;
@@ -932,14 +885,6 @@ footer.hide {
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-  #comment-form input,
-  #comment-form button {
-    font-size: 14px;
-  }
-
-  #comments-list .list-group-item {
-    padding: 12px;
-  }
   .custom-search-item {
     padding: 8px; /* Adjust padding for mobile */
   }
@@ -957,10 +902,38 @@ footer.hide {
   .navbar-logo {
     height: 50px;
   }
+  #comment-form .input-group {
+    flex-wrap: nowrap;
+  }
+
+  #comment-form input {
+    flex: 1;
+  }
+
+  #comment-form button {
+    width: auto;
+  }
+
+  /* Ensure comments fit within the container on small screens */
+  #comments-list {
+    padding-right: 0;
+  }
+
+  #comments-list .list-group-item {
+    padding: 10px;
+  }
+
+  #comments-list .list-group-item p {
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 400px) {
   .navbar-logo {
     height: 40px;
+  }
+  .container {
+    padding-left: 5px;
+    padding-right: 5px;
   }
 }
