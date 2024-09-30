@@ -29,7 +29,6 @@ $(document).ready(function () {
         sessionStorage.removeItem("user");
         sessionStorage.removeItem("avatar");
         sessionStorage.removeItem("userid");
-        sessionStorage.setItem("token", userData.token);
         sessionStorage.setItem("user", JSON.stringify(userData));
         sessionStorage.setItem("avatar", avatarURL);
         sessionStorage.setItem("userid", userData.id);
