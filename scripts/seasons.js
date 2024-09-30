@@ -225,15 +225,17 @@ $(document).ready(function () {
   const commentinput = document.getElementById("commenter-text");
   const commentbutton = document.getElementById("submit-comment");
   const profilepicture = document.getElementById("profile-picture");
+  const mobileprofilepicture = document.getElementById("profile-picture-mobile");
   const avatarUrl = sessionStorage.getItem("avatar");
   const userdata = JSON.parse(sessionStorage.getItem("user"));
   const commentsList = document.getElementById("comments-list");
   if (userid) {
     console.log(avatarUrl);
     profilepicture.src = avatarUrl;
+    mobileprofilepicture.src = avatarUrl;
     commentinput.placeholder = "Comment as " + userdata.global_name;
-    commentbutton.disabled = true;
-    commentinput.disabled = true;
+    commentbutton.disabled = false;
+    commentinput.disabled = false;
   } else {
     commentbutton.disabled = true;
     commentbutton.textContent = "Log in";
@@ -283,15 +285,16 @@ $(document).ready(function () {
 
     // Prepend the new comment to the comments list
     commentsList.prepend(listItem);
+    const token = getCookie('token');
 
     // Post the comment to the server
-    fetch("https://api.jailbreakchangelogs.xyz/add_comment", {
+    fetch("https://api.jailbreakchangelogs.xyz/comments/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        author: userid,
+        author: token,
         content: comment.value,
         item_id: localStorage.getItem("selectedSeason"),
         item_type: "season",
@@ -336,13 +339,24 @@ $(document).ready(function () {
     }
   }
 
+  function getCookie(name) {
+    let cookieArr = document.cookie.split(';');
+    for(let i = 0; i < cookieArr.length; i++) {
+        let cookiePair = cookieArr[i].split('=');
+        if(name === cookiePair[0].trim()) {
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+    return null;
+}
+
   function loadComments(comments) {
     commentsList.innerHTML = ""; // Clear existing comments
     comments.sort((a, b) => b.date - a.date);
 
     const userDataPromises = comments.map((comment) => {
       return fetch(
-        "https://api.jailbreakchangelogs.xyz/get_user?id=" + comment.author
+        "https://api.jailbreakchangelogs.xyz/users/get?token=" + comment.author
       )
         .then((response) => response.json())
         .then((userData) => ({ comment, userData }))
@@ -404,7 +418,7 @@ $(document).ready(function () {
     CommentHeader.textContent =
       "Comments For Season " + localStorage.getItem("selectedSeason");
     fetch(
-      "https://api.jailbreakchangelogs.xyz/get_comments?type=season&id=" +
+      "https://api.jailbreakchangelogs.xyz/comments/get?type=season&id=" +
         localStorage.getItem("selectedSeason")
     )
       .then((response) => {
