@@ -1,7 +1,7 @@
 $(document).ready(function () {
   // Get references to DOM elements
   const loadingOverlay = document.getElementById("loading-overlay");
-  const apiUrl = "https://api.jailbreakchangelogs.xyz/get_changelogs";
+  const apiUrl = "https://api.jailbreakchangelogs.xyz/changelogs/list";
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
   const titleElement = document.getElementById("changelogTitle");
@@ -1175,8 +1175,8 @@ $(document).ready(function () {
     console.log(avatarUrl);
     profilepicture.src = avatarUrl;
     commentinput.placeholder = "Comment as " + userdata.global_name;
-    commentbutton.disabled = true;
-    commentinput.disabled = true;
+    commentbutton.disabled = false;
+    commentinput.disabled = false;
   } else {
     commentbutton.disabled = true;
     commentbutton.textContent = "Log in";
@@ -1188,6 +1188,17 @@ $(document).ready(function () {
       window.location.href = "/login.html"; // Redirect to login page
     });
   }
+
+  function getCookie(name) {
+    let cookieArr = document.cookie.split(';');
+    for(let i = 0; i < cookieArr.length; i++) {
+        let cookiePair = cookieArr[i].split('=');
+        if(name === cookiePair[0].trim()) {
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+    return null;
+}
 
   function addComment(comment) {
     const listItem = document.createElement("li");
@@ -1226,15 +1237,16 @@ $(document).ready(function () {
 
     // Prepend the new comment to the comments list
     commentsList.prepend(listItem);
+    const token = getCookie("token");
 
     // Post the comment to the server
-    fetch("https://api.jailbreakchangelogs.xyz/add_comment", {
+    fetch("https://api.jailbreakchangelogs.xyz/comments/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        author: userid,
+        author: token,
         content: comment.value,
         item_id: localStorage.getItem("selectedChangelogId"),
         item_type: "changelog",
@@ -1288,7 +1300,7 @@ $(document).ready(function () {
 
     const userDataPromises = comments.map((comment) => {
       return fetch(
-        "https://api.jailbreakchangelogs.xyz/get_user?id=" + comment.author
+        "https://api.jailbreakchangelogs.xyz/users/get?token=" + comment.author
       )
         .then((response) => response.json())
         .then((userData) => ({ comment, userData }))
@@ -1350,7 +1362,7 @@ $(document).ready(function () {
     CommentHeader.textContent =
       "Comments For Changelog " + localStorage.getItem("selectedChangelogId");
     fetch(
-      "https://api.jailbreakchangelogs.xyz/get_comments?type=changelog&id=" +
+      "https://api.jailbreakchangelogs.xyz/comments/get?type=changelog&id=" +
         localStorage.getItem("selectedChangelogId")
     )
       .then((response) => {
