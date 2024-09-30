@@ -225,7 +225,9 @@ $(document).ready(function () {
   const commentinput = document.getElementById("commenter-text");
   const commentbutton = document.getElementById("submit-comment");
   const profilepicture = document.getElementById("profile-picture");
-  const mobileprofilepicture = document.getElementById("profile-picture-mobile");
+  const mobileprofilepicture = document.getElementById(
+    "profile-picture-mobile"
+  );
   const avatarUrl = sessionStorage.getItem("avatar");
   const userdata = JSON.parse(sessionStorage.getItem("user"));
   const commentsList = document.getElementById("comments-list");
@@ -237,7 +239,7 @@ $(document).ready(function () {
     commentbutton.disabled = false;
     commentinput.disabled = false;
   } else {
-    commentbutton.disabled = true;
+    commentbutton.disabled = false;
     commentbutton.textContent = "Log in";
     commentbutton.addEventListener("click", function (event) {
       localStorage.setItem(
@@ -250,12 +252,12 @@ $(document).ready(function () {
 
   function throw_error(message) {
     toastr.error(message, "Error creating comment.", {
-        positionClass: "toast-bottom-right", // Position at the bottom right
-        timeOut: 3000, // Toast will disappear after 3 seconds
-        closeButton: true, // Add a close button
-        progressBar: true, // Show a progress bar
+      positionClass: "toast-bottom-right", // Position at the bottom right
+      timeOut: 3000, // Toast will disappear after 3 seconds
+      closeButton: true, // Add a close button
+      progressBar: true, // Show a progress bar
     });
-}
+  }
 
   function addComment(comment) {
     const listItem = document.createElement("li");
@@ -293,7 +295,7 @@ $(document).ready(function () {
     listItem.appendChild(commentContainer);
 
     // Prepend the new comment to the comments list
-    const token = getCookie('token');
+    const token = getCookie("token");
 
     // Post the comment to the server
     fetch("https://api.jailbreakchangelogs.xyz/comments/add", {
@@ -308,26 +310,26 @@ $(document).ready(function () {
         item_type: "season",
       }),
     })
-    .then(async (response) => {
-      const data = await response.json(); // Parse JSON response
-  
-      if (response.status === 429) {
-        const cooldown = data.remaining;
-        throw_error("Try again in " + cooldown + " seconds.");
-        return; // Stop further execution
-      }
-  
-      if (response.ok) {
-        commentsList.prepend(listItem);
-      } else {
-        // Handle other non-429 errors (e.g., validation)
-        throw_error(data.error || "An error occurred.");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      throw_error("An unexpected error occurred.");
-    });
+      .then(async (response) => {
+        const data = await response.json(); // Parse JSON response
+
+        if (response.status === 429) {
+          const cooldown = data.remaining;
+          throw_error("Try again in " + cooldown + " seconds.");
+          return; // Stop further execution
+        }
+
+        if (response.ok) {
+          commentsList.prepend(listItem);
+        } else {
+          // Handle other non-429 errors (e.g., validation)
+          throw_error(data.error || "An error occurred.");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        throw_error("An unexpected error occurred.");
+      });
   }
 
   function formatDate(unixTimestamp) {
@@ -365,15 +367,15 @@ $(document).ready(function () {
   }
 
   function getCookie(name) {
-    let cookieArr = document.cookie.split(';');
-    for(let i = 0; i < cookieArr.length; i++) {
-        let cookiePair = cookieArr[i].split('=');
-        if(name === cookiePair[0].trim()) {
-            return decodeURIComponent(cookiePair[1]);
-        }
+    let cookieArr = document.cookie.split(";");
+    for (let i = 0; i < cookieArr.length; i++) {
+      let cookiePair = cookieArr[i].split("=");
+      if (name === cookiePair[0].trim()) {
+        return decodeURIComponent(cookiePair[1]);
+      }
     }
     return null;
-}
+  }
 
   function loadComments(comments) {
     commentsList.innerHTML = ""; // Clear existing comments

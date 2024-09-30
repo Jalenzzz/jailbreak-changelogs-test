@@ -1,14 +1,14 @@
 $(document).ready(function () {
   function setCookie(name, value, days) {
     let date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); // Set expiration time
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000); // Set expiration time
     let expires = "expires=" + date.toUTCString();
     document.cookie = name + "=" + value + ";" + expires + ";path=/"; // Set cookie with expiration and path
-}
+  }
 
-// Function to get a cookie value
+  // Function to get a cookie value
   const OauthRedirect =
-    "https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=https%3A%2F%2Fjailbreakchangelogs.xyz%2Flogin&scope=identify";
+    "https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=https%3A%2F%2Ftesting.jailbreakchangelogs.xyz%2Flogin&scope=identify";
   const DiscordLoginButton = document.getElementById("login-button");
   DiscordLoginButton.addEventListener("click", () => {
     console.log("Redirecting to Discord OAuth...");
@@ -25,7 +25,7 @@ $(document).ready(function () {
       .then((response) => response.json())
       .then((userData) => {
         const avatarURL = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-        setCookie('token', userData.token, 7);
+        setCookie("token", userData.token, 7);
         sessionStorage.removeItem("user");
         sessionStorage.removeItem("avatar");
         sessionStorage.removeItem("userid");
