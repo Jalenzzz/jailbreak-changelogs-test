@@ -383,7 +383,7 @@ $(document).ready(function () {
 
     const userDataPromises = comments.map((comment) => {
       return fetch(
-        "https://api.jailbreakchangelogs.xyz/users/get?token=" + comment.author
+        "https://api.jailbreakchangelogs.xyz/users/get?id=" + comment.user_id
       )
         .then((response) => response.json())
         .then((userData) => ({ comment, userData }))
