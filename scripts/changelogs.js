@@ -1203,7 +1203,14 @@ $(document).ready(function () {
     }
     return null;
 }
-
+  function throw_error(message) {
+    toastr.error(message, "Error creating comment.", {
+        positionClass: "toast-bottom-right", // Position at the bottom right
+        timeOut: 3000, // Toast will disappear after 3 seconds
+        closeButton: true, // Add a close button
+        progressBar: true, // Show a progress bar
+    });
+}
   function addComment(comment) {
     const listItem = document.createElement("li");
     listItem.classList.add("list-group-item", "d-flex", "align-items-start");
@@ -1240,7 +1247,7 @@ $(document).ready(function () {
     listItem.appendChild(commentContainer);
 
     // Prepend the new comment to the comments list
-    commentsList.prepend(listItem);
+    
     const token = getCookie("token");
 
     // Post the comment to the server
@@ -1256,9 +1263,28 @@ $(document).ready(function () {
         item_type: "changelog",
       }),
     })
-      .then((response) => response.json())
-      .catch((error) => console.error("Error adding comment:", error));
+      .then(async (response) => {
+        const data = await response.json(); // Parse JSON response
+    
+        if (response.status === 429) {
+          const cooldown = data.remaining;
+          throw_error("Try again in " + cooldown + " seconds.");
+          return; // Stop further execution
+        }
+    
+        if (response.ok) {
+          commentsList.prepend(listItem);
+        } else {
+          // Handle other non-429 errors (e.g., validation)
+          throw_error(data.error || "An error occurred.");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        throw_error("An unexpected error occurred.");
+      });
   }
+  
 
   function formatDate(unixTimestamp) {
     // Check if timestamp is in seconds or milliseconds
