@@ -1251,6 +1251,7 @@ $(document).ready(function () {
     // Prepend the new comment to the comments list
 
     const token = getCookie("token");
+    console.log(token);
 
     // Post the comment to the server
     fetch("https://api.jailbreakchangelogs.xyz/comments/add", {
