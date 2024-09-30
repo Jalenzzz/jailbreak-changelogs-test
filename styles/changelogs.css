@@ -703,6 +703,18 @@ span {
   position: relative; /* Relative positioning */
 }
 
+#paginationControls {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  margin: 20px 0; /* Optional: Add some margin for spacing */
+}
+
+#paginationControls button,
+#paginationControls input {
+  margin: 0 5px; /* Add margin between controls */
+}
+
 /* Skip Link Styles */
 .skip-link {
   position: absolute; /* Absolute positioning */

@@ -1268,7 +1268,7 @@ $(document).ready(function () {
 
         if (response.status === 429) {
           const cooldown = data.remaining;
-          throw_error("Try again in " + cooldown + " seconds.");
+          throw_error("Wait " + cooldown + " seconds before commenting again.");
           return; // Stop further execution
         }
 
@@ -1323,14 +1323,26 @@ $(document).ready(function () {
     }
   }
 
-  function loadComments(comments) {
+  let currentPage = 1; // Track the current page
+  const commentsPerPage = 5; // Number of comments per page
+  let comments = []; // Declare the comments array globally
+  
+  // Function to load comments
+  function loadComments(commentsData) {
+    comments = commentsData; // Assign the fetched comments to the global variable
     commentsList.innerHTML = ""; // Clear existing comments
     comments.sort((a, b) => b.date - a.date);
-
-    const userDataPromises = comments.map((comment) => {
-      return fetch(
-        "https://api.jailbreakchangelogs.xyz/users/get?id=" + comment.user_id
-      )
+  
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(comments.length / commentsPerPage);
+  
+    // Get the comments for the current page
+    const startIndex = (currentPage - 1) * commentsPerPage;
+    const endIndex = startIndex + commentsPerPage;
+    const commentsToDisplay = comments.slice(startIndex, endIndex);
+  
+    const userDataPromises = commentsToDisplay.map((comment) => {
+      return fetch("https://api.jailbreakchangelogs.xyz/users/get?id=" + comment.user_id)
         .then((response) => response.json())
         .then((userData) => ({ comment, userData }))
         .catch((error) => {
@@ -1338,54 +1350,101 @@ $(document).ready(function () {
           return null;
         });
     });
-
+  
     Promise.all(userDataPromises).then((results) => {
       const validResults = results.filter((result) => result !== null);
-
+  
       validResults.forEach(({ comment, userData }) => {
         const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-
+  
         const listItem = document.createElement("li");
-        listItem.classList.add(
-          "list-group-item",
-          "d-flex",
-          "align-items-start"
-        );
-
+        listItem.classList.add("list-group-item", "d-flex", "align-items-start");
+  
         const avatarElement = document.createElement("img");
         avatarElement.src = avatarUrl;
         avatarElement.classList.add("rounded-circle", "m-1");
         avatarElement.width = 32;
         avatarElement.height = 32;
-
+  
         const commentContainer = document.createElement("div");
         commentContainer.classList.add("ms-2");
-
+  
         const usernameElement = document.createElement("strong");
         usernameElement.textContent = userData.global_name;
-
+  
         const commentTextElement = document.createElement("p");
         commentTextElement.textContent = comment.content;
         commentTextElement.classList.add("mb-0");
-
+  
         const formattedDate = formatDate(comment.date);
         const dateElement = document.createElement("small");
         dateElement.textContent = formattedDate;
         dateElement.classList.add("text-muted");
-
-        const divider = document.createElement("hr");
-
+  
         commentContainer.appendChild(usernameElement);
         commentContainer.appendChild(commentTextElement);
         commentContainer.appendChild(dateElement);
-
         listItem.appendChild(avatarElement);
         listItem.appendChild(commentContainer);
-
         commentsList.appendChild(listItem);
       });
+  
+      // Render pagination controls
+      renderPaginationControls(totalPages);
     });
   }
+  
+  // Function to render pagination controls with arrows and input
+  function renderPaginationControls(totalPages) {
+    const paginationContainer = document.getElementById("paginationControls");
+    paginationContainer.innerHTML = ""; // Clear existing controls
+  
+    // Create left arrow button
+    const leftArrow = document.createElement("button");
+    leftArrow.textContent = "<";
+    leftArrow.classList.add("btn", "btn-outline-primary", "m-1");
+    leftArrow.disabled = currentPage === 1; // Disable if on the first page
+    leftArrow.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadComments(comments); // Reload comments for the current page
+      }
+    });
+    paginationContainer.appendChild(leftArrow);
+  
+    // Page number input
+    const pageInput = document.createElement("input");
+    pageInput.type = "number";
+    pageInput.value = currentPage;
+    pageInput.min = 1;
+    pageInput.max = totalPages;
+    pageInput.classList.add("form-control", "mx-1");
+    pageInput.style.width = "60px"; // Set width for input
+    pageInput.addEventListener("change", () => {
+      const newPage = parseInt(pageInput.value);
+      if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        loadComments(comments); // Reload comments for the new page
+      } else {
+        pageInput.value = currentPage; // Reset input if invalid
+      }
+    });
+    paginationContainer.appendChild(pageInput);
+  
+    // Create right arrow button
+    const rightArrow = document.createElement("button");
+    rightArrow.textContent = ">";
+    rightArrow.classList.add("btn", "btn-outline-primary", "m-1");
+    rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
+    rightArrow.addEventListener("click", () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        loadComments(comments); // Reload comments for the current page
+      }
+    });
+    paginationContainer.appendChild(rightArrow);
+  }
+  
 
   function reloadcomments() {
     CommentHeader.textContent =
