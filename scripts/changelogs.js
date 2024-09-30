@@ -1176,10 +1176,8 @@ $(document).ready(function () {
   const commentsList = document.getElementById("comments-list");
   profilepicture.src = null;
   if (userid) {
-    console.log(avatarUrl);
     profilepicture.src = avatarUrl;
     mobileprofilepicture.src = avatarUrl;
-    console.log(profilepicture.src);
     commentinput.placeholder = "Comment as " + userdata.global_name;
     commentbutton.disabled = false;
     commentinput.disabled = false;
@@ -1251,7 +1249,6 @@ $(document).ready(function () {
     // Prepend the new comment to the comments list
 
     const token = getCookie("token");
-    console.log(token);
 
     // Post the comment to the server
     fetch("https://api.jailbreakchangelogs.xyz/comments/add", {
@@ -1332,7 +1329,7 @@ $(document).ready(function () {
 
     const userDataPromises = comments.map((comment) => {
       return fetch(
-        "https://api.jailbreakchangelogs.xyz/users/get/id?id=" + comment.user_id
+        "https://api.jailbreakchangelogs.xyz/users/get?id=" + comment.user_id
       )
         .then((response) => response.json())
         .then((userData) => ({ comment, userData }))
@@ -1431,7 +1428,6 @@ $(document).ready(function () {
   CommentForm.addEventListener("submit", function (event) {
     event.preventDefault();
     const comment = document.getElementById("commenter-text");
-    console.log(comment.value);
     addComment(comment);
     comment.value = ""; // Clear the comment input field
   });

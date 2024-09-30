@@ -7,7 +7,7 @@ function keyCreated(message) {
     });
 }
 
-function error(message) {
+function throw_error(message) {
     toastr.error(message, "Error creating key.", {
         positionClass: "toast-bottom-right", // Position at the bottom right
         timeOut: 3000, // Toast will disappear after 3 seconds
@@ -15,6 +15,16 @@ function error(message) {
         progressBar: true, // Show a progress bar
     });
 }
+function getCookie(name) {
+    let cookieArr = document.cookie.split(";");
+    for (let i = 0; i < cookieArr.length; i++) {
+      let cookiePair = cookieArr[i].split("=");
+      if (name === cookiePair[0].trim()) {
+        return decodeURIComponent(cookiePair[1]);
+      }
+    }
+    return null;
+  }
 
 document.addEventListener('DOMContentLoaded', async function(event) {
     // Fetch existing API keys
@@ -30,34 +40,59 @@ document.addEventListener('DOMContentLoaded', async function(event) {
         `;
         document.getElementById('apiKeyList').innerHTML += row;
     });
-
     const apiKeys = []; // Store API keys
+    const token = getCookie("token");
 
     document.getElementById('createKeyButton').addEventListener('click', async () => {
         const name = document.getElementById('keyName').value;
         const description = document.getElementById('keyDescription').value;
-
+        
         if (name && description) {
-            // Simulate API call
-            const newKey = {
-                key: `jbc-${Math.random().toString(36).substr(2, 8)}`, // Simulating key generation
+          try {
+            const response = await fetch('https://api.jailbreakchangelogs.xyz/keys/create', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                owner: token, // Your token here
                 name: name,
                 description: description,
-                createdAt: new Date().toLocaleString()
-            };
-
+                permissions: ["changelog"], // Sending permissions as an array
+              }),
+            });
+      
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            if (response.status === 200) {
+            const result = await response.json(); // Parse the JSON response
+            console.log(result);
+            const newKey = result.key; // Assuming the response contains the created key
+      
+            // Add the new key to your API key list and update the UI
             apiKeys.push(newKey);
-            updateApiKeyList();
-            keyCreated('API key successfully created!'); // Call keyCreated here
-            $('#createKeyModal').modal('hide'); // Hide the modal
+            updateApiKeyList(); // Function to update the UI with the new list of keys
+      
+            // Show success message and close the modal
+            keyCreated('API key successfully created!');
+            $('#createKeyModal').modal('hide');
+            }
+            
+          } catch (error) {
+            console.error('Error creating API key:', error);
+            throw_error(`Failed to create API key: ${error.message}`); // Show error message to the user
+          }
         } else {
-            error('Please fill in both name and description.');
+            throw_error('Please fill in both name and description.');
         }
-    });
+      });
+      
 
     async function fetchExistingKeys() {
         try {
-            const response = await fetch('https://api.example.com/api-keys');
+            const token = getCookie("token");
+            const response = await fetch('https://api.jailbreakchangelogs.xyz/keys/get?author=' + token);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
