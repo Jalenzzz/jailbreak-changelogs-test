@@ -4,17 +4,59 @@ document.addEventListener('DOMContentLoaded', function() {
     async function fetchUserBio(userId) {
         try {
             const response = await fetch(`https://api.jailbreakchangelogs.xyz/description/get?user=${userId}`);
+            
             if (!response.ok) {
                 if (response.status === 404) {
-                    userBio.textContent = " ";
-                }
-                else {
+                    userBio.textContent = "User does not have a description.";
+                } else {
                     userBio.textContent = "Error fetching description.";
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                return; // Return early if an error occurred
             }
+            
             const user = await response.json();
-            userBio.textContent = user.description;
+            const description = user.description || "No description available."; // Fallback message
+    
+            // Regular expression to match URLs starting with "https://"
+            const urlRegex = /https:\/\/[^\s]+/g;
+            let resultHtml = "";
+            let lastIndex = 0;
+            
+            // Split the description by newlines
+            const lines = description.split('\n');
+    
+            lines.forEach(line => {
+                const matches = line.match(urlRegex);
+                if (matches) {
+                    // Iterate through the matches to build the result
+                    matches.forEach((url) => {
+                        // Find the start index of the current URL
+                        const urlIndex = line.indexOf(url);
+                        // Extract text before the current URL
+                        const textBeforeLink = line.slice(0, urlIndex).trim();
+                        
+                        // Add the text before the URL to the result
+                        if (textBeforeLink) {
+                            resultHtml += `${textBeforeLink} `;
+                        }
+                        
+                        // Add the link element
+                        resultHtml += `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a> `;
+                        
+                        // Remove the processed part of the line for the next loop
+                        line = line.slice(urlIndex + url.length);
+                    });
+                }
+                // Add any remaining text after the last URL
+                if (line.trim()) {
+                    resultHtml += line.trim(); // Add the remaining text from the line
+                }
+                resultHtml += '<br>'; // Add a line break after each line
+            });
+    
+            // Set the user bio with the complete result
+            userBio.innerHTML = resultHtml.trim(); // Combine all parts together
         } catch (error) {
             console.error('Error:', error);
             userBio.textContent = 'Error fetching user bio.';
@@ -311,12 +353,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const icon = editbio_button.querySelector('i'); // Get the icon element
         // Create a text input
         const textInput = document.createElement('textarea');
-        textInput.type = 'text';
         textInput.style.marginTop = '20px';
         textInput.placeholder = 'Enter your bio here...'; // Placeholder text
+        textInput.style.minHeight = '150px';
+        textInput.value = userBio.innerHTML
+        .replace(/<br>/g, '\n')
+        .replace(/<a href="([^"]+)"[^>]*>([^<]+)<\/a>/g, '$1') // Set the value of the text input to the current bio with newlines
         textInput.className = 'form-control'; // Bootstrap class for styling
         const space = document.createElement('br'); // Line break for better formatting
-        
+    
         // Append the input to the description box
         descriptionBox.appendChild(space);
         descriptionBox.appendChild(textInput);
@@ -334,13 +379,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Content-Type': 'application/json', // Set content type to JSON
                     },
                     body: body, // Pass the body here
-                });                if (!response.ok) {
+                });
+    
+                if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
+    
+                // Update user bio display
                 userBio.style.display = 'block';
                 textInput.remove();
                 space.remove();
-                fetchUserBio(userId); // Fetch updated bio
+                fetchUserBio(userId); // Fetch updated bio and convert newlines to <br>
             } catch (error) {
                 console.error('Error:', error);
                 userBio.style.display = 'block';
