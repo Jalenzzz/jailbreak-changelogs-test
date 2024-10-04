@@ -86,8 +86,9 @@
       </div>
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar-color">
+    <nav class="navbar navbar-expand-lg custom-navbar-color sticky-top">
       <div class="container-fluid">
+        <!-- Navbar brand with logo -->
         <a class="navbar-brand d-flex align-items-center" href="/">
           <img
             src="https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs_timeline.png"
@@ -95,56 +96,104 @@
             class="header-logo timeline-logo me-2"
           />
         </a>
-
-        <!-- Container for navbar toggler and profile picture on mobile -->
+  
+        <!-- Mobile navigation controls -->
         <div class="d-flex d-lg-none align-items-center">
-          <!-- Navbar toggler -->
+          <!-- Custom hamburger menu icon for mobile -->
           <button
-            class="navbar-toggler"
+            id="navbarToggler"
+            class="navbar-toggler burger-menu-icon"
             type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
+            aria-controls="fullscreenMenu"
             aria-expanded="false"
             aria-label="Toggle navigation"
           >
-            <span class="navbar-toggler-icon"></span>
+            <svg width="34" height="34" viewBox="0 0 100 100">
+              <path
+                class="line line1"
+                d="M 20,29.000046 H 80.000231 C 80.000231,29.000046 94.498839,28.817352 94.532987,66.711331 94.543142,77.980673 90.966081,81.670246 85.259173,81.668997 79.552261,81.667751 75.000211,74.999942 75.000211,74.999942 L 25.000021,25.000058"
+              ></path>
+              <path class="line line2" d="M 20,50 H 80"></path>
+              <path
+                class="line line3"
+                d="M 20,70.999954 H 80.000231 C 80.000231,70.999954 94.498839,71.182648 94.532987,33.288669 94.543142,22.019327 90.966081,18.329754 85.259173,18.331003 79.552261,18.332249 75.000211,25.000058 75.000211,25.000058 L 25.000021,74.999942"
+              ></path>
+            </svg>
           </button>
-
-          <!-- Profile picture icon (visible on mobile) -->
+  
+          <!-- Mobile profile picture -->
           <div class="ms-2 d-lg-none">
-            <a href="login" title="Go to login page" class="profile-link">
+            <a href="login">
               <img
                 src="/favicon.ico"
                 alt="Profile"
-                id="profile-picture-mobile"
                 class="rounded-circle"
+                id="profile-picture-mobile"
                 width="32"
                 height="32"
               />
             </a>
           </div>
         </div>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
+  
+        <!-- Full-screen overlay menu for mobile -->
+        <div id="sideMenu" class="side-menu d-lg-none">
+          <div class="side-menu-content">
+            <nav class="navbar-nav">
+              <div class="nav-item">
+                <a class="nav-link" href="/changelogs">Changelogs</a>
+              </div>
+              <div class="nav-item">
+                <a class="nav-link" href="/seasons">Seasons</a>
+              </div>
+              <div class="nav-item">
+                <a class="nav-link" href="/users">Users</a>
+              </div>
+              <div class="nav-item">
+                <a class="nav-link" href="/tradetracker">Trade Tracker</a>
+              </div>
+              <div class="nav-item">
+                <a class="nav-link" href="/keys">Api</a>
+              </div>
+              <div class="nav-item">
+                <a class="nav-link" href="/bot">Our Discord Bot</a>
+              </div>
+              <div class="nav-item">
+                <a class="nav-link" href="/faq">FAQ</a>
+              </div>
+              <div class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="offcanvas" data-bs-target="#discordOffcanvas" aria-controls="discordOffcanvas">
+                  Join the Discord
+                </a>
+              </div>
+            </nav>
+          </div>
+        </div>
+  
+        <!-- Desktop menu (hidden on mobile) -->
+        <div class="collapse navbar-collapse d-none d-lg-block" id="navbarNav">
           <ul class="navbar-nav ms-auto align-items-center">
+            <!-- Desktop menu items -->
             <li class="nav-item">
-              <a class="nav-link" href="changelogs">Changelogs</a>
+              <a class="nav-link" href="/changelogs">Changelogs</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="seasons">Seasons</a>
+              <a class="nav-link" href="/seasons">Seasons</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/users">Users</a>
             </li>
             <li class="nav-item"></li>
-              <a class="nav-link" href="tradetracker">Trade Tracker</a>
+              <a class="nav-link" href="/tradetracker">Trade Tracker</a>
             </li>
             <li class="nav-item"></li>
-              <a class="nav-link" href="keys">Api</a>
+              <a class="nav-link" href="/keys">Api</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="bot">Our Discord Bot</a>
+              <a class="nav-link" href="/bot">Our Discord Bot</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="faq">FAQ</a>
+              <a class="nav-link" href="/faq">FAQ</a>
             </li>
             <li class="nav-item">
               <button
@@ -159,16 +208,12 @@
             </li>
             <!-- Profile picture icon (visible on desktop) -->
             <li class="nav-item d-none d-lg-block ms-2">
-              <a
-                href="login"
-                title="Go to login page"
-                class="profile-link"
-              >
+              <a href="login" title="Go to login page" class="profile-link">
                 <img
                   src="/favicon.ico"
                   alt="Profile"
-                  id="profile-picture"
                   class="rounded-circle"
+                  id="profile-picture"
                   width="32"
                   height="32"
                 />
