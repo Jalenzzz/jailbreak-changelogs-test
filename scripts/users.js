@@ -171,6 +171,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
             const comments = await response.json(); // Assuming the API returns a JSON array of comments
             const totalComments = comments.length; // Get the total number of comments
+            if (!totalComments) {
+                recentComments.innerHTML = "<div>No recent comments.</div>"; // No comments found
+                return;
+            }
             const totalPages = Math.ceil(totalComments / commentsPerPage); // Calculate total pages
     
             // Clear existing comments
