@@ -108,12 +108,12 @@ footer a:hover::after {
 }
 @media (max-width: 576px) {
   .navbar-logo {
-    height: 50px;
+    height: 40px;
   }
 }
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 50px;
+    height: 35px;
   }
 }
