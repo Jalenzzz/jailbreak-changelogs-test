@@ -55,8 +55,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 resultHtml += '<br>'; // Add a line break after each line
             });
     
-            // Set the user bio with the complete result
-            userBio.innerHTML = resultHtml.trim(); // Combine all parts together
+            resultHtml = resultHtml.replace(/(<br\s*\/?>\s*){2,}$/, '<br>');
+
+            // Set the user bio with the cleaned-up result
+            userBio.innerHTML = resultHtml.trim();
         } catch (error) {
             console.error('Error:', error);
             userBio.textContent = 'Error fetching user bio.';
@@ -518,6 +520,45 @@ document.addEventListener('DOMContentLoaded', function() {
             FollowToast("User unfollowed successfully.");
             follow_button.textContent = 'Follow';
         }
+    });
+    function AlertToast(message) {
+        toastr.info(message, "Alert", {
+          positionClass: "toast-bottom-right", // Position at the bottom right
+          timeOut: 3000, // Toast will disappear after 3 seconds
+          closeButton: true, // Add a close button
+          progressBar: true, // Show a progress bar
+        });
+      }
+      function SuccessToast(message) {
+        toastr.success(message, "Alert", {
+          positionClass: "toast-bottom-right", // Position at the bottom right
+          timeOut: 3000, // Toast will disappear after 3 seconds
+          closeButton: true, // Add a close button
+          progressBar: true, // Show a progress bar
+        });
+      }
+
+      crown.addEventListener('click', function() {
+        fetch(`https://api.jailbreakchangelogs.xyz/owner/check?user=${userId}`, {
+            method: 'GET', // Specify the method, e.g., GET
+            headers: {
+                'Content-Type': 'application/json', // Set content type to JSON
+            }
+        })
+        .then(response => {
+            console.log(response.status); // Log the response status
+    
+            if (response.status === 200) {
+                AlertToast("This user created Jailbreak Changelogs!");
+            } else {
+                SuccessToast('The only owners of Jailbreak Changelogs are <a href="/users/659865209741246514" target="_blank" rel="noopener noreferrer">@Jakobiis</a> and <a href="/users/1019539798383398946" target="_blank" rel="noopener noreferrer">@Jalenzz</a>');
+                AlertToast("This crown is given out to the creators of Jailbreak Changelogs! Unfortunately, this user is not one of them 🤣");
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching owner status:', error);
+            AlertToast("There was an error checking the owner's status.");
+        });
     });
     
 });
