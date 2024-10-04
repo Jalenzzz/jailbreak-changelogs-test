@@ -233,7 +233,6 @@ body {
 .side-menu .nav-item {
   opacity: 0;
   transform: translateX(20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .side-menu.show .nav-item {
