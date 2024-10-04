@@ -185,6 +185,7 @@ footer a::after {
   align-items: center; /* Center items horizontally */
 }
 
+
 /* Individual comment styling */
 #comments-list .list-group-item {
   background-color: #212a31; /* Dark background for comments */
@@ -241,6 +242,8 @@ footer a:hover {
   transform: translate(-50%, -50%); /* Adjust for the spinner's dimensions */
   display: none; /* Initially hide the spinner */
 }
+
+
 
 .loading-icon {
   vertical-align: middle; /* Align icon with text */

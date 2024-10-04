@@ -209,12 +209,18 @@
             <div class="user-header d-flex align-items-center">
                 <img src="<%= avatar %>" class="user-avatar rounded-circle me-3 large-avatar" alt="User Avatar">
               <div class="user-info">
+                
                 <h2 class="mb-0">
                   <%= userData.global_name %> 
-                  <a id="crown" style="display: none;"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-                    <path fill="none" stroke="#f5aa45" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 6l4 6l5-4l-2 10H5L3 8l5 4z" />
-                  </svg></a>
+                  <a id="crown" style="display: none;">
+                    <div class="card" style="display: inline-flex; padding: 3px; align-items: center; justify-content: center;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                        <path fill="none" stroke="#f5aa45" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 6l4 6l5-4l-2 10H5L3 8l5 4z" />
+                      </svg>
+                    </div>
+                  </a>
                 </h2>
+                
                 <a class="text-muted mb-0" href="https://discord.com/users/<%= userData.id %>">@<%= userData.username %></a>
                 <div class="user-stats mt-2">
                   <span class="me-3" id="followers">
