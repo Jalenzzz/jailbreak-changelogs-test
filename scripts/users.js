@@ -101,6 +101,25 @@ document.addEventListener('DOMContentLoaded', function() {
     
         return formattedDate;
       }
+    async function fetchSeasonRewards(season) {
+        try {
+            const response = await fetch(`https://api.jailbreakchangelogs.xyz/rewards/get?season=${season}`);
+            if (!response.ok) {
+                if (response.status === 404) {
+                    return "No rewards found for this season.";
+                }
+                else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            }
+            const rewards = await response.json();
+            return rewards
+        } catch (error) {
+            console.error('Error:', error);
+            return 'Error fetching season rewards.';
+        }
+    }
+
     async function fetchCommentItem(comment) {
         try {
             if (comment.item_type === "changelog") {
@@ -241,12 +260,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 const item = await fetchCommentItem(comment); // Await the fetchCommentItem
                 const formattedDate = formatDate(comment.date);
                 const commentElement = document.createElement('div');
+                let url; // Placeholder URL for season rewards
+                if (comment.item_type === "season") {
+                    let rewards = await fetchSeasonRewards(comment.item_id); // Await the fetchSeasonRewards
+                    if (!Array.isArray(rewards)) {
+                        if (typeof rewards === 'object' && rewards !== null) {
+                            rewards = Object.values(rewards); // Convert object properties to an array
+                        } else {
+                            rewards = []; // Initialize as empty array if rewards is null or undefined
+                        }
+                    }
+                    
+            
+                    const level10Reward = rewards.find(reward => reward.requirement === "Level 10");
+                    url = level10Reward.link
+                }
+
+                const image_url = item.image_url || url; // Placeholder image URL
                 commentElement.className = 'list-group-item';
                 commentElement.innerHTML = `
-                    <strong>${comment.item_type.toUpperCase()} ${comment.item_id} | ${item.title}</strong>
-                    <div class="text-muted">${formattedDate}</div>
-                    <p>${comment.content}</p>
-                `;
+<div style="display: flex; align-items: center; justify-content: space-between;">
+    <div style="flex-grow: 1;">
+        <strong>${capitalizeFirstLetter(comment.item_type)} ${comment.item_id} | ${item.title}</strong>
+        <div class="text-muted">${formattedDate}</div>
+        <p>${comment.content}</p>
+    </div>
+    <a href="/${comment.item_type}s/${comment.item_id}" class="btn btn-outline-primary me-2" id="message-button">
+        View ${capitalizeFirstLetter(comment.item_type)}
+    </a>
+    <img src="${image_url}" alt="Comment Image" style="width: 15%; height: auto; margin-left: 10px;"/> <!-- Small image -->
+</div>
+            `;
                 comments_to_add.push(commentElement); // Add the new comment to the array
             }
             // Add all comments to the DOM
