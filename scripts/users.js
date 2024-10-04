@@ -1,6 +1,18 @@
 
 
 document.addEventListener('DOMContentLoaded', function() {
+    const permissions = JSON.parse(settings)
+    const recent_comments_tab = document.getElementById('recent-comments-tab');
+    // Lol! these are backwards, true = false, false = true
+    if (permissions.show_recent_comments == true) {
+        recent_comments_tab.remove();
+    }
+    const loggedinuserId = sessionStorage.getItem('userid');
+    const pathSegments = window.location.pathname.split("/");
+    const userId = pathSegments[pathSegments.length - 1];
+    if (permissions.profile_public === true && loggedinuserId !== userId) {
+        window.location.href = '/users'
+    }
     async function fetchUserBio(userId) {
         try {
             const response = await fetch(`https://api.jailbreakchangelogs.xyz/description/get?user=${userId}`);
@@ -402,9 +414,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const message_button = document.getElementById('message-button');
     const about_button = document.getElementById('about-button');
     const recent_comments_button = document.getElementById('recent-comments-button');
-    const pathSegments = window.location.pathname.split("/");
-    const userId = pathSegments[pathSegments.length - 1];
-    const loggedinuserId = sessionStorage.getItem('userid');
     if (loggedinuserId === userId) {
         message_button.style.display = 'none';
         follow_button.style.display = 'none';
@@ -475,7 +484,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     const description_tab = document.getElementById('description-tab');
-    const recent_comments_tab = document.getElementById('recent-comments-tab');
     recent_comments_button.addEventListener('click', function () {
         // Remove 'active' class from About button and reset aria-selected
         about_button.classList.remove('active');
@@ -696,7 +704,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             case 'profile_public':
                                 // Logic for profile_public
                                 const profilePublicIcon = document.createElement('i');
-                                profilePublicIcon.classList.add('bi', value ? 'bi-check-lg' : 'bi-check-lg'); // Set icon based on public/private status
+                                profilePublicIcon.classList.add('bi', value ? 'bi-check-lg' : 'bi-x-lg'); // Set icon based on public/private status
                             
                                 profile_public_button.classList.remove('btn-danger', 'btn-success'); // Clear previous button classes
                                 profile_public_button.classList.add('btn', value ? 'btn-success' : 'btn-danger'); // Update button class based on value

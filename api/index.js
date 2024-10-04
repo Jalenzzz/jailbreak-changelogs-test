@@ -303,10 +303,10 @@ app.get("/users/:user", (req, res) => {
         const defaultUserID = "659865209741246514"; // Set your default changelog ID here
         return res.redirect(`/users/${defaultUserID}`);
       }
-      console.log(settings);
 
       // Render the page only after both data sets are fetched
-      const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+      const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+      const avatar = avatarUrl.endsWith('null.png') ? '/favicon.ico' : avatarUrl;
       res.render("users", { userData, avatar, settings });
     })
     .catch((error) => {
