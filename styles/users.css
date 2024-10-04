@@ -60,6 +60,10 @@
   background-color: var(--common-bg-color);
 }
 
+.hidden {
+  display: none; /* Hides the button */
+}
+
 .navbar-logo {
   height: 50px;
   width: auto;
@@ -158,6 +162,8 @@ footer a {
   transition: color 0.3s ease;
 }
 
+
+
 footer a::after {
   content: "";
   position: absolute;
@@ -170,8 +176,74 @@ footer a::after {
   transition: transform 0.3s ease;
 }
 
+#comments-list {
+  max-height: 500px; /* Set the maximum height for the scrollable area */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding-right: 10px; /* Right padding for the scrollbar */
+  display: flex; /* Enable flexbox */
+  flex-direction: column; /* Stack comments vertically */
+  align-items: center; /* Center items horizontally */
+}
+
+/* Individual comment styling */
+#comments-list .list-group-item {
+  background-color: #212a31; /* Dark background for comments */
+  border: 1px solid #748d92; /* Border around comments */
+  border-radius: 15px; /* Rounded corners */
+  padding: 15px; /* Padding inside each comment */
+  margin-bottom: 15px; /* Space between comments */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Transition effects */
+  word-wrap: break-word; /* Break long words */
+  overflow-wrap: break-word; /* Handle overflow of long words */
+  max-width: 100%; /* Ensure comments do not exceed container width */
+  width: 90%; /* Set width to 90% for centering */
+}
+
+#comments-list .list-group-item:hover {
+  transform: translateY(-3px); /* Raise comment on hover */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Add shadow on hover */
+}
+
+/* Commenter name styling */
+#comments-list .list-group-item strong {
+  color: var(--content-h3); /* Color for commenter name */
+  display: block; /* Display name as block */
+  margin-bottom: 5px; /* Space below name */
+  text-align: left; /* Center the name */
+}
+
+/* Comment timestamp styling */
+#comments-list .list-group-item .text-muted {
+  font-size: 0.85em; /* Smaller font for timestamp */
+  color: var(--gray-600) !important; /* Color for timestamp */
+  display: block; /* Display timestamp as block */
+  margin-bottom: 10px; /* Space below timestamp */
+  text-align: left; /* Center the timestamp */
+}
+
+/* Comment text styling */
+#comments-list .list-group-item p {
+  color: var(--text-color); /* Color for comment text */
+  line-height: 1.6; /* Line height for readability */
+  margin-bottom: 0; /* Remove bottom margin */
+  word-break: break-word; /* Break long words */
+  hyphens: auto; /* Enable hyphenation */
+  text-align: left; /* Center the comment text */
+}
 footer a:hover {
   color: #f0f0f0; /* Slightly lighter shade of white */
+}
+
+.loading-spinner {
+  position: absolute; /* Position absolutely within the container */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for the spinner's dimensions */
+  display: none; /* Initially hide the spinner */
+}
+
+#description-box {
+  min-height: 62px
 }
 
 footer a:hover::after {

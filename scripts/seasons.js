@@ -268,8 +268,11 @@ $(document).ready(function () {
     const selectedSeason = $(this).attr("href").split("=")[1];
 
     // Update the URL with the selected season
-    const newUrl = new URL(window.location);
-    newUrl.searchParams.set("season", selectedSeason);
+    const pathSegments = window.location.pathname.split("/");
+    if (!isNaN(pathSegments[pathSegments.length - 1])) {
+      pathSegments.pop();
+    }
+    const newUrl = `${window.location.origin}${pathSegments.join("/")}/${selectedSeason}`;
     window.history.pushState({}, "", newUrl);
 
     // Only show loading overlay if we're fetching fresh data
@@ -308,9 +311,8 @@ $(document).ready(function () {
   loadAllData()
     .then(([seasonDescriptions, allRewards]) => {
       populateSeasonDropdown(seasonDescriptions);
-
-      const urlParams = new URLSearchParams(window.location.search);
-      let seasonNumber = urlParams.get("season");
+      const pathSegments = window.location.pathname.split("/");
+      let seasonNumber = pathSegments[pathSegments.length - 1];
 
       const latestSeason = Math.max(
         ...seasonDescriptions.map((desc) => desc.season)
@@ -318,13 +320,14 @@ $(document).ready(function () {
 
       if (
         !seasonNumber ||
-        !seasonDescriptions.some(
-          (desc) => desc.season === parseInt(seasonNumber)
-        )
+        isNaN(seasonNumber) ||
+        !seasonDescriptions.some((desc) => desc.season === parseInt(seasonNumber))
       ) {
+        // If invalid, set seasonNumber to the latest season
         seasonNumber = latestSeason.toString();
-        const newUrl = new URL(window.location);
-        newUrl.searchParams.set("season", seasonNumber);
+    
+        // Update the URL to include the latest season in the path
+        const newUrl = `${window.location.origin}/seasons/${seasonNumber}`;
         window.history.replaceState({}, "", newUrl);
       }
 

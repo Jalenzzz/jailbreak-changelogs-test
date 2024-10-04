@@ -848,22 +848,32 @@ $(document).ready(function () {
   };
   function processChangelogData(data) {
     changelogsData = data;
+  
     if (Array.isArray(data) && data.length > 0) {
       populateChangelogDropdown(data);
-      const urlParams = new URLSearchParams(window.location.search);
-      const changelogId = urlParams.get("changelog");
+  
+      // Get changelogId from the URL path, e.g., /changelogs/{changelog id}
+      const pathSegments = window.location.pathname.split("/");
+      const changelogId = pathSegments[pathSegments.length - 1]; // Get the last part of the URL
+      
+      // If changelogId exists in the path, find it in the data
       let selectedChangelog = changelogId
         ? changelogsData.find((cl) => cl.id == changelogId)
-        : data[0];
+        : data[0]; // Default to the first changelog if no id is found
+  
       if (!selectedChangelog) {
-        selectedChangelog = data[0];
+        selectedChangelog = data[0]; // Fallback to first changelog if no match
       }
+  
       displayChangelog(selectedChangelog);
+  
+      // Toggle button visibility based on whether the selected changelog is the latest one
       desktopLatestChangelogBtn.style.display =
         selectedChangelog.id === data[0].id ? "none" : "block";
       mobileLatestChangelogBtn.style.display =
         selectedChangelog.id === data[0].id ? "none" : "block";
     }
+  
     hideLoadingOverlay();
   }
 
@@ -1110,15 +1120,12 @@ $(document).ready(function () {
     }
 
     sectionsElement.innerHTML = contentHtml; // Update sections element with content HTML
-
-    // Update the URL with the ID parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("changelog", changelog.id);
-    window.history.pushState(
-      {},
-      "",
-      `${window.location.pathname}?${urlParams.toString()}`
-    );
+    const pathSegments = window.location.pathname.split("/");
+    if (!isNaN(pathSegments[pathSegments.length - 1])) {
+      pathSegments.pop();
+    }
+    const newPath = `${pathSegments.join("/")}/${changelog.id}`;
+    window.history.pushState({}, "", newPath);
     // Check if the currently displayed changelog is the latest one
     const isLatestChangelog = changelog.id === changelogsData[0].id;
 
@@ -1187,7 +1194,7 @@ $(document).ready(function () {
     commentbutton.addEventListener("click", function (event) {
       localStorage.setItem(
         "redirectAfterLogin",
-        "/changelogs?changelog=" + localStorage.getItem("selectedChangelogId")
+        "/changelogs/" + localStorage.getItem("selectedChangelogId")
       ); // Store the redirect URL in local storage
       window.location.href = "/login"; // Redirect to login page
     });

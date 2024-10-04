@@ -33,7 +33,7 @@
     />
 
     <!-- Page title -->
-    <title>User Profile | Jailbreak Changelogs Community</title>
+    <title><%= userData.global_name %> | Jailbreak Changelogs</title>
 
     <!-- CSS Links -->
     <link
@@ -44,12 +44,19 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
     />
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+  />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <!-- Custom stylesheet -->
+    <base href="/">
     <link rel="stylesheet" href="styles/users.css" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -86,6 +93,18 @@
             >
               <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="ms-2 d-lg-none">
+              <a href="login" title="Go to login page" class="profile-link">
+                <img 
+                  src="/favicon.ico" 
+                  alt="Profile" 
+                  id="profile-picture-mobile" 
+                  class="rounded-circle" 
+                  width="32" 
+                  height="32"
+                >
+              </a>
+            </div>
             
           </div>
       
@@ -123,7 +142,18 @@
                       Join the Discord
                     </button>
                   </li>
-              
+                  <li class="nav-item d-none d-lg-block ms-2">
+                    <a href="login.html" title="Go to login page" class="profile-link">
+                      <img 
+                        src="/favicon.ico"
+                        alt="Profile" 
+                        id="profile-picture" 
+                        class="rounded-circle" 
+                        width="32" 
+                        height="32"
+                      >
+                    </a>
+                  </li>
             </ul>
           </div>
         </div>
@@ -164,19 +194,21 @@
         <div class="row mb-4">
           <div class="col-md-12">
             <div class="user-header d-flex align-items-center">
-                <img src="/favicon.ico" class="user-avatar rounded-circle me-3 large-avatar" alt="User Avatar">
+                <img src="https://cdn.discordapp.com/avatars/<%= userData.id %>/<%= userData.avatar %>.png" class="user-avatar rounded-circle me-3 large-avatar" alt="User Avatar">
               <div class="user-info">
-                <h2 class="mb-0">Jalenzz16</h2>
-                <p class="text-muted mb-0">@jalenzz16</p>
+                <h2 class="mb-0"><%= userData.global_name %></h2>
+                <a class="text-muted mb-0" href="https://discord.com/users/<%= userData.id %>">@<%= userData.username %></a>
                 <div class="user-stats mt-2">
-                  <span class="me-3">2 Friends</span>
-                  <span class="me-3">1.7K Followers</span>
-                  <span>90 Following</span>
+                  <span class="me-3" id="followers">0</span>
+                  <span id="following">0</span>
                 </div>
               </div>
               <div class="ms-auto">
-                <button class="btn btn-outline-primary me-2">Message</button>
-                <button class="btn btn-primary">Add Friend</button>
+                <button class="btn btn-outline-primary me-2" id="message-button">Message</button>
+                <button class="btn btn-primary" id="follow-button">Follow</button>
+                <button id="settings-button" class="btn btn-primary me-2 hidden">
+                  <i class="bi bi-gear-fill"></i>
+              </button>
               </div>
             </div>
           </div>
@@ -185,7 +217,10 @@
         <!-- User Content Tabs -->
         <ul class="nav nav-tabs mb-4" id="userTabs" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="true">About</button>
+            <button class="nav-link active" id="about-button" aria-selected="true">About</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="recent-comments-button" aria-selected="false">Recent Comments</button>
           </li>
         </ul>
   
@@ -193,33 +228,30 @@
           <div class="tab-pane fade show active" id="about" role="tabpanel" aria-labelledby="about-tab">
             <div class="row">
               <div class="col-md-12 mb-4">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">About</h5>
-                    <p class="card-text" id="userBio">dear readers, I feel as though I am in a dream</p>
-                    <a href="#" class="float-end text-danger">Report Abuse</a>
+                <div class="col-md-12 mb-4">
+                  <div class="card" style="position: relative;" id="description-tab">
+                      <div class="card-body" id="description-box">
+                          <p class="card-text" id="userBio">dear readers, I feel as though I am in a dream</p>
+                      </div>
+                      <button class="btn btn-primary hidden" id="edit-bio-button" style="position: absolute; top: 10px; right: 10px;"><i class="bi bi-pencil-fill"></i></button>
+                      <button class="btn btn-primary hidden" id="save-bio-button" style="position: absolute; top: 10px; right: 10px;"><i class="bi bi-save"></i></button>
                   </div>
+                  <div class="container  hidden" style="position: relative;" id="recent-comments-tab">
+                    <div id="comments-list">
+                      <div id="loading-spinner" class="loading-spinner" style="display: none;">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                        <!-- Add more comments as needed -->
+                    </div>
+                    <div id="paginationControls" class="pagination d-flex align-items-center"></div>
+
                 </div>
               </div>
             </div>
-  
-            <div class="row">
-              <div class="col-md-12">
-                <h5>Friends (2) <a href="#" class="float-end">See All</a></h5>
-                <div class="friends-grid">
-                  <!-- Replace with actual friend avatars and names -->
-                  <div class="friend-item">
-                    <img src="/path/to/friend1.jpg" alt="Friend 1" class="friend-avatar rounded-circle">
-                    <p class="friend-name">Goobster</p>
-                  </div>
-                  <div class="friend-item">
-                    <img src="/path/to/friend2.jpg" alt="Friend 2" class="friend-avatar rounded-circle">
-                    <p class="friend-name">CokLobsta</p>
-                  </div>
-                  <!-- Add more friend items as needed -->
-                </div>
-              </div>
             </div>
+
           </div>
   
           <div class="tab-pane fade" id="creations" role="tabpanel" aria-labelledby="creations-tab">
@@ -245,6 +277,9 @@
 
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+
     <script src="scripts/main.js"></script>
+    <script src="scripts/users.js"></script>
   </body>
 </html>

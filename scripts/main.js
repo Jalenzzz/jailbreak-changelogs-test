@@ -1,12 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Inject the Speed Insights code on every page load
   const path = window.location.pathname;
-  fetch("https://api.jailbreakchangelogs.xyz/version/website")
-    .then((response) => response.json())
-    .then((data) => {
-      document.getElementById("last-updated").textContent = data.date;
-      document.getElementById("version-number").textContent = data.version;
-    });
+  try {
+    if (!document.getElementById("last-updated")) {
+      return;
+    }
+      fetch("https://api.jailbreakchangelogs.xyz/version/website")
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("last-updated").textContent = data.date;
+          document.getElementById("version-number").textContent = data.version;
+        });
+  } catch (error) {
+    console.error("Failed to fetch version data:", error);
+  }
 
   if (path.endsWith(".html")) {
     const cleanUrl = path.replace(".html", "");

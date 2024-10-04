@@ -49,8 +49,14 @@ app.get("/trade-data", async (req, res) => {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views")); // Set the directory for your EJS files
 
-app.get("/changelogs", async (req, res) => {
-  let changelogId = req.query.changelog || 1;
+app.get("/changelogs", (req, res) => {
+  // Redirect to a default changelog if no ID is provided in the URL
+  const defaultChangelogId = 344; // Set your default changelog ID here
+  res.redirect(`/changelogs/${defaultChangelogId}`);
+});
+
+app.get("/changelogs/:changelog", async (req, res) => {
+  let changelogId = req.params.changelog || 1; // Default to user 1 if no ID is provided
   console.log(`Fetching changelog with ID: ${changelogId}`);
   const apiUrl = `https://api.jailbreakchangelogs.xyz/changelogs/get?id=${changelogId}`;
 
@@ -84,8 +90,14 @@ app.get("/changelogs", async (req, res) => {
   }
 });
 
-app.get("/seasons", async (req, res) => {
-  let seasonId = req.query.season || 1; // Default to season 1 if no ID is provided
+app.get("/seasons", (req, res) => {
+  // Redirect to a default changelog if no ID is provided in the URL
+  const defaultChangelogId = 23; // Set your default changelog ID here
+  res.redirect(`/seasons/${defaultChangelogId}`);
+});
+
+app.get("/seasons/:season", async (req, res) => {
+  let seasonId = req.params.season || 1; // Default to user 1 if no ID is provided
   const apiUrl = `https://api.jailbreakchangelogs.xyz/seasons/get?season=${seasonId}`;
   const rewardsUrl = `https://api.jailbreakchangelogs.xyz/rewards/get?season=${seasonId}`;
 
@@ -173,10 +185,32 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
+app.get("/users", (req, res) => {
+  // Redirect to a default changelog if no ID is provided in the URL
+  const defaultUserID = "659865209741246514"; // Set your default changelog ID here
+  res.redirect(`/users/${defaultUserID}`);
+});
+
 app.get("/users/:user", (req, res) => {
-  const user = req.params.user; // This gets the 'user' from the URL
-  console.log(`Serving user page for ${user}`); // Log the user for debugging
-  res.render("users"); // Pass the 'user' to the view if necessary
+  const user = req.params.user || 659865209741246514; // Fallback to default user ID
+
+  fetch(`https://api.jailbreakchangelogs.xyz/users/get?id=${user}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "https://jailbreakchangelogs.xyz", // Add your origin
+    },
+  })
+    .then((response) => response.json())
+    .then((userData) => {
+      // Render the page only after the data is fetched
+      res.render("users", { userData });
+    })
+    .catch((error) => {
+      console.error("Error fetching user data:", error);
+
+      // Optionally render an error page or send a response with an error message
+      res.status(500).send("Error fetching user data");
+    });
 });
 
 app.get("/timeline", (req, res) => {
