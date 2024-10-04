@@ -583,14 +583,14 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       crown.addEventListener('click', function() {
-        fetch(`https://api.jailbreakchangelogs.xyz/owner/check?user=${userId}`, {
+        fetch(`/owner/check/${userId}`, {
             method: 'GET', // Specify the method, e.g., GET
             headers: {
                 'Content-Type': 'application/json', // Set content type to JSON
             }
         })
         .then(response => {
-            console.log(response.status); // Log the response status
+            
     
             if (response.status === 200) {
                 AlertToast("This user created Jailbreak Changelogs!");

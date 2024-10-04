@@ -55,6 +55,16 @@ app.get("/changelogs", (req, res) => {
   res.redirect(`/changelogs/${defaultChangelogId}`);
 });
 
+app.get("/owner/check/:user", (req, res) => {
+  const user = req.params.user; // Get the user ID from the URL parameter
+  const owners = ['1019539798383398946', '659865209741246514']
+  const isOwner = owners.includes(user);
+  if (!isOwner) {
+    res.status(403).json({ error: "Unauthorized" });
+  }  
+  res.status(200).json({ isOwner });
+});
+
 app.get("/changelogs/:changelog", async (req, res) => {
   let changelogId = req.params.changelog || 1; // Default to user 1 if no ID is provided
   console.log(`Fetching changelog with ID: ${changelogId}`);
