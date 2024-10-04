@@ -3,12 +3,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchButton = document.getElementById('searchButton');
   
     const displayUsers = (users) => {
+        const searchTerm = searchInput.value.trim();
         if (users.length === 1) {
              return window.location.href = `/users/${users[0].id}`;
         }
+        const exact_match = users.filter(user => user.username === searchTerm.toLowerCase());
+        if (exact_match.length > 0) {
+            return window.location.href = `/users/${exact_match[0].id}`;
+        }
         const usersGrid = document.getElementById('usersGrid');
+        usersGrid.style.display = 'block';
         usersGrid.innerHTML = ''; // Clear previous results
-    
+        let loadingSpinner = document.getElementById('loading-spinner');
+        loadingSpinner.style.display = 'none';
         users.forEach(user => {
           const userCard = document.createElement('div');
           userCard.className = 'user-card';
@@ -27,8 +34,25 @@ document.addEventListener('DOMContentLoaded', function() {
       };
     // Function to handle search requests
     const handleSearch = async () => {
+    usersGrid.style.display = 'none';
       const searchTerm = searchInput.value.trim();
+      let loadingSpinner = document.getElementById('loading-spinner');
+      if (!loadingSpinner) {
+          
+          loadingSpinner = document.createElement('div');
+          loadingSpinner.id = 'loading-spinner';
+          loadingSpinner.className = 'loading-spinner';
+          loadingSpinner.style.display = 'flex'; // Set to flex for centering
+          loadingSpinner.innerHTML = `
+              <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+              </div>
+          `;
+          document.body.appendChild(loadingSpinner); // Append spinner to the body or desired parent
+      }      const user_results = document.getElementById('user-results');
       if (searchTerm) {
+        user_results.style.display = 'block';
+        loadingSpinner.style.display = 'block';
         try {
           const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/get/name?name=${searchTerm}`);
           if (response.ok) {

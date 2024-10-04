@@ -74,6 +74,17 @@
     filter: invert(1) grayscale(100%) brightness(200%);
   }
   
+  .loading-spinner {
+    position: absolute; /* Position absolutely within the container */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for the spinner's dimensions */
+  }
+
+  .results {
+    min-height: 100px;
+  }
+
   .cursive {
     font-size: 0.8rem; /* make the text smaller */
     font-style: italic; /* make the text cursive */
