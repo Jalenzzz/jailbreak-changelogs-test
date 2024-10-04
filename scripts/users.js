@@ -61,7 +61,9 @@ document.addEventListener('DOMContentLoaded', function() {
             editbio_button.innerHTML = '<i class="bi bi-pencil-fill"></i>'
             savebio_button.style.display = 'none';
             savebio_button.innerHTML = '<i class="bi bi-save"></i>'
-            editbio_button.style.display = 'inline-block';
+            if (loggedinuserId === userId) {
+                editbio_button.style.display = 'inline-block';
+            }
             userBio.innerHTML = resultHtml.trim();
             savebio_button.disabled = false;
             editbio_button.disabled = false;
@@ -408,6 +410,9 @@ document.addEventListener('DOMContentLoaded', function() {
         follow_button.style.display = 'none';
         settings_button.style.display = 'inline-block';
         editbio_button.style.display = 'inline-block';
+    } else {
+        settings_button.style.display = 'none';
+        editbio_button.style.display = 'none';
     }
     const userBio = document.getElementById('userBio');
     fetchUserBio(userId)
@@ -815,6 +820,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             SuccessToast('Settings saved successfully!');
             settings_modal.style.display = 'none';
+            window.location.reload();
         })
         .catch(error => {
             console.error('Error saving settings:', error);

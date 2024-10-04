@@ -261,30 +261,56 @@ app.get("/users", (req, res) => {
 
 // Route to render a specific user profile
 app.get("/users/:user", (req, res) => {
-  const user = req.params.user; // Fallback to default user ID
+  const user = req.params.user; // Get the user from the URL params
+
   if (!user) {
-    res.render("usersearch");
+    return res.render("usersearch");
   }
-  fetch(`https://api.jailbreakchangelogs.xyz/users/get?id=${user}`, {
+
+  // Fetch user settings and user data concurrently
+  const settingsFetch = fetch(`https://api.jailbreakchangelogs.xyz/users/settings?user=${user}`, {
     headers: {
       "Content-Type": "application/json",
       Origin: "https://jailbreakchangelogs.xyz", // Add your origin
     },
-  })
-    .then((response) => response.json())
-    .then((userData) => {
+  }).then((response) => response.json());
+
+  const userFetch = fetch(`https://api.jailbreakchangelogs.xyz/users/get?id=${user}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "https://jailbreakchangelogs.xyz", // Add your origin
+    },
+  }).then((response) => response.json());
+
+  // Use Promise.all to wait for both fetch requests to resolve
+  Promise.all([settingsFetch, userFetch])
+    .then(([settings1, userData]) => {
+      const booleanSettings = {
+        ...settings1, // Keep other properties like user_id and updated_at
+        profile_public: Boolean(settings1.profile_public),
+        show_recent_comments: Boolean(settings1.show_recent_comments),
+        hide_following: Boolean(settings1.hide_following),
+        hide_followers: Boolean(settings1.hide_followers)
+      };
+      const settings = {
+        ...booleanSettings, // Keep other properties like user_id and updated_at
+        profile_public: !booleanSettings.profile_public,
+        show_recent_comments: !booleanSettings.show_recent_comments,
+        hide_following: !booleanSettings.hide_following,
+        hide_followers: !booleanSettings.hide_followers
+      };
       if (userData.error) {
         const defaultUserID = "659865209741246514"; // Set your default changelog ID here
-        res.redirect(`/users/${defaultUserID}`);
+        return res.redirect(`/users/${defaultUserID}`);
       }
-      // Render the page only after the data is fetched
+      console.log(settings);
+
+      // Render the page only after both data sets are fetched
       const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-      res.render("users", { userData, avatar });
+      res.render("users", { userData, avatar, settings });
     })
     .catch((error) => {
-      console.error("Error fetching user data:", error);
-
-      // Optionally render an error page or send a response with an error message
+      console.error("Error fetching user data or settings:", error);
       res.status(500).send("Error fetching user data");
     });
 });
