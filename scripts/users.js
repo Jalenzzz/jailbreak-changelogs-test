@@ -522,6 +522,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     about_button.addEventListener('click', function () {
         // Remove 'active' class from Recent Comments button and reset aria-selected
+        if (document.getElementById('paginationControls')) {
+            document.getElementById('paginationControls').innerHTML = ''; // Reset pagination controls
+        }
         recent_comments_button.classList.remove('active');
         recent_comments_button.setAttribute('aria-selected', 'false');
         recent_comments_tab.style.display = 'none'; // Reset recent comments tab
