@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loggedinuserId = sessionStorage.getItem('userid');
     const pathSegments = window.location.pathname.split("/");
     const userId = pathSegments[pathSegments.length - 1];
+    const card_pagination = document.getElementById('card-pagination');
     if (permissions.profile_public === true && loggedinuserId !== userId) {
         window.location.href = '/users'
     }
@@ -266,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
             // Clear existing comments
             
-            renderPaginationControls(totalPages); // Render pagination controls
+             // Render pagination controls
     
             // Slice the comments array for the current page
             const startIndex = (currentPage - 1) * commentsPerPage;
@@ -319,6 +320,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             // Add all comments to the DOM
             recentComments.innerHTML = ""; 
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = card_pagination.innerHTML;
+            const spans = tempDiv.getElementsByTagName('span');
+            while (spans.length > 0) {
+                spans[0].parentNode.removeChild(spans[0]);
+            }
+            card_pagination.innerHTML = tempDiv.innerHTML; // Clear existing pagination controls
+            renderPaginationControls(totalPages);
             recentComments.append(...comments_to_add); // Use spread operator to add multiple elements at once
     
         } catch (error) {
@@ -448,6 +457,8 @@ document.addEventListener('DOMContentLoaded', function() {
         textInput.style.marginTop = '20px';
         textInput.placeholder = 'Enter your bio here...'; // Placeholder text
         textInput.style.minHeight = '150px';
+        textInput.style.resize = 'none';
+        textInput.style.width = '100%';
         textInput.value = userBio.innerHTML
         .replace(/<br>/g, '\n')
         .replace(/<a href="([^"]+)"[^>]*>([^<]+)<\/a>/g, '$1') // Set the value of the text input to the current bio with newlines
@@ -510,6 +521,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remove 'active' class from About button and reset aria-selected
         about_button.classList.remove('active');
         about_button.setAttribute('aria-selected', 'false');
+        card_pagination.innerHTML += '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>';
+        card_pagination.style.display = 'block'; // Reset pagination controls
         description_tab.style.display = 'none';
         recent_comments_tab.style.display = 'block'; // Show recent comments tab
         fetchUserComments(userId); // Fetch recent comments
@@ -527,6 +540,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         recent_comments_button.classList.remove('active');
         recent_comments_button.setAttribute('aria-selected', 'false');
+        card_pagination.style.display = 'none';
         recent_comments_tab.style.display = 'none'; // Reset recent comments tab
         description_tab.style.display = 'block'; // Show description tab
 
