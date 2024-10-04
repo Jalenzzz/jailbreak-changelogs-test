@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchButton = document.getElementById('searchButton');
   
     const displayUsers = (users) => {
+        if (users.length === 1) {
+             return window.location.href = `/users/${users[0].id}`;
+        }
         const usersGrid = document.getElementById('usersGrid');
         usersGrid.innerHTML = ''; // Clear previous results
     
