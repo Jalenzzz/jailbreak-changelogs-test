@@ -1,0 +1,119 @@
+body {
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  font-family: Arial, sans-serif;
+}
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #ffffff;
+}
+.content-wrapper {
+  background-color: rgba(33, 37, 41, 0.9);
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+.navbar {
+  background-color: #212a31 !important;
+}
+
+.btn-primary {
+  background-color: #124e66 !important;
+  border-color: #124e66 !important;
+}
+.btn-primary:hover {
+  background-color: #212a31 !important;
+  border-color: #212a31 !important;
+}
+.card {
+  background-color: rgba(33, 37, 41, 0.9);
+  border-color: #444;
+}
+.card-header {
+  background-color: rgba(48, 52, 57, 0.9);
+  border-color: #444;
+}
+.faq-item {
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+.faq-question,
+.faq-answer {
+  display: flex;
+  align-items: flex-start;
+}
+.faq-symbol {
+  font-family: "Bangers", cursive;
+  font-size: 2.5em;
+  margin-right: 10px;
+  line-height: 1;
+}
+.q-symbol {
+  color: #ff341c;
+}
+.a-symbol {
+  color: #31b1ff;
+}
+.question-text {
+  font-size: 1.2em;
+  margin-top: 5px;
+  color: #ffffff;
+  font-weight: bold;
+}
+.answer-text {
+  font-size: 1em;
+  margin-top: 5px;
+  color: #e0e0e0;
+}
+a {
+  color: #6ea8fe;
+}
+a:hover {
+  color: #9ec5fe;
+}
+
+footer a {
+  position: relative;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: #fff;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+footer a:hover {
+  color: #f0f0f0; /* Slightly lighter shade of white */
+}
+
+footer a:hover::after {
+  transform: scaleX(1);
+}
+.navbar-logo {
+  height: 50px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+@media (max-width: 576px) {
+  .navbar-logo {
+    height: 50px;
+  }
+}
+
+@media (max-width: 400px) {
+  .navbar-logo {
+    height: 50px;
+  }
+}

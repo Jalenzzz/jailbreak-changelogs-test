@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <!-- Character encoding -->
+    <meta charset="UTF-8" />
+
+    <!-- Responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Referrer policy -->
+    <meta name="referrer" content="no-referrer" />
+
+    <!-- Open Graph metadata for social media sharing -->
+    <meta property="og:title" content="User Profile | Your Gaming Community" />
+    <meta
+      property="og:description"
+      content="View and manage your gaming profile, achievements, and connections."
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://yourgamingcommunity.com/user" />
+    <meta property="og:type" content="profile" />
+
+    <!-- Additional metadata for SEO -->
+    <meta
+      name="description"
+      content="Manage your gaming profile, view achievements, connect with friends, and customize your experience in our gaming community."
+    />
+    <meta name="robots" content="index, follow" />
+    <meta
+      name="keywords"
+      content="user profile, gaming community, achievements, friends, customization"
+    />
+
+    <!-- Page title -->
+    <title>User Profile | Jailbreak Changelogs Community</title>
+
+    <!-- CSS Links -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" href="styles/users.css" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar-color sticky-top">
+        <div class="container-fluid">
+          <a class="navbar-brand d-flex align-items-center" href="/">
+            <img
+              src="https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png"
+              alt="Users Page Logo"
+              class="navbar-logo"
+            />
+          </a>
+      
+          <!-- Container for navbar toggler and profile picture on mobile -->
+          <div class="d-flex d-lg-none align-items-center">
+            <!-- Navbar toggler -->
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            
+          </div>
+      
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="/changelogs">Changelogs</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/seasons">Seasons</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/timeline">Timeline</a>
+                  </li>
+                  <li class="nav-item"></li>
+                    <a class="nav-link" href="/tradetracker">Trade Tracker</a>
+                  </li>
+                  <li class="nav-item"></li>
+                    <a class="nav-link" href="/keys">Api</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/bot">Our Discord Bot</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/faq">FAQ</a>
+                  </li>
+                  <li class="nav-item">
+                    <button
+                      class="nav-link btn"
+                      type="button"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#discordOffcanvas"
+                      aria-controls="discordOffcanvas"
+                    >
+                      Join the Discord
+                    </button>
+                  </li>
+              
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div
+      class="offcanvas offcanvas-end"
+      tabindex="-1"
+      id="discordOffcanvas"
+      aria-labelledby="discordOffcanvasLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="discordOffcanvasLabel">
+          Join the Changelogs Discord
+        </h5>
+        <button
+          type="button"
+          class="btn-close text-reset"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body">
+        <iframe
+          src="https://discord.com/widget?id=1286064050135896064&theme=dark"
+          width="100%"
+          height="100%"
+          allowtransparency="true"
+          frameborder="0"
+          sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+        >
+        </iframe>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="container mt-4">
+        <!-- User Header Section -->
+        <div class="row mb-4">
+          <div class="col-md-12">
+            <div class="user-header d-flex align-items-center">
+                <img src="/favicon.ico" class="user-avatar rounded-circle me-3 large-avatar" alt="User Avatar">
+              <div class="user-info">
+                <h2 class="mb-0">Jalenzz16</h2>
+                <p class="text-muted mb-0">@jalenzz16</p>
+                <div class="user-stats mt-2">
+                  <span class="me-3">2 Friends</span>
+                  <span class="me-3">1.7K Followers</span>
+                  <span>90 Following</span>
+                </div>
+              </div>
+              <div class="ms-auto">
+                <button class="btn btn-outline-primary me-2">Message</button>
+                <button class="btn btn-primary">Add Friend</button>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- User Content Tabs -->
+        <ul class="nav nav-tabs mb-4" id="userTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="true">About</button>
+          </li>
+        </ul>
+  
+        <div class="tab-content" id="userTabContent">
+          <div class="tab-pane fade show active" id="about" role="tabpanel" aria-labelledby="about-tab">
+            <div class="row">
+              <div class="col-md-12 mb-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">About</h5>
+                    <p class="card-text" id="userBio">dear readers, I feel as though I am in a dream</p>
+                    <a href="#" class="float-end text-danger">Report Abuse</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <div class="row">
+              <div class="col-md-12">
+                <h5>Friends (2) <a href="#" class="float-end">See All</a></h5>
+                <div class="friends-grid">
+                  <!-- Replace with actual friend avatars and names -->
+                  <div class="friend-item">
+                    <img src="/path/to/friend1.jpg" alt="Friend 1" class="friend-avatar rounded-circle">
+                    <p class="friend-name">Goobster</p>
+                  </div>
+                  <div class="friend-item">
+                    <img src="/path/to/friend2.jpg" alt="Friend 2" class="friend-avatar rounded-circle">
+                    <p class="friend-name">CokLobsta</p>
+                  </div>
+                  <!-- Add more friend items as needed -->
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="tab-pane fade" id="creations" role="tabpanel" aria-labelledby="creations-tab">
+            <!-- Content for Creations tab -->
+            <p>User's creations will be displayed here.</p>
+          </div>
+        </div>
+      </div>
+
+      <footer
+      style="background-color: #212a31; color: #d3d9d4"
+      class="text-center py-4"
+    >
+      <p>© 2024 Jailbreak Changelogs. All rights reserved.</p>
+      <div>
+        <a href="privacy" class="text-white me-2">Privacy Policy</a>
+        <a href="tos" class="text-white me-2">Terms of Service</a>
+        <a href="mailto:jailbreakchangelogs@gmail.com" class="text-white"
+          >Contact Us</a
+        >
+      </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/main.js"></script>
+  </body>
+</html>

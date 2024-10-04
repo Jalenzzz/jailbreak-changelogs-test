@@ -1,0 +1,190 @@
+/* Dark Theme Colors */
+[data-bs-theme="dark"] body {
+  --common-bg-color: #2e3944; /* Dark background */
+  --content-h1: #d3d9d4; /* Lighter Blue for Dark Mode */
+  --content-h2: #748d92; /* Softer Red for Dark Mode */
+  --content-h3: #748d92; /* Light Gray for H3 and Paragraph Text */
+  --content-paragraph: #d3d9d4; /* Light Gray for Paragraphs */
+  --content-bullet: #748d92; /* Lighter Blue for Bullets */
+  --content-sub-bullet: #748d92; /* Softer Red for Bullets */
+  --text-color: #ffffff; /* White Text */
+
+  --header-text: #ffffff; /* White for Header Text */
+  --button-primary-bg: #124e66; /* Dark Blue for Primary Button Background */
+  --button-primary-text: #eeeeee; /* White for Primary Button Text */
+  --button-primary-hover-bg: #212a31; /* Darker Blue for Hover */
+  /* Mention Colors */
+  --mention-color: #748d92; /* Teal color for Mentions */
+  --mention-bg: #212a31; /* Dark blue-gray for Mention Background */
+  --at-color: #d3d9d4; /* Bright teal for '@' Symbol */
+  --username-color: #76abae; /* Soft cyan for Username */
+  --mention-hover-bg: #124e66; /* Hover Background Color for Mentions */
+
+  --highlight-bg: rgba(
+    255,
+    165,
+    0,
+    0.4
+  ); /* Semi-transparent Orange for Highlights */
+  --highlight-text: #ffffff; /* White for Highlighted Text */
+  --selection-bg: #4682b4; /* Steel Blue for Selection Background */
+  --selection-text: #ffffff; /* White for Selection Text */
+  --glow-color: #4b4b4b; /* Dark Gray for Glow Effects */
+
+  /* Social Media Colors */
+  --reddit-color: #ff4500; /* Reddit Orange */
+  --discord-color: #7289da; /* Discord Blurple */
+  --wiki-color: #8ab4f8; /* Lighter Wiki Blue */
+  --github-color: #ffffff; /* GitHub White */
+
+  /* Gray Scale */
+  --gray-100: #333333; /* Very Dark Gray */
+  --gray-200: #444444; /* Darker Gray */
+  --gray-300: #555555; /* Dark Gray */
+  --gray-400: #666666; /* Gray */
+  --gray-500: #777777; /* Medium Gray */
+  --gray-600: #888888; /* Slate Gray */
+  --gray-700: #999999; /* Light Slate Gray */
+  --gray-800: #aaaaaa; /* Light Gray */
+  --gray-900: #bbbbbb; /* Very Light Gray */
+}
+[data-bs-theme="dark"] body {
+  background-color: var(--common-bg-color);
+}
+[data-bs-theme="dark"] .custom-navbar-color {
+  background-color: #212a31; /* Darker Blue for Navbar */
+  color: #ffffff; /* White Text Color */
+}
+/* Dark Theme Adjustments */
+[data-bs-theme="dark"] footer {
+  background-color: var(--common-bg-color);
+}
+
+.navbar-logo {
+  height: 50px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+.offcanvas-header {
+  display: flex; /* Keep the header visible */
+  justify-content: space-between; /* Align items properly */
+  background-color: #212a31; /* Semi-transparent background */
+  color: #ffffff;
+}
+.offcanvas-title {
+  font-weight: bold; /* Bold title */
+  font-size: 1.25rem; /* Title font size */
+}
+.offcanvas-body {
+  background-color: transparent;
+  padding: 0;
+}
+
+.offcanvas {
+  border: none;
+  box-shadow: none;
+}
+.white-close-button {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+.btn-primary {
+  background-color: var(
+    --button-primary-bg
+  ) !important; /* Primary button background */
+  border-color: var(--button-primary-bg) !important; /* Primary button border */
+  color: var(--button-primary-text) !important; /* Primary button text color */
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active {
+  background-color: var(
+    --button-primary-hover-bg
+  ) !important; /* Hover state for primary button */
+  border-color: var(
+    --button-primary-hover-bg
+  ) !important; /* Border color on hover */
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 0.2rem rgba(var(--glow-color), 0.5); /* Glow effect on focus */
+}
+.large-avatar {
+  width: 128px;
+  height: 128pxpx;
+}
+* Custom Navbar Color */ .custom-navbar-color {
+  background-color: #212a31; /* This is the dark blue-gray color from your theme */
+  color: #ffffff; /* White text color */
+}
+/* Custom styles for navbar items */
+.custom-navbar-color .navbar-nav .nav-link {
+  color: #d3d9d4; /* Light gray color for nav links */
+  transition: color 0.3s ease;
+}
+
+.custom-navbar-color .navbar-nav .nav-link:hover,
+.custom-navbar-color .navbar-nav .nav-link:focus {
+  color: #ffffff; /* White color on hover/focus */
+}
+
+/* Custom style for the active nav item */
+.custom-navbar-color .navbar-nav .nav-item.active .nav-link {
+  color: #748d92; /* Highlight color for active link */
+}
+/* Custom style for the navbar toggler */
+.custom-navbar-color .navbar-toggler {
+  border-color: #748d92; /* Border color for the toggler */
+}
+
+.custom-navbar-color .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+/* Custom style for the "Join the Discord" button */
+.nav-link {
+  color: #d3d9d4; /* Light color for button text */
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-brand {
+  margin-right: 0;
+}
+footer a {
+  position: relative;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: #fff;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+footer a:hover {
+  color: #f0f0f0; /* Slightly lighter shade of white */
+}
+
+footer a:hover::after {
+  transform: scaleX(1);
+}
+@media (max-width: 576px) {
+  .navbar-logo {
+    height: 40px;
+  }
+}
+
+@media (max-width: 400px) {
+  .navbar-logo {
+    height: 30px;
+  }
+}
