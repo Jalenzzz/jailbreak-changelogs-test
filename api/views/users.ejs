@@ -207,13 +207,13 @@
                 <div class="user-stats mt-2">
                   <span class="me-3" id="followers">
                     <span class="loading-icon" id="followers-loading" style="display: none;">
-                      <i class="bi bi-hourglass-split"></i> <!-- Replace with your loading icon -->
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     </span>
                     
                   </span>
                   <span id="following">
                     <span class="loading-icon" id="following-loading" style="display: none;">
-                      <i class="bi bi-hourglass-split"></i> <!-- Replace with your loading icon -->
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     </span>
                     
                   </span>
@@ -221,7 +221,10 @@
               </div>
               <div class="ms-auto">
                 <button class="btn btn-outline-primary me-2" id="message-button">Message</button>
-                <button class="btn btn-primary" id="follow-button">Follow</button>
+                <button class="btn btn-primary" style="max-height: 40px;" id="follow-button">
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <span id="button-text">Loading</span>
+              </button>
                 <button id="settings-button" class="btn btn-primary me-2 hidden">
                   <i class="bi bi-gear-fill"></i>
               </button>
@@ -253,7 +256,7 @@
                       <button class="btn btn-primary hidden" id="save-bio-button" style="position: absolute; top: 10px; right: 10px;"><i class="bi bi-save"></i></button>
                   </div>
                   <div class="container  hidden" style="position: relative;" id="recent-comments-tab">
-                    <div class="card" style="position: relative; padding: 20px;" id="description-tab">
+                    <div class="card" style="position: relative; padding: 20px; min-height: 88px;" id="description-tab">
                     <div id="comments-list">
                       <div id="loading-spinner" class="loading-spinner" style="display: none;">
                         <div class="spinner-border" role="status">
