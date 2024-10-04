@@ -153,7 +153,7 @@
       </div>
 
       <!-- Full-screen overlay menu for mobile -->
-      <div id="sideMenu" class="side-menu">
+      <div id="sideMenu" class="side-menu d-lg-none">
         <div class="side-menu-content">
           <nav class="navbar-nav">
             <div class="nav-item">
@@ -718,29 +718,5 @@
 <script src="scripts/main.js"></script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8152532464536367"
      crossorigin="anonymous"></script>
-     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const navbarToggler = document.getElementById("navbarToggler");
-        const sideMenu = document.getElementById("sideMenu");
-        const mobileViewUpdates = document.getElementById("mobileViewUpdates");
-  
-        function toggleMenu() {
-          navbarToggler.classList.toggle("opened");
-          sideMenu.classList.toggle("show");
-          document.body.classList.toggle("menu-open");
-  
-          // Update aria-expanded attribute
-          const isExpanded = navbarToggler.classList.contains("opened");
-          navbarToggler.setAttribute("aria-expanded", isExpanded);
-        }
-  
-        navbarToggler.addEventListener("click", toggleMenu);
-        mobileViewUpdates.addEventListener("click", toggleMenu);
-        // Close menu when a nav item is clicked
-        sideMenu.querySelectorAll(".nav-link, .btn").forEach((link) => {
-          link.addEventListener("click", toggleMenu);
-        });
-      });
-    </script>
 </body>
 </html>
