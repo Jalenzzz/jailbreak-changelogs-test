@@ -241,6 +241,57 @@
             </div>
           </div>
         </div>
+        <div id="settingsModal" class="modal">
+          <!-- Modal Content -->
+          <div class="modal-content">
+            <span id="close-settings" class="close">&times;</span>
+            <h2>Profile Settings</h2>
+            <form id="settingsForm">
+              <table class="table ">
+                <thead>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong for="profilePublic">Profile Public</strong></td>
+                    <td>
+                      <button id="profile-public-button" class="btn btn-danger">
+                        <i class="bi bi-x-lg"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><label for="showComments">Show Recent Comments</label></td>
+                    <td>
+                      <button id="show-comments-button" class="btn btn-danger">
+                        <i class="bi bi-x-lg"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><label for="hideFollowing">Hide Following</label></td>
+                    <td>
+                      <button id="hide-following-button" class="btn btn-danger">
+                        <i class="bi bi-x-lg"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><label for="hideFollowers">Hide Followers</label></td>
+                    <td>
+                      <button id="hide-followers-button" class="btn btn-danger">
+                        <i class="bi bi-x-lg"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- Submit Button -->
+              <div class="d-flex justify-content-center mt-3">
+                <button id="settings-submit" type="submit" class="btn btn-primary">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
   
         <!-- User Content Tabs -->
         <ul class="nav nav-tabs mb-4" id="userTabs" role="tablist">

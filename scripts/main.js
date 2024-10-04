@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
     window.history.pushState({}, "", cleanUrl);
   }
   const avatarUrl = sessionStorage.getItem("avatar");
-  console.log("Avatar URL:", avatarUrl);
 
   function getCookie(name) {
     let cookieArr = document.cookie.split(";");

@@ -59,6 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Set the user bio with the cleaned-up result
             userBio.innerHTML = resultHtml.trim();
+            editbio_button.innerHTML = '<i class="bi bi-pencil-fill"></i>'
+            editbio_button.disabled = false;
         } catch (error) {
             console.error('Error:', error);
             userBio.textContent = 'Error fetching user bio.';
@@ -322,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
               followersLoading = document.createElement('span');
               followersLoading.className = 'loading-icon';
               followersLoading.id = 'followers-loading';
-              followersLoading.innerHTML = '<i class="bi bi-hourglass-split"></i>'; // Replace with your loading icon
+              followersLoading.innerHTML = '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>'; // Replace with your loading icon
               document.getElementById('followers').prepend(followersLoading);
             }
         
@@ -331,10 +333,9 @@ document.addEventListener('DOMContentLoaded', function() {
               followingLoading = document.createElement('span');
               followingLoading.className = 'loading-icon';
               followingLoading.id = 'following-loading';
-              followingLoading.innerHTML = '<i class="bi bi-hourglass-split"></i>'; // Replace with your loading icon
+              followingLoading.innerHTML = '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>'; // Replace with your loading icon
               document.getElementById('following').prepend(followingLoading);
             }
-            console.log(userId)
             if (userId === "659865209741246514" || userId === "1019539798383398946") {
                 
                 const crown = document.getElementById('crown');
@@ -390,6 +391,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const settings_button = document.getElementById('settings-button');
     const editbio_button = document.getElementById('edit-bio-button');
+    editbio_button.innerHTML = '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>'
+    editbio_button.disabled = true;
     const message_button = document.getElementById('message-button');
     const about_button = document.getElementById('about-button');
     const recent_comments_button = document.getElementById('recent-comments-button');
@@ -620,8 +623,203 @@ document.addEventListener('DOMContentLoaded', function() {
             AlertToast("There was an error checking the owner's status.");
         });
     });
+    const profile_public_button = document.getElementById('profile-public-button');
+    const show_comments_button = document.getElementById('show-comments-button');
+    const hide_following_button = document.getElementById('hide-following-button');
+    const hide_followers_button = document.getElementById('hide-followers-button');
     settings_button.addEventListener('click', function() {
-        AlertToast("This button doesnt work yet. It will feature customization settings and security, such as hiding following/followers or your recent comments.");
+        const settingsModal = document.getElementById('settingsModal');
+        settingsModal.style.display = 'block';
+        profile_public_button.classList.remove('btn-danger', 'btn-success');
+        show_comments_button.classList.remove('btn-danger', 'btn-success');
+        hide_following_button.classList.remove('btn-danger', 'btn-success');
+        hide_followers_button.classList.remove('btn-danger', 'btn-success');
+
+        profile_public_button.classList.add('btn-secondary');
+        show_comments_button.classList.add('btn-secondary');
+        hide_following_button.classList.add('btn-secondary');
+        hide_followers_button.classList.add('btn-secondary');
+
+     
+        
+
+        profile_public_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span><span id="button-text"></span>'
+        show_comments_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span><span id="button-text"></span>'
+        hide_following_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span><span id="button-text"></span>'
+        hide_followers_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span><span id="button-text"></span>'
+        loadProfileSettings();
     });
+    async function loadProfileSettings() {
+        try {
+            const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/settings?user=${loggedinuserId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
     
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const settings = await response.json();
+    
+            // Process each setting
+            for (const [key, value] of Object.entries(settings)) {
+                switch (key) {
+                    case 'hide_followers':
+                        const hideFollowersIcon = document.createElement('i');
+                        hideFollowersIcon.classList.add('bi', value ? 'bi-x-lg' : 'bi-check-lg');
+            
+                        hide_followers_button.classList.remove('btn-danger', 'btn-success'); // Clear previous button classes
+                        hide_followers_button.classList.add('btn', value ? 'btn-danger' : 'btn-success');
+                        hide_followers_button.innerHTML = hideFollowersIcon.outerHTML; // Update button with the icon
+                        break;
+                        case 'hide_following':
+                            // Logic for hide_following
+                            const hideFollowingIcon = document.createElement('i');
+                            hideFollowingIcon.classList.add('bi', value ? 'bi-x-lg' : 'bi-check-lg'); // Set the icon based on the value
+                        
+                            hide_following_button.classList.remove('btn-danger', 'btn-success'); // Clear previous button classes
+                            hide_following_button.classList.add('btn', value ? 'btn-danger' : 'btn-success'); // Update button class based on value
+                            hide_following_button.innerHTML = hideFollowingIcon.outerHTML; // Update button with the icon
+                            break;
+                            case 'profile_public':
+                                // Logic for profile_public
+                                const profilePublicIcon = document.createElement('i');
+                                profilePublicIcon.classList.add('bi', value ? 'bi-check-lg' : 'bi-check-lg'); // Set icon based on public/private status
+                            
+                                profile_public_button.classList.remove('btn-danger', 'btn-success'); // Clear previous button classes
+                                profile_public_button.classList.add('btn', value ? 'btn-success' : 'btn-danger'); // Update button class based on value
+                                profile_public_button.innerHTML = profilePublicIcon.outerHTML; // Update button with the icon
+                                break;
+                                case 'show_recent_comments':
+                                    // Logic for show_recent_comments
+                                    const recentCommentsIcon = document.createElement('i');
+                                    recentCommentsIcon.classList.add('bi', value ? 'bi-check-lg' : 'bi-x-lg'); // Set icon based on the value
+                                
+                                    show_comments_button.classList.remove('btn-danger', 'btn-success'); // Clear previous button classes
+                                    show_comments_button.classList.add('btn', value ? 'btn-success' : 'btn-danger'); // Update button class based on value
+                                    show_comments_button.innerHTML = recentCommentsIcon.outerHTML; // Update button with the icon
+                                    break;
+                    default:
+                        break;
+                }
+            }
+        } catch (error) {
+            console.error('Error loading profile settings:', error);
+        }
+    }
+    
+    profile_public_button.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission or button's default behavior
+        const profilePublicIcon = profile_public_button.querySelector('i');
+    
+        // Toggle the icon class
+        if (profilePublicIcon.classList.contains('bi-x-lg')) {
+            profile_public_button.classList.remove('btn-danger');
+            profilePublicIcon.classList.remove('bi-x-lg');
+            profile_public_button.classList.add('btn-success');
+            profilePublicIcon.classList.add('bi-check-lg');
+        } else {
+            profilePublicIcon.classList.remove('bi-check-lg');
+            profile_public_button.classList.remove('btn-success');
+            profile_public_button.classList.add('btn-danger');
+            profilePublicIcon.classList.add('bi-x-lg');
+        }
+    }); 
+    hide_followers_button.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission or button's default behavior
+        const hideFollowersIcon = hide_followers_button.querySelector('i');
+    
+        // Toggle the icon class
+        if (hideFollowersIcon.classList.contains('bi-check-lg')) {
+            hide_followers_button.classList.remove('btn-success');
+            hideFollowersIcon.classList.remove('bi-check-lg');
+            hide_followers_button.classList.add('btn-danger');
+            hideFollowersIcon.classList.add('bi-x-lg');
+        } else {
+            hideFollowersIcon.classList.remove('bi-x-lg');
+            hide_followers_button.classList.remove('btn-danger');
+            hide_followers_button.classList.add('btn-success');
+            hideFollowersIcon.classList.add('bi-check-lg');
+        }
+    });
+    hide_following_button.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission or button's default behavior
+        const hideFollowingIcon = hide_following_button.querySelector('i');
+    
+        // Toggle the icon class
+        if (hideFollowingIcon.classList.contains('bi-check-lg')) {
+            hide_following_button.classList.remove('btn-success');
+            hideFollowingIcon.classList.remove('bi-check-lg');
+            hide_following_button.classList.add('btn-danger');
+            hideFollowingIcon.classList.add('bi-x-lg');
+        } else {
+            hideFollowingIcon.classList.remove('bi-x-lg');
+            hide_following_button.classList.remove('btn-danger');
+            hide_following_button.classList.add('btn-success');
+            hideFollowingIcon.classList.add('bi-check-lg');
+        }
+    });
+    show_comments_button.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission or button's default behavior
+        const recentCommentsIcon = show_comments_button.querySelector('i');
+    
+        // Toggle the icon class
+        if (recentCommentsIcon.classList.contains('bi-x-lg')) {
+            show_comments_button.classList.remove('btn-danger');
+            recentCommentsIcon.classList.remove('bi-x-lg');
+            show_comments_button.classList.add('btn-success');
+            recentCommentsIcon.classList.add('bi-check-lg');
+        } else {
+            recentCommentsIcon.classList.remove('bi-check-lg');
+            show_comments_button.classList.remove('btn-success');
+            show_comments_button.classList.add('btn-danger');
+            recentCommentsIcon.classList.add('bi-x-lg');
+        }
+    });
+    const save_settings_button = document.getElementById('settings-submit');
+    save_settings_button.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission
+    
+        // Assemble the request body with boolean values
+        const settingsBody = {
+            profile_public: profile_public_button.querySelector('i').classList.contains('bi-check-lg'), // true or false
+            hide_followers: !hide_followers_button.querySelector('i').classList.contains('bi-check-lg'), // true or false
+            hide_following: !hide_following_button.querySelector('i').classList.contains('bi-check-lg'), // true or false
+            show_recent_comments: show_comments_button.querySelector('i').classList.contains('bi-check-lg'), // true or false
+        };
+    
+        console.log('Saving updated settings:', settingsBody);
+        const token = getCookie('token');
+    
+        // Send the request to the server
+        fetch(`https://api.jailbreakchangelogs.xyz/users/settings/update?user=${token}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(settingsBody),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            SuccessToast('Settings saved successfully!');
+            settings_modal.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error saving settings:', error);
+            // Optionally, display an error message to the user
+        });
+    });
+    const close_settings_button = document.getElementById('close-settings');
+    const settings_modal = document.getElementById('settingsModal');
+    close_settings_button.addEventListener('click', function() {
+        settings_modal.style.display = 'none';
+    });
 });
