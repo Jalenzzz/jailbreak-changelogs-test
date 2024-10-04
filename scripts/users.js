@@ -3,6 +3,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const permissions = JSON.parse(settings)
     const recent_comments_tab = document.getElementById('recent-comments-tab');
+    const userDateBio = document.getElementById('description-updated-date');
     // Lol! these are backwards, true = false, false = true
     if (permissions.show_recent_comments == true) {
         recent_comments_tab.remove();
@@ -28,6 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             const user = await response.json();
+            const timestamp = user.last_updated || 0;
+            const date = formatDate(timestamp);
             const description = user.description || "No description available."; // Fallback message
     
             // Regular expression to match URLs starting with "https://"
@@ -76,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (loggedinuserId === userId) {
                 editbio_button.style.display = 'inline-block';
             }
+            userDateBio.textContent = `${date}`;
             userBio.innerHTML = resultHtml.trim();
             savebio_button.disabled = false;
             editbio_button.disabled = false;
@@ -424,6 +428,7 @@ document.addEventListener('DOMContentLoaded', function() {
         editbio_button.style.display = 'none';
     }
     const userBio = document.getElementById('userBio');
+    const character_count = document.getElementById('character-count');
     fetchUserBio(userId)
     const savebio_button = document.getElementById('save-bio-button');
     updateUserCounts(userId);
@@ -431,9 +436,13 @@ document.addEventListener('DOMContentLoaded', function() {
         editbio_button.style.display = 'none';
         savebio_button.style.display = 'inline-block';
         const descriptionBox = document.getElementById('description-box');
+        userDateBio.textContent = '';
+        character_count.textContent = '0/500'; // Reset character count
+
         // Clear previous content
         userBio.style.display = 'none';
         const icon = editbio_button.querySelector('i'); // Get the icon element
+        
         // Create a text input
         const textInput = document.createElement('textarea');
         textInput.style.marginTop = '20px';
@@ -444,6 +453,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .replace(/<a href="([^"]+)"[^>]*>([^<]+)<\/a>/g, '$1') // Set the value of the text input to the current bio with newlines
         textInput.className = 'form-control'; // Bootstrap class for styling
         const space = document.createElement('br'); // Line break for better formatting
+        textInput.addEventListener('input', function() {
+            const characterCount = document.getElementById('character-count');
+            characterCount.textContent = `${textInput.value.length}/500`; // Update character count
+        });
     
         // Append the input to the description box
         descriptionBox.appendChild(space);
@@ -452,10 +465,18 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 savebio_button.innerHTML = '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>'
                 savebio_button.disabled = true;
+                const characterCount = document.getElementById('character-count');
+                characterCount.textContent = '';
                 
                 const description = textInput.value;
+                if (description.length > 500) {
+                    AlertToast("Bio cannot exceed 500 characters. Please try again.");
+                    return;
+                }
+                console.log('Updating bio:', description);
                 const user = getCookie('token');
                 const body = JSON.stringify({ user, description });
+                console.log('body:', body);
                 const response = await fetch(`https://api.jailbreakchangelogs.xyz/description/update`, {
                     method: 'POST', // Specify the method, e.g., POST
                     headers: {
@@ -468,18 +489,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
     
-                // Update user bio display
-                userBio.style.display = 'block';
-                textInput.remove();
-                space.remove();
-                fetchUserBio(userId); // Fetch updated bio and convert newlines to <br>
+
             } catch (error) {
                 console.error('Error:', error);
                 userBio.style.display = 'block';
                 textInput.remove();
                 space.remove();
-                fetchUserBio(userId);
-                icon.className = 'bi bi-exclamation-triangle-fill'; // Change to exclamation triangle icon
+                alert('Failed to update bio. Please try again.');
+                window.location.reload();
+            } finally {
+                userBio.style.display = 'block';
+                textInput.remove();
+                space.remove();
+                window.location.reload(); // Refresh the page to reflect the updated bio
             }
         });
     });
