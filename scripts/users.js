@@ -58,8 +58,12 @@ document.addEventListener('DOMContentLoaded', function() {
             resultHtml = resultHtml.replace(/(<br\s*\/?>\s*){2,}$/, '<br>');
 
             // Set the user bio with the cleaned-up result
-            userBio.innerHTML = resultHtml.trim();
             editbio_button.innerHTML = '<i class="bi bi-pencil-fill"></i>'
+            savebio_button.style.display = 'none';
+            savebio_button.innerHTML = '<i class="bi bi-save"></i>'
+            editbio_button.style.display = 'inline-block';
+            userBio.innerHTML = resultHtml.trim();
+            savebio_button.disabled = false;
             editbio_button.disabled = false;
         } catch (error) {
             console.error('Error:', error);
@@ -432,8 +436,8 @@ document.addEventListener('DOMContentLoaded', function() {
         descriptionBox.appendChild(textInput);
         savebio_button.addEventListener('click', async function() {
             try {
-                savebio_button.style.display = 'none';
-                editbio_button.style.display = 'inline-block';
+                savebio_button.innerHTML = '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>'
+                savebio_button.disabled = true;
                 
                 const description = textInput.value;
                 const user = getCookie('token');
