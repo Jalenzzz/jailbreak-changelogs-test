@@ -119,6 +119,11 @@
   width: 128px;
   height: 128pxpx;
 }
+
+.nav-tabs {
+  display: flex;  /* Ensures that all items are displayed in a row */
+  align-items: center; /* Vertically aligns items */
+}
 * Custom Navbar Color */ .custom-navbar-color {
   background-color: #212a31; /* This is the dark blue-gray color from your theme */
   color: #ffffff; /* White text color */
@@ -185,6 +190,18 @@ footer a::after {
   align-items: center; /* Center items horizontally */
 }
 
+.card-pagination {
+  display: flex; /* Enable flexbox */
+  justify-content: center; /* Center items horizontally */
+  margin-left: 15px;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.recent-comments-button {
+  max-height: 100%;
+}
+
 
 /* Individual comment styling */
 #comments-list .list-group-item {
@@ -197,7 +214,7 @@ footer a::after {
   word-wrap: break-word; /* Break long words */
   overflow-wrap: break-word; /* Handle overflow of long words */
   max-width: 100%; /* Ensure comments do not exceed container width */
-  width: 90%; /* Set width to 90% for centering */
+  width: 100%; /* Set width to 90% for centering */
 }
 
 #comments-list .list-group-item:hover {
