@@ -426,9 +426,14 @@ $(document).ready(function () {
     const commentContainer = document.createElement("div");
     commentContainer.classList.add("ms-2"); // Add margin to the left of the comment
 
-    const usernameElement = document.createElement("strong");
-    usernameElement.textContent = userdata.global_name;
-
+    const usernameElement = document.createElement("a");
+    usernameElement.href = `/users/${userdata.id}`; // Set the href to redirect to the user's page
+    usernameElement.textContent = userdata.global_name; // Set the text to the user's global name
+    usernameElement.classList.add('text-decoration-none'); 
+    usernameElement.style.fontWeight = "bold"; // Make the text bold
+    usernameElement.style.textDecoration = "none"; // Remove underline
+    usernameElement.style.color = "#748d92"; // Use inherited color (usually the same as the surrounding text)
+    
     const commentTextElement = document.createElement("p");
     commentTextElement.textContent = comment.value;
     commentTextElement.classList.add("mb-0"); // Remove default margin from <p>
@@ -586,8 +591,14 @@ $(document).ready(function () {
         const commentContainer = document.createElement("div");
         commentContainer.classList.add("ms-2");
 
-        const usernameElement = document.createElement("strong");
-        usernameElement.textContent = userData.global_name;
+        const usernameElement = document.createElement("a");
+        usernameElement.href = `/users/${userdata.id}`; // Set the href to redirect to the user's page
+        usernameElement.textContent = userdata.global_name; // Set the text to the user's global name
+        usernameElement.classList.add('text-decoration-none'); 
+        usernameElement.style.fontWeight = "bold"; // Make the text bold
+        usernameElement.style.textDecoration = "none"; // Remove underline
+        usernameElement.style.color = "#748d92"; // Use inherited color (usually the same as the surrounding text)
+        
 
         const commentTextElement = document.createElement("p");
         commentTextElement.textContent = comment.content;

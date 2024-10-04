@@ -356,11 +356,27 @@ document.addEventListener('DOMContentLoaded', function() {
           const followersCount = Array.isArray(followersArray) ? followersArray.length : 0; 
       
           // Update the DOM elements with the counts
+
           const following = document.getElementById('following');
           const followers = document.getElementById('followers');
-      
-          following.textContent = followingCount + " Following"  ;
-          followers.textContent = followersCount + " Followers";
+          
+          // Create <a> tags for Following
+          const followingLink = document.createElement('a');
+          followingLink.href = `/users/${userId}/following`; // Link to the following page
+          followingLink.textContent = `${followingCount} Following`; // Set the text for following
+          followingLink.classList.add('text-decoration-none', 'text-muted'); // Add classes for styling
+          
+          // Create <a> tags for Followers
+          const followersLink = document.createElement('a');
+          followersLink.href = `/users/${userId}/followers`; // Link to the followers page
+          followersLink.textContent = `${followersCount} Followers`; // Set the text for followers
+          followersLink.classList.add('text-decoration-none', 'text-muted'); // Add classes for styling
+          
+          // Clear existing content and append links
+          following.innerHTML = ''; // Clear existing content
+          following.appendChild(followingLink); // Add the link to following
+          followers.innerHTML = ''; // Clear existing content
+          followers.appendChild(followersLink); // Add the link to followers
       
           // Hide loading icons
       
@@ -603,6 +619,9 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error fetching owner status:', error);
             AlertToast("There was an error checking the owner's status.");
         });
+    });
+    settings_button.addEventListener('click', function() {
+        AlertToast("This button doesnt work yet. It will feature customization settings and security, such as hiding following/followers or your recent comments.");
     });
     
 });

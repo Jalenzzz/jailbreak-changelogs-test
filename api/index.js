@@ -195,6 +195,66 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
+app.get("/users/:user/followers", (req, res) => {
+  const user = req.params.user; // Fallback to default user ID
+  if (!user) {
+    res.render("usersearch");
+  }
+  fetch(`https://api.jailbreakchangelogs.xyz/users/get?id=${user}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "https://jailbreakchangelogs.xyz", // Add your origin
+    },
+  })
+  .then((response) => response.json())
+  .then((userData) => {
+    if (userData.error) {
+      const defaultUserID = "659865209741246514"; // Set your default changelog ID here
+      res.redirect(`/users/${defaultUserID}/followers`);
+    }
+    // Render the page only after the data is fetched
+    const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+    res.render("followers", { userData, avatar });
+  })
+  .catch((error) => {
+    console.error("Error fetching user data:", error);
+
+    // Optionally render an error page or send a response with an error message
+    res.status(500).send("Error fetching user data");
+  });
+});
+
+app.get("/users/:user/following", (req, res) => {
+  const user = req.params.user; // Fallback to default user ID
+  if (!user) {
+    res.render("usersearch");
+  }
+  fetch(`https://api.jailbreakchangelogs.xyz/users/get?id=${user}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "https://jailbreakchangelogs.xyz", // Add your origin
+    },
+  })
+  .then((response) => response.json())
+  .then((userData) => {
+    if (userData.error) {
+      const defaultUserID = "659865209741246514"; // Set your default changelog ID here
+      res.redirect(`/users/${defaultUserID}/following`);
+    }
+    // Render the page only after the data is fetched
+    const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+    res.render("following", { userData, avatar });
+  })
+  .catch((error) => {
+    console.error("Error fetching user data:", error);
+
+    // Optionally render an error page or send a response with an error message
+    res.status(500).send("Error fetching user data");
+  });
+});
+
+
+
 app.get("/users", (req, res) => {
   res.render("usersearch"); // Render search page
 });

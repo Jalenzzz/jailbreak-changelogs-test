@@ -591,6 +591,12 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   margin-bottom: 5px;
 }
 
+#comments-list .list-group-item a {
+  color: var(--content-h3);
+  display: block;
+  margin-bottom: 5px;
+}
+
 /* Comment timestamp styling */
 #comments-list .list-group-item .text-muted {
   font-size: 0.85em;
