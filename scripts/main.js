@@ -2,24 +2,25 @@ document.addEventListener("DOMContentLoaded", () => {
   // Inject the Speed Insights code on every page load
   const path = window.location.pathname;
   try {
-    if (!document.getElementById("last-updated")) {
-      return;
+      if (document.getElementById("last-updated")) {
+        // Only fetch if the element exists
+        fetch("https://api.jailbreakchangelogs.xyz/version/website")
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("last-updated").textContent = data.date;
+            document.getElementById("version-number").textContent = data.version;
+          });
+      }
+    } catch (error) {
+      console.error("Failed to fetch version data:", error);
     }
-      fetch("https://api.jailbreakchangelogs.xyz/version/website")
-        .then((response) => response.json())
-        .then((data) => {
-          document.getElementById("last-updated").textContent = data.date;
-          document.getElementById("version-number").textContent = data.version;
-        });
-  } catch (error) {
-    console.error("Failed to fetch version data:", error);
-  }
 
   if (path.endsWith(".html")) {
     const cleanUrl = path.replace(".html", "");
     window.history.pushState({}, "", cleanUrl);
   }
   const avatarUrl = sessionStorage.getItem("avatar");
+  console.log("Avatar URL:", avatarUrl);
 
   function getCookie(name) {
     let cookieArr = document.cookie.split(";");

@@ -186,14 +186,15 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/users", (req, res) => {
-  // Redirect to a default changelog if no ID is provided in the URL
-  const defaultUserID = "659865209741246514"; // Set your default changelog ID here
-  res.redirect(`/users/${defaultUserID}`);
+  res.render("usersearch"); // Render search page
 });
 
+// Route to render a specific user profile
 app.get("/users/:user", (req, res) => {
-  const user = req.params.user || 659865209741246514; // Fallback to default user ID
-
+  const user = req.params.user; // Fallback to default user ID
+  if (!user) {
+    res.render("usersearch");
+  }
   fetch(`https://api.jailbreakchangelogs.xyz/users/get?id=${user}`, {
     headers: {
       "Content-Type": "application/json",
@@ -202,8 +203,13 @@ app.get("/users/:user", (req, res) => {
   })
     .then((response) => response.json())
     .then((userData) => {
+      if (userData.error) {
+        const defaultUserID = "659865209741246514"; // Set your default changelog ID here
+        res.redirect(`/users/${defaultUserID}`);
+      }
       // Render the page only after the data is fetched
-      res.render("users", { userData });
+      const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+      res.render("users", { userData, avatar });
     })
     .catch((error) => {
       console.error("Error fetching user data:", error);

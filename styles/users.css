@@ -242,6 +242,11 @@ footer a:hover {
   display: none; /* Initially hide the spinner */
 }
 
+.loading-icon {
+  margin-right: 5px; /* Space between icon and count */
+  vertical-align: middle; /* Align icon with text */
+}
+
 #description-box {
   min-height: 62px
 }

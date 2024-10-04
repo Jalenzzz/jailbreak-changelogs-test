@@ -225,29 +225,55 @@ document.addEventListener('DOMContentLoaded', function() {
       const follow_button = document.getElementById('follow-button');
       async function updateUserCounts(userId) {
         try {
-      
+            let followersLoading = document.getElementById('followers-loading');
+            if (!followersLoading) {
+              followersLoading = document.createElement('span');
+              followersLoading.className = 'loading-icon';
+              followersLoading.id = 'followers-loading';
+              followersLoading.innerHTML = '<i class="bi bi-hourglass-split"></i>'; // Replace with your loading icon
+              document.getElementById('followers').prepend(followersLoading);
+            }
+        
+            let followingLoading = document.getElementById('following-loading');
+            if (!followingLoading) {
+              followingLoading = document.createElement('span');
+              followingLoading.className = 'loading-icon';
+              followingLoading.id = 'following-loading';
+              followingLoading.innerHTML = '<i class="bi bi-hourglass-split"></i>'; // Replace with your loading icon
+              document.getElementById('following').prepend(followingLoading);
+            }
+            console.log(userId)
+            if (userId === "659865209741246514" || userId === "1019539798383398946") {
+                
+                const crown = document.getElementById('crown');
+                crown.style.display = 'inline-block';
+            }
+        
+            // Show loading icons
+            followersLoading.style.display = 'inline';
+            followingLoading.style.display = 'inline';
           // Await the fetching of user following and followers
           const followingArray = await fetchUserFollowing(userId); 
           const followersArray = await fetchUserFollowers(userId); 
       
-          console.log("Following Array:", followingArray); // Log the following array
-          console.log("Followers Array:", followersArray); // Log the followers array
-          console.log("Logged In User ID:", loggedinuserId);
-          const isFollowing = followersArray.some(follower => follower.follower_id === loggedinuserId);          console.log("Is Following:", isFollowing);
-          if (isFollowing) {
-            follow_button.textContent = "Unfollow";
-          } 
+          const isFollowing = followersArray.some(follower => follower.follower_id === loggedinuserId);
+          follow_button.textContent = isFollowing? "Unfollow" : "Follow";
+      
+          // Check if they are valid arrays
           const followingCount = Array.isArray(followingArray) ? followingArray.length : 0; 
           const followersCount = Array.isArray(followersArray) ? followersArray.length : 0; 
       
           // Update the DOM elements with the counts
           const following = document.getElementById('following');
           const followers = document.getElementById('followers');
-          following.textContent = followingCount.toString() + " Following";
-          followers.textContent = followersCount.toString() + " Followers";
-
+      
+          following.textContent = followingCount + " Following"  ;
+          followers.textContent = followersCount + " Followers";
+      
+          // Hide loading icons
+      
         } catch (error) {
-          console.error('Error fetching user counts:', error);
+          console.error('Error updating user counts:', error);
         }
       }
 
@@ -279,7 +305,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Clear previous content
         userBio.style.display = 'none';
         const icon = editbio_button.querySelector('i'); // Get the icon element
-        icon.className = 'bi bi-save'; // Change to save icon
         // Create a text input
         const textInput = document.createElement('textarea');
         textInput.type = 'text';
@@ -314,6 +339,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchUserBio(userId); // Fetch updated bio
             } catch (error) {
                 console.error('Error:', error);
+                userBio.style.display = 'block';
+                textInput.remove();
+                space.remove();
+                fetchUserBio(userId);
                 icon.className = 'bi bi-exclamation-triangle-fill'; // Change to exclamation triangle icon
             }
         });
@@ -430,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (follow_button.textContent === 'Follow') {
             addFollow(userId);
             FollowToast("User followed successfully.");
-            follow_button.textContent = 'Following';
+            follow_button.textContent = 'Unfollow';
         } else {
             removeFollow(userId);
             FollowToast("User unfollowed successfully.");
