@@ -14,12 +14,18 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   navbarToggler.addEventListener("click", toggleMenu);
-  mobileViewUpdates.addEventListener("click", toggleMenu);
+
+  // Conditional check for mobileViewUpdates
+  if (mobileViewUpdates) {
+    mobileViewUpdates.addEventListener("click", toggleMenu);
+  }
+
   // Close menu when a nav item is clicked
   sideMenu.querySelectorAll(".nav-link, .btn").forEach((link) => {
     link.addEventListener("click", toggleMenu);
   });
 });
+
 document.addEventListener("DOMContentLoaded", () => {
   // Inject the Speed Insights code on every page load
   const path = window.location.pathname;
