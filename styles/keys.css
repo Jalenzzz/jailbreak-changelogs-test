@@ -100,7 +100,8 @@ body {
   border-color: var(--button-primary-bg) !important; /* Primary button border */
   color: var(--button-primary-text) !important; /* Primary button text color */
 }
-* Burger Menu Icon Styles */ .burger-menu-icon {
+/* Burger Menu Icon Styles */
+.burger-menu-icon {
   background-color: transparent;
   border: none;
   cursor: pointer;
