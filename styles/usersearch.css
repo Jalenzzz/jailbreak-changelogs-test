@@ -74,15 +74,56 @@ body {
   filter: invert(1) grayscale(100%) brightness(200%);
 }
 
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
 .loading-spinner {
-  position: absolute; /* Position absolutely within the container */
-  top: 50%; /* Center vertically */
-  left: 50%; /* Center horizontally */
-  transform: translate(-50%, -50%); /* Adjust for the spinner's dimensions */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(
+    33,
+    42,
+    49,
+    0.8
+  ); /* Add this for a semi-transparent background */
+}
+
+.custom-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid transparent;
+  border-radius: 50%;
+  border-top-color: #31b1ff;
+  border-right-color: #31b1ff;
+  border-bottom-color: #ff341c;
+  border-left-color: #ff341c;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .results {
-  min-height: 100px;
+  min-height: 200px;
+  position: relative;
 }
 
 .cursive {
@@ -347,6 +388,29 @@ footer a:hover {
 
 footer a:hover::after {
   transform: scaleX(1);
+}
+.no-results-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+  .search-box {
+    width: 100% !important;
+  }
+
+  .user-grid {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .user-grid > div {
+    margin-bottom: 15px;
+  }
 }
 @media (max-width: 576px) {
   .navbar-logo {

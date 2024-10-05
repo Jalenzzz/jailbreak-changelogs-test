@@ -282,6 +282,18 @@ footer a:hover {
 footer a:hover::after {
   transform: scaleX(1);
 }
+.version-number {
+  position: absolute;
+  bottom: 10px;
+  font-size: 13px;
+  color: #90a0ac;
+  z-index: 1000;
+}
+
+.version-number-left {
+  left: 10px;
+}
+
 @media (max-width: 576px) {
   .navbar-logo {
     height: 40px;
