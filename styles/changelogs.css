@@ -1120,7 +1120,7 @@ footer.hide {
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 47px;
+    height: 42px;
   }
   .container {
     padding-left: 5px;

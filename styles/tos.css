@@ -276,6 +276,6 @@ body.menu-open {
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 27px;
+    height: 24px;
   }
 }

@@ -880,6 +880,6 @@ button {
 }
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 34px;
+    height: 31px;
   }
 }
