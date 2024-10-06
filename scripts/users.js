@@ -475,13 +475,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const character_count = document.getElementById('character-count');
     fetchUserBio(userId)
     userAvatar = document.getElementById('user-avatar');
-    const hexColor = decimalToHex(udata.accent_color);
-    userAvatar.style.border = `4px solid ${hexColor}`;
+    if (!udata.accent_color) {
+        userAvatar.style.border = '4px solid #000'; // Default blue border color
+    } else {
+        const hexColor = decimalToHex(udata.accent_color);
+        userAvatar.style.border = `4px solid ${hexColor}`;
+    }
     const savebio_button = document.getElementById('save-bio-button');
+    const cancel_button = document.getElementById('canceledit');
     updateUserCounts(userId);
     editbio_button.addEventListener('click', function() {
         editbio_button.style.display = 'none';
         savebio_button.style.display = 'inline-block';
+        cancel_button.style.display = 'inline-block';
         const descriptionBox = document.getElementById('description-box');
         userDateBio.textContent = '';
         character_count.textContent = '0/500'; // Reset character count
@@ -492,7 +498,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Create a text input
         const textInput = document.createElement('textarea');
-        textInput.style.marginTop = '20px';
+        textInput.style.marginTop = '0px';
         textInput.placeholder = 'Enter your bio here...'; // Placeholder text
         textInput.style.minHeight = '150px';
         textInput.style.resize = 'none';
@@ -553,15 +559,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.reload(); // Refresh the page to reflect the updated bio
             }
         });
+        cancel_button.addEventListener('click', function() {
+            window.location.reload();
+        });
     });
     const description_tab = document.getElementById('description-tab');
     recent_comments_button.addEventListener('click', function () {
+        const recentComments = document.getElementById('comments-list');
         // Remove 'active' class from About button and reset aria-selected
         about_button.classList.remove('active');
         about_button.setAttribute('aria-selected', 'false');
         const loading_spinner = document.getElementById('loading-spinner');
         if (!loading_spinner) {
-            card_pagination.innerHTML += '<span class="loading-icon" id="loading-spinner"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>';
+            card_pagination.innerHTML += '<span id="loading-spinner" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>';
+            recentComments.innerHTML = '<span id="loading-spinner" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>';
         }
         card_pagination.style.display = 'block'; // Reset pagination controls
         description_tab.style.display = 'none';
@@ -575,11 +586,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Optional: Any additional functionality you want to perform when this button is clicked
     });
     about_button.addEventListener('click', function () {
+        const recentComments = document.getElementById('comments-list');
         // Remove 'active' class from Recent Comments button and reset aria-selected
         if (document.getElementById('paginationControls')) {
             document.getElementById('paginationControls').innerHTML = ''; // Reset pagination controls
         }
         recent_comments_button.classList.remove('active');
+        recentComments.innerHTML = ''; // Reset recent comments
         recent_comments_button.setAttribute('aria-selected', 'false');
         if (card_pagination) {
             card_pagination.style.display = 'none';

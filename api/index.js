@@ -372,7 +372,7 @@ app.get("/users/:user", (req, res) => {
 
       // Render the page only after both data sets are fetched
       const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-      const avatar = avatarUrl.endsWith('null.png') ? '/favicon.ico' : avatarUrl;
+      const avatar = avatarUrl.endsWith('null.png') ? '/icon-512.png' : avatarUrl;
 
       res.render("users", { 
         userData, 
@@ -424,6 +424,10 @@ app.get("/faq.png", (req, res) => {
 
 app.get("/api.png", (req, res) => {
   res.sendFile(path.join(__dirname, "../API.png"));
+});
+
+app.get("/icon-512.png", (req, res) => {
+  res.sendFile(path.join(__dirname, "../icon-512.png"));
 });
 
 // Handle unknown routes by serving index.html

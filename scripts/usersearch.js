@@ -32,12 +32,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     users.forEach((user) => {
       const userCard = document.createElement("div");
+      let avatar = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+      if (avatar.endsWith("null.png")) {
+        avatar = "/icon-512.png";
+      }
       userCard.className = "user-card";
       userCard.innerHTML = `
       <div class="card user-card mb-3 border-0 shadow-sm">
         <div class="card-body p-3">
           <div class="d-flex align-items-center">
-            <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" 
+            <img src=${avatar}
                  class="user-avatar rounded-circle me-3" 
                  alt="${user.username}">
             <div class="user-info">

@@ -255,16 +255,18 @@
             </div>
           </li>
         </ul>
-  
         <div class="tab-content" id="userTabContent">
           <div class="tab-pane fade show active" id="about" role="tabpanel" aria-labelledby="about-tab">
             <div class="row">
               <div class="col-md-12 mb-4">
                 <div class="card bg-dark text-light" id="description-tab">
                   <div class="card-body position-relative" id="description-box">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="d-flex justify-content-between align-items-start mb-0" style="margin-bottom: 0px;">
                       <h5 class="card-title">About Me</h5>
                       <div>
+                        <button class="btn btn-outline-light btn-sm hidden" id="canceledit">
+                          <i class="bi bi-x-lg"></i>
+                        </button>
                         <button class="btn btn-outline-light btn-sm hidden" id="edit-bio-button">
                           <i class="bi bi-pencil-fill"></i>
                         </button>
@@ -274,22 +276,17 @@
                       </div>
                     </div>
                     <p class="card-text mb-4" id="userBio">dear readers, I feel as though I am in a dream</p>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="d-flex justify-content-between align-items-center mt-1">
                       <small class="text-muted" id="description-updated-date"></small>
                       <small class="text-muted" id="character-count"></small>
                     </div>
                   </div>
                 </div>
-                <div class="container hidden mt-4" id="recent-comments-tab">
+                <div class="container hidden mt-1" id="recent-comments-tab">
                   <div class="card bg-dark text-light">
                     <div class="card-body">
-                      <h5 class="card-title mb-3">Recent Comments</h5>
                       <div id="comments-list">
-                        <div id="loading-spinner" class="loading-spinner d-none">
-                          <div class="spinner-border text-light" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                          </div>
-                        </div>
+                        <span id="loading-spinner" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
                         <!-- Add more comments as needed -->
                       </div>
                     </div>
