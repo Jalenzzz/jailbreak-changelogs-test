@@ -719,6 +719,17 @@ footer a:hover::after {
   .breadcrumb-item:not(:last-child)::after {
     margin-left: 10px;
   }
+  .user-stats-container {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  .user-stats .stat-box {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+  .user-stats .h5 {
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 400px) {

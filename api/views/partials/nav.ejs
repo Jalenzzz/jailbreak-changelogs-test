@@ -111,7 +111,7 @@
     function updateDropdownContent() {
       const dropdownContent = userId
         ? `
-          <li><a class="dropdown-item" href="/profile">Profile</a></li>
+          <li><a class="dropdown-item" href="/users/${userId}">Profile</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="#" onclick="logout()">Log out</a></li>
         `
