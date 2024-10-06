@@ -121,23 +121,27 @@
     <script>
       // Function to load and display FAQ items
       function loadFAQ() {
-        fetch('faq.json')
-          .then(response => response.json())
-          .then(data => {
-            const faqContainer = document.getElementById('faq-container');
-            data.forEach(item => {
-              const faqItem = document.createElement('div');
-              faqItem.className = 'faq-item';
-              faqItem.innerHTML = `
-  <div class="faq-question">
-    <div class="faq-symbol q-symbol">Q</div>
-    <p class="question-text">${item.question}</p>
-  </div>
-  <div class="faq-answer">
-    <div class="faq-symbol a-symbol">A</div>
-    <p class="answer-text">${item.answer}</p>
-  </div>
-`;
+  fetch('faq.json')
+    .then(response => response.json())
+    .then(data => {
+      const faqContainer = document.getElementById('faq-container');
+      data.forEach(item => {
+        const faqItem = document.createElement('div');
+        faqItem.className = 'faq-item';
+        faqItem.innerHTML = `
+          <div class="faq-question">
+            <div class="faq-symbol-container">
+              <div class="faq-symbol q-symbol">Q</div>
+            </div>
+            <p class="question-text">${item.question}</p>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-symbol-container">
+              <div class="faq-symbol a-symbol">A</div>
+            </div>
+            <p class="answer-text">${item.answer}</p>
+          </div>
+        `;
 
               faqContainer.appendChild(faqItem);
             });
