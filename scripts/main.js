@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tokenInput.style.marginBottom = "10px"; // Margin at the bottom
     tokenInput.style.marginTop = "10px"; // Margin at the top
     tokenInput.style.marginLeft = "25px"; // Margin to the left of the input field
-    tokenInput.style.backgroundColor = "#212529"; // Dark background color
+    tokenInput.style.backgroundColor = "#627180"; // Dark background color
 
     // Create a new container for the input and buttons
     const inputButtonContainer = document.createElement("div");
