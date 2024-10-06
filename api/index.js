@@ -228,9 +228,24 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
-app.get("/users/:user/followers", (req, res) => {
+app.get("/users/:user/followers", async (req, res) => {
   const user = req.params.user; // Get the user from the URL params
-  if (!user) {
+  const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/settings?user=${user}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "https://jailbreakchangelogs.xyz",
+    }
+  });
+
+  if (!response.ok) {
+    return res.status(response.status).send('Error fetching user settings');
+  }
+
+  const data = await response.json();
+  if (data.hide_followers === 0) {
+    return res.redirect(`/users/${user}`);
+  }
+    if (!user) {
     return res.render("usersearch", {
       title: 'User Search / Changelogs',
       logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
@@ -269,8 +284,24 @@ app.get("/users/:user/followers", (req, res) => {
 });
 
 
-app.get("/users/:user/following", (req, res) => {
+app.get("/users/:user/following", async (req, res) => {
   const user = req.params.user; // Get the user from the URL params
+  const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/settings?user=${user}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "https://jailbreakchangelogs.xyz",
+    }
+  });
+
+  if (!response.ok) {
+    return res.status(response.status).send('Error fetching user settings');
+  }
+
+  const data = await response.json();
+  if (data.hide_followers === 0) {
+    return res.redirect(`/users/${user}`);
+  }
+
   if (!user) {
     return res.render("usersearch", {
       title: 'User Search / Changelogs',

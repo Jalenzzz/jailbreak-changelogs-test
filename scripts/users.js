@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             
             let image
-            console.log(permissions)
             if (permissions.banner_discord === true) {
                 image = `https://cdn.discordapp.com/banners/${userId}/${udata.banner}.png`;
             } else {
@@ -430,13 +429,17 @@ document.addEventListener('DOMContentLoaded', function() {
           
           // Create <a> tags for Following
           const followingLink = document.createElement('a');
-          followingLink.href = `/users/${userId}/following`; // Link to the following page
+          if (permissions.hide_following === false) {
+            followingLink.href = `/users/${userId}/following`; // Link to the following page
+          }
           followingLink.textContent = `${followingCount} Following`; // Set the text for following
           followingLink.classList.add('text-decoration-none', 'text-muted', 'text-bold'); // Add classes for styling
           
           // Create <a> tags for Followers
           const followersLink = document.createElement('a');
-          followersLink.href = `/users/${userId}/followers`; // Link to the followers page
+          if (permissions.hide_followers === false) {
+            followersLink.href = `/users/${userId}/followers`; // Link to the followers page
+          }
           followersLink.textContent = `${followersCount} Followers`; // Set the text for followers
           followersLink.classList.add('text-decoration-none', 'text-muted', 'text-bold'); // Add classes for styling
           
