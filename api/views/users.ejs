@@ -87,52 +87,55 @@
       
 
         <!-- User Header Section -->
-        <div class="row mb-4">
-          <div class="col-md-12">
-            <div class="user-header d-flex align-items-center">
-                <img src="<%= avatar %>" class="user-avatar rounded-circle me-3 large-avatar" alt="User Avatar">
-              <div class="user-info">
-                
-                <h2 class="mb-0">
-                  <%= userData.global_name %> 
-                  <a id="crown" style="display: none;">
-                    <div class="card" style="display: inline-flex; padding: 3px; align-items: center; justify-content: center;">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-                        <path fill="none" stroke="#f5aa45" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 6l4 6l5-4l-2 10H5L3 8l5 4z" />
-                      </svg>
-                    </div>
-                  </a>
-                </h2>
-                
-                <a class="text-muted mb-0" href="https://discord.com/users/<%= userData.id %>">@<%= userData.username %></a>
-                <div class="user-stats mt-2">
-                  <span class="me-3" id="followers">
-                    <span class="loading-icon" id="followers-loading" style="display: none;">
-                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    </span>
-                    Followers
-                  </span>
-                  <span id="following">
-                    <span class="loading-icon" id="following-loading" style="display: none;">
-                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    </span>
-                    Following
-                  </span>
-                </div>
-              </div>
-              <div class="ms-auto">
-                <button class="btn btn-outline-primary me-2" id="message-button">Message</button>
-                <button class="btn btn-primary" style="max-height: 40px;" id="follow-button">
-                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  <span id="button-text">Loading</span>
-              </button>
-                <button id="settings-button" class="btn btn-primary me-2 hidden">
-                  <i class="bi bi-gear-fill"></i>
-              </button>
-              </div>
+<div class="row mb-4">
+  <div class="col-md-12">
+    <!-- New banner div -->
+    <div class="user-banner mb-3">
+      <img src="<%= bannerUrl %>" class="w-100 banner-image" alt="User Banner">
+    </div>
+    <div class="user-header d-flex align-items-center position-relative">
+      <img src="<%= avatar %>" class="user-avatar rounded-circle me-3 large-avatar position-absolute" alt="User Avatar">
+      <div class="user-info ms-5 ps-5">
+        <h2 class="mb-0">
+          <%= userData.global_name %> 
+          <a id="crown" style="display: none;">
+            <div class="card" style="display: inline-flex; padding: 3px; align-items: center; justify-content: center;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                <path fill="none" stroke="#f5aa45" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 6l4 6l5-4l-2 10H5L3 8l5 4z" />
+              </svg>
             </div>
-          </div>
+          </a>
+        </h2>
+        <a class="text-muted mb-0" href="https://discord.com/users/<%= userData.id %>">@<%= userData.username %></a>
+        <div class="user-stats mt-2">
+          <span class="me-3" id="followers">
+            <span class="loading-icon" id="followers-loading" style="display: none;">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </span>
+            Followers
+          </span>
+          <span id="following">
+            <span class="loading-icon" id="following-loading" style="display: none;">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </span>
+            Following
+          </span>
         </div>
+      </div>
+      <div class="ms-auto">
+        <button class="btn btn-outline-primary me-2" id="message-button">Message</button>
+        <button class="btn btn-primary" style="max-height: 40px;" id="follow-button">
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          <span id="button-text">Loading</span>
+        </button>
+        <button id="settings-button" class="btn btn-primary me-2 hidden">
+          <i class="bi bi-gear-fill"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
         <div id="settingsModal" class="modal">
           <!-- Modal Content -->
           <div class="modal-content">

@@ -335,14 +335,14 @@ app.get("/users/:user", (req, res) => {
   const settingsFetch = fetch(`https://api.jailbreakchangelogs.xyz/users/settings?user=${user}`, {
     headers: {
       "Content-Type": "application/json",
-      Origin: "https://jailbreakchangelogs.xyz", // Add your origin
+      Origin: "https://jailbreakchangelogs.xyz",
     },
   }).then((response) => response.json());
 
   const userFetch = fetch(`https://api.jailbreakchangelogs.xyz/users/get?id=${user}`, {
     headers: {
       "Content-Type": "application/json",
-      Origin: "https://jailbreakchangelogs.xyz", // Add your origin
+      Origin: "https://jailbreakchangelogs.xyz",
     },
   }).then((response) => response.json());
 
@@ -350,30 +350,35 @@ app.get("/users/:user", (req, res) => {
   Promise.all([settingsFetch, userFetch])
     .then(([settings1, userData]) => {
       const booleanSettings = {
-        ...settings1, // Keep other properties like user_id and updated_at
+        ...settings1,
         profile_public: Boolean(settings1.profile_public),
         show_recent_comments: Boolean(settings1.show_recent_comments),
         hide_following: Boolean(settings1.hide_following),
         hide_followers: Boolean(settings1.hide_followers)
       };
       const settings = {
-        ...booleanSettings, // Keep other properties like user_id and updated_at
+        ...booleanSettings,
         profile_public: !booleanSettings.profile_public,
         show_recent_comments: !booleanSettings.show_recent_comments,
         hide_following: !booleanSettings.hide_following,
         hide_followers: !booleanSettings.hide_followers
       };
       if (userData.error) {
-        const defaultUserID = "659865209741246514"; // Set your default changelog ID here
+        const defaultUserID = "659865209741246514";
         return res.redirect(`/users/${defaultUserID}`);
       }
 
       // Render the page only after both data sets are fetched
       const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
       const avatar = avatarUrl.endsWith('null.png') ? '/favicon.ico' : avatarUrl;
+      
+      // Add banner URL (assuming it's provided in userData, adjust as necessary)
+      const bannerUrl = userData.banner ? `https://cdn.discordapp.com/banners/${userData.id}/${userData.banner}.png` : null;
+
       res.render("users", { 
         userData, 
         avatar, 
+        bannerUrl,
         settings,
         title: 'User Profile',
         logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
@@ -385,6 +390,7 @@ app.get("/users/:user", (req, res) => {
       res.status(500).send("Error fetching user data");
     });
 });
+
 
 app.get('/timeline', (req, res) => {
   res.render('timeline', {

@@ -59,7 +59,67 @@
 [data-bs-theme="dark"] footer {
   background-color: var(--common-bg-color);
 }
-
+.comment-card {
+  border: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
+}
+.comment-card:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+.card-body {
+  padding: 1rem;
+}
+.comment-container {
+  display: flex;
+  gap: 1rem;
+}
+.comment-image-container {
+  flex-shrink: 0;
+  width: 200px;
+  height: 112.5px; /* Maintains a 16:9 aspect ratio */
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.comment-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.comment-content-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.card-title {
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+.card-subtitle {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+.comment-text {
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+.btn-sm {
+  align-self: flex-start;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+}
 .hidden {
   display: none; /* Hides the button */
 }
@@ -323,20 +383,48 @@ footer a::after {
 .recent-comments-button {
   max-height: 100%;
 }
+.user-banner {
+  position: relative;
+  height: 200px; /* Adjust as needed */
+  overflow: hidden;
+}
+
+.banner-image {
+  object-fit: cover;
+  height: 100%;
+}
+
+.user-header {
+  margin-top: -50px; /* Adjust to overlap with banner */
+}
+
+.user-avatar {
+  width: 120px; /* Adjust size as needed */
+  height: 120px;
+  border: 4px solid #fff; /* White border around avatar */
+  top: -60px; /* Adjust to position avatar on banner */
+  left: 20px;
+  z-index: 1;
+}
+
+.user-info {
+  padding-top: 60px; /* Make space for the avatar */
+}
 
 /* Individual comment styling */
 #comments-list .list-group-item {
   background-color: #212a31; /* Dark background for comments */
   border: 1px solid #748d92; /* Border around comments */
   border-radius: 15px; /* Rounded corners */
-  padding: 15px; /* Padding inside each comment */
+  padding: 15px 15px 1px; /* Reduced bottom padding */
   margin-bottom: 15px; /* Space between comments */
   transition: transform 0.2s ease, box-shadow 0.2s ease; /* Transition effects */
   word-wrap: break-word; /* Break long words */
   overflow-wrap: break-word; /* Handle overflow of long words */
   max-width: 100%; /* Ensure comments do not exceed container width */
-  width: 100%; /* Set width to 90% for centering */
+  width: 100%; /* Set width to 100% */
 }
+
 
 #comments-list .list-group-item:hover {
   transform: translateY(-3px); /* Raise comment on hover */
@@ -472,6 +560,24 @@ form label {
 
 footer a:hover::after {
   transform: scaleX(1);
+}
+@media (max-width: 768px) {
+  .comment-container {
+      flex-direction: column;
+  }
+  .comment-header {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+  .card-title {
+      margin-bottom: 0.25rem;
+  }
+  .card-subtitle {
+      font-size: 1rem;
+  }
+  .comment-text {
+      font-size: 0.85rem;
+  }
 }
 @media (max-width: 576px) {
   .navbar-logo {

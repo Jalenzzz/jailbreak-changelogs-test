@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     async function fetchUserBio(userId) {
         try {
-            const response = await fetch(`https://api.jailbreakchangelogs.xyz/description/get?user=${userId}`);
+            const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/description/get?user=${userId}`);
             
             if (!response.ok) {
                 if (response.status === 404) {
@@ -303,19 +303,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const image_url = item.image_url || url; // Placeholder image URL
                 commentElement.className = 'list-group-item';
+                // the actual comments
                 commentElement.innerHTML = `
-<div style="display: flex; align-items: center; justify-content: space-between;">
-    <div style="flex-grow: 1;">
-        <strong>${capitalizeFirstLetter(comment.item_type)} ${comment.item_id} | ${item.title}</strong>
-        <div class="text-muted">${formattedDate}</div>
-        <p>${comment.content}</p>
+<div class="card mb-3 comment-card">
+    <div class="card-body">
+        <div class="comment-container">
+            <div class="comment-image-container d-none d-md-block">
+                <img src="${image_url}" alt="Comment Image" class="comment-image"/>
+            </div>
+            <div class="comment-content-container">
+                <div class="comment-header">
+                    <h6 class="card-title">${capitalizeFirstLetter(comment.item_type)} ${comment.item_id}</h6>
+                    <small class="text-muted">${formattedDate}</small>
+                </div>
+                <h5 class="card-subtitle fw-bold">${item.title}</h5>
+                <p class="card-text comment-text">${comment.content}</p>
+                <a href="/${comment.item_type}s/${comment.item_id}" class="btn btn-outline-primary btn-sm">
+                    View ${capitalizeFirstLetter(comment.item_type)}
+                </a>
+            </div>
+        </div>
     </div>
-    <a href="/${comment.item_type}s/${comment.item_id}" class="btn btn-outline-primary me-2" id="message-button">
-        View ${capitalizeFirstLetter(comment.item_type)}
-    </a>
-    <img src="${image_url}" alt="Comment Image" style="width: 15%; height: auto; margin-left: 10px;"/> <!-- Small image -->
 </div>
-            `;
+`;
+
                 comments_to_add.push(commentElement); // Add the new comment to the array
             }
             // Add all comments to the DOM
@@ -488,7 +499,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const user = getCookie('token');
                 const body = JSON.stringify({ user, description });
                 console.log('body:', body);
-                const response = await fetch(`https://api.jailbreakchangelogs.xyz/description/update`, {
+                const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/description/update`, {
                     method: 'POST', // Specify the method, e.g., POST
                     headers: {
                         'Content-Type': 'application/json', // Set content type to JSON
