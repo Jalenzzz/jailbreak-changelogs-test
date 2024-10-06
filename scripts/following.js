@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Async function to fetch followers
     async function fetchFollowers(userId) {
         try {
-            const response = await fetch(`https://api.jailbreakchangelogs.xyz/following/get?user=${userId}`);
+            const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/following/get?user=${userId}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

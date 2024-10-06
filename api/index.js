@@ -169,7 +169,7 @@ app.get("/seasons/:season", async (req, res) => {
     const { season, title } = data; // Adjust the destructured properties based on the API response structure
     res.render("seasons", { 
       season, 
-      title, 
+      title: "Seasons / Changelogs", 
       image_url,
       logoUrl: "https://res.cloudinary.com/dsvlphknq/image/upload/v1728177220/logos/seasons_logo.png",
       logoAlt: "Jailbreak Seasons Logo"
@@ -182,7 +182,7 @@ app.get("/seasons/:season", async (req, res) => {
 
 app.get('/bot', (req, res) => {
   res.render('bot', {
-    title: 'Bot',
+    title: 'Discord Bot / Changelogs',
     logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs_discord_bot.png',
     logoAlt: 'Timeline Page Logo'
   });
@@ -190,7 +190,7 @@ app.get('/bot', (req, res) => {
 
 app.get('/faq', (req, res) => {
   res.render('faq', {
-    title: 'Bot',
+    title: 'User FAQ',
     logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs_faq.png',
     logoAlt: 'FAQ Page Logo'
   });
@@ -198,7 +198,7 @@ app.get('/faq', (req, res) => {
 
 app.get('/privacy', (req, res) => {
   res.render('privacy', {
-    title: 'Privacy Policy',
+    title: 'Privacy Policy / Changelogs',
     logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs_privacy_policy.png',
     logoAlt: 'Privacy Policy Page Logo'
   });
@@ -206,7 +206,7 @@ app.get('/privacy', (req, res) => {
 
 app.get('/tos', (req, res) => {
   res.render('tos', {
-    title: 'Terms Of Service',
+    title: 'Terms Of Service / Changelogs',
     logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392624/logos/changelogs_tos.png',
     logoAlt: 'TOS Page Logo'
   });
@@ -218,7 +218,7 @@ app.get("/botinvite", (req, res) => {
 
 app.get('/keys', (req, res) => {
   res.render('keys', {
-    title: 'Keys',
+    title: 'API / Changelogs',
     logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727729487/logos/changelogs_api.png',
     logoAlt: 'API Page Logo'
   });
@@ -232,7 +232,7 @@ app.get("/users/:user/followers", (req, res) => {
   const user = req.params.user; // Get the user from the URL params
   if (!user) {
     return res.render("usersearch", {
-      title: 'Users',
+      title: 'User Search / Changelogs',
       logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
       logoAlt: 'Users Page Logo'
     });
@@ -255,7 +255,7 @@ app.get("/users/:user/followers", (req, res) => {
     res.render("followers", { 
       userData, 
       avatar,
-      title: 'Followers',
+      title: 'Followers / Changelogs',
       logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
       logoAlt: 'Users Page Logo'
     });
@@ -273,7 +273,7 @@ app.get("/users/:user/following", (req, res) => {
   const user = req.params.user; // Get the user from the URL params
   if (!user) {
     return res.render("usersearch", {
-      title: 'Users',
+      title: 'User Search / Changelogs',
       logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
       logoAlt: 'Users Page Logo'
     });
@@ -296,7 +296,7 @@ app.get("/users/:user/following", (req, res) => {
     res.render("following", { 
       userData, 
       avatar,
-      title: 'Users',
+      title: 'Users - Following',
       logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
       logoAlt: 'Users Page Logo'
     });
@@ -388,7 +388,7 @@ app.get("/users/:user", (req, res) => {
 
 app.get('/timeline', (req, res) => {
   res.render('timeline', {
-    title: 'Timeline',
+    title: 'Timeline / Changelogs',
     logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728177020/logos/timeline.png',
     logoAlt: 'Timeline Page Logo'
   });
@@ -404,7 +404,7 @@ app.get('/tradetracker', (req, res) => {
 
 app.get('/', (req, res) => {
   res.render('index', {
-    title: 'Home',
+    title: 'Home / Changelogs',
     logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727987863/logos/home_page.png',
     logoAlt: 'Home Page Logo'
   });

@@ -552,7 +552,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     async function fetchUserFollowers(userId) {
         try {
-            const response = await fetch(`https://api.jailbreakchangelogs.xyz/followers/get?user=${userId}`);
+            const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/followers/get?user=${userId}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -564,7 +564,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     async function fetchUserFollowing(userId) {
         try {
-            const response = await fetch(`https://api.jailbreakchangelogs.xyz/following/get?user=${userId}`);
+            const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/following/get?user=${userId}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -593,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function addFollow(userId) {
         try {
             const user = getCookie('token');
-            const response = await fetch(`https://api.jailbreakchangelogs.xyz/followers/add`, {
+            const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/followers/add`, {
                 method: 'POST', // Specify the method, e.g., POST
                 headers: {
                     'Content-Type': 'application/json', // Set content type to JSON
@@ -614,7 +614,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function removeFollow(userId) {
         try {
             const user = getCookie('token');
-            const response = await fetch(`https://api.jailbreakchangelogs.xyz/followers/remove`, {
+            const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/followers/remove`, {
                 method: 'DELETE', // Specify the method, e.g., POST
                 headers: {
                     'Content-Type': 'application/json', // Set content type to JSON
