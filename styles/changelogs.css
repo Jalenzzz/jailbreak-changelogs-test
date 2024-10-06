@@ -176,6 +176,10 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   border: none;
   transition: background-color 0.3s ease;
 }
+.nav-link:hover {
+  background-color: rgba(211, 217, 212, 0.1); /* Slightly lighter background on hover */
+  color: #ffffff; /* Brighter text color on hover */
+}
 
 .custom-search-input {
   background-color: #f0f0f0; /* Light gray background */
@@ -222,6 +226,36 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   cursor: pointer;
   padding: 0;
   z-index: 1001; /* Ensure it's above the fullscreen menu */
+}
+
+.breadcrumb {
+  background-color: #212529; /* Light background color */
+  border-radius: 0.25rem; /* Slightly rounded corners */
+  padding: 10px 15px; /* Padding around the breadcrumb */
+  list-style: none; /* Remove default list styling */
+  display: flex; /* Use flexbox for alignment */
+  flex-wrap: wrap; /* Allow wrapping */
+  max-width: fit-content;
+}
+
+.breadcrumb-item {
+  margin-right: 10px; /* Space between items */
+  font-size: 16px; /* Font size */
+}
+
+.breadcrumb-item a {
+  text-decoration: none; /* Remove underline */
+  color: #007bff; /* Bootstrap primary color */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.breadcrumb-item a:hover {
+  color: #0056b3; /* Darker blue on hover */
+}
+
+.breadcrumb-item.active {
+  color: #6c757d; /* Bootstrap secondary color for active item */
+  font-weight: bold; /* Bold text for active item */
 }
 
 /* Burger Menu Line Styles */
@@ -1032,7 +1066,7 @@ footer.hide {
 }
 @media (max-width: 576px) {
   .navbar-logo {
-    height: 50px;
+    height: 55px;
   }
   #comment-form .input-group {
     flex-wrap: nowrap;
@@ -1062,7 +1096,7 @@ footer.hide {
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 40px;
+    height: 45px;
   }
   .container {
     padding-left: 5px;

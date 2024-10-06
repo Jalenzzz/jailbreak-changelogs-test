@@ -1,5 +1,5 @@
 .hero {
-  background-image: url("https://cdn.jailbreakchangelogs.xyz/backgrounds/jailbreak_background.png");
+  background-image: url("https://res.cloudinary.com/dsvlphknq/image/upload/v1727358371/backgrounds/3.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -14,6 +14,35 @@
   bottom: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.5);
+}
+.breadcrumb {
+  background-color: #212529; /* Light background color */
+  border-radius: 0.25rem; /* Slightly rounded corners */
+  padding: 10px 15px; /* Padding around the breadcrumb */
+  list-style: none; /* Remove default list styling */
+  display: flex; /* Use flexbox for alignment */
+  flex-wrap: wrap; /* Allow wrapping */
+  max-width: fit-content;
+}
+
+.breadcrumb-item {
+  margin-right: 10px; /* Space between items */
+  font-size: 16px; /* Font size */
+}
+
+.breadcrumb-item a {
+  text-decoration: none; /* Remove underline */
+  color: #007bff; /* Bootstrap primary color */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.breadcrumb-item a:hover {
+  color: #0056b3; /* Darker blue on hover */
+}
+
+.breadcrumb-item.active {
+  color: #6c757d; /* Bootstrap secondary color for active item */
+  font-weight: bold; /* Bold text for active item */
 }
 .hero-content {
   position: relative;
@@ -97,7 +126,8 @@ body {
 
 .custom-navbar-color .navbar-nav .nav-link:hover,
 .custom-navbar-color .navbar-nav .nav-link:focus {
-  color: #ffffff; /* White color on hover/focus */
+  background-color: rgba(211, 217, 212, 0.1); /* Slightly lighter background on hover */
+  color: #ffffff; /* Brighter text color on hover */
 }
 
 /* Custom style for the active nav item */
@@ -296,12 +326,12 @@ footer a:hover::after {
 
 @media (max-width: 576px) {
   .navbar-logo {
-    height: 40px;
+    height: 46px;
   }
 }
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 35px;
+    height: 39px;
   }
 }

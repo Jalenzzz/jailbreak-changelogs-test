@@ -111,7 +111,35 @@ body {
   border-left-color: #ff341c;
   animation: spin 1s linear infinite;
 }
+.breadcrumb {
+  background-color: #212529; /* Light background color */
+  border-radius: 0.25rem; /* Slightly rounded corners */
+  padding: 10px 15px; /* Padding around the breadcrumb */
+  list-style: none; /* Remove default list styling */
+  display: flex; /* Use flexbox for alignment */
+  flex-wrap: wrap; /* Allow wrapping */
+  max-width: fit-content;
+}
 
+.breadcrumb-item {
+  margin-right: 10px; /* Space between items */
+  font-size: 16px; /* Font size */
+}
+
+.breadcrumb-item a {
+  text-decoration: none; /* Remove underline */
+  color: #007bff; /* Bootstrap primary color */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.breadcrumb-item a:hover {
+  color: #0056b3; /* Darker blue on hover */
+}
+
+.breadcrumb-item.active {
+  color: #6c757d; /* Bootstrap secondary color for active item */
+  font-weight: bold; /* Bold text for active item */
+}
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -143,25 +171,15 @@ body {
 }
 /* Custom styles for navbar items */
 .custom-navbar-color .navbar-nav .nav-link {
-  color: #d3d9d4; /* Light gray color for nav links */
-  transition: color 0.3s ease;
+  color: #d3d9d4; /* Light color for button text */
+  border: none;
+  transition: background-color 0.3s ease;
 }
 
 .custom-navbar-color .navbar-nav .nav-link:hover,
 .custom-navbar-color .navbar-nav .nav-link:focus {
-  color: #ffffff; /* White color on hover/focus */
-}
-
-/* Custom style for the active nav item */
-.custom-navbar-color .navbar-nav .nav-item.active .nav-link {
-  color: #748d92; /* Highlight color for active link */
-}
-
-/* Custom style for the "Join the Discord" button */
-.nav-link {
-  color: #d3d9d4; /* Light color for button text */
-  border: none;
-  transition: background-color 0.3s ease;
+  background-color: rgba(211, 217, 212, 0.1); /* Slightly lighter background on hover */
+  color: #ffffff; /* Brighter text color on hover */
 }
 /* Burger Menu Icon Styles */
 .burger-menu-icon {
@@ -414,12 +432,12 @@ footer a:hover::after {
 }
 @media (max-width: 576px) {
   .navbar-logo {
-    height: 40px;
+    height: 46px;
   }
 }
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 35px;
+    height: 38px;
   }
 }

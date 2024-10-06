@@ -592,8 +592,8 @@ $(document).ready(function () {
         commentContainer.classList.add("ms-2");
 
         const usernameElement = document.createElement("a");
-        usernameElement.href = `/users/${userdata.id}`; // Set the href to redirect to the user's page
-        usernameElement.textContent = userdata.global_name; // Set the text to the user's global name
+        usernameElement.href = `/users/${userData.id}`; // Set the href to redirect to the user's page
+        usernameElement.textContent = userData.global_name; // Set the text to the user's global name
         usernameElement.classList.add('text-decoration-none'); 
         usernameElement.style.fontWeight = "bold"; // Make the text bold
         usernameElement.style.textDecoration = "none"; // Remove underline

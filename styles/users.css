@@ -124,31 +124,22 @@
   display: flex; /* Ensures that all items are displayed in a row */
   align-items: center; /* Vertically aligns items */
 }
-* Custom Navbar Color */ .custom-navbar-color {
+/* Custom Navbar Color */
+.custom-navbar-color {
   background-color: #212a31; /* This is the dark blue-gray color from your theme */
   color: #ffffff; /* White text color */
 }
 /* Custom styles for navbar items */
 .custom-navbar-color .navbar-nav .nav-link {
-  color: #d3d9d4; /* Light gray color for nav links */
-  transition: color 0.3s ease;
+  color: #d3d9d4; /* Light color for button text */
+  border: none;
+  transition: background-color 0.3s ease;
 }
 
 .custom-navbar-color .navbar-nav .nav-link:hover,
 .custom-navbar-color .navbar-nav .nav-link:focus {
-  color: #ffffff; /* White color on hover/focus */
-}
-
-/* Custom style for the active nav item */
-.custom-navbar-color .navbar-nav .nav-item.active .nav-link {
-  color: #748d92; /* Highlight color for active link */
-}
-
-/* Custom style for the "Join the Discord" button */
-.nav-link {
-  color: #d3d9d4; /* Light color for button text */
-  border: none;
-  transition: background-color 0.3s ease;
+  background-color: rgba(211, 217, 212, 0.1); /* Slightly lighter background on hover */
+  color: #ffffff; /* Brighter text color on hover */
 }
 
 .navbar-brand {
@@ -484,12 +475,12 @@ footer a:hover::after {
 }
 @media (max-width: 576px) {
   .navbar-logo {
-    height: 40px;
+    height: 46px;
   }
 }
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 35px;
+    height: 38px;
   }
 }

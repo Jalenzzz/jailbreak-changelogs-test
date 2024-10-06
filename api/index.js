@@ -66,7 +66,7 @@ app.get("/owner/check/:user", (req, res) => {
 });
 
 app.get("/changelogs/:changelog", async (req, res) => {
-  let changelogId = req.params.changelog || 1; // Default to user 1 if no ID is provided
+  let changelogId = req.params.changelog || 1;
   console.log(`Fetching changelog with ID: ${changelogId}`);
   const apiUrl = `https://api.jailbreakchangelogs.xyz/changelogs/get?id=${changelogId}`;
 
@@ -83,6 +83,8 @@ app.get("/changelogs/:changelog", async (req, res) => {
         title: "Changelog not found",
         image_url:
           "https://res.cloudinary.com/dsvlphknq/image/upload/v1727054787/changelogs/changelog-image-287.png",
+        logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs.png',
+        logoAlt: 'Changelogs Page Logo'
       });
     }
 
@@ -93,7 +95,12 @@ app.get("/changelogs/:changelog", async (req, res) => {
     const data = await response.json();
     const { title, image_url } = data;
 
-    res.render("changelogs", { title, image_url });
+    res.render("changelogs", { 
+      title, 
+      image_url,
+      logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs.png',
+      logoAlt: 'Changelogs Page Logo'
+    });
   } catch (error) {
     console.error("Error fetching changelog data:", error);
     res.status(500).send("Internal Server Error");
@@ -107,7 +114,7 @@ app.get("/seasons", (req, res) => {
 });
 
 app.get("/seasons/:season", async (req, res) => {
-  let seasonId = req.params.season || 1; // Default to user 1 if no ID is provided
+  let seasonId = req.params.season || 1; // Default to season 1 if no ID is provided
   const apiUrl = `https://api.jailbreakchangelogs.xyz/seasons/get?season=${seasonId}`;
   const rewardsUrl = `https://api.jailbreakchangelogs.xyz/rewards/get?season=${seasonId}`;
 
@@ -123,8 +130,9 @@ app.get("/seasons/:season", async (req, res) => {
       return res.render("seasons", {
         season: "???",
         title: "Season not found",
-        image_url:
-          "https://res.cloudinary.com/dsvlphknq/image/upload/v1727054787/changelogs/changelog-image-287.png",
+        image_url: "https://res.cloudinary.com/dsvlphknq/image/upload/v1727054787/changelogs/changelog-image-287.png",
+        logoUrl: "https://res.cloudinary.com/dsvlphknq/image/upload/v1728177220/logos/seasons_logo.png",
+        logoAlt: "Jailbreak Seasons Logo"
       });
     }
     const rewardsResponse = await fetch(rewardsUrl, {
@@ -138,8 +146,9 @@ app.get("/seasons/:season", async (req, res) => {
       return res.render("seasons", {
         season: "???",
         title: "Season not found",
-        image_url:
-          "https://res.cloudinary.com/dsvlphknq/image/upload/v1727054787/changelogs/changelog-image-287.png",
+        image_url: "https://res.cloudinary.com/dsvlphknq/image/upload/v1727054787/changelogs/changelog-image-287.png",
+        logoUrl: "https://res.cloudinary.com/dsvlphknq/image/upload/v1728177220/logos/seasons_logo.png",
+        logoAlt: "Jailbreak Seasons Logo"
       });
     }
 
@@ -152,43 +161,67 @@ app.get("/seasons/:season", async (req, res) => {
     );
 
     // Ensure we got the reward before accessing properties
-    let image_url =
-      "https://res.cloudinary.com/dsvlphknq/image/upload/v1727054787/changelogs/changelog-image-287.png";
+    let image_url = "https://res.cloudinary.com/dsvlphknq/image/upload/v1727054787/changelogs/changelog-image-287.png";
     if (level_10_reward) {
       image_url = level_10_reward.link;
     }
 
     const { season, title } = data; // Adjust the destructured properties based on the API response structure
-    res.render("seasons", { season, title, image_url }); // Render the seasons page with the retrieved data
+    res.render("seasons", { 
+      season, 
+      title, 
+      image_url,
+      logoUrl: "https://res.cloudinary.com/dsvlphknq/image/upload/v1728177220/logos/seasons_logo.png",
+      logoAlt: "Jailbreak Seasons Logo"
+    }); // Render the seasons page with the retrieved data
   } catch (error) {
     console.error("Error fetching season data:", error);
     res.status(500).send("Internal Server Error");
   }
 });
 
-app.get("/bot", (req, res) => {
-  res.render("bot");
+app.get('/bot', (req, res) => {
+  res.render('bot', {
+    title: 'Bot',
+    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs_discord_bot.png',
+    logoAlt: 'Timeline Page Logo'
+  });
 });
 
-app.get("/faq", (req, res) => {
-  res.render("faq");
+app.get('/faq', (req, res) => {
+  res.render('faq', {
+    title: 'Bot',
+    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs_faq.png',
+    logoAlt: 'FAQ Page Logo'
+  });
 });
 
-app.get("/privacy", (req, res) => {
-  res.render("privacy");
+app.get('/privacy', (req, res) => {
+  res.render('privacy', {
+    title: 'Privacy Policy',
+    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs_privacy_policy.png',
+    logoAlt: 'Privacy Policy Page Logo'
+  });
 });
 
-app.get("/tos", (req, res) => {
-  console.log("Serving FAQ page");
-  res.render("tos");
+app.get('/tos', (req, res) => {
+  res.render('tos', {
+    title: 'Terms Of Service',
+    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392624/logos/changelogs_tos.png',
+    logoAlt: 'TOS Page Logo'
+  });
 });
 
 app.get("/botinvite", (req, res) => {
   res.render("botinvite");
 });
 
-app.get("/keys", (req, res) => {
-  res.render("keys");
+app.get('/keys', (req, res) => {
+  res.render('keys', {
+    title: 'Keys',
+    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727729487/logos/changelogs_api.png',
+    logoAlt: 'API Page Logo'
+  });
 });
 
 app.get("/login", (req, res) => {
@@ -196,10 +229,15 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/users/:user/followers", (req, res) => {
-  const user = req.params.user; // Fallback to default user ID
+  const user = req.params.user; // Get the user from the URL params
   if (!user) {
-    res.render("usersearch");
+    return res.render("usersearch", {
+      title: 'Users',
+      logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+      logoAlt: 'Users Page Logo'
+    });
   }
+  
   fetch(`https://api.jailbreakchangelogs.xyz/users/get?id=${user}`, {
     headers: {
       "Content-Type": "application/json",
@@ -210,11 +248,17 @@ app.get("/users/:user/followers", (req, res) => {
   .then((userData) => {
     if (userData.error) {
       const defaultUserID = "659865209741246514"; // Set your default changelog ID here
-      res.redirect(`/users/${defaultUserID}/followers`);
+      return res.redirect(`/users/${defaultUserID}/followers`);
     }
     // Render the page only after the data is fetched
     const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-    res.render("followers", { userData, avatar });
+    res.render("followers", { 
+      userData, 
+      avatar,
+      title: 'Followers',
+      logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+      logoAlt: 'Users Page Logo'
+    });
   })
   .catch((error) => {
     console.error("Error fetching user data:", error);
@@ -223,12 +267,18 @@ app.get("/users/:user/followers", (req, res) => {
     res.status(500).send("Error fetching user data");
   });
 });
+
 
 app.get("/users/:user/following", (req, res) => {
-  const user = req.params.user; // Fallback to default user ID
+  const user = req.params.user; // Get the user from the URL params
   if (!user) {
-    res.render("usersearch");
+    return res.render("usersearch", {
+      title: 'Users',
+      logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+      logoAlt: 'Users Page Logo'
+    });
   }
+  
   fetch(`https://api.jailbreakchangelogs.xyz/users/get?id=${user}`, {
     headers: {
       "Content-Type": "application/json",
@@ -239,11 +289,17 @@ app.get("/users/:user/following", (req, res) => {
   .then((userData) => {
     if (userData.error) {
       const defaultUserID = "659865209741246514"; // Set your default changelog ID here
-      res.redirect(`/users/${defaultUserID}/following`);
+      return res.redirect(`/users/${defaultUserID}/following`);
     }
     // Render the page only after the data is fetched
     const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-    res.render("following", { userData, avatar });
+    res.render("following", { 
+      userData, 
+      avatar,
+      title: 'Users',
+      logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+      logoAlt: 'Users Page Logo'
+    });
   })
   .catch((error) => {
     console.error("Error fetching user data:", error);
@@ -254,9 +310,13 @@ app.get("/users/:user/following", (req, res) => {
 });
 
 
-
-app.get("/users", (req, res) => {
-  res.render("usersearch"); // Render search page
+// Render search page
+app.get('/users', (req, res) => {
+  res.render('usersearch',  { 
+    title: 'Users',
+    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+    logoAlt: 'Users Page Logo'
+  });
 });
 
 // Route to render a specific user profile
@@ -264,7 +324,11 @@ app.get("/users/:user", (req, res) => {
   const user = req.params.user; // Get the user from the URL params
 
   if (!user) {
-    return res.render("usersearch");
+    return res.render("usersearch", {
+      title: 'Users',
+      logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+      logoAlt: 'Users Page Logo'
+    });
   }
 
   // Fetch user settings and user data concurrently
@@ -307,7 +371,14 @@ app.get("/users/:user", (req, res) => {
       // Render the page only after both data sets are fetched
       const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
       const avatar = avatarUrl.endsWith('null.png') ? '/favicon.ico' : avatarUrl;
-      res.render("users", { userData, avatar, settings });
+      res.render("users", { 
+        userData, 
+        avatar, 
+        settings,
+        title: 'User Profile',
+        logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+        logoAlt: 'User Profile Logo'
+      });
     })
     .catch((error) => {
       console.error("Error fetching user data or settings:", error);
@@ -315,17 +386,30 @@ app.get("/users/:user", (req, res) => {
     });
 });
 
-app.get("/timeline", (req, res) => {
-  res.render("timeline");
+app.get('/timeline', (req, res) => {
+  res.render('timeline', {
+    title: 'Timeline',
+    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728177020/logos/timeline.png',
+    logoAlt: 'Timeline Page Logo'
+  });
 });
 
-app.get("/tradetracker", (req, res) => {
-  res.render("tradetracker");
+app.get('/tradetracker', (req, res) => {
+  res.render('tradetracker', {
+    title: 'Trade Tracker',
+    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727821049/logos/trade_tracker.png',
+    logoAlt: 'Trade Tracker Page Logo'
+  });
 });
 
-app.get("/", (req, res) => {
-  res.render("index");
+app.get('/', (req, res) => {
+  res.render('index', {
+    title: 'Home',
+    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727987863/logos/home_page.png',
+    logoAlt: 'Home Page Logo'
+  });
 });
+
 
 app.get("/api", (req, res) => {
   res.redirect("/");

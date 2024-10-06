@@ -48,7 +48,35 @@
 #backToTop.show {
   display: block; /* Show when the 'show' class is added */
 }
+.breadcrumb {
+  background-color: #212529; /* Light background color */
+  border-radius: 0.25rem; /* Slightly rounded corners */
+  padding: 10px 15px; /* Padding around the breadcrumb */
+  list-style: none; /* Remove default list styling */
+  display: flex; /* Use flexbox for alignment */
+  flex-wrap: wrap; /* Allow wrapping */
+  max-width: fit-content;
+}
 
+.breadcrumb-item {
+  margin-right: 10px; /* Space between items */
+  font-size: 16px; /* Font size */
+}
+
+.breadcrumb-item a {
+  text-decoration: none; /* Remove underline */
+  color: #007bff; /* Bootstrap primary color */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.breadcrumb-item a:hover {
+  color: #0056b3; /* Darker blue on hover */
+}
+
+.breadcrumb-item.active {
+  color: #6c757d; /* Bootstrap secondary color for active item */
+  font-weight: bold; /* Bold text for active item */
+}
 #backToTop:hover {
   background-color: var(--button-primary-hover-bg);
 }
@@ -458,7 +486,7 @@ body.menu-open {
 .responsive-text {
   font-size: 1rem;
 }
-.timeline-logo {
+.navbar-logo {
   height: 50px; /* Default height for larger screens */
   width: auto; /* Maintain aspect ratio */
   object-fit: contain;
@@ -490,9 +518,6 @@ span {
   color: var(--text-color);
 }
 
-.custom-navbar-color {
-  background-color: #4b4b4b;
-}
 [data-bs-theme="dark"] .custom-navbar-color {
   background-color: #212a31; /* darker blue color for dark mode */
   color: #ffffff; /* white text color */
@@ -620,7 +645,15 @@ button {
     transform: scale(1);
   }
 }
-
+.nav-link {
+  color: #d3d9d4; /* Light color for button text */
+  border: none;
+  transition: background-color 0.3s ease;
+}
+.nav-link:hover {
+  background-color: rgba(211, 217, 212, 0.1); /* Slightly lighter background on hover */
+  color: #ffffff; /* Brighter text color on hover */
+}
 .info-button {
   animation: pulse 2s infinite;
 }
@@ -820,11 +853,11 @@ button {
 }
 @media (max-width: 576px) {
   .navbar-logo {
-    height: 50px;
+    height: 40px;
   }
 }
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 40px;
+    height: 33px;
   }
 }

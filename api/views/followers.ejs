@@ -68,99 +68,7 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-expand-lg custom-navbar-color sticky-top">
-      <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-          <img
-            class="navbar-logo"
-            src="https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png"
-            alt="Home Page Logo"
-          />
-        </a>
-
-        <!-- Container for navbar toggler and profile picture on mobile -->
-        <div class="d-flex d-lg-none align-items-center">
-          <!-- Navbar toggler -->
-          <button
-            id="navbarToggler"
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <!-- Profile picture icon (visible on mobile) -->
-          <div class="ms-2 d-lg-none">
-            <a href="login">
-              <img
-                src="/favicon.ico"
-                alt="Profile"
-                class="rounded-circle"
-                id="profile-picture-mobile"
-                width="32"
-                height="32"
-              />
-            </a>
-          </div>
-        </div>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto align-items-center">
-            <li class="nav-item">
-              <a class="nav-link" href="/changelogs">Changelogs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/seasons">Seasons</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/timeline">Timeline</a>
-            </li>
-            <li class="nav-item"></li>
-              <a class="nav-link" href="/tradetracker">Trade Tracker</a>
-            </li>
-            <li class="nav-item"></li>
-              <a class="nav-link" href="/keys">Api</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/bot">Our Discord Bot</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/faq">FAQ</a>
-            </li>
-            <li class="nav-item">
-              <button
-                class="nav-link btn"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#discordOffcanvas"
-                aria-controls="discordOffcanvas"
-              >
-                Join the Discord
-              </button>
-            </li>
-            <!-- Profile picture icon (visible on desktop) -->
-            <li class="nav-item d-none d-lg-block ms-2">
-              <a href="login" title="Go to login page" class="profile-link">
-                <img
-                  src="/favicon.ico"
-                  alt="Profile"
-                  class="rounded-circle"
-                  id="profile-picture"
-                  width="32"
-                  height="32"
-                />
-              </a>
-            </li>
-            
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <%- include('partials/nav') %>
 
     <!-- Offcanvas -->
     <div
@@ -194,6 +102,13 @@
 
     <div style="background-color: #2e3944; color: white; padding: 40px 0">
         <div class="container">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item" aria-current="page"><a href="/users/<%= userData.id %>">@<%= userData.username %></a></li>
+              <li class="breadcrumb-item active" aria-current="page">Followers</li>
+            </ol>
+          </nav>
             <div style="display: flex; justify-content: center;">
                 <h2><%= userData.global_name %>'s Followers</h2>
               </div>
