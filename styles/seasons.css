@@ -461,33 +461,45 @@ span {
   font-family: "Luckiest Guy", "Bangers", Arial, Helvetica, sans-serif;
 }
 .breadcrumb {
-  background-color: #212529; /* Light background color */
-  border-radius: 0.25rem; /* Slightly rounded corners */
-  padding: 10px 15px; /* Padding around the breadcrumb */
-  list-style: none; /* Remove default list styling */
-  display: flex; /* Use flexbox for alignment */
-  flex-wrap: wrap; /* Allow wrapping */
+  background-color: #212529;
+  border-radius: 0.25rem;
+  padding: 12px 20px;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
   max-width: fit-content;
+  margin: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .breadcrumb-item {
-  margin-right: 10px; /* Space between items */
-  font-size: 16px; /* Font size */
+  margin-right: 15px;
+  font-size: 16px;
+  position: relative;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+  content: "›";
+  color: #6c757d;
+  margin-left: 15px;
 }
 
 .breadcrumb-item a {
-  text-decoration: none; /* Remove underline */
-  color: #007bff; /* Bootstrap primary color */
-  transition: color 0.3s; /* Smooth color transition */
+  text-decoration: none;
+  color: #ffffff;
+  transition: color 0.3s, opacity 0.3s;
+  opacity: 0.8;
 }
 
 .breadcrumb-item a:hover {
-  color: #0056b3; /* Darker blue on hover */
+  color: #ffffff;
+  opacity: 1;
 }
 
 .breadcrumb-item.active {
-  color: #6c757d; /* Bootstrap secondary color for active item */
-  font-weight: bold; /* Bold text for active item */
+  color: #ffffff;
+  font-weight: 600;
+  opacity: 1;
 }
 
 .custom-prizes-title {
@@ -866,12 +878,21 @@ body.menu-open {
     flex-wrap: nowrap;
   }
   .navbar-logo {
-    height: 40px;
+    height: 38px;
+  } .breadcrumb {
+    padding: 10px 15px;
+  }
+  .breadcrumb-item {
+    font-size: 14px;
+    margin-right: 10px;
+  }
+  .breadcrumb-item:not(:last-child)::after {
+    margin-left: 10px;
   }
 }
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 33px;
+    height: 34px;
   }
   .container {
     padding-left: 5px;

@@ -2,18 +2,58 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     const permissions = JSON.parse(settings)
+    const udata = JSON.parse(userData)
     const recent_comments_tab = document.getElementById('recent-comments-tab');
     const userDateBio = document.getElementById('description-updated-date');
+    const recent_comments_button = document.getElementById('recent-comments-button');
+
     // Lol! these are backwards, true = false, false = true
-    if (permissions.show_recent_comments == true) {
+    if (permissions.show_recent_comments === true) {
         recent_comments_tab.remove();
+        recent_comments_button.remove();
     }
+    const input = document.getElementById('bannerInput');
     const loggedinuserId = sessionStorage.getItem('userid');
     const pathSegments = window.location.pathname.split("/");
     const userId = pathSegments[pathSegments.length - 1];
     const card_pagination = document.getElementById('card-pagination');
+    const userBanner = document.getElementById('banner');
     if (permissions.profile_public === true && loggedinuserId !== userId) {
         window.location.href = '/users'
+    }
+    let banner
+    function decimalToHex(decimal) {
+        // Convert the decimal number to hex and pad with leading zeros if necessary
+        const hex = decimal.toString(16).toUpperCase().padStart(6, '0');
+    
+        // Return the hex color with a # prefix
+        return `#${hex}`;
+    }
+    async function fetchUserBanner(userId) {
+        try {
+            
+            let image
+            console.log(permissions)
+            if (permissions.banner_discord === true) {
+                image = `https://cdn.discordapp.com/banners/${userId}/${udata.banner}.png`;
+            } else {
+                const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/background/get?user=${userId}`); // Replace with actual URL
+    
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+        
+                const bannerData = await response.json();
+                image = bannerData.image_url;
+            }
+
+            userBanner.src = image;
+            banner = image;
+            // Process and display the banner data here, e.g.:
+            // document.getElementById('banner').src = bannerData.image_url;
+        } catch (error) {
+            console.error('Error fetching banner:', error);
+        }
     }
     async function fetchUserBio(userId) {
         try {
@@ -28,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 return; // Return early if an error occurred
             }
+            await fetchUserBanner(userId);
             
             const user = await response.json();
             const timestamp = user.last_updated || 0;
@@ -228,23 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function fetchUserComments(userId) {
         const recentComments = document.getElementById('comments-list'); // Ensure this is the correct ID
         let loadingSpinner = document.getElementById('loading-spinner');
-        if (!loadingSpinner) {
-            
-            loadingSpinner = document.createElement('div');
-            loadingSpinner.id = 'loading-spinner';
-            loadingSpinner.className = 'loading-spinner';
-            loadingSpinner.style.display = 'flex'; // Set to flex for centering
-            loadingSpinner.innerHTML = `
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            `;
-            document.body.appendChild(loadingSpinner); // Append spinner to the body or desired parent
-        }
         try {
-            loadingSpinner.style.display = 'flex'; // Show the loading spinner
-            loadingSpinner.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>'; // Optional: Add spinner HTML if not in place
-    
             const response = await fetch(`https://api.jailbreakchangelogs.xyz/comments/get/user?author=${userId}`);
     
             if (!response.ok) {
@@ -345,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error fetching comments:', error);
             recentComments.innerHTML = "<div>Internal Server Error.</div>"; // Display error message
         } finally {
-            loadingSpinner.style.display = 'none'; // Hide the loading spinner after the fetch operation
+            loadingSpinner.remove(); // Hide the loading spinner after the fetch operation
         }
     }
     function getCookie(name) {
@@ -407,13 +432,13 @@ document.addEventListener('DOMContentLoaded', function() {
           const followingLink = document.createElement('a');
           followingLink.href = `/users/${userId}/following`; // Link to the following page
           followingLink.textContent = `${followingCount} Following`; // Set the text for following
-          followingLink.classList.add('text-decoration-none', 'text-muted'); // Add classes for styling
+          followingLink.classList.add('text-decoration-none', 'text-muted', 'text-bold'); // Add classes for styling
           
           // Create <a> tags for Followers
           const followersLink = document.createElement('a');
           followersLink.href = `/users/${userId}/followers`; // Link to the followers page
           followersLink.textContent = `${followersCount} Followers`; // Set the text for followers
-          followersLink.classList.add('text-decoration-none', 'text-muted'); // Add classes for styling
+          followersLink.classList.add('text-decoration-none', 'text-muted', 'text-bold'); // Add classes for styling
           
           // Clear existing content and append links
           following.innerHTML = ''; // Clear existing content
@@ -437,7 +462,6 @@ document.addEventListener('DOMContentLoaded', function() {
     editbio_button.disabled = true;
     const message_button = document.getElementById('message-button');
     const about_button = document.getElementById('about-button');
-    const recent_comments_button = document.getElementById('recent-comments-button');
     if (loggedinuserId === userId) {
         message_button.style.display = 'none';
         follow_button.style.display = 'none';
@@ -450,6 +474,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const userBio = document.getElementById('userBio');
     const character_count = document.getElementById('character-count');
     fetchUserBio(userId)
+    userAvatar = document.getElementById('user-avatar');
+    const hexColor = decimalToHex(udata.accent_color);
+    userAvatar.style.border = `4px solid ${hexColor}`;
     const savebio_button = document.getElementById('save-bio-button');
     updateUserCounts(userId);
     editbio_button.addEventListener('click', function() {
@@ -532,7 +559,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remove 'active' class from About button and reset aria-selected
         about_button.classList.remove('active');
         about_button.setAttribute('aria-selected', 'false');
-        card_pagination.innerHTML += '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>';
+        const loading_spinner = document.getElementById('loading-spinner');
+        if (!loading_spinner) {
+            card_pagination.innerHTML += '<span class="loading-icon" id="loading-spinner"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>';
+        }
         card_pagination.style.display = 'block'; // Reset pagination controls
         description_tab.style.display = 'none';
         recent_comments_tab.style.display = 'block'; // Show recent comments tab
@@ -551,7 +581,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         recent_comments_button.classList.remove('active');
         recent_comments_button.setAttribute('aria-selected', 'false');
-        card_pagination.style.display = 'none';
+        if (card_pagination) {
+            card_pagination.style.display = 'none';
+        }
         recent_comments_tab.style.display = 'none'; // Reset recent comments tab
         description_tab.style.display = 'block'; // Show description tab
 
@@ -694,6 +726,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const show_comments_button = document.getElementById('show-comments-button');
     const hide_following_button = document.getElementById('hide-following-button');
     const hide_followers_button = document.getElementById('hide-followers-button');
+    const use_discord_banner_button = document.getElementById('usediscordBanner');
+    const bannerInput = document.getElementById('input-for-banner');
     settings_button.addEventListener('click', function() {
         const settingsModal = document.getElementById('settingsModal');
         settingsModal.style.display = 'block';
@@ -701,11 +735,13 @@ document.addEventListener('DOMContentLoaded', function() {
         show_comments_button.classList.remove('btn-danger', 'btn-success');
         hide_following_button.classList.remove('btn-danger', 'btn-success');
         hide_followers_button.classList.remove('btn-danger', 'btn-success');
+        use_discord_banner_button.classList.remove('btn-danger', 'btn-success');
 
         profile_public_button.classList.add('btn-secondary');
         show_comments_button.classList.add('btn-secondary');
         hide_following_button.classList.add('btn-secondary');
         hide_followers_button.classList.add('btn-secondary');
+        use_discord_banner_button.classList.add('btn-secondary');
 
      
         
@@ -714,6 +750,7 @@ document.addEventListener('DOMContentLoaded', function() {
         show_comments_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span><span id="button-text"></span>'
         hide_following_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span><span id="button-text"></span>'
         hide_followers_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span><span id="button-text"></span>'
+        use_discord_banner_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span><span id="button-text"></span>'
         loadProfileSettings();
     });
     async function loadProfileSettings() {
@@ -769,6 +806,21 @@ document.addEventListener('DOMContentLoaded', function() {
                                     show_comments_button.classList.add('btn', value ? 'btn-success' : 'btn-danger'); // Update button class based on value
                                     show_comments_button.innerHTML = recentCommentsIcon.outerHTML; // Update button with the icon
                                     break;
+                                case 'banner_discord':
+                                    // Logic for banner_discord
+                                    const bannerDiscordIcon = document.createElement('i');
+                                    const BannerInputHeader = document.createElement('BannerInputHeader');
+                                    bannerDiscordIcon.classList.add('bi', value ? 'bi-x-lg' : 'bi-check-lg'); // Set icon based on the value
+                                    bannerInput.style.display = value? 'block' : 'none'; // Show or hide the input field based on the value
+                                    input.value = banner
+
+                                    use_discord_banner_button.classList.remove('btn-danger', 'btn-success'); // Clear previous button classes
+                                    use_discord_banner_button.classList.add('btn', value ? 'btn-danger' : 'btn-success'); // Update button class based on value
+                                    use_discord_banner_button.innerHTML = bannerDiscordIcon.outerHTML; // Update button with the icon
+                                    break;
+
+                                    
+
                     default:
                         break;
                 }
@@ -795,6 +847,27 @@ document.addEventListener('DOMContentLoaded', function() {
             profilePublicIcon.classList.add('bi-x-lg');
         }
     }); 
+    use_discord_banner_button.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission or button's default behavior
+        const bannerDiscordIcon = use_discord_banner_button.querySelector('i');
+
+        // Toggle the icon class
+        if (bannerDiscordIcon.classList.contains('bi-check-lg')) {
+            bannerInput.style.display = 'block';
+            use_discord_banner_button.classList.remove('btn-success');
+            bannerDiscordIcon.classList.remove('bi-check-lg');
+            use_discord_banner_button.classList.add('btn-danger');
+            bannerDiscordIcon.classList.add('bi-x-lg');
+        } else {
+            bannerInput.style.display = 'none';
+            bannerDiscordIcon.classList.remove('bi-x-lg');
+            use_discord_banner_button.classList.remove('btn-danger');
+            use_discord_banner_button.classList.add('btn-success');
+            bannerDiscordIcon.classList.add('bi-check-lg');
+        }
+    });
+
+
     hide_followers_button.addEventListener('click', function(event) {
         event.preventDefault(); // Prevent form submission or button's default behavior
         const hideFollowersIcon = hide_followers_button.querySelector('i');
@@ -846,8 +919,29 @@ document.addEventListener('DOMContentLoaded', function() {
             recentCommentsIcon.classList.add('bi-x-lg');
         }
     });
+    async function validateImageURL(url) {
+        try {
+            const proxyUrl = `https://proxy.wyzie.ru/${url}`;    
+            // Make the fetch request to the proxy with 'HEAD' method
+            const response = await fetch(proxyUrl, {
+                method: 'GET',
+                headers: {
+                    'Origin': '' // This may be optional, depending on your proxy configuration
+                }
+            });
+    
+            if (response.ok) {
+                return url; // The URL is valid
+            } else {
+                return 'None'; // The URL is invalid
+            }
+        } catch (error) {
+            console.log('Error fetching the URL:', error);
+            return 'None'; // Error or invalid URL
+        }
+    }
     const save_settings_button = document.getElementById('settings-submit');
-    save_settings_button.addEventListener('click', function(event) {
+    save_settings_button.addEventListener('click', async function(event) {
         event.preventDefault(); // Prevent form submission
     
         // Assemble the request body with boolean values
@@ -856,35 +950,66 @@ document.addEventListener('DOMContentLoaded', function() {
             hide_followers: !hide_followers_button.querySelector('i').classList.contains('bi-check-lg'), // true or false
             hide_following: !hide_following_button.querySelector('i').classList.contains('bi-check-lg'), // true or false
             show_recent_comments: show_comments_button.querySelector('i').classList.contains('bi-check-lg'), // true or false
+            banner_discord: !use_discord_banner_button.querySelector('i').classList.contains('bi-check-lg'), // true or false
         };
     
-        console.log('Saving updated settings:', settingsBody);
         const token = getCookie('token');
     
         // Send the request to the server
-        fetch(`https://api.jailbreakchangelogs.xyz/users/settings/update?user=${token}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(settingsBody),
-        })
-        .then(response => {
+        try {
+            const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/settings/update?user=${token}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(settingsBody),
+            });
+    
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return response.json();
-        })
-        .then(data => {
-            SuccessToast('Settings saved successfully!');
+    
+            const data = await response.json();
+    
+            let image = String(input.value); 
+            const validImage = await validateImageURL(image);
+            
+            if (validImage !== 'None') {
+                image = validImage;
+            } else {
+                const discord_banner_button = use_discord_banner_button.querySelector('i').classList.contains('bi-check-lg');
+                if (discord_banner_button) {
+                    image = 'NONE';
+                } else {
+                    image = 'INVALID';
+                    AlertToast('Invalid image URL. Please enter a valid image URL.');
+                }
+            }
+    
+            if (image === 'INVALID') {
+                return; // Exit if the image is invalid
+            }
+    
+            const url = `https://api.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=${image}`;
+            
+            const backgroundResponse = await fetch(url, {
+                method: 'POST',
+            });
+    
+            if (!backgroundResponse.ok) {
+                throw new Error(`HTTP error! status: ${backgroundResponse.status}`);
+            }
+    
+            const backgroundData = await backgroundResponse.json();
             settings_modal.style.display = 'none';
-            window.location.reload();
-        })
-        .catch(error => {
+            SuccessToast('Settings saved successfully!');
+            window.location.reload(); // Refresh the page to reflect the new settings
+    
+        } catch (error) {
             console.error('Error saving settings:', error);
-            // Optionally, display an error message to the user
-        });
+        }
     });
+
     const close_settings_button = document.getElementById('close-settings');
     const settings_modal = document.getElementById('settingsModal');
     close_settings_button.addEventListener('click', function() {

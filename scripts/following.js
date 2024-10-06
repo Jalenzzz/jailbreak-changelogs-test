@@ -33,13 +33,25 @@ document.addEventListener("DOMContentLoaded", async () => {
                 userCard.className = 'user-card';
                 
                 userCard.innerHTML = `
-                <div style="position: relative; padding: 10px;">
-                  <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" class="user-avatar" alt="${user.username}">
-                  <h3 class="user-name">${user.global_name}</h3>
-                  <p class="user-username">@${user.username}</p>
-                  <a href="/users/${user.id}" class="btn btn-primary" style="position: absolute; top: 5px; right: 5px;">View Profile</a>
-                </div>
-              `;
+  <div class="card user-card border-0 shadow-sm mb-3">
+    <div class="card-body position-relative p-3">
+      <div class="row g-0 align-items-center">
+        <div class="col-auto me-3">
+          <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" 
+               class="user-avatar rounded-circle" 
+               alt="${user.username}">
+        </div>
+        <div class="col">
+          <h5 class="user-name card-title mb-1">${user.global_name}</h5>
+          <p class="user-username card-text text-muted mb-0">@${user.username}</p>
+        </div>
+        <div class="col-auto ms-auto">
+          <a href="/users/${user.id}" class="btn btn-primary btn-sm">View Profile</a>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
           
                 usersGrid.appendChild(userCard);
              })

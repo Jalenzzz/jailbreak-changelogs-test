@@ -326,12 +326,12 @@ footer a:hover::after {
 
 @media (max-width: 576px) {
   .navbar-logo {
-    height: 46px;
+    height: 44px;
   }
 }
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 39px;
+    height: 38px;
   }
 }

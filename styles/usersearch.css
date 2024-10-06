@@ -1,41 +1,3 @@
-.hero {
-  background-image: url("https://res.cloudinary.com/dsvlphknq/image/upload/v1727358371/backgrounds/3.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  padding: 100px 0;
-  position: relative;
-}
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-.hero-content {
-  position: relative;
-  z-index: 1;
-  color: white;
-  text-align: center;
-}
-.hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-.hero p {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-}
-.hero div {
-  position: relative;
-  z-index: 2; /* Ensures text is on top of the overlay */
-}
-.feature-icon {
-  font-size: 3rem;
-}
 .btn-primary {
   background-color: #032b44;
   border-color: #032b44; /* Border color on hover */
@@ -74,13 +36,6 @@ body {
   filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-.user-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
-  margin-top: 15px;
-}
-
 .loading-spinner {
   display: flex;
   justify-content: center;
@@ -112,33 +67,45 @@ body {
   animation: spin 1s linear infinite;
 }
 .breadcrumb {
-  background-color: #212529; /* Light background color */
-  border-radius: 0.25rem; /* Slightly rounded corners */
-  padding: 10px 15px; /* Padding around the breadcrumb */
-  list-style: none; /* Remove default list styling */
-  display: flex; /* Use flexbox for alignment */
-  flex-wrap: wrap; /* Allow wrapping */
+  background-color: #212529;
+  border-radius: 0.25rem;
+  padding: 12px 20px;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
   max-width: fit-content;
+  margin: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .breadcrumb-item {
-  margin-right: 10px; /* Space between items */
-  font-size: 16px; /* Font size */
+  margin-right: 15px;
+  font-size: 16px;
+  position: relative;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+  content: "›";
+  color: #6c757d;
+  margin-left: 15px;
 }
 
 .breadcrumb-item a {
-  text-decoration: none; /* Remove underline */
-  color: #007bff; /* Bootstrap primary color */
-  transition: color 0.3s; /* Smooth color transition */
+  text-decoration: none;
+  color: #ffffff;
+  transition: color 0.3s, opacity 0.3s;
+  opacity: 0.8;
 }
 
 .breadcrumb-item a:hover {
-  color: #0056b3; /* Darker blue on hover */
+  color: #ffffff;
+  opacity: 1;
 }
 
 .breadcrumb-item.active {
-  color: #6c757d; /* Bootstrap secondary color for active item */
-  font-weight: bold; /* Bold text for active item */
+  color: #ffffff;
+  font-weight: 600;
+  opacity: 1;
 }
 @keyframes spin {
   0% {
@@ -321,58 +288,58 @@ body {
 body.menu-open {
   overflow: hidden;
 }
-#usersGrid {
-  max-height: 500px; /* Set the maximum height for the scrollable area */
-  overflow-y: auto; /* Enable vertical scrolling */
-  padding-right: 10px; /* Right padding for the scrollbar */
-  display: flex; /* Enable flexbox */
-  flex-direction: column; /* Stack users vertically */
-  align-items: center; /* Center items horizontally */
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
 }
-
-/* Individual user card styling */
 .user-card {
-  background-color: #212a31; /* Dark background for user cards */
-  border: 1px solid #748d92; /* Border around user cards */
-  border-radius: 15px; /* Rounded corners */
-  padding: 15px; /* Padding inside each user card */
-  margin-bottom: 15px; /* Space between user cards */
-  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Transition effects */
-  word-wrap: break-word; /* Break long words */
-  overflow-wrap: break-word; /* Handle overflow of long words */
-  max-width: 100%; /* Ensure user cards do not exceed container width */
-  width: 90%; /* Set width to 90% for centering */
+  background-color: #2C2F33;
+  border-radius: 12px;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  width: 100%; /* Ensure the card takes full width */
 }
-
 .user-card:hover {
-  transform: translateY(-3px); /* Raise user card on hover */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Add shadow on hover */
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
-
-/* User name styling */
-.user-name {
-  color: var(--content-h3); /* Color for user name */
-  display: block; /* Display name as block */
-  margin-bottom: 5px; /* Space below name */
-  text-align: left; /* Align the name to the left */
-}
-
-/* User username styling */
-.user-username {
-  font-size: 0.85em; /* Smaller font for username */
-  color: var(--gray-600) !important; /* Color for username */
-  display: block; /* Display username as block */
-  margin-bottom: 10px; /* Space below username */
-  text-align: left; /* Align the username to the left */
-}
-
-/* User avatar styling */
 .user-avatar {
-  width: 40px; /* Adjust avatar size */
-  height: 40px; /* Adjust avatar size */
-  border-radius: 50%; /* Round avatar */
-  margin-bottom: 10px; /* Space below avatar */
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border: 2px solid #7289DA;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
+.user-info {
+  flex-grow: 1;
+  min-width: 0; /* Allows text to wrap properly */
+}
+.user-name {
+  font-weight: 600;
+  color: #FFFFFF;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.user-username {
+  font-size: 0.9rem;
+  color: #99AAB5;
+  margin-bottom: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.view-profile-btn {
+  background-color: #124E66;
+  border-color: #748D92;
+  color: #FFFFFF;
+  transition: background-color 0.3s ease-in-out;
+  white-space: nowrap;
+}
+
 
 .search-box {
   background-color: #212529;
@@ -420,24 +387,42 @@ footer a:hover::after {
   .search-box {
     width: 100% !important;
   }
-
-  .user-grid {
-    display: flex !important;
-    flex-direction: column !important;
-  }
-
-  .user-grid > div {
-    margin-bottom: 15px;
-  }
 }
 @media (max-width: 576px) {
+  .user-card {
+    width: 100%;
+  }
+  .user-avatar {
+    width: 50px;
+    height: 50px;
+  }
+  .user-name {
+    font-size: 1rem;
+  }
+  .user-username {
+    font-size: 0.8rem;
+  }
+  .view-profile-btn {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+  }
   .navbar-logo {
-    height: 46px;
+    height: 43px;
+  }
+  .breadcrumb {
+    padding: 10px 15px;
+  }
+  .breadcrumb-item {
+    font-size: 14px;
+    margin-right: 10px;
+  }
+  .breadcrumb-item:not(:last-child)::after {
+    margin-left: 10px;
   }
 }
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 38px;
+    height: 39px;
   }
 }

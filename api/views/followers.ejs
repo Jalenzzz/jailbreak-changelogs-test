@@ -100,32 +100,25 @@
       </div>
     </div>
 
-    <div style="background-color: #2e3944; color: white; padding: 40px 0">
-        <div class="container">
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="/">Home</a></li>
-              <li class="breadcrumb-item" aria-current="page"><a href="/users/<%= userData.id %>">@<%= userData.username %></a></li>
-              <li class="breadcrumb-item active" aria-current="page">Followers</li>
-            </ol>
-          </nav>
-            <div style="display: flex; justify-content: center;">
-                <h2><%= userData.global_name %>'s Followers</h2>
-              </div>
-          <div style="display: flex; justify-content: center; align-items: center;">
-            
+    <div class="container">
+      <nav aria-label="breadcrumb" class="my-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item" aria-current="page"><a href="/users/<%= userData.id %>">@<%= userData.username %></a></li>
+          <li class="breadcrumb-item active" aria-current="page">Followers</li>
+        </ol>
+      </nav>
+      <h2 class="text-center mb-3">Followers</h2>
+    
+      <div class="card search-box mx-auto" style="max-width: 80%;">
+        <div class="card-body p-4">
+          <div id="usersGrid" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"> 
+            <!-- User Cards will be injected here -->
           </div>
         </div>
-        <div class="container">
-            <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
-              <div class="search-box card" style="position: relative; padding: 20px; width: 80%;" id="description-tab">
-                <div id="usersGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;">
-                    <!-- User Cards will be injected here -->
-                  </div>
-              </div>
-            </div>
-          </div>
       </div>
+    </div>
+    
 
     <footer
       style="background-color: #212a31; color: #d3d9d4"

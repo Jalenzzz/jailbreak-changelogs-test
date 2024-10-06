@@ -354,14 +354,16 @@ app.get("/users/:user", (req, res) => {
         profile_public: Boolean(settings1.profile_public),
         show_recent_comments: Boolean(settings1.show_recent_comments),
         hide_following: Boolean(settings1.hide_following),
-        hide_followers: Boolean(settings1.hide_followers)
+        hide_followers: Boolean(settings1.hide_followers),
+        banner_discord: Boolean(settings1.banner_discord)
       };
       const settings = {
         ...booleanSettings,
         profile_public: !booleanSettings.profile_public,
         show_recent_comments: !booleanSettings.show_recent_comments,
         hide_following: !booleanSettings.hide_following,
-        hide_followers: !booleanSettings.hide_followers
+        hide_followers: !booleanSettings.hide_followers,
+        banner_discord:!booleanSettings.banner_discord
       };
       if (userData.error) {
         const defaultUserID = "659865209741246514";
@@ -371,14 +373,10 @@ app.get("/users/:user", (req, res) => {
       // Render the page only after both data sets are fetched
       const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
       const avatar = avatarUrl.endsWith('null.png') ? '/favicon.ico' : avatarUrl;
-      
-      // Add banner URL (assuming it's provided in userData, adjust as necessary)
-      const bannerUrl = userData.banner ? `https://cdn.discordapp.com/banners/${userData.id}/${userData.banner}.png` : null;
 
       res.render("users", { 
         userData, 
         avatar, 
-        bannerUrl,
         settings,
         title: 'User Profile',
         logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
@@ -390,7 +388,6 @@ app.get("/users/:user", (req, res) => {
       res.status(500).send("Error fetching user data");
     });
 });
-
 
 app.get('/timeline', (req, res) => {
   res.render('timeline', {

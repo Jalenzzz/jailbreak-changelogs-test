@@ -273,9 +273,31 @@ footer a:hover::after {
 body.menu-open {
   overflow: hidden;
 }
+.offcanvas-header {
+  display: flex; /* Keep the header visible */
+  justify-content: space-between; /* Align items properly */
+  background-color: #212a31; /* Semi-transparent background */
+  color: #ffffff;
+}
+.offcanvas-title {
+  font-weight: bold; /* Bold title */
+  font-size: 1.25rem; /* Title font size */
+}
+.offcanvas-body {
+  background-color: transparent;
+  padding: 0;
+}
+
+.offcanvas {
+  border: none;
+  box-shadow: none;
+}
+.white-close-button {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
 @media (max-width: 576px) {
   .navbar-logo {
-    height: 36px;
+    height: 34px;
   }
   .alert {
     font-size: 0.9rem;
@@ -287,6 +309,6 @@ body.menu-open {
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 29px;
+    height: 30px;
   }
 }

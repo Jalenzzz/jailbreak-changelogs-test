@@ -60,11 +60,9 @@
     <link rel="stylesheet" href="styles/faq.css" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
   </head>
-
   <body>
     <%- include('partials/nav') %>
 
-    <!-- Offcanvas -->
     <div
       class="offcanvas offcanvas-end"
       tabindex="-1"
@@ -77,7 +75,7 @@
         </h5>
         <button
           type="button"
-          class="btn-close white-close-button"
+          class="btn-close text-reset"
           data-bs-dismiss="offcanvas"
           aria-label="Close"
         ></button>
@@ -90,70 +88,89 @@
           allowtransparency="true"
           frameborder="0"
           sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-        ></iframe>
+        >
+        </iframe>
       </div>
     </div>
-     <h1>Frequently Asked Questions</h1>
-     <div id="faq-container" class="faq-container">
+
+    <div class="container content-wrapper">
+      <h1 class="text-center mb-4">Frequently Asked Questions</h1>
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
           <li class="breadcrumb-item active" aria-current="page">FAQ</li>
         </ol>
       </nav>
-       <!-- FAQ items will be dynamically inserted here -->
-     </div>
-  </head>
-  <footer
-  style="background-color: #212a31; color: #d3d9d4"
-  class="text-center py-4"
->
-  <p>© 2024 Jailbreak Changelogs. All rights reserved.</p>
-  <div>
-    <a href="privacy" class="text-white me-2">Privacy Policy</a>
-    <a href="tos" class="text-white me-2">Terms of Service</a>
-    <a href="mailto:jailbreakchangelogs@gmail.com" class="text-white"
-      >Contact Us</a
-    >
-  </div>
-</footer>
+      <div id="faq-accordion" class="accordion">
+        <!-- FAQ items will be dynamically inserted here -->
+      </div>
+      <div id="faq-error" class="alert alert-danger" style="display: none;"></div>
+    </div>
+
+    <!-- Your existing footer -->
+    <footer
+    style="background-color: #212a31; color: #d3d9d4"
+    class="text-center py-4"
+  >
+    <p>© 2024 Jailbreak Changelogs. All rights reserved.</p>
+    <div>
+      <a href="privacy" class="text-white me-2">Privacy Policy</a>
+      <a href="tos" class="text-white me-2">Terms of Service</a>
+      <a href="mailto:jailbreakchangelogs@gmail.com" class="text-white"
+        >Contact Us</a
+      >
+    </div>
+  </footer>
+
     <script src="scripts/main.js"></script>
     <script>
-      // Function to load and display FAQ items
       function loadFAQ() {
-  fetch('faq.json')
-    .then(response => response.json())
-    .then(data => {
-      const faqContainer = document.getElementById('faq-container');
-      data.forEach(item => {
-        const faqItem = document.createElement('div');
-        faqItem.className = 'faq-item';
-        faqItem.innerHTML = `
-          <div class="faq-question">
-            <div class="faq-symbol-container">
-              <div class="faq-symbol q-symbol">Q</div>
-            </div>
-            <p class="question-text">${item.question}</p>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-symbol-container">
-              <div class="faq-symbol a-symbol">A</div>
-            </div>
-            <p class="answer-text">${item.answer}</p>
-          </div>
-        `;
+        const faqAccordion = document.getElementById('faq-accordion');
+        const errorDiv = document.getElementById('faq-error');
 
-              faqContainer.appendChild(faqItem);
-            });
+        fetch('faq.json')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
           })
-          .catch(error => console.error('Error loading FAQ:', error));
+          .then(data => {
+            if (!Array.isArray(data) || data.length === 0) {
+              throw new Error('FAQ data is empty or not in the expected format');
+            }
+
+            data.forEach((item, index) => {
+              const accordionItem = document.createElement('div');
+              accordionItem.className = 'accordion-item';
+              accordionItem.innerHTML = `
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="false" aria-controls="collapse${index}">
+                    ${item.question}
+                  </button>
+                </h2>
+                <div id="collapse${index}" class="accordion-collapse collapse" data-bs-parent="#faq-accordion">
+                  <div class="accordion-body">
+                    ${item.answer}
+                  </div>
+                </div>
+              `;
+              faqAccordion.appendChild(accordionItem);
+            });
+
+            console.log('FAQ loaded successfully');
+          })
+          .catch(error => {
+            console.error('Error loading FAQ:', error);
+            errorDiv.textContent = `Failed to load FAQ: ${error.message}`;
+            errorDiv.style.display = 'block';
+          });
       }
 
-      // Call the function when the page loads
       window.addEventListener('load', loadFAQ);
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8152532464536367"
-     crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8152532464536367"
+    crossorigin="anonymous"></script>
   </body>
 </html>

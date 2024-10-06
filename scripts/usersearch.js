@@ -33,15 +33,26 @@ document.addEventListener("DOMContentLoaded", function () {
     users.forEach((user) => {
       const userCard = document.createElement("div");
       userCard.className = "user-card";
-
       userCard.innerHTML = `
-        <div style="position: relative; padding: 10px;">
-          <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" class="user-avatar" alt="${user.username}">
-          <h3 class="user-name">${user.global_name}</h3>
-          <p class="user-username">@${user.username}</p>
-          <a href="/users/${user.id}" class="btn btn-primary" style="position: absolute; top: 5px; right: 5px;">View Profile</a>
+      <div class="card user-card mb-3 border-0 shadow-sm">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center">
+            <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" 
+                 class="user-avatar rounded-circle me-3" 
+                 alt="${user.username}">
+            <div class="user-info">
+              <h5 class="user-name">${user.global_name}</h5>
+              <p class="user-username mb-0">@${user.username}</p>
+            </div>
+            <div class="ms-auto">
+              <a href="/users/${user.id}" class="btn btn-primary btn-sm view-profile-btn">
+                View Profile
+              </a>
+            </div>
+          </div>
         </div>
-      `;
+      </div>
+    `;
 
       usersGrid.appendChild(userCard);
     });
