@@ -268,6 +268,8 @@ document.addEventListener('DOMContentLoaded', function() {
     async function fetchUserComments(userId) {
         const recentComments = document.getElementById('comments-list'); // Ensure this is the correct ID
         let loadingSpinner = document.getElementById('loading-spinner');
+        recentComments.innerHTML = ""; // Clear existing comments
+        recentComments.innerHTML = '<span id="loading-spinner" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>';
         try {
             const response = await fetch(`https://api.jailbreakchangelogs.xyz/comments/get/user?author=${userId}`);
     
