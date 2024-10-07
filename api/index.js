@@ -240,10 +240,13 @@ app.get("/users/:user/followers", async (req, res) => {
   if (!response.ok) {
     return res.status(response.status).send('Error fetching user settings');
   }
+  let showfollowers = true;
 
   const data = await response.json();
   if (data.hide_followers === 0) {
-    return res.redirect(`/users/${user}`);
+    showfollowers = false;
+  } else {
+    showfollowers = true;
   }
     if (!user) {
     return res.render("usersearch", {
@@ -270,6 +273,7 @@ app.get("/users/:user/followers", async (req, res) => {
     res.render("followers", { 
       userData, 
       avatar,
+      showfollowers,
       title: 'Followers / Changelogs',
       logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
       logoAlt: 'Users Page Logo'
@@ -296,12 +300,14 @@ app.get("/users/:user/following", async (req, res) => {
   if (!response.ok) {
     return res.status(response.status).send('Error fetching user settings');
   }
+  let showfollowing = true;
 
   const data = await response.json();
-  if (data.hide_followers === 0) {
-    return res.redirect(`/users/${user}`);
+  if (data.hide_following === 0) {
+    showfollowing = false;
+  } else {
+    showfollowing = true;
   }
-
   if (!user) {
     return res.render("usersearch", {
       title: 'User Search / Changelogs',
@@ -327,6 +333,7 @@ app.get("/users/:user/following", async (req, res) => {
     res.render("following", { 
       userData, 
       avatar,
+      showfollowing,
       title: 'Users - Following',
       logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
       logoAlt: 'Users Page Logo'

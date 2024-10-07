@@ -460,6 +460,191 @@ footer a::after {
 .user-info {
   padding-top: 60px; /* Make space for the avatar */
 }
+.open-chat-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+/* Chat popup container */
+.chat-popup {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 600px;
+  height: 350px;
+  background-color: #2e3944;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Chat header */
+.chat-header {
+  background-color: #212a31;
+  color: #d3d9d4;
+  padding: 10px;
+  font-weight: bold;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Close button */
+.chat-header button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+}
+
+/* Chat content layout: left for chat, right for table */
+.chat-content {
+  display: flex;
+  flex: 1;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #1e2b3b00;
+  border-radius: 10px;
+
+}
+
+tbody tr:nth-child(even) {
+  background-color: #2e394400;
+  border-radius: 10px;
+
+}
+
+/* Hover effect on table rows */
+tbody tr:hover {
+  background-color: #007bff00;
+  border-radius: 10px;
+
+}
+
+/* Highlight and lift effect for <td> */
+td {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease, transform 0.3s ease;
+}
+
+td:hover {
+  background-color: #535353; /* Change background color */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15); /* Add subtle lift effect */
+  border-radius: 10px;
+  transform: translateY(-2px); /* Lift up the cell slightly */
+}
+
+/* Chat body */
+#chat-body {
+  flex: 2;
+  padding: 10px;
+  overflow-y: auto;
+  background-color: #212529;
+}
+
+/* Chat sidebar (table) */
+.chat-sidebar {
+  flex: 1;
+  padding: 10px;
+  background-color: #2e3944;
+  border-left: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #212529;
+  border-radius: 10px;
+  border-collapse: unset;
+}
+
+table, th, td {
+  border: 1px solid #212529;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+}
+
+thead {
+  background-color: #007bff42;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #3a445000;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #2e394400;
+}
+
+/* Chat footer */
+.chat-footer {
+  display: block;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+/* Chat input field */
+#chat-input {
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #ccc;
+  min-width: 80%;
+  border-radius: 5px;
+  margin-right: 10px;
+  background-color: #3a4450;
+  color: white;
+}
+
+/* Send button */
+#send-chat-message {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Chat messages styling */
+#chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-message {
+  padding: 8px;
+  background-color: #eee;
+  border-radius: 5px;
+}
+
+.chat-message.self {
+  background-color: #d4edda;
+  align-self: flex-end;
+}
+
+.chat-message.other {
+  background-color: #f8d7da;
+  align-self: flex-start;
+}
 
 input {
   padding: 10px;
@@ -634,7 +819,7 @@ footer a:hover {
 }
 
 td {
-  background-color: #f0f0f0; /* Background color */
+  background-color: #212529; /* Background color */
   padding: 10px;             /* Padding */
   text-align: left;          /* Text alignment */
   display: grid;

@@ -229,6 +229,7 @@
         </form>
       </div>
       <div class="modal-footer">
+        <button id="settings-loading" type="submit" style="display: none;" class="btn btn-secondary disabled"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></button>
         <button id="settings-submit" type="submit" class="btn btn-primary">Save Changes</button>
       </div>
     </div>
@@ -308,6 +309,7 @@
             >Contact Us</a
           >
         </div>
+        
       </footer>
         
 
@@ -320,5 +322,43 @@
     <script src="scripts/main.js"></script>
     <script src="scripts/users.js"></script>
   </body>
-  
+  <div id="chat-popup" class="chat-popup">
+    <div class="chat-header">
+        <span>Chat</span>
+        <button id="close-chat-popup">×</button>
+    </div>
+    <div class="chat-content">
+        <!-- Chat Body on the Left -->
+        <div id="chat-body" class="chat-body">
+            <div id="chat-messages">
+                <!-- Chat messages will be dynamically added here -->
+            </div>
+        </div>
+        <!-- Table on the Right -->
+        <div id="chat-sidebar" class="chat-sidebar">
+            <table>
+                <thead>
+
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>User 1</td>
+                    </tr>
+                    <tr>
+                        <td>User 2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="chat-footer">
+      <div clas="input-group">
+        <input type="text" id="chat-input" placeholder="Type a message...">
+        <button id="send-chat-message" class="btn btn-primary">Send</button>
+    </div>
+  </div>
+</div>
+
+<button id="open-chat-button" class="open-chat-button btn btn-primary">Chat</button>
+
 </html>

@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const usersGrid = document.getElementById("usersGrid");
     const path = window.location.pathname;
+    const showfollowers = JSON.parse(showingfollowers)
+    console.log(showfollowers)
     const segments = path.split('/');
     const userId = segments[2]; // Assuming the structure is "/users/{userId}/followers"
 
@@ -19,6 +21,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Fetch followers and log the results
+    if (!showfollowers) {
+      usersGrid.textContent = "This user has their followers hidden.";
+      return;
+    }
     const followers = await fetchFollowers(userId);
     console.log(followers);
     

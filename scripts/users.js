@@ -878,6 +878,7 @@ document.addEventListener('DOMContentLoaded', function() {
             bannerDiscordIcon.classList.add('bi-x-lg');
         } else {
             bannerInput.style.display = 'none';
+            bannerInput.value = '';
             bannerDiscordIcon.classList.remove('bi-x-lg');
             use_discord_banner_button.classList.remove('btn-danger');
             use_discord_banner_button.classList.add('btn-success');
@@ -958,9 +959,31 @@ document.addEventListener('DOMContentLoaded', function() {
             return 'None'; // Error or invalid URL
         }
     }
+    document.getElementById('open-chat-button').addEventListener('click', function() {
+        document.getElementById('chat-popup').style.display = 'flex';
+        document.getElementById('open-chat-button').style.display = 'none';
+    });
+    
+    document.getElementById('close-chat-popup').addEventListener('click', function() {
+        document.getElementById('chat-popup').style.display = 'none';
+        document.getElementById('open-chat-button').style.display = 'block';
+    });
+    
+    document.getElementById('send-chat-message').addEventListener('click', function() {
+        sendMessage();
+    });
+    
+    document.getElementById('chat-input').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    });
     const save_settings_button = document.getElementById('settings-submit');
+    const save_settings_loading = document.getElementById('settings-loading');
     save_settings_button.addEventListener('click', async function(event) {
         event.preventDefault(); // Prevent form submission
+        save_settings_loading.style.display = 'block';
+        save_settings_button.disabled = true;
     
         // Assemble the request body with boolean values
         const settingsBody = {
@@ -990,7 +1013,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
     
             let image = String(input.value); 
-            const validImage = await validateImageURL(image);
+            let validImage
+            if (image) {
+                validImage = await validateImageURL(image);
+            }
             
             if (validImage !== 'None') {
                 image = validImage;
@@ -1019,6 +1045,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
     
             const backgroundData = await backgroundResponse.json();
+            save_settings_loading.style.display = 'none';
+            save_settings_button.disabled = false;
             settings_modal.style.display = 'none';
             SuccessToast('Settings saved successfully!');
             window.location.reload(); // Refresh the page to reflect the new settings

@@ -64,7 +64,9 @@
     />
     <link rel="stylesheet" href="styles/usersearch.css" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-
+    <script>
+      const showingfollowing = `<%= showfollowing %>`
+    </script>
   </head>
 
   <body>
@@ -112,7 +114,7 @@
     
       <div class="card search-box mx-auto" style="max-width: 80%;">
         <div class="card-body p-4">
-          <div id="usersGrid" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"> 
+          <div id="usersGrid" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4" style="justify-content: center;"> 
             <!-- User Cards will be injected here -->
           </div>
         </div>
