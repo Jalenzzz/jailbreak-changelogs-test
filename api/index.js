@@ -446,7 +446,7 @@ app.get('/tradetracker', (req, res) => {
 app.get('/', (req, res) => {
   res.render('index', {
     title: 'Home / Changelogs',
-    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727987863/logos/home_page.png',
+    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728503466/logos/new_home_logo.png',
     logoAlt: 'Home Page Logo'
   });
 });
