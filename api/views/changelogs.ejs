@@ -157,11 +157,6 @@
                   </button>
                 </li>
                 <li>
-                  <button class="dropdown-item" type="button" id="desktopClearDateFilter">
-                    <i class="bi bi-x-circle me-2"></i> Clear Filter
-                  </button>
-                </li>
-                <li>
                   <button class="dropdown-item" type="button" id="desktopCopyChangelog">
                     <i class="bi bi-clipboard me-2"></i> Copy Changelog
                   </button>
@@ -260,9 +255,6 @@
             <div class="btn-group" role="group" aria-label="Date Filter Options">
               <button class="btn btn-secondary" id="mobileOpenDateFilterModal">
                 <i class="bi bi-calendar-event me-2"></i> Select Date
-              </button>
-              <button class="btn btn-danger" id="mobileClearDateFilter">
-                <i class="bi bi-x-circle me-2"></i> Clear
               </button>
             </div>
           </div>
@@ -568,6 +560,13 @@
         </div>
       </div>
       <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-danger"
+          id="desktopClearDateFilter"
+        >
+          <i class="bi bi-x-circle me-2"></i> Clear Filter
+        </button>
         <button
           type="button"
           class="btn btn-secondary"
