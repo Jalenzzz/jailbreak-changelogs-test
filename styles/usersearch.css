@@ -147,6 +147,7 @@ body {
 .custom-navbar-color .navbar-nav .nav-link:focus {
   background-color: rgba(211, 217, 212, 0.1); /* Slightly lighter background on hover */
   color: #ffffff; /* Brighter text color on hover */
+  border-radius: 5px;
 }
 /* Burger Menu Icon Styles */
 .burger-menu-icon {
