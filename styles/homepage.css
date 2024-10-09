@@ -16,6 +16,55 @@
   left: 0;
   background-color: rgba(0, 0, 0, 0.5);
 }
+/* Remove the default dropdown arrow */
+.dropdown-toggle::after {
+  display: none;
+}
+
+/* Style for dropdown toggles */
+.dropdown-toggle,
+.dropdown-toggle:focus,
+.dropdown-toggle:active,
+.dropdown-toggle:hover {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Style for the profile pictures */
+#profile-picture-mobile,
+#profile-picture {
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  transition: border-color 0.3s ease;
+}
+
+#profile-picture-mobile:hover,
+#profile-picture:hover {
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Custom styles for the dropdown menus */
+#mobileUserDropdown,
+#userDropdown {
+  background-color: rgba(33, 37, 41, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#mobileUserDropdown .dropdown-item,
+#userDropdown .dropdown-item {
+  color: rgba(255, 255, 255, 0.8);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#mobileUserDropdown .dropdown-item:hover,
+#mobileUserDropdown .dropdown-item:focus,
+#userDropdown .dropdown-item:hover,
+#userDropdown .dropdown-item:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
 
 .breadcrumb {
   background-color: #212529;
