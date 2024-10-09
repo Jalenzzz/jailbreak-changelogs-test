@@ -1,8 +1,8 @@
-<nav class="navbar navbar-expand-lg custom-navbar-color sticky-top">
+<nav class="alt-navbar navbar-expand-lg custom-navbar-color sticky-top">
   <div class="container-fluid">
     <!-- Navbar brand with logo -->
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img class="navbar-logo" src="<%= logoUrl %>" alt="<%= logoAlt %>" />
+      <!--TODO: change this back to a dynamic URL-->
     </a>
 
     <!-- Mobile navigation controls -->
@@ -36,7 +36,7 @@
           <div class="nav-item"><a class="nav-link" href="/timeline">Timeline</a></div>
           <div class="nav-item"><a class="nav-link" href="/users">Users</a></div>
           <div class="nav-item"><a class="nav-link" href="/tradetracker">Trade Tracker</a></div>
-          <div class="nav-item"><a class="nav-link" href="/keys">Api</a></div>
+          <div class="nav-item"><a class="nav-link" href="/keys">API</a></div>
           <div class="nav-item"><a class="nav-link" href="/bot">Our Discord Bot</a></div>
           <div class="nav-item"><a class="nav-link" href="/faq">FAQ</a></div>
           <div class="nav-item">
@@ -49,31 +49,27 @@
     </div>
 
     <!-- Desktop menu (hidden on mobile) -->
-    <div class="collapse navbar-collapse d-none d-lg-block" id="navbarNav">
-      <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item"><a class="nav-link" href="/changelogs">Changelogs</a></li>
-        <li class="nav-item"><a class="nav-link" href="/seasons">Seasons</a></li>
-        <li class="nav-item"><a class="nav-link" href="/timeline">Timeline</a></li>
-        <li class="nav-item"><a class="nav-link" href="/users">Users</a></li>
-        <li class="nav-item"><a class="nav-link" href="/tradetracker">Trade Tracker</a></li>
-        <li class="nav-item"><a class="nav-link" href="/keys">Api</a></li>
-        <li class="nav-item"><a class="nav-link" href="/bot">Our Discord Bot</a></li>
-        <li class="nav-item"><a class="nav-link" href="/faq">FAQ</a></li>
-        <li class="nav-item">
-          <button class="nav-link btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#discordOffcanvas" aria-controls="discordOffcanvas">
+    <div class="alt-navbar-spacers collapse navbar-collapse d-none d-lg-block" id="navbarNav">
+        <div class="alt-navbar-button"><a class="nav-link" href="/changelogs">Changelogs</a></div>
+        <div class="alt-navbar-button"><a class="nav-link" href="/seasons">Seasons</a></div>
+        <div class="alt-navbar-button"><a class="nav-link" href="/timeline">Timeline</a></div>
+        <div class="alt-navbar-button"><a class="nav-link" href="/users">Users</a></div>
+        <div class="alt-navbar-button"><a class="nav-link" href="/tradetracker">Trade Tracker</a></div>
+        <div class="alt-navbar-button"><a class="nav-link" href="/keys">Api</a></div>
+        <div class="alt-navbar-button"><a class="nav-link" href="/bot">Our Discord Bot</a></div>
+        <div class="alt-navbar-button"><a class="nav-link" href="/faq">FAQ</a></div>
+          <button calt-navbar-button-link btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#discordOffcanvas" aria-controls="discordOffcanvas" class="alt-navbar-button">
             Join the Discord
           </button>
-        </li>
-        <!-- Profile picture icon with dynamic dark dropdown (visible on desktop) -->
-        <li class="nav-item dropdown d-none d-lg-block ms-2">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <!--picture icon with dynamic dark dropdown (visible on desktop) ; style override to place it on the right :D-->
+        <div class="nav-item dropdown d-none d-lg-block ms-2" style="margin-left: auto !important; margin-right: 16px !important;">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"  >
             <img src="/favicon.ico" alt="Profile" class="rounded-circle" id="profile-picture" width="32" height="32" />
           </a>
           <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarDropdown" id="userDropdown">
             <!-- Dropdown items will be populated by JavaScript -->
           </ul>
-        </li>
-      </ul>
+        </div>
     </div>
   </div>
 </nav>
