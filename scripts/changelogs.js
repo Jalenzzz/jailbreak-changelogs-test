@@ -6,6 +6,16 @@ $(document).ready(function () {
   const sectionsElement = document.getElementById("content");
   const titleElement = document.getElementById("changelogTitle");
   const CommentHeader = document.getElementById("comment-header");
+  const startDateBtn = document.getElementById('startDateBtn');
+  const endDateBtn = document.getElementById('endDateBtn');
+  const startDateInput = document.getElementById('startDate');
+  const endDateInput = document.getElementById('endDate');
+  const applyFilterBtn = document.getElementById('applyDateFilter');
+  const clearFilterBtn = document.getElementById('desktopClearDateFilter');
+  const openModalBtn = document.getElementById('desktopOpenDateFilterModal');
+  const mobileOpenModalBtn = document.getElementById('mobileOpenDateFilterModal');
+  const dateFilterModal = new bootstrap.Modal(document.getElementById('dateFilterModal'));
+  
   // Caching variables
   const CACHE_KEY = "changelogsCache";
   const CACHE_EXPIRY = 60 * 60 * 1000; // 1 hour in milliseconds
@@ -21,56 +31,9 @@ $(document).ready(function () {
   const $searchResultsContainer = $("#search-results");
   const $navbarCollapse = $("#navbarContent");
 
-  // Get reference to the clear filter button
-  const clearFilterBtn = document.getElementById("clearDateFilter");
-
-  // Initialize Bootstrap modal for date filtering
-  const dateFilterModal = new bootstrap.Modal(
-    document.getElementById("dateFilterModal")
-  );
-
-  // Event listeners to open the date filter modal
-  document
-    .getElementById("mobileOpenDateFilterModal")
-    .addEventListener("click", function () {
-      dateFilterModal.show();
-    });
-
-  document
-    .getElementById("desktopOpenDateFilterModal")
-    .addEventListener("click", function () {
-      dateFilterModal.show();
-    });
-
-  // Event listener for applying the date filter
-  document
-    .getElementById("applyDateFilter")
-    .addEventListener("click", function () {
-      const startDate = startDatePicker.getDate(); // Get start date
-      const endDate = endDatePicker.getDate(); // Get end date
-
-      // Validate that at least one date is selected
-      if (!startDate && !endDate) {
-        alert("Please select at least one date before applying the filter.");
-      } else {
-        const filteredChangelogs = filterChangelogsByDate(); // Filter changelogs by selected dates
-
-        // Populate dropdown with filtered changelogs
-        if (filteredChangelogs.length > 0) {
-          populateChangelogDropdown(filteredChangelogs);
-          // Update the button text to show the date range
-          updateDropdownButton(getDateRangeText());
-          setTimeout(openChangelogDropdown, 100); // Open dropdown after a short delay
-        } else {
-          populateChangelogDropdown([]); // Clear dropdown if no changelogs found
-        }
-
-        dateFilterModal.hide(); // Close the modal
-      }
-    });
-
   // Initialize changelogs data and debounce timer
   let changelogsData = [];
+  let currentFilterState = null;
   let debounceTimer;
 
   // Function to get cache from localStorage
@@ -122,8 +85,205 @@ $(document).ready(function () {
     loadingOverlay.classList.remove("show");
   }
 
-  // Show the loading overlay initially
+
   showLoadingOverlay();
+  mobileOpenModalBtn.addEventListener('click', function() {
+    dateFilterModal.show();
+});
+
+   // Open modal when clicking the "Select Date Range" button
+   openModalBtn.addEventListener('click', function() {
+    dateFilterModal.show();
+});
+
+// Function to create and open a date picker
+function openDatePicker(inputId, buttonId) {
+    const input = document.createElement('input');
+    input.type = 'date';
+    
+  
+    document.body.appendChild(input);
+
+    input.addEventListener('change', function() {
+        const selectedDate = new Date(this.value);
+        document.getElementById(inputId).value = this.value;
+        updateButtonText(buttonId, selectedDate);
+        document.body.removeChild(input);
+    });
+
+    input.showPicker();
+}
+
+// Add click event listeners to the date buttons
+startDateBtn.addEventListener('click', () => openDatePicker('startDate', 'startDateBtn'));
+endDateBtn.addEventListener('click', () => openDatePicker('endDate', 'endDateBtn'));
+
+// Function to update button text
+function updateButtonText(buttonId, date) {
+    const btn = document.getElementById(buttonId);
+    if (date) {
+        const formattedDate = formatDateForButton(date);
+        btn.querySelector('span').textContent = formattedDate;
+    } else {
+        btn.querySelector('span').textContent = buttonId === 'startDateBtn' ? 'Select Start Date' : 'Select End Date';
+    }
+}
+
+// Function to format date for button display
+function formatDate(date) {
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+/**
+ * Generates a formatted date range string based on provided start and end dates.
+ * 
+ * @param {Date} startDate - The start date of the range
+ * @param {Date} endDate - The end date of the range
+ * @returns {string} A formatted string representing the date range.
+ */
+function getDateRangeText(startDate, endDate) {
+  // Helper function to format a date in the desired format (e.g., "Jan 1, 2023")
+  const formatDate = (date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  // Check different combinations of start and end dates
+  if (startDate && endDate) {
+    // Both start and end dates are provided
+    return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+  } else if (startDate) {
+    // Only start date is provided
+    return `From ${formatDate(startDate)}`;
+  } else if (endDate) {
+    // Only end date is provided
+    return `Until ${formatDate(endDate)}`;
+  }
+
+  // Neither start nor end date is provided
+  return 'Invalid date range';
+}
+
+// Apply filter button click handler
+applyFilterBtn.addEventListener('click', function() {
+  // Convert input values to Date objects, using UTC to avoid timezone issues
+  // If no date is selected, the value will be null
+  const startDate = startDateInput.value ? new Date(startDateInput.value + 'T00:00:00Z') : null;
+  const endDate = endDateInput.value ? new Date(endDateInput.value + 'T00:00:00Z') : null;
+
+  // Validate that at least one date is selected
+  if (!startDate && !endDate) {
+    alert("Please select at least one date before applying the filter.");
+    return; // Exit the function if no dates are selected
+  }
+
+  // Filter changelogs based on the selected date range
+  const filteredChangelogs = filterChangelogsByDate(startDate, endDate);
+
+  // Determine the appropriate button text based on the selected date range
+  let buttonText;
+  if (startDate && endDate) {
+    // Both start and end dates are selected
+    buttonText = `${formatDateForButton(startDate)} - ${formatDateForButton(endDate)}`;
+  } else if (startDate) {
+    // Only start date is selected
+    buttonText = `From ${formatDateForButton(startDate)}`;
+  } else if (endDate) {
+    // Only end date is selected
+    buttonText = `Until ${formatDateForButton(endDate)}`;
+  }
+
+  // Store the current filter state for potential future use
+  currentFilterState = buttonText;
+
+  // Update the changelog dropdown with filtered results and new button text
+  populateChangelogDropdown(filteredChangelogs, buttonText);
+
+  // Open the changelog dropdown after a short delay
+  // This delay ensures that the dropdown is populated before opening
+  setTimeout(openChangelogDropdown, 100);
+
+  // Hide the date filter modal after applying the filter
+  dateFilterModal.hide();
+});
+
+// Clear filter button click handler
+clearFilterBtn.addEventListener('click', function() {
+  startDateInput.value = '';
+  endDateInput.value = '';
+  updateButtonText('startDateBtn', null);
+  updateButtonText('endDateBtn', null);
+  currentFilterState = null; // Clear the filter state
+  populateChangelogDropdown(changelogsData, 'View Changelogs');
+  clearedFilterToast('The date filter has been cleared successfully!');
+});
+
+// Function to populate the changelog dropdowns for mobile and desktop
+function populateChangelogDropdown(changelogs, buttonText) {
+  const $mobileDropdown = $("#mobileChangelogList");
+  const $desktopDropdown = $("#desktopChangelogList");
+  const $mobileDropdownButton = $("#mobileChangelogDropdown");
+  const $desktopDropdownButton = $("#desktopChangelogDropdown");
+
+  $mobileDropdown.empty();
+  $desktopDropdown.empty();
+
+  if (changelogs.length === 0) {
+    const noDataItem = `
+      <li>
+          <span class="dropdown-item-text">No data for selected dates</span>
+      </li>
+    `;
+    $mobileDropdown.append(noDataItem);
+    $desktopDropdown.append(noDataItem);
+    $mobileDropdownButton.html('<i class="bi bi-calendar-event me-2"></i>No data for selected dates');
+    $desktopDropdownButton.html('<i class="bi bi-calendar-event me-2"></i>No data for selected dates');
+  } else {
+    const sortedChangelogs = changelogs.sort((a, b) => b.id - a.id);
+
+    sortedChangelogs.forEach((changelog) => {
+      const fullTitle = changelog.title;
+      const truncatedTitle = truncateText(fullTitle, 37);
+
+      $mobileDropdown.append(`
+        <li class="w-100">
+            <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}" title="${fullTitle}">
+                <span class="changelog-title">${truncatedTitle}</span>
+            </a>
+        </li>
+      `);
+
+      $desktopDropdown.append(`
+        <li class="w-100">
+            <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
+                <span class="changelog-title">${fullTitle}</span>
+            </a>
+        </li>
+      `);
+    });
+
+    // Update the dropdown button text
+    if (buttonText) {
+      const iconHtml = '<i class="bi bi-calendar-event me-2"></i>';
+      $mobileDropdownButton.html(`${iconHtml}${buttonText}`);
+      $desktopDropdownButton.html(`${iconHtml}${buttonText}`);
+    }
+  }
+}
+
+// Update the dropdown button text based on the provided text
+function updateDropdownButton(text) {
+  const $mobileDropdownButton = $("#mobileChangelogDropdown");
+  const $desktopDropdownButton = $("#desktopChangelogDropdown");
+
+  let buttonText = '<i class="bi bi-calendar-event me-2"></i>';
+
+  if (text === "default") {
+    buttonText += "View Changelogs";
+  } else {
+    buttonText += text;
+  }
+
+  $mobileDropdownButton.html(buttonText);
+  $desktopDropdownButton.html(buttonText);
+}
 
   // Function to preprocess Markdown text
   const preprocessMarkdown = (markdown) =>
@@ -220,48 +380,6 @@ $(document).ready(function () {
     }
   }
 
-  // Function to populate the changelog dropdowns for mobile and desktop
-  function populateChangelogDropdown(changelogs) {
-    const $mobileDropdown = $("#mobileChangelogList");
-    const $desktopDropdown = $("#desktopChangelogList");
-
-    $mobileDropdown.empty();
-    $desktopDropdown.empty();
-
-    if (changelogs.length === 0) {
-      const noDataItem = `
-        <li>
-            <span class="dropdown-item-text">No data for selected dates</span>
-        </li>
-      `;
-      $mobileDropdown.append(noDataItem);
-      $desktopDropdown.append(noDataItem);
-    } else {
-      const sortedChangelogs = changelogs.sort((a, b) => b.id - a.id);
-
-      sortedChangelogs.forEach((changelog) => {
-        const fullTitle = changelog.title;
-        const truncatedTitle = truncateText(fullTitle, 37);
-
-        $mobileDropdown.append(`
-          <li class="w-100">
-              <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}" title="${fullTitle}">
-                  <span class="changelog-title">${truncatedTitle}</span>
-              </a>
-          </li>
-        `);
-
-        $desktopDropdown.append(`
-          <li class="w-100">
-              <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
-                  <span class="changelog-title">${fullTitle}</span>
-              </a>
-          </li>
-        `);
-      });
-    }
-  }
-
   // Initialize Bootstrap dropdowns
   var dropdownElementList = [].slice.call(
     document.querySelectorAll(".dropdown-toggle") // Select all dropdown toggle elements
@@ -270,132 +388,109 @@ $(document).ready(function () {
     return new bootstrap.Dropdown(dropdownToggleEl); // Create Bootstrap dropdown instances
   });
 
-  // Pikaday configuration for date picker
-  var pikadayConfig = {
-    format: "YYYY-MM-DD", // Date format
-    showDaysInNextAndPreviousMonths: true, // Show days in adjacent months
-    enableSelectionDaysInNextAndPreviousMonths: true, // Allow selection of days in adjacent months
-    onSelect: function (date) {
-      // Callback on date selection
-      const fieldId = this._o.field.id; // Get the ID of the input field
-      if (date) {
-        // Adjust the date to local timezone
-        const localDate = new Date(
-          date.getTime() - date.getTimezoneOffset() * 60000 // Convert to local time
-        );
-        document.getElementById(fieldId).value = localDate
-          .toISOString()
-          .split("T")[0]; // Set the value of the input field
-      } else {
-        document.getElementById(fieldId).value = ""; // Clear the input field if no date is selected
-      }
-    },
+
+  /**
+ * Formats a date object for display on a button.
+ * 
+ * @param {Date} date - The date to be formatted.
+ * @returns {string} A formatted date string (e.g., "Jan 1, 2023").
+ */
+function formatDateForButton(date) {
+  const options = {
+    year: "numeric",   // Include the full year (e.g., 2023)
+    month: "short",    // Use abbreviated month name (e.g., Jan)
+    day: "numeric",    // Include the day of the month
+    timeZone: "UTC"    // Use UTC to avoid time zone discrepancies
   };
+  return date.toLocaleDateString("en-US", options);
+}
 
-  // Function to update the button text based on the selected date
-  function updateButtonText(fieldId) {
-    const btn = document.getElementById(fieldId + "Btn"); // Get the button element
-    const dateString = document.getElementById(fieldId).value; // Get the date input value
-    if (dateString) {
-      const date = new Date(dateString); // Create a Date object
-      const formattedDate = formatDateForButton(date); // Format the date for display
-      btn.querySelector("span").textContent = formattedDate; // Update button text
-    } else {
-      // Set default button text based on the field ID
-      btn.querySelector("span").textContent =
-        fieldId === "startDate" ? "Select Start Date" : "Select End Date";
+/**
+ * Parses a date from a changelog title string.
+ * 
+ * @param {string} title - The changelog title containing the date (e.g., "January 1st 2023").
+ * @returns {Date|null} A Date object representing the parsed date, or null if parsing fails.
+ */
+function parseDateFromTitle(title) {
+  // Object mapping month names to their numeric representations (0-11)
+  const months = {
+    'January': 0, 'February': 1, 'March': 2, 'April': 3, 'May': 4, 'June': 5,
+    'July': 6, 'August': 7, 'September': 8, 'October': 9, 'November': 10, 'December': 11
+  };
+  
+  // Regular expression to match the date format in the title
+  // Captures: (month name) (day) (year)
+  // Ignores ordinal suffixes (st, nd, rd, th)
+  const match = title.match(/(\w+)\s(\d+)(?:st|nd|rd|th)\s(\d{4})/);
+  
+  if (match) {
+    // Destructure the matched groups
+    const [, month, day, year] = match;
+    
+    // Create a new Date object using UTC to avoid timezone issues
+    // months[month] converts the month name to its numeric value (0-11)
+    return new Date(Date.UTC(parseInt(year), months[month], parseInt(day)));
+  }
+  
+  // Return null if no valid date format is found in the title
+  return null;
+}
+/**
+ * Filters changelogs based on a given date range.
+ * 
+ * @param {Date|null} startDate - The start date of the range (inclusive), or null if no start date.
+ * @param {Date|null} endDate - The end date of the range (inclusive), or null if no end date.
+ * @returns {Array} An array of changelog objects that fall within the specified date range.
+ */
+function filterChangelogsByDate(startDate, endDate) {
+  return changelogsData.filter(changelog => {
+    // Parse the date from the changelog title
+    const changelogDate = parseDateFromTitle(changelog.title);
+    
+    // If the date couldn't be parsed, exclude this changelog
+    if (!changelogDate) return false;
+
+    // Apply different filtering logic based on the provided date range
+    if (startDate && endDate) {
+      // Both start and end dates provided: check if changelog is within range
+      return changelogDate >= startDate && changelogDate <= endDate;
+    } else if (startDate) {
+      // Only start date provided: check if changelog is on or after start date
+      return changelogDate >= startDate;
+    } else if (endDate) {
+      // Only end date provided: check if changelog is on or before end date
+      return changelogDate <= endDate;
     }
-  }
-
-  // Function to format the date for the button display
-  function formatDateForButton(date) {
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      timeZone: "UTC", // Use UTC timezone
-    };
-    return date.toLocaleDateString("en-US", options); // Format date as a string
-  }
-
-  // Function to update the changelog list based on selected dates
-  function updateChangelogList() {
-    const startDate = startDatePicker.getDate(); // Get the start date from the picker
-    const endDate = endDatePicker.getDate(); // Get the end date from the picker
-
-    if (startDate || endDate) {
-      const filteredChangelogs = filterChangelogsByDate(); // Filter changelogs by date
-
-      if (filteredChangelogs.length > 0) {
-        populateChangelogDropdown(filteredChangelogs); // Populate dropdown with filtered changelogs
-        updateDropdownButton("filtered"); // Update the dropdown button state
-        setTimeout(openChangelogDropdown, 100); // Open dropdown after a brief delay
-      } else {
-        populateChangelogDropdown([]); // Populate dropdown with no data
-        updateDropdownButton("No data for selected dates"); // Update button text
-      }
-    } else {
-      populateChangelogDropdown(changelogsData); // Populate dropdown with all changelogs
-      updateDropdownButton("default"); // Set button to default state
-    }
-  }
-
-  // Initialize the start date picker with Pikaday
-  var startDatePicker = new Pikaday({
-    ...pikadayConfig, // Spread existing configuration
-    field: document.getElementById("startDate"), // Input field for start date
-    trigger: document.getElementById("startDateBtn"), // Button to trigger date picker
-    onSelect: function () {
-      updateButtonText("startDate"); // Update button text on date selection
-      updateChangelogList(); // Update changelog list based on new date
-    },
+    
+    // If no dates are provided, include all changelogs
+    return true;
   });
+}
 
-  // Initialize the end date picker with Pikaday
-  var endDatePicker = new Pikaday({
-    ...pikadayConfig, // Spread existing configuration
-    field: document.getElementById("endDate"), // Input field for end date
-    trigger: document.getElementById("endDateBtn"), // Button to trigger date picker
-    onSelect: function () {
-      updateButtonText("endDate"); // Update button text on date selection
-      updateChangelogList(); // Update changelog list based on new date
-    },
-  });
+/**
+ * Updates the text of the changelog dropdown buttons on both mobile and desktop views.
+ * 
+ * @param {string} text - The text to display on the buttons. Use "default" for the default text.
+ */
+function updateDropdownButton(text) {
+  // Select the dropdown buttons for mobile and desktop views
+  const $mobileDropdownButton = $("#mobileChangelogDropdown");
+  const $desktopDropdownButton = $("#desktopChangelogDropdown");
 
-  // Modify the event listener for the dropdown button to prevent default behavior
-  $(document).on(
-    "click",
-    "#mobileChangelogDropdown, #desktopChangelogDropdown",
-    function (e) {
-      const buttonText = $(this).text().trim(); // Get the text of the clicked dropdown
-      if (buttonText === "No data for selected dates") {
-        e.preventDefault(); // Prevent default action if no data is available
-        e.stopPropagation(); // Stop the event from bubbling up
-      }
-    }
-  );
+  // Start with the calendar icon
+  let buttonText = '<i class="bi bi-calendar-event me-2"></i>';
 
-  // Update the dropdown button text based on the provided text
-  function updateDropdownButton(text) {
-    const $mobileDropdownButton = $("#mobileChangelogDropdown"); // Mobile dropdown reference
-    const $desktopDropdownButton = $("#desktopChangelogDropdown"); // Desktop dropdown reference
+  // Set the button text based on the input
+  if (text === "default") {
+    buttonText += "View Changelogs";
+  } else {
+    buttonText += text;
+  }
 
-    // Check if the text is default and set button text accordingly
-    if (text === "default") {
-      $mobileDropdownButton.html(
-        '<i class="bi bi-calendar-event me-2"></i>View Changelogs'
-      );
-      $desktopDropdownButton.html(
-        '<i class="bi bi-calendar-event me-2"></i>View Changelogs'
-      );
-    } else {
-      $mobileDropdownButton.html(
-        `<i class="bi bi-calendar-event me-2"></i>${text}`
-      );
-      $desktopDropdownButton.html(
-        `<i class="bi bi-calendar-event me-2"></i>${text}`
-      );
-    }
+  // Update both mobile and desktop buttons with the new text
+  $mobileDropdownButton.html(buttonText);
+  $desktopDropdownButton.html(buttonText);
+}
 
     // Initialize the dropdown instance for Bootstrap
     var dropdownElementList = [].slice.call(
@@ -403,19 +498,6 @@ $(document).ready(function () {
     );
     var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
       return new bootstrap.Dropdown(dropdownToggleEl); // Create Bootstrap dropdown instances
-    });
-  }
-
-  // Open date filter modal when the button is clicked
-  document
-    .getElementById("mobileOpenDateFilterModal")
-    .addEventListener("click", function () {
-      dateFilterModal.show(); // Show the date filter modal
-    });
-  document
-    .getElementById("desktopOpenDateFilterModal")
-    .addEventListener("click", function () {
-      dateFilterModal.show(); // Show the date filter modal
     });
 
   // Define buttons for copying changelog
@@ -506,31 +588,6 @@ $(document).ready(function () {
   mobileCopyChangelogBtn.on("click", copyChangelog);
   desktopCopyChangelogBtn.on("click", copyChangelog);
 
-  // Function to get a formatted date range text
-  function getDateRangeText() {
-    const startDate = startDatePicker.getDate(); // Get start date
-    const endDate = endDatePicker.getDate(); // Get end date
-
-    // Format the date range based on available dates
-    if (startDate && endDate) {
-      return `From: ${formatDate(startDate)} - To: ${formatDate(endDate)}`;
-    } else if (startDate) {
-      return `From: ${formatDate(startDate)}`;
-    } else if (endDate) {
-      return `To: ${formatDate(endDate)}`;
-    }
-    return "Select Start Date and End Date"; // Default message if no dates are selected
-  }
-
-  // Function to format a date into a readable string
-  function formatDate(date) {
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
-
   // Function to open the changelog dropdown
   function openChangelogDropdown() {
     const $mobileDropdownEl = $("#mobileChangelogDropdown"); // Mobile dropdown reference
@@ -588,159 +645,6 @@ $(document).ready(function () {
       progressBar: true, // Show a progress bar
     });
   }
-
-  // Function to clear the date filter
-  function clearDateFilter() {
-    startDatePicker.setDate(null); // Reset start date
-    endDatePicker.setDate(null); // Reset end date
-
-    // Update button texts
-    updateButtonText("startDate");
-    updateButtonText("endDate");
-
-    // Hide the date filter modal
-    dateFilterModal.hide();
-
-    // Populate changelog dropdown with all data
-    populateChangelogDropdown(changelogsData);
-
-    // Show the toast notification for clearing the filter
-    clearedFilterToast("The date filter has been cleared successfully!");
-  }
-
-  // Function to handle clearing the filter with spam prevention
-  function handleClearDateFilter(event) {
-    event.preventDefault(); // Prevent default button action
-
-    // Disable buttons to prevent spamming
-    document
-      .querySelectorAll("#mobileClearDateFilter, #desktopClearDateFilter")
-      .forEach((button) => {
-        button.disabled = true; // Disable each button
-      });
-
-    clearDateFilter(); // Call the function to clear the date filter
-
-    // Re-enable buttons after 5 seconds
-    setTimeout(() => {
-      document
-        .querySelectorAll("#mobileClearDateFilter, #desktopClearDateFilter")
-        .forEach((button) => {
-          button.disabled = false; // Re-enable each button
-        });
-    }, 4000); // 4 seconds delay
-  }
-
-  // Attach the event listener to both clear date filter buttons
-  document
-    .querySelectorAll("#mobileClearDateFilter, #desktopClearDateFilter")
-    .forEach((button) => {
-      button.addEventListener("click", handleClearDateFilter); // Add click event listener
-    });
-
-  // Function to filter changelogs based on selected date range
-  function filterChangelogsByDate() {
-    let startDate = startDatePicker.getDate(); // Get the start date
-    let endDate = endDatePicker.getDate(); // Get the end date
-
-    // If no dates are selected, return all changelogs
-    if (!startDate && !endDate) {
-      updateDropdownButton("default");
-      return changelogsData; // Return all changelogs
-    }
-
-    // Normalize the start date to UTC
-    if (startDate) {
-      startDate = new Date(
-        Date.UTC(
-          startDate.getFullYear(),
-          startDate.getMonth(),
-          startDate.getDate()
-        )
-      );
-    }
-    // Normalize the end date to UTC, set to the end of the day
-    if (endDate) {
-      endDate = new Date(
-        Date.UTC(
-          endDate.getFullYear(),
-          endDate.getMonth(),
-          endDate.getDate(),
-          23,
-          59,
-          59,
-          999
-        )
-      );
-    }
-
-    // Filter changelogs based on date range
-    return changelogsData.filter((changelog) => {
-      const changelogDate = parseDateFromTitle(changelog.title); // Parse the date from the changelog title
-      if (!changelogDate) return false; // If no date found, exclude this changelog
-
-      // Check if the changelog date falls within the selected range
-      if (startDate && endDate) {
-        return changelogDate >= startDate && changelogDate <= endDate;
-      } else if (startDate) {
-        return changelogDate >= startDate;
-      } else if (endDate) {
-        return changelogDate <= endDate;
-      }
-      return true; // Default case, include the changelog
-    });
-  }
-
-  // Function to parse the date from the changelog title
-  function parseDateFromTitle(title) {
-    const months = {
-      January: 0,
-      February: 1,
-      March: 2,
-      April: 3,
-      May: 4,
-      June: 5,
-      July: 6,
-      August: 7,
-      September: 8,
-      October: 9,
-      November: 10,
-      December: 11,
-    };
-
-    // Match the date format in the title
-    const match = title.match(/(\w+)\s(\d+)(?:st|nd|rd|th)\s(\d{4})/);
-    if (match) {
-      const [, month, day, year] = match; // Destructure the matched groups
-      return new Date(Date.UTC(parseInt(year), months[month], parseInt(day))); // Return date object
-    }
-    return null; // Return null if no match
-  }
-
-  // Function to update the dropdown button text based on filtering
-  function updateDropdownButton(text) {
-    const $dropdownButton = $("#changelogDropdown"); // Reference to the dropdown button
-    if (text === "default") {
-      $dropdownButton.html(
-        '<i class="bi bi-calendar-event me-2"></i>View Changelogs'
-      );
-    } else if (text === "filtered") {
-      $dropdownButton.html(
-        '<i class="bi bi-calendar-event me-2"></i>Filtered Changelogs'
-      );
-    } else {
-      $dropdownButton.html(`<i class="bi bi-calendar-event me-2"></i>${text}`);
-    }
-  }
-
-  // Modify the event listener for the dropdown button
-  $(document).on("click", "#changelogDropdown", function (e) {
-    const buttonText = $(this).text().trim(); // Get the current button text
-    if (buttonText === "No data for selected dates") {
-      e.preventDefault(); // Prevent default action if there's no data
-      e.stopPropagation(); // Stop event propagation
-    }
-  });
 
   // Function to toggle the visibility of the clear button based on input
   function toggleClearButton() {
@@ -1080,64 +984,63 @@ $(document).ready(function () {
 
   // Function to display the selected changelog
   function displayChangelog(changelog) {
-    localStorage.setItem("selectedChangelogId", changelog.id); // Store selected changelog ID in local storage
-
-    document.title = changelog.title; // Set document title to just the changelog title
+    localStorage.setItem("selectedChangelogId", changelog.id);
+  
+    document.title = changelog.title;
     reloadcomments();
-
+  
     if (titleElement) {
-      titleElement.textContent = changelog.title; // Update title element
+      titleElement.textContent = changelog.title;
     }
-
+  
     // Update image element if available
     if (changelog.image_url) {
       imageElement.src = changelog.image_url;
       imageElement.alt = `Image for ${changelog.title}`;
-      imageElement.style.display = "block"; // Show image
+      imageElement.style.display = "block";
     } else {
-      imageElement.src = ""; // Clear the source
-      imageElement.alt = ""; // Clear alt text when no image is present
-      imageElement.style.display = "none"; // Hide image
+      imageElement.src = "";
+      imageElement.alt = "";
+      imageElement.style.display = "none";
     }
-
-    let contentHtml = `<h1 class="display-4 mb-4">${changelog.title}</h1>`; // Initialize content HTML
-
+  
+    let contentHtml = `<h1 class="display-4 mb-4">${changelog.title}</h1>`;
+  
     if (changelog.sections) {
-      const processedMarkdown = preprocessMarkdown(changelog.sections); // Preprocess markdown
-      const processedSections = convertMarkdownToHtml(processedMarkdown); // Convert markdown to HTML
-      contentHtml += processedSections; // Append processed sections to content HTML
+      const processedMarkdown = preprocessMarkdown(changelog.sections);
+      const processedSections = convertMarkdownToHtml(processedMarkdown);
+      contentHtml += processedSections;
     } else {
-      console.warn("No sections available for changelog."); // Log warning if no sections
-      contentHtml += '<p class="lead">No sections available.</p>'; // Show message if no sections
+      console.warn("No sections available for changelog.");
+      contentHtml += '<p class="lead">No sections available.</p>';
     }
-
-    const dropdownText = $("#mobileChangelogDropdown").text().trim();
-    if (
-      dropdownText !== "Filtered Changelogs" &&
-      dropdownText !== "No data for selected dates"
-    ) {
-      updateDropdownButton("default"); // Update dropdown button if not filtered
+  
+    // Use the stored filter state instead of checking the dropdown text
+    if (currentFilterState) {
+      updateDropdownButton(currentFilterState);
+    } else {
+      updateDropdownButton("default");
     }
-
-    sectionsElement.innerHTML = contentHtml; // Update sections element with content HTML
+  
+    sectionsElement.innerHTML = contentHtml;
     const pathSegments = window.location.pathname.split("/");
     if (!isNaN(pathSegments[pathSegments.length - 1])) {
       pathSegments.pop();
     }
     const newPath = `${pathSegments.join("/")}/${changelog.id}`;
     window.history.pushState({}, "", newPath);
-    // Check if the currently displayed changelog is the latest one
+    
     const isLatestChangelog = changelog.id === changelogsData[0].id;
-
-    // Hide the "Latest Changelog" buttons if we're already showing the latest changelog
+  
     if (isLatestChangelog) {
       desktopLatestChangelogBtn.style.display = "none";
       mobileLatestChangelogBtn.style.display = "none";
     } else {
-      desktopLatestChangelogBtn.style.display = ""; // Reset to default display value
-      mobileLatestChangelogBtn.style.display = ""; // Reset to default display value
+      desktopLatestChangelogBtn.style.display = "";
+      mobileLatestChangelogBtn.style.display = "";
     }
   }
+  
 
   // Back to Top button functionality
   const backToTopButton = $("#backToTop");
