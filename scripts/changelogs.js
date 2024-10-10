@@ -98,25 +98,57 @@ $(document).ready(function () {
 
 // Function to create and open a date picker
 function openDatePicker(inputId, buttonId) {
-    const input = document.createElement('input');
-    input.type = 'date';
-    
+  const input = document.getElementById(inputId);
+  const button = document.getElementById(buttonId);
   
-    document.body.appendChild(input);
-
-    input.addEventListener('change', function() {
-        const selectedDate = new Date(this.value);
-        document.getElementById(inputId).value = this.value;
-        updateButtonText(buttonId, selectedDate);
-        document.body.removeChild(input);
-    });
-
-    input.showPicker();
+  // Show the date input
+  input.style.display = 'block';
+  button.style.display = 'none';
+  
+  // Focus and click to open the date picker
+  input.focus();
+  input.click();
+  
+  // Add an event listener to hide the input when it loses focus
+  input.addEventListener('blur', function() {
+    input.style.display = 'none';
+    button.style.display = 'block';
+  }, { once: true });
 }
 
-// Add click event listeners to the date buttons
-startDateBtn.addEventListener('click', () => openDatePicker('startDate', 'startDateBtn'));
-endDateBtn.addEventListener('click', () => openDatePicker('endDate', 'endDateBtn'));
+function updateButtonText(buttonId, date) {
+  const btn = document.getElementById(buttonId);
+  if (date) {
+    const formattedDate = formatDateForButton(date);
+    btn.querySelector('span').textContent = formattedDate;
+  } else {
+    btn.querySelector('span').textContent = buttonId === 'startDateBtn' ? 'Select Start Date' : 'Select End Date';
+  }
+}
+
+// Event listeners for the date buttons
+document.getElementById('startDateBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  openDatePicker('startDate', 'startDateBtn');
+});
+
+document.getElementById('endDateBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  openDatePicker('endDate', 'endDateBtn');
+});
+
+// Event listeners for the date inputs
+document.getElementById('startDate').addEventListener('change', function() {
+  updateButtonText('startDateBtn', new Date(this.value));
+  this.style.display = 'none';
+  document.getElementById('startDateBtn').style.display = 'block';
+});
+
+document.getElementById('endDate').addEventListener('change', function() {
+  updateButtonText('endDateBtn', new Date(this.value));
+  this.style.display = 'none';
+  document.getElementById('endDateBtn').style.display = 'block';
+});
 
 // Function to update button text
 function updateButtonText(buttonId, date) {

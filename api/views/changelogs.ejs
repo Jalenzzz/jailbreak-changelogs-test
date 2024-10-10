@@ -531,27 +531,25 @@
       <div class="modal-body">
         <div id="dateRangeFilter" class="row g-2">
           <div class="col-md-6">
-            <label for="startDateBtn" class="form-label">Start Date:</label>
-            <button
-              id="startDateBtn"
-              class="btn btn-outline-secondary w-100"
-            >
-              <i class="bi bi-calendar-event me-2"></i>
-              <span>Select Start Date</span>
-            </button>
-            <input type="hidden" id="startDate" />
+            <label for="startDate" class="form-label">Start Date:</label>
+            <div class="input-group">
+              <input type="date" id="startDate" class="form-control" style="display: none;">
+              <button id="startDateBtn" class="btn btn-outline-secondary w-100">
+                <i class="bi bi-calendar-event me-2"></i>
+                <span>Select Start Date</span>
+              </button>
+            </div>
           </div>
           <div class="col-md-6">
-            <label for="endDateBtn" class="form-label">End Date:</label>
-            <button
-              id="endDateBtn"
-              class="btn btn-outline-secondary w-100"
-            >
-              <i class="bi bi-calendar-event me-2"></i>
-              <span>Select End Date</span>
-            </button>
-            <input type="hidden" id="endDate" />
-          </div>
+            <label for="endDate" class="form-label">End Date:</label>
+            <div class="input-group">
+              <input type="date" id="endDate" class="form-control" style="display: none;">
+              <button id="endDateBtn" class="btn btn-outline-secondary w-100">
+                <i class="bi bi-calendar-event me-2"></i>
+                <span>Select End Date</span>
+              </button>
+            </div>
+          </div>          
         </div>
       </div>
       <div class="modal-footer">
