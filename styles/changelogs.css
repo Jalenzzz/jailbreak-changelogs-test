@@ -176,11 +176,6 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   border: none;
   transition: background-color 0.3s ease;
 }
-.nav-link:hover {
-  background-color: rgba(211, 217, 212, 0.1); /* Slightly lighter background on hover */
-  color: #ffffff; /* Brighter text color on hover */
-  border-radius: 5px;
-}
 
 .custom-search-input {
   background-color: #f0f0f0; /* Light gray background */
@@ -220,204 +215,26 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
     0.1
   ); /* Slight highlight when focused */
 }
-/* Burger Menu Icon Styles */
-.burger-menu-icon {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 1001; /* Ensure it's above the fullscreen menu */
-}
 
-
-.breadcrumb {
-  background-color: #212529;
-  border-radius: 0.25rem;
-  padding: 12px 20px;
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  max-width: fit-content;
-  margin: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.breadcrumb-item {
-  margin-right: 15px;
-  font-size: 16px;
-  position: relative;
-}
-
-.breadcrumb-item:not(:last-child)::after {
-  content: "›";
-  color: #6c757d;
-  margin-left: 15px;
-}
-
-.breadcrumb-item a {
-  text-decoration: none;
-  color: #ffffff;
-  transition: color 0.3s, opacity 0.3s;
-  opacity: 0.8;
-}
-
-.breadcrumb-item a:hover {
-  color: #ffffff;
-  opacity: 1;
-}
-
-.breadcrumb-item.active {
-  color: #ffffff;
-  font-weight: 600;
-  opacity: 1;
-}
-
-
-/* Burger Menu Line Styles */
-.burger-menu-icon .line {
-  fill: none;
-  stroke: #ffffff; /* Color of the burger menu lines */
-  stroke-width: 6;
-  transition: stroke-dasharray 600ms cubic-bezier(0.4, 0, 0.2, 1),
-    stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Specific styles for each line of the burger menu */
-.burger-menu-icon .line1 {
-  stroke-dasharray: 60 207;
-  stroke-width: 6;
-}
-
-.burger-menu-icon .line2 {
-  stroke-dasharray: 60 60;
-  stroke-width: 6;
-}
-
-.burger-menu-icon .line3 {
-  stroke-dasharray: 60 207;
-  stroke-width: 6;
-}
-
-/* Styles for opened burger menu icon */
-.burger-menu-icon.opened .line1 {
-  stroke-dasharray: 90 207;
-  stroke-dashoffset: -134;
-  stroke-width: 6;
-}
-
-.burger-menu-icon.opened .line2 {
-  stroke-dasharray: 1 60;
-  stroke-dashoffset: -30;
-  stroke-width: 6;
-}
-
-.burger-menu-icon.opened .line3 {
-  stroke-dasharray: 90 207;
-  stroke-dashoffset: -134;
-  stroke-width: 6;
-}
-/* Navbar toggler styles */
-.navbar-toggler {
-  padding: 0;
-  border: none;
-}
-
-.navbar-toggler:focus {
-  box-shadow: none;
-}
-
-/* Off-screen Side Menu Styles */
-.side-menu {
-  position: fixed;
-  top: 0;
-  right: -405px; /* Start off-screen */
-  width: 400px;
-  max-width: 90vw;
-  height: 100%;
-  background-color: #212a31;
-  z-index: 1000;
-  overflow-x: hidden;
-  transition: right 0.3s ease-in-out;
-  padding-top: 83px; /* Account for the logo area */
-  padding-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Show the side menu */
-.side-menu.show {
-  right: 0;
-}
-
-/* Side menu content styles */
-.side-menu-content {
-  padding: 0 1.5rem;
-  text-align: left;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Navigation styles within the side menu */
-.side-menu .navbar-nav {
-  flex-direction: column;
-  align-items: flex-start;
-  margin-top: 1rem;
-}
-
-.side-menu .nav-item {
-  margin: 0.25rem 0;
-  width: 100%;
-}
-
-.side-menu .nav-link {
-  font-size: 1.25rem;
-  color: white;
-  padding: 0.25rem 0;
-  display: block;
-  text-align: left;
-  background-color: transparent;
-  border: none;
-  transition: color 0.3s;
-}
-
-/* Animation for menu items */
-.side-menu .nav-item {
-  opacity: 0;
-  transform: translateX(20px);
-}
-
-.side-menu.show .nav-item {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* Stagger the animation of menu items */
-.side-menu.show .nav-item:nth-child(1) {
-  transition-delay: 0.1s;
-}
-.side-menu.show .nav-item:nth-child(2) {
-  transition-delay: 0.2s;
-}
-
-/* Adjust the body when menu is opened */
-body.menu-open {
-  overflow: hidden;
-}
-
-/* second navbar toggler  */
 .navbar-toggler.btn-light {
   padding: 0.375rem 0.75rem;
   background-color: #f8f9fa;
   border-color: #e2e6ea;
   transition: all 0.15s ease-in-out;
 }
+
 .navbar-toggler.btn-light:active,
 .navbar-toggler.btn-light[aria-expanded="true"] {
   background-color: #dae0e5;
   border-color: #d3d9df;
   transform: translateY(1px);
 }
+
+.navbar-toggler.btn-light:focus {
+  box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
 .navbar-toggler.btn-light .bi-menu-button-wide {
   color: #212529;
   font-size: 1.25rem;
@@ -508,84 +325,43 @@ body.menu-open {
 
 /* Sidebar Image Wrapper Styles */
 #sidebar-image-wrapper .card {
-  position: relative;  /* Allows absolute positioning of pseudo-elements */
-  overflow: hidden;    /* Ensures the sliding borders don't extend outside the card */
-  transition: box-shadow 0.3s ease;  /* Smooth transition for box-shadow on hover */
+  position: relative; /* Positioning for hover effects */
+  overflow: hidden; /* Hide overflow */
+  transition: all 0.5s ease; /* Smooth transition for all properties */
+  transform-style: preserve-3d; /* Preserve 3D transformations */
 }
 
-/* Pseudo-elements for top and bottom borders */
-#sidebar-image-wrapper .card::before,
-#sidebar-image-wrapper .card::after {
-  content: '';  /* Required for pseudo-elements */
-  position: absolute;
-  width: 100%;
-  height: 2px;  /* Thickness of the border */
-  background-color: #124E66;  /* Color of the border, can be customized */
-  transition: transform 0.6s ease;  /* Smooth sliding animation */
-}
-
-/* Top border - slides in from left */
 #sidebar-image-wrapper .card::before {
+  content: ""; /* Create a pseudo-element for gradient overlay */
+  position: absolute; /* Positioning for overlay */
   top: 0;
   left: 0;
-  transform: translateX(-100%);  /* Initially hidden off-screen to the left */
-}
-
-/* Bottom border - slides in from right */
-#sidebar-image-wrapper .card::after {
-  bottom: 0;
-  right: 0;
-  transform: translateX(100%);  /* Initially hidden off-screen to the right */
-}
-
-/* Slide in top and bottom borders on hover */
-#sidebar-image-wrapper .card:hover::before,
-#sidebar-image-wrapper .card:hover::after {
-  transform: translateX(0);  /* Moves borders into view */
-}
-
-/* Left and right border elements */
-#sidebar-image-wrapper .card .border-left,
-#sidebar-image-wrapper .card .border-right {
-  position: absolute;
-  width: 2px;  /* Thickness of the border */
-  height: 100%;
-  background-color: #124E66;  /* Should match the color of top/bottom borders */
-  transition: transform 0.6s ease;  /* Smooth sliding animation */
-}
-
-/* Left border - slides in from top */
-#sidebar-image-wrapper .card .border-left {
-  top: 0;
-  left: 0;
-  transform: translateY(-100%);  /* Initially hidden above the card */
-}
-
-/* Right border - slides in from bottom */
-#sidebar-image-wrapper .card .border-right {
-  bottom: 0;
-  right: 0;
-  transform: translateY(100%);  /* Initially hidden below the card */
-}
-
-/* Slide in left and right borders on hover */
-#sidebar-image-wrapper .card:hover .border-left,
-#sidebar-image-wrapper .card:hover .border-right {
-  transform: translateY(0);  /* Moves borders into view */
-}
-
-/* Add subtle shadow effect on hover */
-#sidebar-image-wrapper .card:hover {
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);  /* Adds depth to the card */
-}
-
-/* Ensure the image fills the card */
-#sidebar-image-wrapper .card img {
-  display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0) 100%
+  ); /* Gradient overlay */
+  transform: translateY(-100%); /* Initial position above the card */
+  transition: transform 0.5s ease; /* Smooth transition for the overlay */
 }
 
+#sidebar-image-wrapper .card:hover {
+  transform: scale(1.05) rotateY(5deg); /* Scale and rotate on hover */
+}
+
+#sidebar-image-wrapper .card:hover::before {
+  transform: translateY(0); /* Move overlay into view on hover */
+}
+
+#sidebar-image-wrapper .card img {
+  transition: all 0.5s ease; /* Smooth transition for image properties */
+}
+
+#sidebar-image-wrapper .card:hover img {
+  filter: brightness(1.2) contrast(1.1); /* Adjust brightness and contrast on hover */
+}
 /* Highlight Styles */
 .highlight {
   background-color: var(
@@ -810,12 +586,6 @@ body.menu-open {
 
 /* Commenter name styling */
 #comments-list .list-group-item strong {
-  color: var(--content-h3);
-  display: block;
-  margin-bottom: 5px;
-}
-
-#comments-list .list-group-item a {
   color: var(--content-h3);
   display: block;
   margin-bottom: 5px;
@@ -1122,7 +892,7 @@ footer.hide {
 }
 @media (max-width: 576px) {
   .navbar-logo {
-    height: 52px;
+    height: 50px;
   }
   #comment-form .input-group {
     flex-wrap: nowrap;
@@ -1148,21 +918,11 @@ footer.hide {
   #comments-list .list-group-item p {
     font-size: 14px;
   }
-  .breadcrumb {
-    padding: 10px 15px;
-  }
-  .breadcrumb-item {
-    font-size: 14px;
-    margin-right: 10px;
-  }
-  .breadcrumb-item:not(:last-child)::after {
-    margin-left: 10px;
-  }
 }
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 42px;
+    height: 40px;
   }
   .container {
     padding-left: 5px;

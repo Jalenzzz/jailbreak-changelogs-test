@@ -89,19 +89,7 @@ function clearFilters() {
 
   // Show toast notification
   toastr.success("Filters have been cleared", "Clear Filters");
-
-  // Disable the button
-  const clearButton = document.getElementById("clearFilters");
-  clearButton.disabled = true;
-
-  // Re-enable the button after 5 seconds
-  setTimeout(() => {
-    clearButton.disabled = false;
-  }, 5000);
 }
-
-// Event listener for the clear button
-document.getElementById("clearFilters").addEventListener("click", clearFilters);
 
 function filterData(data) {
   const searchTerm = document.getElementById("searchInput").value.toLowerCase();
@@ -186,6 +174,11 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("sortPreference", sortBy.value);
     displayData();
   });
+
+  // Add event listener for the clear button
+  document
+    .getElementById("clearFilters")
+    .addEventListener("click", clearFilters);
 
   // Load saved sort preference
   const savedSort = localStorage.getItem("sortPreference");
