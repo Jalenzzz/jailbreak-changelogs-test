@@ -26,27 +26,44 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Inject the Speed Insights code on every page load
-  const path = window.location.pathname;
-  try {
-    if (document.getElementById("last-updated")) {
-      // Only fetch if the element exists
-      fetch("https://api.jailbreakchangelogs.xyz/version/website")
-        .then((response) => response.json())
-        .then((data) => {
-          document.getElementById("last-updated").textContent = data.date;
-          document.getElementById("version-number").textContent = data.version;
-        });
-    }
-  } catch (error) {
-    console.error("Failed to fetch version data:", error);
-  }
+// Function to check version with caching
+function checkVersionWithCache() {
+  const cachedVersion = localStorage.getItem('versionData');
+  const cachedTimestamp = localStorage.getItem('versionTimestamp');
+  const currentTime = new Date().getTime();
 
-  if (path.endsWith(".html")) {
-    const cleanUrl = path.replace(".html", "");
-    window.history.pushState({}, "", cleanUrl);
+  // Check if we have cached data and it's less than 1 hour old
+  if (cachedVersion && cachedTimestamp && (currentTime - parseInt(cachedTimestamp) < 3600000)) {
+    // Use cached data
+    const versionData = JSON.parse(cachedVersion);
+    updateVersionDisplay(versionData);
+  } else {
+    // Fetch new data
+    fetch("https://api.jailbreakchangelogs.xyz/version/website")
+      .then((response) => response.json())
+      .then((data) => {
+        // Cache the new data
+        localStorage.setItem('versionData', JSON.stringify(data));
+        localStorage.setItem('versionTimestamp', currentTime.toString());
+        updateVersionDisplay(data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch version data:", error);
+      });
   }
+}
+
+// Function to update the version display
+function updateVersionDisplay(data) {
+  if (document.getElementById("last-updated")) {
+    document.getElementById("last-updated").textContent = data.date;
+    document.getElementById("version-number").textContent = data.version;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  checkVersionWithCache();
+
   const avatarUrl = sessionStorage.getItem("avatar");
 
   function getCookie(name) {
