@@ -1,19 +1,17 @@
 {
-    "name": "@jbchangelogs/jailbreak-changelogs",
-    "version": "1.1.0",
+    "name": "jailbreak-changelogs",
+    "version": "1.0.0",
     "scripts": {
         "start": "node api/index.js",
-        "dev": "nodemon api/index.js",
-        "test": "echo \"No test specified\" && exit 0",
-        "bump-version": "npm version patch && git push && git push --tags",
-        "smart-push": "node scripts/smart-push.js"
+        "dev": "nodemon api/index.js"
     },
     "dependencies": {
         "@vercel/speed-insights": "^1.0.12",
         "axios": "^1.7.7",
         "cors": "^2.8.5",
         "ejs": "^3.1.10",
-        "express": "^4.21.0"
+        "express": "^4.21.0",
+        "express-ejs-layouts": "^2.5.1"
     },
     "engines": {
         "node": "20.x"
@@ -22,7 +20,7 @@
         "@babel/core": "^7.25.2",
         "@babel/preset-env": "^7.25.4",
         "babel-loader": "^9.2.1",
-        "nodemon": "^3.0.1",
+        "nodemon": "^3.1.7",
         "webpack": "^5.95.0",
         "webpack-cli": "^5.1.4"
     }

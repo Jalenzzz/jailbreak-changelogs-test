@@ -268,8 +268,11 @@ $(document).ready(function () {
     const selectedSeason = $(this).attr("href").split("=")[1];
 
     // Update the URL with the selected season
-    const newUrl = new URL(window.location);
-    newUrl.searchParams.set("season", selectedSeason);
+    const pathSegments = window.location.pathname.split("/");
+    if (!isNaN(pathSegments[pathSegments.length - 1])) {
+      pathSegments.pop();
+    }
+    const newUrl = `${window.location.origin}${pathSegments.join("/")}/${selectedSeason}`;
     window.history.pushState({}, "", newUrl);
 
     // Only show loading overlay if we're fetching fresh data
@@ -308,9 +311,8 @@ $(document).ready(function () {
   loadAllData()
     .then(([seasonDescriptions, allRewards]) => {
       populateSeasonDropdown(seasonDescriptions);
-
-      const urlParams = new URLSearchParams(window.location.search);
-      let seasonNumber = urlParams.get("season");
+      const pathSegments = window.location.pathname.split("/");
+      let seasonNumber = pathSegments[pathSegments.length - 1];
 
       const latestSeason = Math.max(
         ...seasonDescriptions.map((desc) => desc.season)
@@ -318,13 +320,14 @@ $(document).ready(function () {
 
       if (
         !seasonNumber ||
-        !seasonDescriptions.some(
-          (desc) => desc.season === parseInt(seasonNumber)
-        )
+        isNaN(seasonNumber) ||
+        !seasonDescriptions.some((desc) => desc.season === parseInt(seasonNumber))
       ) {
+        // If invalid, set seasonNumber to the latest season
         seasonNumber = latestSeason.toString();
-        const newUrl = new URL(window.location);
-        newUrl.searchParams.set("season", seasonNumber);
+    
+        // Update the URL to include the latest season in the path
+        const newUrl = `${window.location.origin}/seasons/${seasonNumber}`;
         window.history.replaceState({}, "", newUrl);
       }
 
@@ -423,9 +426,14 @@ $(document).ready(function () {
     const commentContainer = document.createElement("div");
     commentContainer.classList.add("ms-2"); // Add margin to the left of the comment
 
-    const usernameElement = document.createElement("strong");
-    usernameElement.textContent = userdata.global_name;
-
+    const usernameElement = document.createElement("a");
+    usernameElement.href = `/users/${userdata.id}`; // Set the href to redirect to the user's page
+    usernameElement.textContent = userdata.global_name; // Set the text to the user's global name
+    usernameElement.classList.add('text-decoration-none'); 
+    usernameElement.style.fontWeight = "bold"; // Make the text bold
+    usernameElement.style.textDecoration = "none"; // Remove underline
+    usernameElement.style.color = "#748d92"; // Use inherited color (usually the same as the surrounding text)
+    
     const commentTextElement = document.createElement("p");
     commentTextElement.textContent = comment.value;
     commentTextElement.classList.add("mb-0"); // Remove default margin from <p>
@@ -583,8 +591,14 @@ $(document).ready(function () {
         const commentContainer = document.createElement("div");
         commentContainer.classList.add("ms-2");
 
-        const usernameElement = document.createElement("strong");
-        usernameElement.textContent = userData.global_name;
+        const usernameElement = document.createElement("a");
+        usernameElement.href = `/users/${userData.id}`; // Set the href to redirect to the user's page
+        usernameElement.textContent = userData.global_name; // Set the text to the user's global name
+        usernameElement.classList.add('text-decoration-none'); 
+        usernameElement.style.fontWeight = "bold"; // Make the text bold
+        usernameElement.style.textDecoration = "none"; // Remove underline
+        usernameElement.style.color = "#748d92"; // Use inherited color (usually the same as the surrounding text)
+        
 
         const commentTextElement = document.createElement("p");
         commentTextElement.textContent = comment.content;

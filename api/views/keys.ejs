@@ -10,7 +10,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles/keys.css" />
-    <title>API Key Management</title>
+    <title><%= title %></title>
     <link
       href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap"
       rel="stylesheet"
@@ -24,103 +24,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   </head>
   <body>
-    <nav
-      class="navbar navbar-expand-lg navbar-dark custom-navbar-color sticky-top"
-    >
-      <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-          <img
-            src="https://res.cloudinary.com/dsvlphknq/image/upload/v1727729487/logos/changelogs_api.png"
-            alt="API Page Logo"
-            class="navbar-logo"
-          />
-        </a>
-
-        <!-- Container for navbar toggler and profile picture on mobile -->
-        <div class="d-flex d-lg-none align-items-center">
-          <!-- Navbar toggler -->
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <!-- Profile picture icon (visible on mobile) -->
-          <div class="ms-2 d-lg-none">
-            <a href="login" title="Go to login page" class="profile-link">
-              <img
-                src="/favicon.ico"
-                alt="Profile"
-                id="profile-picture-mobile"
-                class="rounded-circle"
-                width="32"
-                height="32"
-              />
-            </a>
-          </div>
-        </div>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto align-items-center">
-            <li class="nav-item">
-                <a class="nav-link" href="/changelogs">Changelogs</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/seasons">Seasons</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/timeline">Timeline</a>
-              </li>
-              <li class="nav-item"></li>
-                <a class="nav-link" href="/tradetracker">Trade Tracker</a>
-              </li>
-              <li class="nav-item"></li>
-                <a class="nav-link" href="/keys">Api</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/bot">Our Discord Bot</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/faq">FAQ</a>
-              </li>
-              <li class="nav-item">
-                <button
-                  class="nav-link btn"
-                  type="button"
-                  data-bs-toggle="offcanvas"
-                  data-bs-target="#discordOffcanvas"
-                  aria-controls="discordOffcanvas"
-                >
-                  Join the Discord
-                </button>
-              </li>
-            <!-- Profile picture icon (visible on desktop) -->
-            <li class="nav-item d-none d-lg-block ms-2">
-              <a
-                href="login"
-                title="Go to login page"
-                class="profile-link"
-              >
-                <img
-                  src="/favicon.ico"
-                  alt="Profile"
-                  class="rounded-circle"
-                  id="profile-picture"
-                  width="32"
-                  height="32"
-                />
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <%- include('partials/nav') %>
 
     <div
       class="offcanvas offcanvas-end"
@@ -153,6 +57,12 @@
     </div>
 
     <div class="container content-wrapper mt-5">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Changelogs Api</li>
+        </ol>
+      </nav>
       <h1>API Key Management</h1>
       <button
         class="btn btn-primary mb-3"

@@ -6,6 +6,7 @@
     <meta name="referrer" content="no-referrer" />
 
     <meta name="google-adsense-account" content="ca-pub-8152532464536367">
+    <base href="/">
 
     <!-- Open Graph metadata for social media sharing -->
     <meta
@@ -51,7 +52,7 @@
       content="<%= image_url %>"
     />
 
-    <title>Jailbreak | Seasons</title>
+    <title><%= title %></title>
 
     <!-- Stylesheets -->
     <link
@@ -93,6 +94,7 @@
   </head>
 
   <body data-scroll-container>
+    <%- include('partials/nav') %>
     <!-- Loading Overlay -->
     <!-- This overlay is shown while the page is loading -->
     <div id="loading-overlay" class="show">
@@ -109,102 +111,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Navigation Bar -->
-    <!-- This navbar contains the logo and theme toggle buttons -->
-    <nav
-      class="navbar navbar-expand-lg navbar-dark custom-navbar-color sticky-top"
-    >
-      <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-          <img
-            src="https://res.cloudinary.com/dsvlphknq/image/upload/v1727392623/logos/changelogs_seasons.png"
-            alt="Changelogs Page Logo"
-            class="header-logo seasons-logo"
-          />
-        </a>
-
-        <!-- Container for navbar toggler and profile picture on mobile -->
-        <div class="d-flex d-lg-none align-items-center">
-          <!-- Navbar toggler -->
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <!-- Profile picture icon (visible on mobile) -->
-          <div class="ms-2 d-lg-none">
-            <a href="login" title="Go to login page" class="profile-link">
-              <img
-                src="https://jailbreakchangelogs.xyz/favicon.ico"
-                alt="Profile"
-                id="profile-picture-mobile"
-                class="rounded-circle"
-                width="32"
-                height="32"
-              />
-            </a>
-          </div>
-        </div>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto align-items-center">
-            <li class="nav-item">
-              <a class="nav-link" href="/changelogs">Changelogs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/seasons">Seasons</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/timeline">Timeline</a>
-            </li>
-            <li class="nav-item"></li>
-              <a class="nav-link" href="/tradetracker">Trade Tracker</a>
-            </li>
-            <li class="nav-item"></li>
-              <a class="nav-link" href="/keys">Api</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/bot">Our Discord Bot</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/faq">FAQ</a>
-            </li>
-            <li class="nav-item">
-              <button
-                class="nav-link btn"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#discordOffcanvas"
-                aria-controls="discordOffcanvas"
-              >
-                Join the Discord
-              </button>
-            </li>
-            <!-- Profile picture icon (visible on desktop) -->
-          <li class="nav-item d-none d-lg-block ms-2">
-            <a href="login.html" title="Go to login page" class="profile-link">
-              <img 
-                src="/favicon.ico"
-                alt="Profile" 
-                id="profile-picture" 
-                class="rounded-circle" 
-                width="32" 
-                height="32"
-              >
-            </a>
-          </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
     <div
       class="offcanvas offcanvas-end"
       tabindex="-1"
@@ -236,6 +142,12 @@
     </div>
     <!-- Seasons Button Container -->
     <div class="container-fluid mt-3">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Seasons</li>
+        </ol>
+      </nav>
       <div class="row">
         <div class="col-12 col-lg-8">
           <!-- This aligns with the content wrapper width -->

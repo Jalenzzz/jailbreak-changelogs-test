@@ -1,70 +1,3 @@
-.hero {
-  background-image: url("https://res.cloudinary.com/dsvlphknq/image/upload/v1727358371/backgrounds/3.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  padding: 100px 0;
-  position: relative;
-}
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-.breadcrumb {
-  background-color: #212529; /* Light background color */
-  border-radius: 0.25rem; /* Slightly rounded corners */
-  padding: 10px 15px; /* Padding around the breadcrumb */
-  list-style: none; /* Remove default list styling */
-  display: flex; /* Use flexbox for alignment */
-  flex-wrap: wrap; /* Allow wrapping */
-  max-width: fit-content;
-}
-
-.breadcrumb-item {
-  margin-right: 10px; /* Space between items */
-  font-size: 16px; /* Font size */
-}
-
-.breadcrumb-item a {
-  text-decoration: none; /* Remove underline */
-  color: #007bff; /* Bootstrap primary color */
-  transition: color 0.3s; /* Smooth color transition */
-}
-
-.breadcrumb-item a:hover {
-  color: #0056b3; /* Darker blue on hover */
-}
-
-.breadcrumb-item.active {
-  color: #6c757d; /* Bootstrap secondary color for active item */
-  font-weight: bold; /* Bold text for active item */
-}
-.hero-content {
-  position: relative;
-  z-index: 1;
-  color: white;
-  text-align: center;
-}
-.hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-.hero p {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-}
-.hero div {
-  position: relative;
-  z-index: 2; /* Ensures text is on top of the overlay */
-}
-.feature-icon {
-  font-size: 3rem;
-}
 .btn-primary {
   background-color: #032b44;
   border-color: #032b44; /* Border color on hover */
@@ -78,7 +11,7 @@
   border-color: #212a31 !important; /* Border color on hover */
 }
 body {
-  background-color: #f8f9fa;
+  background-color: #2e3944;
 }
 .offcanvas-header {
   display: flex; /* Keep the header visible */
@@ -103,6 +36,91 @@ body {
   filter: invert(1) grayscale(100%) brightness(200%);
 }
 
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(
+    33,
+    42,
+    49,
+    0.8
+  ); /* Add this for a semi-transparent background */
+}
+
+.custom-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid transparent;
+  border-radius: 50%;
+  border-top-color: #31b1ff;
+  border-right-color: #31b1ff;
+  border-bottom-color: #ff341c;
+  border-left-color: #ff341c;
+  animation: spin 1s linear infinite;
+}
+.breadcrumb {
+  background-color: #212529;
+  border-radius: 0.25rem;
+  padding: 12px 20px;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: fit-content;
+  margin: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.breadcrumb-item {
+  margin-right: 15px;
+  font-size: 16px;
+  position: relative;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+  content: "›";
+  color: #6c757d;
+  margin-left: 15px;
+}
+
+.breadcrumb-item a {
+  text-decoration: none;
+  color: #ffffff;
+  transition: color 0.3s, opacity 0.3s;
+  opacity: 0.8;
+}
+
+.breadcrumb-item a:hover {
+  color: #ffffff;
+  opacity: 1;
+}
+
+.breadcrumb-item.active {
+  color: #ffffff;
+  font-weight: 600;
+  opacity: 1;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.results {
+  min-height: 200px;
+  position: relative;
+}
+
 .cursive {
   font-size: 0.8rem; /* make the text smaller */
   font-style: italic; /* make the text cursive */
@@ -120,8 +138,9 @@ body {
 }
 /* Custom styles for navbar items */
 .custom-navbar-color .navbar-nav .nav-link {
-  color: #d3d9d4; /* Light gray color for nav links */
-  transition: color 0.3s ease;
+  color: #d3d9d4; /* Light color for button text */
+  border: none;
+  transition: background-color 0.3s ease;
 }
 
 .custom-navbar-color .navbar-nav .nav-link:hover,
@@ -129,18 +148,6 @@ body {
   background-color: rgba(211, 217, 212, 0.1); /* Slightly lighter background on hover */
   color: #ffffff; /* Brighter text color on hover */
   border-radius: 5px;
-}
-
-/* Custom style for the active nav item */
-.custom-navbar-color .navbar-nav .nav-item.active .nav-link {
-  color: #748d92; /* Highlight color for active link */
-}
-
-/* Custom style for the "Join the Discord" button */
-.nav-link {
-  color: #d3d9d4; /* Light color for button text */
-  border: none;
-  transition: background-color 0.3s ease;
 }
 /* Burger Menu Icon Styles */
 .burger-menu-icon {
@@ -194,7 +201,6 @@ body {
   stroke-dashoffset: -134;
   stroke-width: 6;
 }
-
 /* Navbar toggler styles */
 .navbar-toggler {
   padding: 0;
@@ -283,6 +289,62 @@ body {
 body.menu-open {
   overflow: hidden;
 }
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+.user-card {
+  background-color: #2C2F33;
+  border-radius: 12px;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  width: 100%; /* Ensure the card takes full width */
+}
+.user-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.user-avatar {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border: 2px solid #7289DA;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.user-info {
+  flex-grow: 1;
+  min-width: 0; /* Allows text to wrap properly */
+}
+.user-name {
+  font-weight: 600;
+  color: #FFFFFF;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.user-username {
+  font-size: 0.9rem;
+  color: #99AAB5;
+  margin-bottom: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.view-profile-btn {
+  background-color: #124E66;
+  border-color: #748D92;
+  color: #FFFFFF;
+  transition: background-color 0.3s ease-in-out;
+  white-space: nowrap;
+}
+
+
+.search-box {
+  background-color: #212529;
+}
 
 .navbar-brand {
   margin-right: 0;
@@ -313,21 +375,50 @@ footer a:hover {
 footer a:hover::after {
   transform: scaleX(1);
 }
-.version-number {
-  position: absolute;
-  bottom: 10px;
-  font-size: 13px;
-  color: #90a0ac;
-  z-index: 1000;
+.no-results-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
 }
 
-.version-number-left {
-  left: 10px;
+@media (max-width: 767px) {
+  .search-box {
+    width: 100% !important;
+  }
 }
-
 @media (max-width: 576px) {
+  .user-card {
+    width: 100%;
+  }
+  .user-avatar {
+    width: 50px;
+    height: 50px;
+  }
+  .user-name {
+    font-size: 1rem;
+  }
+  .user-username {
+    font-size: 0.8rem;
+  }
+  .view-profile-btn {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+  }
   .navbar-logo {
-    height: 44px;
+    height: 43px;
+  }
+  .breadcrumb {
+    padding: 10px 15px;
+  }
+  .breadcrumb-item {
+    font-size: 14px;
+    margin-right: 10px;
+  }
+  .breadcrumb-item:not(:last-child)::after {
+    margin-left: 10px;
   }
 }
 
