@@ -149,25 +149,44 @@ document.addEventListener("DOMContentLoaded", () => {
     modalHeader.className = "modal-header";
 
     const modalTitle = document.createElement("h5");
-    modalTitle.className = "modal-title";
-    modalTitle.innerText = "Logging in with token";
-    modalTitle.style.color = "#ffffff"; // White text color
+modalTitle.className = "modal-title";
+modalTitle.innerText = "Logging in with token";
+modalTitle.style.color = "#FFFFFF"; // White text color
+modalTitle.style.fontWeight = "bold"; // Make the title bold
+modalTitle.style.fontSize = "18px"; // Slightly larger font size
 
-    modalHeader.appendChild(modalTitle);
+modalHeader.appendChild(modalTitle);
 
-    const tokenInput = document.createElement("input");
-    tokenInput.type = "text";
-    tokenInput.placeholder = "Enter your token";
-    tokenInput.style.width = "60%"; // Full width
-    tokenInput.style.padding = "10px"; // Padding for better touch
-    tokenInput.style.border = "1px solid rgb(73, 80, 87)"; // Light border
-    tokenInput.style.borderRadius = "8px"; // Slightly rounded corners
-    tokenInput.style.fontSize = "16px"; // Font size
-    tokenInput.style.boxShadow = "none"; // Remove default shadow
-    tokenInput.style.marginBottom = "10px"; // Margin at the bottom
-    tokenInput.style.marginTop = "10px"; // Margin at the top
-    tokenInput.style.marginLeft = "25px"; // Margin to the left of the input field
-    tokenInput.style.backgroundColor = "#627180"; // Dark background color
+const tokenInput = document.createElement("input");
+tokenInput.type = "text";
+tokenInput.placeholder = "Enter your token";
+tokenInput.style.width = "60%";
+tokenInput.style.padding = "12px"; // Slightly more padding
+tokenInput.style.border = "2px solid #4A90E2"; // Blue border
+tokenInput.style.borderRadius = "8px";
+tokenInput.style.fontSize = "16px";
+tokenInput.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)"; // Subtle shadow
+tokenInput.style.marginBottom = "15px";
+tokenInput.style.marginTop = "15px";
+tokenInput.style.marginLeft = "25px";
+tokenInput.style.backgroundColor = "#FFFFFF"; // White background
+tokenInput.style.color = "#333333"; // Dark gray text color
+tokenInput.style.outline = "none"; // Remove default focus outline
+
+// Add focus styles
+tokenInput.addEventListener('focus', function() {
+    this.style.borderColor = "#2E5AAC"; // Darker blue on focus
+    this.style.boxShadow = "0 0 0 3px rgba(74, 144, 226, 0.3)"; // Blue glow effect
+});
+
+tokenInput.addEventListener('blur', function() {
+    this.style.borderColor = "#4A90E2"; // Return to original border color
+    this.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)"; // Return to original shadow
+});
+
+// Style the placeholder text
+tokenInput.style.setProperty('::placeholder', 'color: #999999'); // Light gray placeholder text
+
 
     // Create a new container for the input and buttons
     const inputButtonContainer = document.createElement("div");
