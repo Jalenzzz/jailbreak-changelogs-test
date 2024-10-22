@@ -55,10 +55,18 @@ function checkVersionWithCache() {
 
 // Function to update the version display
 function updateVersionDisplay(data) {
-  if (document.getElementById("last-updated")) {
-    document.getElementById("last-updated").textContent = data.date;
-    document.getElementById("version-number").textContent = data.version;
-  }
+  const updateElement = (id, value) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.textContent = value;
+    } else {
+      // If the element doesn't exist yet, try again after a short delay
+      setTimeout(() => updateElement(id, value), 100);
+    }
+  };
+
+  updateElement("last-updated", data.date);
+  updateElement("version-number", data.version);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
