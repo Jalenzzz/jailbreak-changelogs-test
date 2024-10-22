@@ -286,9 +286,10 @@ span {
   overflow-wrap: break-word;
 }
 /* Style the main container for the comment section */
-.container {
+.comment-container {
   border-radius: 15px; /* Rounded corners for the container */
   padding: 30px; /* Add space inside the container */
+  box-shadow: 0 0 20px #000000c7; /* Subtle shadow for depth */
 }
 
 /* Header styling */

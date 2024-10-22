@@ -784,7 +784,7 @@ function updateDropdownButton(text) {
   
       // Get changelogId from the URL path, e.g., /changelogs/{changelog id}
       const pathSegments = window.location.pathname.split("/");
-      const changelogId = pathSegments[pathSegments.length - 1]; // Get the last part of the URL
+      const changelogId = pathSegments[pathSegments.length]; // Get the last part of the URL
       
       // If changelogId exists in the path, find it in the data
       let selectedChangelog = changelogId
