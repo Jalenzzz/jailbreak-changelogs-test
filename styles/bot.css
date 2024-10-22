@@ -88,10 +88,6 @@ footer a:hover {
   color: #f0f0f0; /* Slightly lighter shade of white */
 }
 
-footer a:hover::after {
-  transform: scaleX(1);
-}
-
 .btn-custom {
   background-color: #032b44 !important; /* Light theme background color */
   color: white; /* Light theme text color */

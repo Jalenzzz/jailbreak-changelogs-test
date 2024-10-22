@@ -438,8 +438,7 @@ h1 {
 
 .container {
   border-radius: 15px; /* Rounded corners for the container */
-  padding: 30px; /* Add space inside the container */
-  box-shadow: 0 0 20px #000000c7; /* Subtle shadow for depth */
+ 
 }
 .navbar-logo {
   height: 50px;
