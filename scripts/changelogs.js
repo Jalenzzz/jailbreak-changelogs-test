@@ -581,17 +581,11 @@ function updateDropdownButton(text) {
       }
     });
 
-    // Add the sidebar image URL if available
-    if (sidebarImageUrl) {
-      processedContent.push("", "Media:", sidebarImageUrl);
-    }
-
     // Add custom message at the end with the current page URL
     processedContent.push(
       "",
       "",
-      "This changelog was copied from jailbreakchangelogs.xyz",
-      `Source: ${currentPageUrl}`
+      `This changelog was copied from ${currentPageUrl}`,
     );
 
     // Join the processed content with newlines
