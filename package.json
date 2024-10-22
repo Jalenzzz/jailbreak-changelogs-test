@@ -3,7 +3,10 @@
     "version": "1.0.0",
     "scripts": {
         "start": "node api/index.js",
-        "dev": "nodemon api/index.js"
+        "dev": "nodemon api/index.js",
+        "test": "echo \"No test specified\" && exit 0",
+        "bump-version": "npm version patch && git push && git push --tags",
+        "smart-push": "node scripts/smart-push.js"
     },
     "dependencies": {
         "@vercel/speed-insights": "^1.0.12",
