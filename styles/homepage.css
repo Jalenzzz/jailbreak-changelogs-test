@@ -77,9 +77,7 @@
   background-color: #212a31 !important; /* Hover state for primary button */
   border-color: #212a31 !important; /* Border color on hover */
 }
-body {
-  background-color: #f8f9fa;
-}
+
 .offcanvas-header {
   display: flex; /* Keep the header visible */
   justify-content: space-between; /* Align items properly */
