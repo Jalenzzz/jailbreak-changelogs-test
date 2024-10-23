@@ -327,32 +327,6 @@ a {
 a:hover {
   color: #9ec5fe;
 }
-
-footer a {
-  position: relative;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-footer a::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 1px;
-  bottom: 0;
-  left: 0;
-  background-color: #fff;
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-footer a:hover {
-  color: #f0f0f0; /* Slightly lighter shade of white */
-}
-
-footer a:hover::after {
-  transform: scaleX(1);
-}
 .navbar-logo {
   height: 50px;
   width: auto;
