@@ -83,7 +83,7 @@ app.get("/changelogs/:changelog", async (req, res) => {
         title: "Changelog not found",
         image_url:
           "https://res.cloudinary.com/dsvlphknq/image/upload/v1727054787/changelogs/changelog-image-287.png",
-        logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs.png',
+        logoUrl: 'assets/logos/changelogs.png',
         logoAlt: 'Changelogs Page Logo'
       });
     }
@@ -98,7 +98,7 @@ app.get("/changelogs/:changelog", async (req, res) => {
     res.render("changelogs", { 
       title, 
       image_url,
-      logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs.png',
+      logoUrl: 'assets/logos/changelogs.png',
       logoAlt: 'Changelogs Page Logo'
     });
   } catch (error) {
@@ -131,7 +131,7 @@ app.get("/seasons/:season", async (req, res) => {
         season: "???",
         title: "Season not found",
         image_url: "https://res.cloudinary.com/dsvlphknq/image/upload/v1727054787/changelogs/changelog-image-287.png",
-        logoUrl: "https://res.cloudinary.com/dsvlphknq/image/upload/v1728177220/logos/seasons_logo.png",
+        logoUrl: "assets/logos/seasons_logo.png",
         logoAlt: "Jailbreak Seasons Logo"
       });
     }
@@ -147,7 +147,7 @@ app.get("/seasons/:season", async (req, res) => {
         season: "???",
         title: "Season not found",
         image_url: "https://res.cloudinary.com/dsvlphknq/image/upload/v1727054787/changelogs/changelog-image-287.png",
-        logoUrl: "https://res.cloudinary.com/dsvlphknq/image/upload/v1728177220/logos/seasons_logo.png",
+        logoUrl: "assets/logos/seasons_logo.png",
         logoAlt: "Jailbreak Seasons Logo"
       });
     }
@@ -171,7 +171,7 @@ app.get("/seasons/:season", async (req, res) => {
       season, 
       title: "Seasons / Changelogs", 
       image_url,
-      logoUrl: "https://res.cloudinary.com/dsvlphknq/image/upload/v1728177220/logos/seasons_logo.png",
+      logoUrl: "assets/logos/seasons_logo.png",
       logoAlt: "Jailbreak Seasons Logo"
     }); // Render the seasons page with the retrieved data
   } catch (error) {
@@ -183,7 +183,7 @@ app.get("/seasons/:season", async (req, res) => {
 app.get('/bot', (req, res) => {
   res.render('bot', {
     title: 'Discord Bot / Changelogs',
-    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs_discord_bot.png',
+    logoUrl: 'assets/logos/changelogs_discord_bot.png',
     logoAlt: 'Timeline Page Logo'
   });
 });
@@ -191,7 +191,7 @@ app.get('/bot', (req, res) => {
 app.get('/faq', (req, res) => {
   res.render('faq', {
     title: 'User FAQ',
-    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs_faq.png',
+    logoUrl: 'assets/logos/changelogs_faq.png',
     logoAlt: 'FAQ Page Logo'
   });
 });
@@ -199,7 +199,7 @@ app.get('/faq', (req, res) => {
 app.get('/privacy', (req, res) => {
   res.render('privacy', {
     title: 'Privacy Policy / Changelogs',
-    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs_privacy_policy.png',
+    logoUrl: 'assets/logos/changelogs_privacy_policy.png',
     logoAlt: 'Privacy Policy Page Logo'
   });
 });
@@ -207,7 +207,7 @@ app.get('/privacy', (req, res) => {
 app.get('/tos', (req, res) => {
   res.render('tos', {
     title: 'Terms Of Service / Changelogs',
-    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727392624/logos/changelogs_tos.png',
+    logoUrl: 'assets/logos/changelogs_tos.png',
     logoAlt: 'TOS Page Logo'
   });
 });
@@ -219,7 +219,7 @@ app.get("/botinvite", (req, res) => {
 app.get('/keys', (req, res) => {
   res.render('keys', {
     title: 'API / Changelogs',
-    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727729487/logos/changelogs_api.png',
+    logoUrl: 'assets/logos/changelogs_api.png',
     logoAlt: 'API Page Logo'
   });
 });
@@ -251,7 +251,7 @@ app.get("/users/:user/followers", async (req, res) => {
     if (!user) {
     return res.render("usersearch", {
       title: 'User Search / Changelogs',
-      logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+      logoUrl: 'assets/logos/users.png',
       logoAlt: 'Users Page Logo'
     });
   }
@@ -275,7 +275,7 @@ app.get("/users/:user/followers", async (req, res) => {
       avatar,
       showfollowers,
       title: 'Followers / Changelogs',
-      logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+      logoUrl: 'assets/logos/users.png',
       logoAlt: 'Users Page Logo'
     });
   })
@@ -311,7 +311,7 @@ app.get("/users/:user/following", async (req, res) => {
   if (!user) {
     return res.render("usersearch", {
       title: 'User Search / Changelogs',
-      logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+      logoUrl: 'assets/logos/users.png',
       logoAlt: 'Users Page Logo'
     });
   }
@@ -335,7 +335,7 @@ app.get("/users/:user/following", async (req, res) => {
       avatar,
       showfollowing,
       title: 'Users - Following',
-      logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+      logoUrl: 'assets/logos/users.png',
       logoAlt: 'Users Page Logo'
     });
   })
@@ -352,7 +352,7 @@ app.get("/users/:user/following", async (req, res) => {
 app.get('/users', (req, res) => {
   res.render('usersearch',  { 
     title: 'Users',
-    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+    logoUrl: 'assets/logos/users.png',
     logoAlt: 'Users Page Logo'
   });
 });
@@ -364,7 +364,7 @@ app.get("/users/:user", (req, res) => {
   if (!user) {
     return res.render("usersearch", {
       title: 'Users',
-      logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+      logoUrl: 'assets/logos/users.png',
       logoAlt: 'Users Page Logo'
     });
   }
@@ -417,7 +417,7 @@ app.get("/users/:user", (req, res) => {
         avatar, 
         settings,
         title: 'User Profile',
-        logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728008939/logos/users.png',
+        logoUrl: 'assets/logos/users.png',
         logoAlt: 'User Profile Logo'
       });
     })
@@ -430,7 +430,7 @@ app.get("/users/:user", (req, res) => {
 app.get('/timeline', (req, res) => {
   res.render('timeline', {
     title: 'Timeline / Changelogs',
-    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1728177020/logos/timeline.png',
+    logoUrl: 'assets/logos/timeline.png',
     logoAlt: 'Timeline Page Logo'
   });
 });
@@ -438,7 +438,7 @@ app.get('/timeline', (req, res) => {
 app.get('/tradetracker', (req, res) => {
   res.render('tradetracker', {
     title: 'Trade Tracker',
-    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727821049/logos/trade_tracker.png',
+    logoUrl: 'assets/logos/trade_tracker.png',
     logoAlt: 'Trade Tracker Page Logo'
   });
 });
@@ -446,7 +446,7 @@ app.get('/tradetracker', (req, res) => {
 app.get('/', (req, res) => {
   res.render('index', {
     title: 'Home / Changelogs',
-    logoUrl: 'https://res.cloudinary.com/dsvlphknq/image/upload/v1727987863/logos/home_page.png',
+    logoUrl: 'assets/logos/home_page.png',
     logoAlt: 'Home Page Logo'
   });
 });

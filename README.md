@@ -8,7 +8,7 @@
 > [!NOTE]
 > This is a fan-made project and is not affiliated with or endorsed by Badimo - the development team behind Roblox Jailbreak.
 
-![Logo](https://res.cloudinary.com/dsvlphknq/image/upload/v1727392622/logos/changelogs.png)
+![Logo](/assets/logos/changelogs.png)
 
 # Roblox Jailbreak Changelogs
 
