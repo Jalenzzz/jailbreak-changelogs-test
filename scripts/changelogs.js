@@ -1024,14 +1024,13 @@ function updateDropdownButton(text) {
           return `${parts[0]}/upload/q_auto,f_auto,c_limit,w_1280/${parts[1]}`;
         } else if (['mp3', 'wav', 'ogg'].includes(fileExtension)) {
           // Audio optimization
-          // Using a bitrate of 128k for MP3 (good balance between quality and file size)
           return `${parts[0]}/upload/q_auto/${parts[1]}`;
         }
       }
     }
     return url;
   }
-  
+
   
   // Function to display the selected changelog
   function displayChangelog(changelog) {

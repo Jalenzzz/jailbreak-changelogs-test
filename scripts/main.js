@@ -52,7 +52,28 @@ function checkVersionWithCache() {
       });
   }
 }
+function addCloudinaryOptimization(url) {
+  if (url.includes('res.cloudinary.com')) {
+    const parts = url.split('/upload/');
+    if (parts.length === 2) {
+      return `${parts[0]}/upload/w_1200,f_auto,q_auto/${parts[1]}`;
+    }
+  }
+  return url;
+}
 
+// Optimize meta tag images
+document.querySelectorAll('meta[property^="og:image"], meta[name^="twitter:image"]').forEach(meta => {
+  const originalUrl = meta.getAttribute('content');
+  meta.setAttribute('content', addCloudinaryOptimization(originalUrl));
+});
+
+const heroElement = document.querySelector('.hero');
+  if (heroElement) {
+    const backgroundImage = getComputedStyle(heroElement).backgroundImage;
+    const imageUrl = backgroundImage.slice(4, -1).replace(/["']/g, "");
+    heroElement.style.backgroundImage = `url('${addCloudinaryOptimization(imageUrl)}')`;
+  }
 // Function to update the version display
 function updateVersionDisplay(data) {
   const updateElement = (id, value) => {

@@ -176,12 +176,33 @@ $(document).ready(function () {
   function formatDescription(description) {
     return `<p class="season-description-paragraph">${description}</p>`;
   }
+  function addCloudinaryOptimization(url) {
+    if (url.includes('res.cloudinary.com')) {
+      const parts = url.split('/upload/');
+      if (parts.length === 2) {
+        const fileExtension = parts[1].split('.').pop().toLowerCase();
+        
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
+          // Image optimization
+          return `${parts[0]}/upload/w_500,f_auto,q_auto/${parts[1]}`;
+        } else if (['mp4', 'webm', 'ogv'].includes(fileExtension)) {
+          // Video optimization
+          return `${parts[0]}/upload/q_auto,f_auto,c_limit,w_1280/${parts[1]}`;
+        } else if (['mp3', 'wav', 'ogg'].includes(fileExtension)) {
+          // Audio optimization
+          return `${parts[0]}/upload/q_auto/${parts[1]}`;
+        }
+      }
+    }
+    return url;
+  }
+  
 
   // Function to update the carousel with reward images
   function updateCarousel(rewards) {
     // Clear any existing carousel items
     $carouselInner.empty();
-
+  
     if (!rewards || rewards.length === 0) {
       // No rewards data available, show a placeholder or message
       const placeholderItem = $(`
@@ -191,18 +212,18 @@ $(document).ready(function () {
           </div>
         </div>
       `);
-
+  
       $carouselInner.append(placeholderItem);
       return;
     }
-
+  
     // Filter rewards based on the criteria
     const filteredRewards = rewards.filter((reward) => {
       const isLevelRequirement = reward.requirement.startsWith("Level");
       const isBonus = reward.bonus === "True";
       return !(isLevelRequirement && isBonus);
     });
-
+  
     if (filteredRewards.length === 0) {
       // No rewards left after filtering, show a message
       const noRewardsItem = $(`
@@ -215,18 +236,20 @@ $(document).ready(function () {
       $carouselInner.append(noRewardsItem);
       return;
     }
-
+  
     // Iterate through each filtered reward
     filteredRewards.forEach((reward, index) => {
       const isActive = index === 0 ? "active" : "";
+      const optimizedImageUrl = addCloudinaryOptimization(reward.link);
       const carouselItem = $(`
         <div class="carousel-item ${isActive} rounded"> 
-          <img src="${reward.link}" class="d-block w-100 img-fluid" alt="${reward.item}">
+          <img src="${optimizedImageUrl}" class="d-block w-100 img-fluid" alt="${reward.item}">
         </div>
       `);
       $carouselInner.append(carouselItem);
     });
   }
+  
 
   // Back to Top button functionality
   const backToTopButton = $("#backToTop");
