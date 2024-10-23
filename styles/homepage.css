@@ -276,6 +276,9 @@
 .side-menu.show .nav-item:nth-child(2) {
   transition-delay: 0.2s;
 }
+body {
+  background-color: #2e3944;
+}
 
 /* Adjust the body when menu is opened */
 body.menu-open {
