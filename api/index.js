@@ -105,7 +105,8 @@ app.get("/changelogs/:changelog", async (req, res) => {
         image_url:
           "https://res.cloudinary.com/dsvlphknq/image/upload/w_500,f_auto,q_auto/v1729712882/changelogs/changelog-image-345.png",
         logoUrl: 'assets/logos/changelogs.png',
-        logoAlt: 'Changelogs Page Logo'
+        logoAlt: 'Changelogs Page Logo',
+        changelogId
       });
     }
 
@@ -123,7 +124,8 @@ app.get("/changelogs/:changelog", async (req, res) => {
       title, 
       image_url: optimizedImageUrl,
       logoUrl: 'assets/logos/changelogs.png',
-      logoAlt: 'Changelogs Page Logo'
+      logoAlt: 'Changelogs Page Logo',
+      changelogId
     });
   } catch (error) {
     console.error("Error fetching changelog data:", error);
@@ -156,7 +158,8 @@ app.get("/seasons/:season", async (req, res) => {
         title: "Season not found",
         image_url: "https://res.cloudinary.com/dsvlphknq/image/upload/w_500,f_auto,q_auto/v1729712882/changelogs/changelog-image-345.png",
         logoUrl: "assets/logos/seasons_logo.png",
-        logoAlt: "Jailbreak Seasons Logo"
+        logoAlt: "Jailbreak Seasons Logo",
+        seasonId
       });
     }
     const rewardsResponse = await fetch(rewardsUrl, {
@@ -172,7 +175,8 @@ app.get("/seasons/:season", async (req, res) => {
         title: "Season not found",
         image_url: "https://res.cloudinary.com/dsvlphknq/image/upload/w_500,f_auto,q_auto/v1729712882/changelogs/changelog-image-345.png",
         logoUrl: "assets/logos/seasons_logo.png",
-        logoAlt: "Jailbreak Seasons Logo"
+        logoAlt: "Jailbreak Seasons Logo",
+        seasonId
       });
     }
 
@@ -196,7 +200,8 @@ app.get("/seasons/:season", async (req, res) => {
       title: "Seasons / Changelogs", 
       image_url,
       logoUrl: "assets/logos/seasons_logo.png",
-      logoAlt: "Jailbreak Seasons Logo"
+      logoAlt: "Jailbreak Seasons Logo",
+      seasonId
     }); // Render the seasons page with the retrieved data
   } catch (error) {
     console.error("Error fetching season data:", error);
@@ -369,6 +374,90 @@ app.get("/users/:user/following", async (req, res) => {
     // Optionally render an error page or send a response with an error message
     res.status(500).send("Error fetching user data");
   });
+});
+// Sitemap route
+app.get('/sitemap.xml', (req, res) => {
+  // Set the Content-Type header to application/xml
+  res.header('Content-Type', 'application/xml');
+
+  const sitemap = `<?xml version="1.0" encoding="utf-8"?>
+  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+      <loc>https://jailbreakchangelogs.xyz/</loc>
+      <lastmod>2024-10-29</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>1.0</priority>
+    </url>
+    <url>
+      <loc>https://jailbreakchangelogs.xyz/timeline</loc>
+      <lastmod>2024-10-29</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.9</priority>
+    </url>
+    <url>
+      <loc>https://jailbreakchangelogs.xyz/tos</loc>
+      <lastmod>2024-10-29</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.9</priority>
+    </url>
+    <url>
+      <loc>https://jailbreakchangelogs.xyz/bot</loc>
+      <lastmod>2024-10-29</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.9</priority>
+    </url>
+    <url>
+      <loc>https://jailbreakchangelogs.xyz/tradetracker</loc>
+      <lastmod>2024-10-29</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.9</priority>
+    </url>
+    <url>
+      <loc>https://jailbreakchangelogs.xyz/faq</loc>
+      <lastmod>2024-10-29</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.9</priority>
+    </url>
+    <url>
+      <loc>https://jailbreakchangelogs.xyz/keys</loc>
+      <lastmod>2024-10-29</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.9</priority>
+    </url>
+    <url>
+      <loc>https://jailbreakchangelogs.xyz/privacy</loc>
+      <lastmod>2024-10-29</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.9</priority>
+    </url>
+    <url>
+      <loc>https://jailbreakchangelogs.xyz/users</loc>
+      <lastmod>2024-10-29</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.9</priority>
+    </url>
+    <url>
+      <loc>https://docs.jailbreakchangelogs.xyz/</loc>
+      <lastmod>2024-10-29</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.8</priority>
+    </url>
+    <url>
+      <loc>https://jailbreakchangelogs.xyz/seasons/23</loc>
+      <lastmod>2024-10-29</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.8</priority>
+    </url>
+    <url>
+      <loc>https://jailbreakchangelogs.xyz/changelogs/344</loc>
+      <lastmod>2024-10-29</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.8</priority>
+    </url>
+  </urlset>`;
+
+  // Send the sitemap
+  res.send(sitemap);
 });
 
 

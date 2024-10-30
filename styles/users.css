@@ -55,6 +55,13 @@
   background-color: #212a31; /* Darker Blue for Navbar */
   color: #ffffff; /* White Text Color */
 }
+#mobileNavbarDropdown {
+  text-decoration: none; /* removes that weird hyphen next to dropdown */
+  color: #d3d9d4;
+}
+#navbarToggler .line {
+  stroke: #d3d9d4; /* Changes the line color of mobile nav toggler */
+}
 
 .comment-card {
   border: none;
@@ -721,7 +728,6 @@ input {
 }
 
 .breadcrumb {
-  background-color: #212529;
   border-radius: 0.25rem;
   padding: 12px 20px;
   list-style: none;
@@ -729,7 +735,6 @@ input {
   flex-wrap: wrap;
   max-width: fit-content;
   margin: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .breadcrumb-item {

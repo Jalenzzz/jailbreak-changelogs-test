@@ -56,6 +56,13 @@
 * {
   outline: none; /* Remove default outline */
 }
+#mobileNavbarDropdown {
+  text-decoration: none; /* removes that weird hyphen next to dropdown */
+  color: #d3d9d4;
+}
+#navbarToggler .line {
+  stroke: #d3d9d4; /* Changes the line color of mobile nav toggler */
+}
 .form-control {
   background-color: rgba(255, 255, 255, 0.1); /* Background color */
   border-color: rgba(255, 255, 255, 0.1); /* Border color */
@@ -159,7 +166,6 @@ body {
   box-shadow: none;
 }
 .breadcrumb {
-  background-color: #212529;
   border-radius: 0.25rem;
   padding: 12px 20px;
   list-style: none;
@@ -167,7 +173,6 @@ body {
   flex-wrap: wrap;
   max-width: fit-content;
   margin: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .breadcrumb-item {
