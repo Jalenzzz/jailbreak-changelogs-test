@@ -1,96 +1,47 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <meta name="google-adsense-account" content="ca-pub-8152532464536367" />
     <!-- Open Graph metadata for social media sharing -->
-    <meta
-      property="og:title"
-      content="Jailbreak Changelogs | Latest Updates & Patch Notes"
-    />
-    <meta
-      property="og:description"
-      content="Get updates on Jailbreak's latest features, bug fixes, and balance changes."
-    />
-    <meta
-      property="og:image"
-      content="https://res.cloudinary.com/dsvlphknq/image/upload/w_500,f_auto,q_auto/v1727536082/changelogs/changelog-image-344.png"
-    />
-    <meta property="og:image:width" content="2328" />
-    <meta property="og:image:height" content="1054" />
+    <meta property="og:title" content="Roblox Jailbreak Changelogs | Latest Updates & Patch Notes" />
+    <meta property="og:description" content="Your go-to source for the latest updates, patch notes, and feature releases in Roblox Jailbreak. Discover new vehicles, weapons, map changes, and more!" />
+    <meta property="og:image" content="https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/changelogs/changelog-image-344?_a=BAMCkGcc0" />
     <meta property="og:url" content="https://jailbreakchangelogs.xyz" />
     <meta property="og:type" content="website" />
 
     <!-- Additional metadata for SEO -->
-    <meta
-      name="description"
-      content="Your go-to source for the latest updates, patch notes, and feature releases in Roblox Jailbreak. Stay informed about new vehicles, weapons, map changes, and more!"
-    />
+    <meta name="description" content="Your go-to source for the latest updates, patch notes, and feature releases in Roblox Jailbreak. Discover new vehicles, weapons, map changes, and more!" />
     <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="Roblox, Jailbreak, Roblox Jailbreak, Jailbreak changelog, Jailbreak changelogs, Jailbreak seasons, Jailbreak update, jailbreak wiki, updates, patch notes, new features, vehicles, customization, gameplay improvements, community news, trading, Discord bot, API integration, user profiles, trade tracker, game mechanics, player stats" />
 
     <!-- Twitter Card metadata -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="Jailbreak Changelogs | Latest Updates & Patch Notes"
-    />
-    <meta
-      name="twitter:image"
-      content="https://res.cloudinary.com/dsvlphknq/image/upload/w_500,f_auto,q_auto/v1727536082/changelogs/changelog-image-344.png"
-    />
-    <title><%= title %></title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
-    />
+    <meta name="twitter:title" content="Roblox Jailbreak Changelogs | Latest Updates & Patch Notes" />
+    <meta name="twitter:image" content="https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/changelogs/changelog-image-344?_a=BAMCkGcc0" />
+    
+    <title>Roblox Jailbreak Changelogs | Latest Updates & Patch Notes</title>
+    
+    <link rel="canonical" href="https://testing.jailbreakchangelogs.xyz/" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="styles/homepage.css" />
+    <link rel="stylesheet" href="styles/navbar.css" />
+    <link rel="stylesheet" href="styles/footer.css" />
+
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-  </head>
+</head>
+
   <body>
     <%- include('partials/nav') %>
 
-    <!-- Offcanvas -->
-    <div
-      class="offcanvas offcanvas-end"
-      tabindex="-1"
-      id="discordOffcanvas"
-      aria-labelledby="discordOffcanvasLabel"
-    >
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="discordOffcanvasLabel">
-          Join the Changelogs Discord
-        </h5>
-        <button
-          type="button"
-          class="btn-close white-close-button"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="offcanvas-body">
-        <iframe
-          src="https://discord.com/widget?id=1286064050135896064&theme=dark"
-          width="100%"
-          height="100%"
-          allowtransparency="true"
-          frameborder="0"
-          sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-        ></iframe>
-      </div>
-    </div>
-
     <div class="hero">
       <div class="hero-content">
-        <h1>Welcome to Jailbreak Changelogs</h1>
+        <h1>Roblox Jailbreak Changelogs and Updates</h1>
         <p>
-          Your source for the latest updates and patch notes in Roblox
-          Jailbreak.
+          Your go-to source for the latest updates, patch notes, and feature releases in Roblox Jailbreak. Stay informed about new vehicles, weapons, map changes, and more!
         </p>
 
         <button class="btn btn-light d-lg-none" id="mobileViewUpdates">
@@ -256,6 +207,33 @@
         });
     }
   </script>
+  <script>
+    // Array of background images
+    const images = [
+      "assets/backgrounds/background1.png",
+      "assets/backgrounds/background2.png",
+      "assets/backgrounds/background3.png",
+      "assets/backgrounds/background4.png",
+      "assets/backgrounds/background5.png",
+      "assets/backgrounds/background6.png",
+      "assets/backgrounds/background7.png",
+      "assets/backgrounds/background8.png",
+      "assets/backgrounds/background9.png",
+      "assets/backgrounds/background10.png"
+    ];
+  
+    // Function to get a random image
+    function getRandomImage() {
+      const randomIndex = Math.floor(Math.random() * images.length);
+      return images[randomIndex];
+    }
+  
+    // Set the background image on page load
+    document.addEventListener("DOMContentLoaded", function() {
+      const heroElement = document.querySelector('.hero');
+      heroElement.style.backgroundImage = `url(${getRandomImage()})`;
+    });
+  </script>  
   <script
     async
     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8152532464536367"
