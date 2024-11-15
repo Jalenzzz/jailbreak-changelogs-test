@@ -84,7 +84,7 @@ app.get("/changelogs/:changelog", async (req, res) => {
         title: "Changelog not found",
         image_url:
           "https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/changelogs/changelog-image-345?_a=BAMCkGcc0",
-        logoUrl: 'assets/logos/changelogs.png',
+        logoUrl: 'assets/logos/Changelogs_Logo.png',
         logoAlt: 'Changelogs Page Logo',
         changelogId
       });
@@ -100,7 +100,7 @@ app.get("/changelogs/:changelog", async (req, res) => {
     res.render("changelogs", { 
       title, 
       image_url,
-      logoUrl: 'assets/logos/changelogs.png',
+      logoUrl: 'assets/logos/Changelogs_Logo.png',
       logoAlt: 'Changelogs Page Logo',
       changelogId
     });
@@ -134,7 +134,7 @@ app.get("/seasons/:season", async (req, res) => {
         season: "???",
         title: "Season not found",
         image_url: "https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/changelogs/changelog-image-345?_a=BAMCkGcc0",
-        logoUrl: "assets/logos/seasons_logo.png",
+        logoUrl: "assets/logos/Seasons_Logo.png",
         logoAlt: "Jailbreak Seasons Logo",
         seasonId
       });
@@ -151,7 +151,7 @@ app.get("/seasons/:season", async (req, res) => {
         season: "???",
         title: "Season not found",
         image_url: "https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/changelogs/changelog-image-345?_a=BAMCkGcc0",
-        logoUrl: "assets/logos/seasons_logo.png",
+        logoUrl: "assets/logos/Seasons_Logo.png",
         logoAlt: "Jailbreak Seasons Logo",
         seasonId
       });
@@ -176,7 +176,7 @@ app.get("/seasons/:season", async (req, res) => {
       season, 
       title,
       image_url,
-      logoUrl: "assets/logos/seasons_logo.png",
+      logoUrl: "assets/logos/Seasons_Logo.png",
       logoAlt: "Jailbreak Seasons Logo",
       seasonId
     }); // Render the seasons page with the retrieved data
@@ -186,11 +186,20 @@ app.get("/seasons/:season", async (req, res) => {
   }
 });
 
+app.get('/trading', (req, res) => {
+  res.render('trading', {
+    title: 'Trading / Changelogs',
+    logoUrl: 'assets/logos/Trade_Ads_Logo.png', //TODO: Add logo for trading page
+    logoAlt: 'Trading Page Logo',
+    images
+  });
+});
+
 app.get('/bot', (req, res) => {
   res.render('bot', {
     title: 'Discord Bot / Changelogs',
-    logoUrl: 'assets/logos/changelogs_discord_bot.png',
-    logoAlt: 'Timeline Page Logo',
+    logoUrl: 'assets/logos/Discord_Bot_Logo.png',
+    logoAlt: 'Bot Page Logo',
     images
   });
 });
@@ -198,7 +207,7 @@ app.get('/bot', (req, res) => {
 app.get('/faq', (req, res) => {
   res.render('faq', {
     title: 'User FAQ',
-    logoUrl: 'assets/logos/changelogs_faq.png',
+    logoUrl: 'assets/logos/FAQ_Logo.png',
     logoAlt: 'FAQ Page Logo'
   });
 });
@@ -226,7 +235,7 @@ app.get("/botinvite", (req, res) => {
 app.get('/keys', (req, res) => {
   res.render('keys', {
     title: 'API / Changelogs',
-    logoUrl: 'assets/logos/changelogs_api.png',
+    logoUrl: 'assets/logos/Api_Logo.png',
     logoAlt: 'API Page Logo'
   });
 });
@@ -522,7 +531,7 @@ app.get("/users/:user", (req, res) => {
 app.get('/timeline', (req, res) => {
   res.render('timeline', {
     title: 'Timeline / Changelogs',
-    logoUrl: 'assets/logos/timeline.png',
+    logoUrl: 'assets/logos/Timeline_Logo.png',
     logoAlt: 'Timeline Page Logo'
   });
 });
@@ -530,7 +539,7 @@ app.get('/timeline', (req, res) => {
 app.get('/tradetracker', (req, res) => {
   res.render('tradetracker', {
     title: 'Trade Tracker',
-    logoUrl: 'assets/logos/trade_tracker.png',
+    logoUrl: 'assets/logos/Trade_Tracker_Logo.png',
     logoAlt: 'Trade Tracker Page Logo'
   });
 });
@@ -551,7 +560,7 @@ const images = [
 app.get('/', (req, res) => {
   res.render('index', {
     title: 'Home / Changelogs',
-    logoUrl: 'assets/logos/home_page.png',
+    logoUrl: 'assets/logos/Homepage_Logo.png',
     logoAlt: 'Home Page Logo',
     images
   });
