@@ -6,26 +6,6 @@ const app = express();
 const PORT = process.env.PORT || 5500; // Set the port
 const fs = require("fs");
 
-function addCloudinaryOptimization(url) {
-  if (url.includes('res.cloudinary.com')) {
-    const parts = url.split('/upload/');
-    if (parts.length === 2) {
-      const fileExtension = parts[1].split('.').pop().toLowerCase();
-      
-      if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
-        // Image optimization
-        return `${parts[0]}/upload/w_500,f_auto,q_auto/${parts[1]}`;
-      } else if (['mp4', 'webm', 'ogv'].includes(fileExtension)) {
-        // Video optimization
-        return `${parts[0]}/upload/q_auto,f_auto,c_limit,w_1280/${parts[1]}`;
-      } else if (['mp3', 'wav', 'ogg'].includes(fileExtension)) {
-        // Audio optimization
-        return `${parts[0]}/upload/q_auto/${parts[1]}`;
-      }
-    }
-  }
-  return url;
-}
 // Serve your static HTML, CSS, and JS files
 const DATA_SOURCE_URL =
   "https://badimo.nyc3.digitaloceanspaces.com/trade/frequency/snapshot/month/latest.json";
@@ -117,12 +97,9 @@ app.get("/changelogs/:changelog", async (req, res) => {
     const data = await response.json();
     const { title, image_url } = data;
 
-    // Apply optimization to the image_url
-    const optimizedImageUrl = addCloudinaryOptimization(image_url);
-
     res.render("changelogs", { 
       title, 
-      image_url: optimizedImageUrl,
+      image_url,
       logoUrl: 'assets/logos/changelogs.png',
       logoAlt: 'Changelogs Page Logo',
       changelogId
@@ -191,13 +168,13 @@ app.get("/seasons/:season", async (req, res) => {
     // Ensure we got the reward before accessing properties
     let image_url = "https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/changelogs/changelog-image-345?_a=BAMCkGcc0";
     if (level_10_reward) {
-      image_url = addCloudinaryOptimization(level_10_reward.link);
+      image_url = level_10_reward.link;
     }
 
     const { season, title } = data; // Adjust the destructured properties based on the API response structure
     res.render("seasons", { 
       season, 
-      title: "Seasons / Changelogs", 
+      title,
       image_url,
       logoUrl: "assets/logos/seasons_logo.png",
       logoAlt: "Jailbreak Seasons Logo",
@@ -213,7 +190,8 @@ app.get('/bot', (req, res) => {
   res.render('bot', {
     title: 'Discord Bot / Changelogs',
     logoUrl: 'assets/logos/changelogs_discord_bot.png',
-    logoAlt: 'Timeline Page Logo'
+    logoAlt: 'Timeline Page Logo',
+    images
   });
 });
 
@@ -380,81 +358,82 @@ app.get('/sitemap.xml', (req, res) => {
   // Set the Content-Type header to application/xml
   res.header('Content-Type', 'application/xml');
 
-  const sitemap = `<?xml version="1.0" encoding="utf-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url>
-      <loc>https://jailbreakchangelogs.xyz/</loc>
-      <lastmod>2024-10-29</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>1.0</priority>
-    </url>
-    <url>
-      <loc>https://jailbreakchangelogs.xyz/timeline</loc>
-      <lastmod>2024-10-29</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
-    </url>
-    <url>
-      <loc>https://jailbreakchangelogs.xyz/tos</loc>
-      <lastmod>2024-10-29</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
-    </url>
-    <url>
-      <loc>https://jailbreakchangelogs.xyz/bot</loc>
-      <lastmod>2024-10-29</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
-    </url>
-    <url>
-      <loc>https://jailbreakchangelogs.xyz/tradetracker</loc>
-      <lastmod>2024-10-29</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
-    </url>
-    <url>
-      <loc>https://jailbreakchangelogs.xyz/faq</loc>
-      <lastmod>2024-10-29</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
-    </url>
-    <url>
-      <loc>https://jailbreakchangelogs.xyz/keys</loc>
-      <lastmod>2024-10-29</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
-    </url>
-    <url>
-      <loc>https://jailbreakchangelogs.xyz/privacy</loc>
-      <lastmod>2024-10-29</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
-    </url>
-    <url>
-      <loc>https://jailbreakchangelogs.xyz/users</loc>
-      <lastmod>2024-10-29</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
-    </url>
-    <url>
-      <loc>https://docs.jailbreakchangelogs.xyz/</loc>
-      <lastmod>2024-10-29</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.8</priority>
-    </url>
-    <url>
-      <loc>https://jailbreakchangelogs.xyz/seasons/23</loc>
-      <lastmod>2024-10-29</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.8</priority>
-    </url>
-    <url>
-      <loc>https://jailbreakchangelogs.xyz/changelogs/344</loc>
-      <lastmod>2024-10-29</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.8</priority>
-    </url>
-  </urlset>`;
+  const sitemap = `
+  <?xml version="1.0" encoding="utf-8"?><!--Generated by Screaming Frog SEO Spider 20.4-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://jailbreakchangelogs.xyz/</loc>
+    <lastmod>2024-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://jailbreakchangelogs.xyz/timeline</loc>
+    <lastmod>2024-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://jailbreakchangelogs.xyz/bot</loc>
+    <lastmod>2024-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://jailbreakchangelogs.xyz/tradetracker</loc>
+    <lastmod>2024-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://jailbreakchangelogs.xyz/tos</loc>
+    <lastmod>2024-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://jailbreakchangelogs.xyz/faq</loc>
+    <lastmod>2024-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://jailbreakchangelogs.xyz/keys</loc>
+    <lastmod>2024-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://jailbreakchangelogs.xyz/privacy</loc>
+    <lastmod>2024-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://jailbreakchangelogs.xyz/users</loc>
+    <lastmod>2024-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://docs.jailbreakchangelogs.xyz/</loc>
+    <lastmod>2024-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://jailbreakchangelogs.xyz/seasons/23</loc>
+    <lastmod>2024-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jailbreakchangelogs.xyz/changelogs/346</loc>
+    <lastmod>2024-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>`;
 
   // Send the sitemap
   res.send(sitemap);
@@ -555,12 +534,26 @@ app.get('/tradetracker', (req, res) => {
     logoAlt: 'Trade Tracker Page Logo'
   });
 });
+// Array of background images
+const images = [
+  "assets/backgrounds/background1.png",
+  "assets/backgrounds/background2.png",
+  "assets/backgrounds/background3.png",
+  "assets/backgrounds/background4.png",
+  "assets/backgrounds/background5.png",
+  "assets/backgrounds/background6.png",
+  "assets/backgrounds/background7.png",
+  "assets/backgrounds/background8.png",
+  "assets/backgrounds/background9.png",
+  "assets/backgrounds/background10.png"
+];
 
 app.get('/', (req, res) => {
   res.render('index', {
     title: 'Home / Changelogs',
     logoUrl: 'assets/logos/home_page.png',
-    logoAlt: 'Home Page Logo'
+    logoAlt: 'Home Page Logo',
+    images
   });
 });
 

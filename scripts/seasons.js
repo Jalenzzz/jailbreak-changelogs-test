@@ -13,6 +13,21 @@ $(document).ready(function () {
     }
   }
 
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+const debouncedReloadComments = debounce(reloadcomments, 300);
+
+
   function fetchAndCacheAllSeasons() {
     return fetch("https://api.jailbreakchangelogs.xyz/seasons/list")
       .then((response) => response.json())
@@ -108,7 +123,6 @@ $(document).ready(function () {
           }</p>
         </div>
       </div>
-      <h3 class="prizes-title display-5 custom-prizes-title mb-4">Season Rewards</h3>
     `);
 
     // Check if rewardsData is available and not empty
@@ -121,31 +135,37 @@ $(document).ready(function () {
       if (rewards.length > 0) {
         // Generate HTML for season rewards
         const rewardsHTML = rewards
-          .map((reward) => {
-            const isBonus = reward.bonus === "True";
-            const bonusBadge = isBonus
-              ? `<span class="badge bg-warning text-dark rounded-pill fs-6 fs-md-5">Bonus</span>`
-              : "";
-            const requirementBadge = `<span class="badge bg-primary rounded-pill fs-6 fs-md-5">${reward.requirement}</span>`;
-
-            return `
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <h6 class="fw-bold fs-6 fs-md-5">${reward.item}</h6>
-            <div class="d-flex align-items-center">
-              ${bonusBadge}
-              ${requirementBadge}
-            </div>
-          </li>`;
-          })
-          .join("");
+        .map((reward, index) => {
+          const isBonus = reward.bonus === "True";
+          const bonusBadge = isBonus
+            ? `<span class="badge bg-warning text-dark rounded-pill fs-6 fs-md-5">Bonus</span>`
+            : "";
+          const requirementBadge = `<span class="badge bg-primary rounded-pill fs-6 fs-md-5">${reward.requirement}</span>`;
+  
+          return `
+          <div class="reward-item ${isBonus ? 'bonus-reward' : ''}" style="--animation-order: ${index}">
+      <div class="reward-content">
+        <h6 class="reward-title">${reward.item}</h6>
+        <div class="reward-badges">
+          ${bonusBadge}
+          ${requirementBadge}
+        </div>
+      </div>
+    </div>`;
+  })
+  .join("");
 
         // Append the rewards list to the season details container
         $seasonDetailsContainer.append(
-          `<ul class="list-group season-rewards">${rewardsHTML}</ul>`
+          `
+          <div class="rewards-container">
+    <h3 class="rewards-title">Season Rewards</h3>
+    <div class="rewards-list">${rewardsHTML}</div>
+  </div>`
         );
 
         // Enable comments
-        reloadcomments();
+        debouncedReloadComments();
       } else {
         // If no rewards for this season, display a message and disable comments
         $seasonDetailsContainer.append(
@@ -240,6 +260,9 @@ $(document).ready(function () {
     );
     displaySeasonDetails(season, seasonData, seasonRewards);
     updateCarousel(seasonRewards);
+    
+    // Add this line to update the document title
+    document.title = `Season ${season} - ${seasonData.title}`;
 
     // Return true if data was from cache, false otherwise
     return allSeasons !== null && allRewards !== null;
@@ -267,7 +290,7 @@ $(document).ready(function () {
       // If data was from cache, hide the overlay immediately
       toggleLoadingOverlay(false);
       try {
-        reloadcomments();
+        debouncedReloadComments();
       } catch (error) {
         console.error("Failed to load comments:", error);
         $("#comments-list").html(
@@ -279,7 +302,7 @@ $(document).ready(function () {
       Promise.resolve().then(() => {
         toggleLoadingOverlay(false);
         try {
-          reloadcomments();
+          debouncedReloadComments();
         } catch (error) {
           console.error("Failed to load comments:", error);
           $("#comments-list").html(
@@ -319,7 +342,7 @@ $(document).ready(function () {
       if (dataFromCache) {
         toggleLoadingOverlay(false);
         try {
-          reloadcomments();
+          debouncedReloadComments();
         } catch (error) {
           console.error("Failed to load comments:", error);
           $("#comments-list").html(
@@ -333,7 +356,7 @@ $(document).ready(function () {
     .then(() => {
       toggleLoadingOverlay(false);
       try {
-        reloadcomments();
+        debouncedReloadComments();
       } catch (error) {
         console.error("Failed to load comments:", error);
         $("#comments-list").html(
@@ -397,7 +420,7 @@ $(document).ready(function () {
     listItem.classList.add("list-group-item", "d-flex", "align-items-start");
 
     const avatarElement = document.createElement("img");
-    const defaultAvatarUrl = "/favicon.ico";
+    const defaultAvatarUrl = "assets/profile-pic-placeholder.png";
 
     avatarElement.src = avatarUrl.endsWith("null.png")
       ? defaultAvatarUrl
@@ -563,7 +586,7 @@ $(document).ready(function () {
         );
 
         const avatarElement = document.createElement("img");
-        const defaultAvatarUrl = "/favicon.ico";
+        const defaultAvatarUrl = "assets/profile-pic-placeholder.png";
         avatarElement.src = avatarUrl.endsWith("null.png")
           ? defaultAvatarUrl
           : avatarUrl;
