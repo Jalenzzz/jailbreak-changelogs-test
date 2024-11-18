@@ -1187,6 +1187,7 @@ function updateDropdownButton(text) {
 
         if (response.ok) {
           commentsList.prepend(listItem);
+          reloadcomments();
         } else {
           // Handle other non-429 errors (e.g., validation)
           throw_error(data.error || "An error occurred.");
