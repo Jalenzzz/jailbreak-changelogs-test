@@ -1237,7 +1237,7 @@ function updateDropdownButton(text) {
   }
 
   let currentPage = 1; // Track the current page
-  const commentsPerPage = 5; // Number of comments per page
+  const commentsPerPage = 7; // Number of comments per page
   let comments = []; // Declare the comments array globally
 
   // Function to load comments
@@ -1296,6 +1296,13 @@ function loadComments(commentsData) {
       usernameElement.href = `/users/${userData.id}`; // Set the href to redirect to the user's page
       usernameElement.textContent = userData.global_name; // Set the text to the user's global name
       usernameElement.style.fontWeight = "bold"; // Make the text bold
+
+      usernameElement.addEventListener('mouseenter', () => {
+        usernameElement.style.textDecoration = 'underline';
+      })
+      usernameElement.addEventListener('mouseleave', () => {
+        usernameElement.style.textDecoration = 'none';
+      })
 
       const dateElement = document.createElement("small");
       const formattedDate = formatDate(comment.date);
@@ -1418,6 +1425,8 @@ function renderPaginationControls(totalPages) {
         if (data.message && data.message === "No comments found") {
           console.log(data.message);
           commentsList.innerHTML = "<p class='text-muted text-center'>Be the first to comment on this entry!</p>";
+          // Hide the pagination if no comments are available
+          document.getElementById("paginationControls").innerHTML = "";
           return;
         }
 
