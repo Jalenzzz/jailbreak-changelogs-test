@@ -938,6 +938,17 @@ button {
 
 /* For even smaller screens (576px and below) */
 @media (max-width: 576px) {
+
+  #loading-overlay .loading-logo {
+    width: 200px;
+    height: auto;
+  }
+
+  .custom-spinner {
+    width: 30px;
+    height: 30px;
+  }
+  
     .comment-container {
         padding: 15px; /* Further reduce padding for smaller screens */
         width: 100%; /* Full width to prevent any compression */
