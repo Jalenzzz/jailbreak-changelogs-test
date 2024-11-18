@@ -1241,104 +1241,101 @@ function updateDropdownButton(text) {
   let comments = []; // Declare the comments array globally
 
   // Function to load comments
-  function loadComments(commentsData) {
-    comments = commentsData; // Assign the fetched comments to the global variable
-    commentsList.innerHTML = ""; // Clear existing comments
-    comments.sort((a, b) => b.date - a.date);
+function loadComments(commentsData) {
+  comments = commentsData; // Assign the fetched comments to the global variable
+  commentsList.innerHTML = ""; // Clear existing comments
+  comments.sort((a, b) => b.date - a.date);
 
-    // Calculate the total number of pages
-    const totalPages = Math.ceil(comments.length / commentsPerPage);
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(comments.length / commentsPerPage);
 
-    // Get the comments for the current page
-    const startIndex = (currentPage - 1) * commentsPerPage;
-    const endIndex = startIndex + commentsPerPage;
-    const commentsToDisplay = comments.slice(startIndex, endIndex);
+  // Get the comments for the current page
+  const startIndex = (currentPage - 1) * commentsPerPage;
+  const endIndex = startIndex + commentsPerPage;
+  const commentsToDisplay = comments.slice(startIndex, endIndex);
 
-    const userDataPromises = commentsToDisplay.map((comment) => {
-      return fetch(
-        "https://api.jailbreakchangelogs.xyz/users/get?id=" + comment.user_id
-      )
-        .then((response) => response.json())
-        .then((userData) => ({ comment, userData }))
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          return null;
-        });
-    });
-
-    Promise.all(userDataPromises).then((results) => {
-      const validResults = results.filter((result) => result !== null);
-
-      validResults.forEach(({ comment, userData }) => {
-        const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-
-        const listItem = document.createElement("li");
-        listItem.classList.add(
-          "list-group-item",
-          "d-flex",
-          "align-items-start"
-        );
-
-        const avatarElement = document.createElement("img");
-        const defaultAvatarUrl = "assets/profile-pic-placeholder.png";
-
-        avatarElement.src = avatarUrl.endsWith("null.png")
-          ? defaultAvatarUrl
-          : avatarUrl;
-        avatarElement.classList.add("rounded-circle", "m-1");
-        avatarElement.width = 32;
-        avatarElement.height = 32;
-
-        const commentContainer = document.createElement("div");
-        commentContainer.classList.add("ms-2", "comment-item");
-
-        const usernameElement = document.createElement("a");
-        usernameElement.href = `/users/${userData.id}`; // Set the href to redirect to the user's page
-        usernameElement.textContent = userData.global_name; // Set the text to the user's global name
-        usernameElement.style.fontWeight = "bold"; // Make the text bold
-
-        usernameElement.addEventListener('mouseenter', () => {
-          usernameElement.style.textDecoration = 'underline';
-        })
-        usernameElement.addEventListener('mouseleave', () => {
-          usernameElement.style.textDecoration = 'none';
-        })
-  
-        
-        const commentTextElement = document.createElement("p");
-        commentTextElement.textContent = comment.content;
-        commentTextElement.classList.add("mb-0", "comment-text");
-
-        const formattedDate = formatDate(comment.date);
-        const dateElement = document.createElement("small");
-        dateElement.textContent = formattedDate;
-        dateElement.classList.add("text-muted");
-
-        commentContainer.appendChild(usernameElement);
-        commentContainer.appendChild(commentTextElement);
-        commentContainer.appendChild(dateElement);
-        listItem.appendChild(avatarElement);
-        listItem.appendChild(commentContainer);
-        commentsList.appendChild(listItem);
+  const userDataPromises = commentsToDisplay.map((comment) => {
+    return fetch(
+      "https://api.jailbreakchangelogs.xyz/users/get?id=" + comment.user_id
+    )
+      .then((response) => response.json())
+      .then((userData) => ({ comment, userData }))
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+        return null;
       });
+  });
 
-      // Render pagination controls
-      renderPaginationControls(totalPages);
+  Promise.all(userDataPromises).then((results) => {
+    const validResults = results.filter((result) => result !== null);
+
+    validResults.forEach(({ comment, userData }) => {
+      const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+
+      const listItem = document.createElement("li");
+      listItem.classList.add("list-group-item", "d-flex", "align-items-start", "mb-3");
+
+      const avatarElement = document.createElement("img");
+      const defaultAvatarUrl = "assets/profile-pic-placeholder.png";
+
+      avatarElement.src = avatarUrl.endsWith("null.png")
+        ? defaultAvatarUrl
+        : avatarUrl;
+      avatarElement.classList.add("rounded-circle", "m-1");
+      avatarElement.width = 32;
+      avatarElement.height = 32;
+
+      const commentContainer = document.createElement("div");
+      commentContainer.classList.add("ms-2", "comment-item", "w-100");
+
+      // Create a container for the username and date (on the same line)
+      const headerContainer = document.createElement("div");
+      headerContainer.classList.add("d-flex", "align-items-center", "flex-wrap");
+
+      const usernameElement = document.createElement("a");
+      usernameElement.href = `/users/${userData.id}`; // Set the href to redirect to the user's page
+      usernameElement.textContent = userData.global_name; // Set the text to the user's global name
+      usernameElement.style.fontWeight = "bold"; // Make the text bold
+
+      const dateElement = document.createElement("small");
+      const formattedDate = formatDate(comment.date);
+      dateElement.textContent = ` · ${formattedDate}`; // Format date with the separator
+      dateElement.classList.add("text-muted");
+
+      // Append the username and date together in the header container
+      headerContainer.appendChild(usernameElement);
+      headerContainer.appendChild(dateElement);
+
+      const commentTextElement = document.createElement("p");
+      commentTextElement.textContent = comment.content;
+      commentTextElement.classList.add("mb-0", "comment-text");
+
+      // Append the avatar, header, and comment content to the list item
+      commentContainer.appendChild(headerContainer);
+      commentContainer.appendChild(commentTextElement);
+      listItem.appendChild(avatarElement);
+      listItem.appendChild(commentContainer);
+      commentsList.appendChild(listItem);
     });
-  }
 
-  // Function to render modern pagination controls
+    // Render pagination controls
+    renderPaginationControls(totalPages);
+  });
+}
+
+
+ // Function to render modern pagination controls
 function renderPaginationControls(totalPages) {
   const paginationContainer = document.getElementById("paginationControls");
   paginationContainer.innerHTML = ""; // Clear existing controls
 
-  // Add container styling
-  paginationContainer.classList.add("d-flex", "align-items-center", "justify-content-center", "gap-2");
+  // Add container styling to keep everything in a single row
+  paginationContainer.classList.add("d-flex", "align-items-center", "justify-content-center", "gap-2", "flex-nowrap");
 
   // Create left arrow button
   const leftArrow = document.createElement("button");
   leftArrow.innerHTML = `<i class="bi bi-chevron-left"></i>`; // Use an icon (Bootstrap Icons)
-  leftArrow.classList.add("btn", "btn-primary", "rounded-circle");
+  leftArrow.classList.add("btn", "btn-primary", "rounded-circle", "pagination-btn");
   leftArrow.disabled = currentPage === 1; // Disable if on the first page
   leftArrow.addEventListener("click", () => {
     if (currentPage > 1) {
@@ -1363,8 +1360,8 @@ function renderPaginationControls(totalPages) {
   pageInput.value = currentPage;
   pageInput.min = 1;
   pageInput.max = totalPages;
-  pageInput.classList.add("form-control", "text-center");
-  pageInput.style.maxWidth = "80px"; // Compact size
+  pageInput.classList.add("form-control", "text-center", "pagination-input");
+  pageInput.style.maxWidth = "70px"; // Compact size for mobile
   pageInput.addEventListener("change", () => {
     const newPage = parseInt(pageInput.value, 10);
     if (newPage >= 1 && newPage <= totalPages) {
@@ -1387,7 +1384,7 @@ function renderPaginationControls(totalPages) {
   // Create right arrow button
   const rightArrow = document.createElement("button");
   rightArrow.innerHTML = `<i class="bi bi-chevron-right"></i>`; // Use an icon
-  rightArrow.classList.add("btn", "btn-primary", "rounded-circle");
+  rightArrow.classList.add("btn", "btn-primary", "rounded-circle", "pagination-btn");
   rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
   rightArrow.addEventListener("click", () => {
     if (currentPage < totalPages) {
@@ -1420,7 +1417,7 @@ function renderPaginationControls(totalPages) {
         // Check if data contains a message like "No comments found"
         if (data.message && data.message === "No comments found") {
           console.log(data.message);
-          commentsList.innerHTML = "";
+          commentsList.innerHTML = "<p class='text-muted text-center'>Be the first to comment on this entry!</p>";
           return;
         }
 

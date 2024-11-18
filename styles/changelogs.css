@@ -682,14 +682,11 @@ body.menu-open {
 
 /* Individual Comment Styling */
 .comment-item {
-  background-color: #2e3944; /* Very dark blue-gray */
+  background-color: transparent; /* Very dark blue-gray */
   color: #D3D9D4; /* Very light grayish-green */
-  border-radius: 8px;
   margin-bottom: 0;
-  padding: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+
   font-family: Arial, sans-serif; /* Default sans-serif font */
-  transition: transform 0.2s, box-shadow 0.2s;
   width: 100%;
   word-wrap: break-word; /* Break words that are too long */
   white-space: pre-wrap;  /* Preserve spaces and line breaks */
@@ -726,6 +723,7 @@ body.menu-open {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
   color: #D3D9D4; /* Very light grayish-green text */
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
   gap: 10px;
@@ -953,16 +951,17 @@ button {
         font-size: 0.85rem; /* Further reduce the font size */
     }
     #paginationControls {
-      flex-direction: row;
-      padding: 8px;
-      justify-content: center;
-      gap: 8px; /* Adjust spacing */
+      gap: 8px; /* Reduce gap for small screens */
     }
   
-    #paginationControls .btn {
-      width: 30px;
-      height: 30px;
-      font-size: 14px; /* Smaller buttons */
+    .pagination-btn {
+      font-size: 16px; /* Smaller buttons on mobile */
+      padding: 6px 10px; /* Smaller padding for the buttons */
+    }
+  
+    .pagination-input {
+      font-size: 14px; /* Smaller input text */
+      max-width: 50px; /* Smaller input box on mobile */
     }
 }
 
@@ -987,6 +986,4 @@ button {
     #commenter-text, #submit-comment {
         font-size: 0.8rem; /* Adjust font size for very small screens */
     }
-
-    
 }
