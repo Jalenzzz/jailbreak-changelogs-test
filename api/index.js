@@ -267,7 +267,7 @@ app.get("/users/:user/followers", async (req, res) => {
     if (!user) {
     return res.render("usersearch", {
       title: 'User Search / Changelogs',
-      logoUrl: 'assets/logos/users.png',
+      logoUrl: 'assets/logos/Users_Logo.png',
       logoAlt: 'Users Page Logo'
     });
   }
@@ -291,7 +291,7 @@ app.get("/users/:user/followers", async (req, res) => {
       avatar,
       showfollowers,
       title: 'Followers / Changelogs',
-      logoUrl: 'assets/logos/users.png',
+      logoUrl: 'assets/logos/Users_Logo.png',
       logoAlt: 'Users Page Logo'
     });
   })
@@ -327,7 +327,7 @@ app.get("/users/:user/following", async (req, res) => {
   if (!user) {
     return res.render("usersearch", {
       title: 'User Search / Changelogs',
-      logoUrl: 'assets/logos/users.png',
+      logoUrl: 'assets/logos/Users_Logo.png',
       logoAlt: 'Users Page Logo'
     });
   }
@@ -351,7 +351,7 @@ app.get("/users/:user/following", async (req, res) => {
       avatar,
       showfollowing,
       title: 'Users - Following',
-      logoUrl: 'assets/logos/users.png',
+      logoUrl: 'assets/logos/Users_Logo.png',
       logoAlt: 'Users Page Logo'
     });
   })
@@ -453,7 +453,7 @@ app.get('/sitemap.xml', (req, res) => {
 app.get('/users', (req, res) => {
   res.render('usersearch',  { 
     title: 'Users',
-    logoUrl: 'assets/logos/users.png',
+    logoUrl: 'assets/logos/Users_Logo.png',
     logoAlt: 'Users Page Logo'
   });
 });
@@ -465,7 +465,7 @@ app.get("/users/:user", (req, res) => {
   if (!user) {
     return res.render("usersearch", {
       title: 'Users',
-      logoUrl: 'assets/logos/users.png',
+      logoUrl: 'assets/logos/Users_Logo.png',
       logoAlt: 'Users Page Logo'
     });
   }
@@ -518,7 +518,7 @@ app.get("/users/:user", (req, res) => {
         avatar, 
         settings,
         title: 'User Profile',
-        logoUrl: 'assets/logos/users.png',
+        logoUrl: 'assets/logos/Users_Logo.png',
         logoAlt: 'User Profile Logo'
       });
     })
