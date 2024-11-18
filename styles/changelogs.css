@@ -602,102 +602,190 @@ body.menu-open {
 .list-group-item {
   word-wrap: break-word;
   overflow-wrap: break-word;
-}
-
-/* Style the main container for the comment section */
-.comment-container {
-  border-radius: 15px; /* Rounded corners for the container */
-  padding: 30px; /* Add space inside the container */
-  box-shadow: 0 0 20px #000000c7; /* Subtle shadow for depth */
-
-}
-/* Header styling */
-#comment-header {
-  font-family: "Luckiest Guy", Arial, sans-serif;
-  letter-spacing: 1px;
-  color: var(--content-h1);
-  text-align: center;
-  border-bottom: 2px solid var(--content-h2);
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-}
-
-/* Comment form styling */
-#comment-form {
-  margin-bottom: 30px;
-}
-
-#comment-form .input-group {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 25px;
-  overflow: hidden;
-}
-
-#comment-form input,
-#comment-form button {
   border: none;
-  padding: 15px 20px;
-  font-size: 16px;
+  background-color: transparent;
+  border-radius: 0;
+}
+/* Overall Comment Section Styling */
+.comment-container {
+  background-color: #212A31; /* Dark grayish-blue background */
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 2px solid #748D92; /* Medium grayish-blue border to distinguish it */
 }
 
-#comment-form button {
+/* Comment Header */
+.comment-header {
+  color: #D3D9D4; /* Very light grayish-green */
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  font-family: "Luckiest Guy", Arial, sans-serif; /* Applying the desired font */
+  text-align: center;
+}
+
+/* Comment Input Field */
+#commenter-text {
+  background-color: #212A31; /* Very dark blue-gray background */
+  color: #D3D9D4; /* Very light grayish-green */
+  border: 1px solid #748D92; /* Medium grayish-blue border */
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 1rem;
+  width: 100%;
+  flex: 1;
+  width: 100%;
+}
+
+/* Disabled State for Commenter Text */
+#commenter-text:disabled {
+  background-color: #2E3944; /* Medium grayish-blue for the background */ 
+  color: #D3D9D4; /* Very light grayish-green for text */
+  cursor: not-allowed; /* Change cursor to indicate it's disabled */
+}
+
+/* Change icon to stop icon on hover (for the disabled state) */
+#commenter-text:disabled:hover {
+  background-color: #2e394483; /* Dark grayish-blue background on hover */
+  color: #D3D9D4; /* Keep the text color consistent */
+}
+
+/* To ensure the icon changes to a "stop" icon on hover, assuming it's an img element */
+#commenter-text:disabled:hover::before {
+  content: "\f04d"; /* Unicode for a stop icon (FontAwesome example) */
+}
+
+/* Comment Submit Button */
+#submit-comment {
+  background-color: #124E66; /* Deep teal */
+  color: #D3D9D4;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0; 
+}
+
+/* Comment Submit Button */
+#submit-comment:hover {
+  background-color: #124e6676 !important; /* Deep teal */
+}
+
+/* Comment List */
+#comments-list {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 30px;
+  width: 100%;
+}
+
+/* Individual Comment Styling */
+.comment-item {
+  background-color: #2e3944; /* Very dark blue-gray */
+  color: #D3D9D4; /* Very light grayish-green */
+  border-radius: 8px;
+  margin-bottom: 0;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif; /* Default sans-serif font */
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
+  word-wrap: break-word; /* Break words that are too long */
+  white-space: pre-wrap;  /* Preserve spaces and line breaks */
+}
+
+.comment-item a {
+  text-decoration: none; /* Remove the default underline */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+/* Comment Author Styling */
+.comment-author {
+  color: #124E66; /* Deep teal */
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* Comment Text Styling */
+.comment-text {
+  color: #D3D9D4;
+  font-size: 1rem;
+  margin-top: 8px;
+  word-wrap: break-word;  /* Ensures long words break and don't overflow */
+  overflow-wrap: break-word;  /* Handle long words within text */
+  word-break: break-word;  /* Breaks words when necessary to prevent overflow */
+  margin-bottom: 0;  /* Ensure no extra margin for text */
+}
+
+/* General Pagination Styles */
+#paginationControls {
+  padding: 8px 15px;
+  background-color: #2E3944; /* Dark grayish-blue for the background */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  color: #D3D9D4; /* Very light grayish-green text */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Button Styles */
+#paginationControls .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  font-size: 16px;
+  border: none;
+  background-color: #124E66; /* Deep teal for button background */
+  color: #D3D9D4; /* Very light grayish-green for button text */
+  border-radius: 50%; /* Circular button */
   transition: background-color 0.3s ease;
 }
 
-/* Comments list styling */
-#comments-list {
-  max-height: 500px;
-  overflow-y: auto;
-  padding-right: 10px;
+#paginationControls .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-/* Individual comment styling */
-#comments-list .list-group-item {
-  background-color: #212a31;
-  border: 1px solid #748d92;
-  border-radius: 15px;
-  padding: 15px;
-  margin-bottom: 15px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  max-width: 100%;
+#paginationControls .btn:hover:not(:disabled) {
+  background-color: #748D92; /* Medium grayish-blue on hover */
+  color: #212A31; /* Very dark blue-gray text on hover */
 }
 
-#comments-list .list-group-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+/* Input Group Styles */
+#paginationControls .input-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
-/* Commenter name styling */
-#comments-list .list-group-item strong {
-  color: var(--content-h3);
-  display: block;
-  margin-bottom: 5px;
+#paginationControls .form-control {
+  text-align: center;
+  font-size: 14px;
+  border: 1px solid #748D92; /* Medium grayish-blue border */
+  background-color: #212A31; /* Very dark blue-gray for the input */
+  color: #D3D9D4; /* Light grayish-green text for input */
+  border-radius: 4px;
+  width: 50px; /* Compact input width */
 }
 
-#comments-list .list-group-item a {
-  color: var(--content-h3);
-  display: block;
-  margin-bottom: 5px;
+#paginationControls .form-control:focus {
+  outline: none;
+  border-color: #124E66; /* Deep teal on focus */
+  box-shadow: 0 0 4px rgba(18, 78, 102, 0.5); /* Focus glow */
 }
 
-/* Comment timestamp styling */
-#comments-list .list-group-item .text-muted {
-  font-size: 0.85em;
-  color: var(--gray-600) !important;
-  display: block;
-  margin-bottom: 10px;
+/* Text and Spacing Adjustments */
+#paginationControls span {
+  font-size: 14px;
+  color: #748D92; /* Medium grayish-blue for text */
 }
 
-/* Comment text styling */
-#comments-list .list-group-item p {
-  color: var(--text-color);
-  line-height: 1.6;
-  margin-bottom: 0;
-  word-break: break-word;
-  hyphens: auto;
-}
 /* Content Wrapper Styles */
 #content-wrapper {
   display: flex; /* Flexbox layout */
@@ -777,20 +865,14 @@ span {
 
 /* Input Group Styles */
 .input-group {
-  position: relative; /* Relative positioning */
+  display: flex; /* Ensures input and button are aligned horizontally by default */
+  align-items: center; /* Aligns them vertically in the center */
+  gap: 10px; /* Adds space between the input field and the button */
+  width: 100%; /* Ensures it takes the full width of the container */
 }
 
-#paginationControls {
-  display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  margin: 20px 0; /* Optional: Add some margin for spacing */
-}
 
-#paginationControls button,
-#paginationControls input {
-  margin: 0 5px; /* Add margin between controls */
-}
+
 
 /* Remove Outline for All Elements */
 * {
@@ -822,65 +904,89 @@ button {
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-  .custom-search-item {
-    padding: 8px; /* Adjust padding for mobile */
-  }
-  .quick-links .btn-link {
-    font-size: 0.9rem; /* Font size for quick links */
-  }
-  video {
-    width: 100%;
-    height: auto;
+    .comment-container {
+        padding: 20px; /* Slightly reduce padding for mobile */
+        width: 100%; /* Full width to prevent compression */
+        max-width: 700px; /* Limit maximum width to prevent over-expansion */
+        margin: 0 auto; /* Center the container */
+    }
+
+    .comment-header {
+        font-size: 1.5rem; /* Smaller header font size */
+    }
+
+    /* Comment input and button */
+    #commenter-text, #submit-comment {
+        font-size: 0.9rem; /* Adjust font size for smaller devices */
+    }
+
+    /* Make the input field and submit button full-width */
+    .input-group {
+        flex-direction: column; /* Stack the input and button vertically */
+        gap: 10px;
+    }
+
+    #submit-comment {
+        width: 100%; /* Make submit button full-width */
+        margin-top: 10px; /* Add space between the input and the button */
+    }
+
+    /* Comment list margin */
+    #comments-list {
+        margin-top: 20px;
+    }
+
 }
 
-  #loading-overlay .loading-logo {
-    width: 200px;
-  }
-  .custom-spinner {
-    width: 30px;
-    height: 30px;
-  }
-}
+/* For even smaller screens (576px and below) */
 @media (max-width: 576px) {
-  #comment-form .input-group {
-    flex-wrap: nowrap;
-  }
+    .comment-container {
+        padding: 15px; /* Further reduce padding for smaller screens */
+        width: 100%; /* Full width to prevent any compression */
+    }
 
-  #comment-form input {
-    flex: 1;
-  }
+    .comment-header {
+        font-size: 1.4rem; /* Slightly smaller header font */
+    }
 
-  #comment-form button {
-    width: auto;
-  }
-
-  /* Ensure comments fit within the container on small screens */
-  #comments-list {
-    padding-right: 0;
-  }
-
-  #comments-list .list-group-item {
-    padding: 10px;
-  }
-
-  #comments-list .list-group-item p {
-    font-size: 14px;
-  }
-  .breadcrumb {
-    padding: 10px 15px;
-  }
-  .breadcrumb-item {
-    font-size: 14px;
-    margin-right: 10px;
-  }
-  .breadcrumb-item:not(:last-child)::after {
-    margin-left: 10px;
-  }
+    #commenter-text, #submit-comment {
+        font-size: 0.85rem; /* Further reduce the font size */
+    }
+    #paginationControls {
+      flex-direction: row;
+      padding: 8px;
+      justify-content: center;
+      gap: 8px; /* Adjust spacing */
+    }
+  
+    #paginationControls .btn {
+      width: 30px;
+      height: 30px;
+      font-size: 14px; /* Smaller buttons */
+    }
 }
 
+
+/* Extra small mobile devices (up to 400px) */
 @media (max-width: 400px) {
-  .container {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
+    .container {
+        padding-left: 5px;
+        padding-right: 5px; /* Ensure no edge space on very small screens */
+    }
+
+    .comment-container {
+        padding: 10px; /* Minimal padding for extra small screens */
+        width: 100%; /* Full width for very small screens */
+        margin: 0 10px; /* Optional: add a little margin on the sides */
+    }
+
+    .comment-header {
+        font-size: 1.2rem; /* Adjust header for small screens */
+    }
+
+    #commenter-text, #submit-comment {
+        font-size: 0.8rem; /* Adjust font size for very small screens */
+    }
+
+    
 }

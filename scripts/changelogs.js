@@ -1126,20 +1126,23 @@ function updateDropdownButton(text) {
     avatarElement.height = 32;
 
     const commentContainer = document.createElement("div");
-    commentContainer.classList.add("ms-2"); // Add margin to the left of the comment
+    commentContainer.classList.add("ms-2", "comment-item"); // Add margin to the left of the comment
 
     const usernameElement = document.createElement("a");
     usernameElement.href = `/users/${userdata.id}`; // Set the href to redirect to the user's page
     usernameElement.textContent = userdata.global_name; // Set the text to the user's global name
-    usernameElement.classList.add('text-decoration-none'); 
     usernameElement.style.fontWeight = "bold"; // Make the text bold
-    usernameElement.style.textDecoration = "none"; // Remove underline
-    usernameElement.style.color = "#748d92"; // Use inherited color (usually the same as the surrounding text)
-    
 
+    usernameElement.addEventListener('mouseenter', () => {
+      usernameElement.style.textDecoration = 'underline';
+    })
+    usernameElement.addEventListener('mouseleave', () => {
+      usernameElement.style.textDecoration = 'none';
+    })
+    
     const commentTextElement = document.createElement("p");
     commentTextElement.textContent = comment.value;
-    commentTextElement.classList.add("mb-0"); // Remove default margin from <p>
+    commentTextElement.classList.add("mb-0", "comment-text");
 
     const date = Math.floor(Date.now() / 1000);
     const formattedDate = formatDate(date); // Assuming comment.date contains the date string
@@ -1287,19 +1290,24 @@ function updateDropdownButton(text) {
         avatarElement.height = 32;
 
         const commentContainer = document.createElement("div");
-        commentContainer.classList.add("ms-2");
+        commentContainer.classList.add("ms-2", "comment-item");
 
         const usernameElement = document.createElement("a");
         usernameElement.href = `/users/${userData.id}`; // Set the href to redirect to the user's page
         usernameElement.textContent = userData.global_name; // Set the text to the user's global name
-        usernameElement.classList.add('text-decoration-none'); 
         usernameElement.style.fontWeight = "bold"; // Make the text bold
-        usernameElement.style.textDecoration = "none"; // Remove underline
-        usernameElement.style.color = "#748d92"; // Use inherited color (usually the same as the surrounding text)
+
+        usernameElement.addEventListener('mouseenter', () => {
+          usernameElement.style.textDecoration = 'underline';
+        })
+        usernameElement.addEventListener('mouseleave', () => {
+          usernameElement.style.textDecoration = 'none';
+        })
+  
         
         const commentTextElement = document.createElement("p");
         commentTextElement.textContent = comment.content;
-        commentTextElement.classList.add("mb-0");
+        commentTextElement.classList.add("mb-0", "comment-text");
 
         const formattedDate = formatDate(comment.date);
         const dateElement = document.createElement("small");
@@ -1319,56 +1327,78 @@ function updateDropdownButton(text) {
     });
   }
 
-  // Function to render pagination controls with arrows and input
-  function renderPaginationControls(totalPages) {
-    const paginationContainer = document.getElementById("paginationControls");
-    paginationContainer.innerHTML = ""; // Clear existing controls
+  // Function to render modern pagination controls
+function renderPaginationControls(totalPages) {
+  const paginationContainer = document.getElementById("paginationControls");
+  paginationContainer.innerHTML = ""; // Clear existing controls
 
-    // Create left arrow button
-    const leftArrow = document.createElement("button");
-    leftArrow.textContent = "<";
-    leftArrow.classList.add("btn", "btn-outline-primary", "m-1");
-    leftArrow.disabled = currentPage === 1; // Disable if on the first page
-    leftArrow.addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        loadComments(comments); // Reload comments for the current page
-      }
-    });
-    paginationContainer.appendChild(leftArrow);
+  // Add container styling
+  paginationContainer.classList.add("d-flex", "align-items-center", "justify-content-center", "gap-2");
 
-    // Page number input
-    const pageInput = document.createElement("input");
-    pageInput.type = "number";
-    pageInput.value = currentPage;
-    pageInput.min = 1;
-    pageInput.max = totalPages;
-    pageInput.classList.add("form-control", "mx-1");
-    pageInput.style.width = "60px"; // Set width for input
-    pageInput.addEventListener("change", () => {
-      const newPage = parseInt(pageInput.value);
-      if (newPage >= 1 && newPage <= totalPages) {
-        currentPage = newPage;
-        loadComments(comments); // Reload comments for the new page
-      } else {
-        pageInput.value = currentPage; // Reset input if invalid
-      }
-    });
-    paginationContainer.appendChild(pageInput);
+  // Create left arrow button
+  const leftArrow = document.createElement("button");
+  leftArrow.innerHTML = `<i class="bi bi-chevron-left"></i>`; // Use an icon (Bootstrap Icons)
+  leftArrow.classList.add("btn", "btn-primary", "rounded-circle");
+  leftArrow.disabled = currentPage === 1; // Disable if on the first page
+  leftArrow.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      loadComments(comments); // Reload comments for the current page
+      renderPaginationControls(totalPages); // Update pagination controls
+    }
+  });
+  paginationContainer.appendChild(leftArrow);
 
-    // Create right arrow button
-    const rightArrow = document.createElement("button");
-    rightArrow.textContent = ">";
-    rightArrow.classList.add("btn", "btn-outline-primary", "m-1");
-    rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
-    rightArrow.addEventListener("click", () => {
-      if (currentPage < totalPages) {
-        currentPage++;
-        loadComments(comments); // Reload comments for the current page
-      }
-    });
-    paginationContainer.appendChild(rightArrow);
-  }
+  // Page number input with label
+  const pageInputGroup = document.createElement("div");
+  pageInputGroup.classList.add("input-group", "mx-1", "align-items-center");
+
+  const pageLabel = document.createElement("span");
+  pageLabel.textContent = `Page `;
+  pageLabel.classList.add("text-muted", "fw-semibold");
+  pageInputGroup.appendChild(pageLabel);
+
+  const pageInput = document.createElement("input");
+  pageInput.type = "number";
+  pageInput.value = currentPage;
+  pageInput.min = 1;
+  pageInput.max = totalPages;
+  pageInput.classList.add("form-control", "text-center");
+  pageInput.style.maxWidth = "80px"; // Compact size
+  pageInput.addEventListener("change", () => {
+    const newPage = parseInt(pageInput.value, 10);
+    if (newPage >= 1 && newPage <= totalPages) {
+      currentPage = newPage;
+      loadComments(comments); // Reload comments for the new page
+      renderPaginationControls(totalPages); // Update pagination controls
+    } else {
+      pageInput.value = currentPage; // Reset input if invalid
+    }
+  });
+  pageInputGroup.appendChild(pageInput);
+
+  const totalPageSpan = document.createElement("span");
+  totalPageSpan.textContent = ` / ${totalPages}`;
+  totalPageSpan.classList.add("text-muted");
+  pageInputGroup.appendChild(totalPageSpan);
+
+  paginationContainer.appendChild(pageInputGroup);
+
+  // Create right arrow button
+  const rightArrow = document.createElement("button");
+  rightArrow.innerHTML = `<i class="bi bi-chevron-right"></i>`; // Use an icon
+  rightArrow.classList.add("btn", "btn-primary", "rounded-circle");
+  rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
+  rightArrow.addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      loadComments(comments); // Reload comments for the current page
+      renderPaginationControls(totalPages); // Update pagination controls
+    }
+  });
+  paginationContainer.appendChild(rightArrow);
+}
+
 
   function reloadcomments() {
     CommentHeader.textContent =
