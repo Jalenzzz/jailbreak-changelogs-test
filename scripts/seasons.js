@@ -475,8 +475,8 @@ const debouncedReloadComments = debounce(reloadcomments, 300);
       body: JSON.stringify({
         author: token,
         content: comment.value,
-        item_id: localStorage.getItem("selectedChangelogId"),
-        item_type: "changelog",
+        item_id: localStorage.getItem("selectedSeason"),
+        item_type: "season",
       }),
     })
       .then(async (response) => {
@@ -733,7 +733,9 @@ function renderPaginationControls(totalPages) {
         // Check if data contains a message like "No comments found"
         if (data.message && data.message === "No comments found") {
           console.log(data.message);
-          commentsList.innerHTML = "";
+          commentsList.innerHTML = "<p class='text-muted text-center'>Be the first to comment on this entry!</p>";
+          // Hide the pagination if no comments are available
+          document.getElementById("paginationControls").innerHTML = "";
           return;
         }
 
