@@ -394,86 +394,6 @@ body.menu-open {
   scrollbar-color: #888 #f1f1f1;
 }
 
-/* Sidebar Image Wrapper Styles */
-#sidebar-image-wrapper .card {
-  position: relative;  /* Allows absolute positioning of pseudo-elements */
-  overflow: hidden;    /* Ensures the sliding borders don't extend outside the card */
-  transition: box-shadow 0.3s ease;  /* Smooth transition for box-shadow on hover */
-}
-
-/* Pseudo-elements for top and bottom borders */
-#sidebar-image-wrapper .card::before,
-#sidebar-image-wrapper .card::after {
-  content: '';  /* Required for pseudo-elements */
-  position: absolute;
-  width: 100%;
-  height: 2px;  /* Thickness of the border */
-  background-color: #124E66;  /* Color of the border, can be customized */
-  transition: transform 0.6s ease;  /* Smooth sliding animation */
-}
-
-/* Top border - slides in from left */
-#sidebar-image-wrapper .card::before {
-  top: 0;
-  left: 0;
-  transform: translateX(-100%);  /* Initially hidden off-screen to the left */
-}
-
-/* Bottom border - slides in from right */
-#sidebar-image-wrapper .card::after {
-  bottom: 0;
-  right: 0;
-  transform: translateX(100%);  /* Initially hidden off-screen to the right */
-}
-
-/* Slide in top and bottom borders on hover */
-#sidebar-image-wrapper .card:hover::before,
-#sidebar-image-wrapper .card:hover::after {
-  transform: translateX(0);  /* Moves borders into view */
-}
-
-/* Left and right border elements */
-#sidebar-image-wrapper .card .border-left,
-#sidebar-image-wrapper .card .border-right {
-  position: absolute;
-  width: 2px;  /* Thickness of the border */
-  height: 100%;
-  background-color: #124E66;  /* Should match the color of top/bottom borders */
-  transition: transform 0.6s ease;  /* Smooth sliding animation */
-}
-
-/* Left border - slides in from top */
-#sidebar-image-wrapper .card .border-left {
-  top: 0;
-  left: 0;
-  transform: translateY(-100%);  /* Initially hidden above the card */
-}
-
-/* Right border - slides in from bottom */
-#sidebar-image-wrapper .card .border-right {
-  bottom: 0;
-  right: 0;
-  transform: translateY(100%);  /* Initially hidden below the card */
-}
-
-/* Slide in left and right borders on hover */
-#sidebar-image-wrapper .card:hover .border-left,
-#sidebar-image-wrapper .card:hover .border-right {
-  transform: translateY(0);  /* Moves borders into view */
-}
-
-/* Add subtle shadow effect on hover */
-#sidebar-image-wrapper .card:hover {
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);  /* Adds depth to the card */
-}
-
-/* Ensure the image fills the card */
-#sidebar-image-wrapper .card img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
 /* Highlight Styles */
 .highlight {
   background-color: var(
@@ -613,6 +533,7 @@ body.menu-open {
   padding: 30px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: 2px solid #748D92; /* Medium grayish-blue border to distinguish it */
+  
 }
 
 /* Comment Header */
@@ -832,11 +753,7 @@ h1 {
 .bi-arrow-right {
   color: var(--content-bullet); /* Color for right arrow icon */
 }
-/* Row Styles */
-.row {
-  margin-left: 0; /* Reset left margin */
-  margin-right: 0; /* Reset right margin */
-}
+
 
 /* Media Tag Styles */
 .media-tag {

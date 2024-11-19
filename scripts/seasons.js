@@ -420,8 +420,7 @@ const debouncedReloadComments = debounce(reloadcomments, 300);
     listItem.classList.add("list-group-item", "d-flex", "align-items-start");
 
     const avatarElement = document.createElement("img");
-    const defaultAvatarUrl = "assets/profile-pic-placeholder.png";
-
+    const defaultAvatarUrl = "/favicon.ico";
     avatarElement.src = avatarUrl.endsWith("null.png")
       ? defaultAvatarUrl
       : avatarUrl;
@@ -430,19 +429,23 @@ const debouncedReloadComments = debounce(reloadcomments, 300);
     avatarElement.height = 32;
 
     const commentContainer = document.createElement("div");
-    commentContainer.classList.add("ms-2"); // Add margin to the left of the comment
+    commentContainer.classList.add("ms-2", "comment-item"); // Add margin to the left of the comment
 
     const usernameElement = document.createElement("a");
     usernameElement.href = `/users/${userdata.id}`; // Set the href to redirect to the user's page
     usernameElement.textContent = userdata.global_name; // Set the text to the user's global name
-    usernameElement.classList.add('text-decoration-none'); 
     usernameElement.style.fontWeight = "bold"; // Make the text bold
-    usernameElement.style.textDecoration = "none"; // Remove underline
-    usernameElement.style.color = "#748d92"; // Use inherited color (usually the same as the surrounding text)
+
+    usernameElement.addEventListener('mouseenter', () => {
+      usernameElement.style.textDecoration = 'underline';
+    })
+    usernameElement.addEventListener('mouseleave', () => {
+      usernameElement.style.textDecoration = 'none';
+    })
     
     const commentTextElement = document.createElement("p");
     commentTextElement.textContent = comment.value;
-    commentTextElement.classList.add("mb-0"); // Remove default margin from <p>
+    commentTextElement.classList.add("mb-0", "comment-text");
 
     const date = Math.floor(Date.now() / 1000);
     const formattedDate = formatDate(date); // Assuming comment.date contains the date string
@@ -460,6 +463,7 @@ const debouncedReloadComments = debounce(reloadcomments, 300);
     listItem.appendChild(commentContainer);
 
     // Prepend the new comment to the comments list
+
     const token = getCookie("token");
 
     // Post the comment to the server
@@ -471,8 +475,8 @@ const debouncedReloadComments = debounce(reloadcomments, 300);
       body: JSON.stringify({
         author: token,
         content: comment.value,
-        item_id: localStorage.getItem("selectedSeason"),
-        item_type: "season",
+        item_id: localStorage.getItem("selectedChangelogId"),
+        item_type: "changelog",
       }),
     })
       .then(async (response) => {
@@ -486,6 +490,7 @@ const debouncedReloadComments = debounce(reloadcomments, 300);
 
         if (response.ok) {
           commentsList.prepend(listItem);
+          reloadcomments();
         } else {
           // Handle other non-429 errors (e.g., validation)
           throw_error(data.error || "An error occurred.");
@@ -543,141 +548,170 @@ const debouncedReloadComments = debounce(reloadcomments, 300);
   }
 
   let currentPage = 1; // Track the current page
-  const commentsPerPage = 5; // Number of comments per page
+  const commentsPerPage = 7; // Number of comments per page
   let comments = []; // Declare the comments array globally
 
   // Function to load comments
-  function loadComments(commentsData) {
-    comments = commentsData; // Assign the fetched comments to the global variable
-    commentsList.innerHTML = ""; // Clear existing comments
-    comments.sort((a, b) => b.date - a.date);
+function loadComments(commentsData) {
+  comments = commentsData; // Assign the fetched comments to the global variable
+  commentsList.innerHTML = ""; // Clear existing comments
+  comments.sort((a, b) => b.date - a.date);
 
-    // Calculate the total number of pages
-    const totalPages = Math.ceil(comments.length / commentsPerPage);
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(comments.length / commentsPerPage);
 
-    // Get the comments for the current page
-    const startIndex = (currentPage - 1) * commentsPerPage;
-    const endIndex = startIndex + commentsPerPage;
-    const commentsToDisplay = comments.slice(startIndex, endIndex);
+  // Get the comments for the current page
+  const startIndex = (currentPage - 1) * commentsPerPage;
+  const endIndex = startIndex + commentsPerPage;
+  const commentsToDisplay = comments.slice(startIndex, endIndex);
 
-    const userDataPromises = commentsToDisplay.map((comment) => {
-      return fetch(
-        "https://api.jailbreakchangelogs.xyz/users/get?id=" + comment.user_id
-      )
-        .then((response) => response.json())
-        .then((userData) => ({ comment, userData }))
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          return null;
-        });
-    });
-
-    Promise.all(userDataPromises).then((results) => {
-      const validResults = results.filter((result) => result !== null);
-
-      validResults.forEach(({ comment, userData }) => {
-        const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-
-        const listItem = document.createElement("li");
-        listItem.classList.add(
-          "list-group-item",
-          "d-flex",
-          "align-items-start"
-        );
-
-        const avatarElement = document.createElement("img");
-        const defaultAvatarUrl = "assets/profile-pic-placeholder.png";
-        avatarElement.src = avatarUrl.endsWith("null.png")
-          ? defaultAvatarUrl
-          : avatarUrl;
-        avatarElement.classList.add("rounded-circle", "m-1");
-        avatarElement.width = 32;
-        avatarElement.height = 32;
-
-        const commentContainer = document.createElement("div");
-        commentContainer.classList.add("ms-2");
-
-        const usernameElement = document.createElement("a");
-        usernameElement.href = `/users/${userData.id}`; // Set the href to redirect to the user's page
-        usernameElement.textContent = userData.global_name; // Set the text to the user's global name
-        usernameElement.classList.add('text-decoration-none'); 
-        usernameElement.style.fontWeight = "bold"; // Make the text bold
-        usernameElement.style.textDecoration = "none"; // Remove underline
-        usernameElement.style.color = "#748d92"; // Use inherited color (usually the same as the surrounding text)
-        
-
-        const commentTextElement = document.createElement("p");
-        commentTextElement.textContent = comment.content;
-        commentTextElement.classList.add("mb-0");
-
-        const formattedDate = formatDate(comment.date);
-        const dateElement = document.createElement("small");
-        dateElement.textContent = formattedDate;
-        dateElement.classList.add("text-muted");
-
-        commentContainer.appendChild(usernameElement);
-        commentContainer.appendChild(commentTextElement);
-        commentContainer.appendChild(dateElement);
-        listItem.appendChild(avatarElement);
-        listItem.appendChild(commentContainer);
-        commentsList.appendChild(listItem);
+  const userDataPromises = commentsToDisplay.map((comment) => {
+    return fetch(
+      "https://api.jailbreakchangelogs.xyz/users/get?id=" + comment.user_id
+    )
+      .then((response) => response.json())
+      .then((userData) => ({ comment, userData }))
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+        return null;
       });
+  });
 
-      // Render pagination controls
-      renderPaginationControls(totalPages);
+  Promise.all(userDataPromises).then((results) => {
+    const validResults = results.filter((result) => result !== null);
+
+    validResults.forEach(({ comment, userData }) => {
+      const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+
+      const listItem = document.createElement("li");
+      listItem.classList.add("list-group-item", "d-flex", "align-items-start", "mb-3");
+
+      const avatarElement = document.createElement("img");
+      const defaultAvatarUrl = "assets/profile-pic-placeholder.png";
+
+      avatarElement.src = avatarUrl.endsWith("null.png")
+        ? defaultAvatarUrl
+        : avatarUrl;
+      avatarElement.classList.add("rounded-circle", "m-1");
+      avatarElement.width = 32;
+      avatarElement.height = 32;
+
+      const commentContainer = document.createElement("div");
+      commentContainer.classList.add("ms-2", "comment-item", "w-100");
+
+      // Create a container for the username and date (on the same line)
+      const headerContainer = document.createElement("div");
+      headerContainer.classList.add("d-flex", "align-items-center", "flex-wrap");
+
+      const usernameElement = document.createElement("a");
+      usernameElement.href = `/users/${userData.id}`; // Set the href to redirect to the user's page
+      usernameElement.textContent = userData.global_name; // Set the text to the user's global name
+      usernameElement.style.fontWeight = "bold"; // Make the text bold
+
+      usernameElement.addEventListener('mouseenter', () => {
+        usernameElement.style.textDecoration = 'underline';
+      })
+      usernameElement.addEventListener('mouseleave', () => {
+        usernameElement.style.textDecoration = 'none';
+      })
+
+      const dateElement = document.createElement("small");
+      const formattedDate = formatDate(comment.date);
+      dateElement.textContent = ` · ${formattedDate}`; // Format date with the separator
+      dateElement.classList.add("text-muted");
+
+      // Append the username and date together in the header container
+      headerContainer.appendChild(usernameElement);
+      headerContainer.appendChild(dateElement);
+
+      const commentTextElement = document.createElement("p");
+      commentTextElement.textContent = comment.content;
+      commentTextElement.classList.add("mb-0", "comment-text");
+
+      // Append the avatar, header, and comment content to the list item
+      commentContainer.appendChild(headerContainer);
+      commentContainer.appendChild(commentTextElement);
+      listItem.appendChild(avatarElement);
+      listItem.appendChild(commentContainer);
+      commentsList.appendChild(listItem);
     });
-  }
 
-  // Function to render pagination controls with arrows and input
-  function renderPaginationControls(totalPages) {
-    const paginationContainer = document.getElementById("paginationControls");
-    paginationContainer.innerHTML = ""; // Clear existing controls
+    // Render pagination controls
+    renderPaginationControls(totalPages);
+  });
+}
 
-    // Create left arrow button
-    const leftArrow = document.createElement("button");
-    leftArrow.textContent = "<";
-    leftArrow.classList.add("btn", "btn-outline-primary", "m-1");
-    leftArrow.disabled = currentPage === 1; // Disable if on the first page
-    leftArrow.addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        loadComments(comments); // Reload comments for the current page
-      }
-    });
-    paginationContainer.appendChild(leftArrow);
+ // Function to render modern pagination controls
+function renderPaginationControls(totalPages) {
+  const paginationContainer = document.getElementById("paginationControls");
+  paginationContainer.innerHTML = ""; // Clear existing controls
 
-    // Page number input
-    const pageInput = document.createElement("input");
-    pageInput.type = "number";
-    pageInput.value = currentPage;
-    pageInput.min = 1;
-    pageInput.max = totalPages;
-    pageInput.classList.add("form-control", "mx-1");
-    pageInput.style.width = "60px"; // Set width for input
-    pageInput.addEventListener("change", () => {
-      const newPage = parseInt(pageInput.value);
-      if (newPage >= 1 && newPage <= totalPages) {
-        currentPage = newPage;
-        loadComments(comments); // Reload comments for the new page
-      } else {
-        pageInput.value = currentPage; // Reset input if invalid
-      }
-    });
-    paginationContainer.appendChild(pageInput);
+  // Add container styling to keep everything in a single row
+  paginationContainer.classList.add("d-flex", "align-items-center", "justify-content-center", "gap-2", "flex-nowrap");
 
-    // Create right arrow button
-    const rightArrow = document.createElement("button");
-    rightArrow.textContent = ">";
-    rightArrow.classList.add("btn", "btn-outline-primary", "m-1");
-    rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
-    rightArrow.addEventListener("click", () => {
-      if (currentPage < totalPages) {
-        currentPage++;
-        loadComments(comments); // Reload comments for the current page
-      }
-    });
-    paginationContainer.appendChild(rightArrow);
-  }
+  // Create left arrow button
+  const leftArrow = document.createElement("button");
+  leftArrow.innerHTML = `<i class="bi bi-chevron-left"></i>`; // Use an icon (Bootstrap Icons)
+  leftArrow.classList.add("btn", "btn-primary", "rounded-circle", "pagination-btn");
+  leftArrow.disabled = currentPage === 1; // Disable if on the first page
+  leftArrow.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      loadComments(comments); // Reload comments for the current page
+      renderPaginationControls(totalPages); // Update pagination controls
+    }
+  });
+  paginationContainer.appendChild(leftArrow);
+
+  // Page number input with label
+  const pageInputGroup = document.createElement("div");
+  pageInputGroup.classList.add("input-group", "mx-1", "align-items-center");
+
+  const pageLabel = document.createElement("span");
+  pageLabel.textContent = `Page `;
+  pageLabel.classList.add("text-muted", "fw-semibold");
+  pageInputGroup.appendChild(pageLabel);
+
+  const pageInput = document.createElement("input");
+  pageInput.type = "number";
+  pageInput.value = currentPage;
+  pageInput.min = 1;
+  pageInput.max = totalPages;
+  pageInput.classList.add("form-control", "text-center", "pagination-input");
+  pageInput.style.maxWidth = "70px"; // Compact size for mobile
+  pageInput.addEventListener("change", () => {
+    const newPage = parseInt(pageInput.value, 10);
+    if (newPage >= 1 && newPage <= totalPages) {
+      currentPage = newPage;
+      loadComments(comments); // Reload comments for the new page
+      renderPaginationControls(totalPages); // Update pagination controls
+    } else {
+      pageInput.value = currentPage; // Reset input if invalid
+    }
+  });
+  pageInputGroup.appendChild(pageInput);
+
+  const totalPageSpan = document.createElement("span");
+  totalPageSpan.textContent = ` / ${totalPages}`;
+  totalPageSpan.classList.add("text-muted");
+  pageInputGroup.appendChild(totalPageSpan);
+
+  paginationContainer.appendChild(pageInputGroup);
+
+  // Create right arrow button
+  const rightArrow = document.createElement("button");
+  rightArrow.innerHTML = `<i class="bi bi-chevron-right"></i>`; // Use an icon
+  rightArrow.classList.add("btn", "btn-primary", "rounded-circle", "pagination-btn");
+  rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
+  rightArrow.addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      loadComments(comments); // Reload comments for the current page
+      renderPaginationControls(totalPages); // Update pagination controls
+    }
+  });
+  paginationContainer.appendChild(rightArrow);
+}
 
   function reloadcomments() {
     CommentHeader.textContent =
