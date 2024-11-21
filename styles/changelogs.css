@@ -214,6 +214,10 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   color: #ffffff; /* Brighter text color on hover */
   border-radius: 5px;
 }
+button.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 
 /* Burger Menu Icon Styles */

@@ -16,6 +16,7 @@ $(document).ready(function () {
   const mobileOpenModalBtn = document.getElementById('mobileOpenDateFilterModal');
   const dateFilterModal = new bootstrap.Modal(document.getElementById('dateFilterModal'));
   
+  
   // Caching variables
   const CACHE_KEY = "changelogsCache";
   const CACHE_EXPIRY = 60 * 60 * 1000; // 1 hour in milliseconds
@@ -582,7 +583,7 @@ function updateDropdownButton(text) {
         copiedChangelogToast("Changelog copied to clipboard!"); // Notify user of success
       })
       .catch((err) => {
-        console.error("Failed to copy text: ", err); // Log error if copy fails
+        console.error("Failed to copy changelog: ", err); // Log error if copy fails
         alert("Failed to copy changelog. Please try again."); // Alert user of failure
       })
       .finally(() => {
@@ -972,6 +973,44 @@ function updateDropdownButton(text) {
     if (text.length <= maxLength) return text;
     return text.substr(0, maxLength) + "...";
   }
+
+  function displayRandomChangelog() {
+    if (changelogsData && changelogsData.length > 0) {
+      const randomIndex = Math.floor(Math.random() * changelogsData.length);
+      const randomChangelog = changelogsData[randomIndex];
+      displayChangelog(randomChangelog);
+      changelogToast("Showing a random changelog");
+    }else {
+      console.warn("No changelog data available to display a random entry.");
+      changelogToast("No changelog data available.")
+    }
+  }
+
+   // Add click event listener with slow mode for both buttons
+   const slowModeDelay = 4500;
+   const buttons = ["#randomChangelogDesktopBtn", "#randomChangelogMobileBtn"]; // IDs of the buttons
+ 
+   buttons.forEach(function (buttonSelector) {
+     $(buttonSelector).on("click", function () {
+       const $btn = $(this); // Cache the button element
+ 
+       // Check if the button is disabled
+       if ($btn.prop("disabled")) {
+         return; // Exit if already in slow mode
+       }
+ 
+       displayRandomChangelog(); // Call the random changelog function
+ 
+       // Disable the button and add a disabled class for styling
+       $btn.prop("disabled", true).addClass("disabled");
+ 
+       // Re-enable the button after the delay
+       setTimeout(function () {
+         $btn.prop("disabled", false).removeClass("disabled");
+       }, slowModeDelay);
+     });
+   });
+
 
   // Function to clean content for search
   function cleanContentForSearch(content) {
