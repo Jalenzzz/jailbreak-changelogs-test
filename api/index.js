@@ -196,11 +196,13 @@ app.get('/trading', (req, res) => {
 });
 
 app.get('/bot', (req, res) => {
+  const randomNumber = Math.floor(Math.random() * 10) + 1;
+  const image = `assets/backgrounds/background${randomNumber}.png`;
   res.render('bot', {
     title: 'Discord Bot / Changelogs',
     logoUrl: 'assets/logos/Discord_Bot_Logo.png',
     logoAlt: 'Bot Page Logo',
-    images
+    image
   });
 });
 
