@@ -191,7 +191,6 @@ app.get('/trading', (req, res) => {
     title: 'Trading / Changelogs',
     logoUrl: 'assets/logos/Trade_Ads_Logo.png', //TODO: Add logo for trading page
     logoAlt: 'Trading Page Logo',
-    images
   });
 });
 
@@ -566,19 +565,6 @@ app.get('/tradetracker', (req, res) => {
     logoAlt: 'Trade Tracker Page Logo'
   });
 });
-// Array of background images
-const images = [
-  "assets/backgrounds/background1.png",
-  "assets/backgrounds/background2.png",
-  "assets/backgrounds/background3.png",
-  "assets/backgrounds/background4.png",
-  "assets/backgrounds/background5.png",
-  "assets/backgrounds/background6.png",
-  "assets/backgrounds/background7.png",
-  "assets/backgrounds/background8.png",
-  "assets/backgrounds/background9.png",
-  "assets/backgrounds/background10.png"
-];
 
 app.get('/', (req, res) => {
   const randomNumber = Math.floor(Math.random() * 10) + 1;
