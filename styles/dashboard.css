@@ -5,6 +5,8 @@
     --deep-teal: #124E66;    
     --medium-grayish-blue: #ecedee;
     --light-grayish-green: #D3D9D4;
+    --button-primary-bg: #124e66; /* Dark Blue for Primary Button Background */
+    --button-primary-hover-bg: #212a31; /* Darker Blue for Hover */
 }
 
 /* Global Styles */
@@ -57,5 +59,25 @@ h2 {
     color: var(--light-grayish-green);
     margin-top: 30px;
 }
-
-
+.btn-primary {
+    background-color: var(
+      --button-primary-bg
+    ) !important; /* Primary button background */
+    border-color: var(--button-primary-bg) !important; /* Primary button border */
+    color: var(--button-primary-text) !important; /* Primary button text color */
+  }
+  .btn-primary:hover,
+  .btn-primary:focus,
+  .btn-primary:active,
+  .btn-primary.active {
+    background-color: var(
+      --button-primary-hover-bg
+    ) !important; /* Hover state for primary button */
+    border-color: var(
+      --button-primary-hover-bg
+    ) !important; /* Border color on hover */
+  }
+  
+  .btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(var(--glow-color), 0.5); /* Glow effect on focus */
+  }
