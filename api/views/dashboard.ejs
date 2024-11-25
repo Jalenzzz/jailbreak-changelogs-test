@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+
+    <!-- Meta tags for SEO -->
+    <meta name="description" content="Admin panel for managing the application. Please log in to access admin features.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="keywords" content="Admin Panel, Login, Admin Dashboard">
+
+    <!-- Open Graph meta tags for social sharing -->
+    <meta property="og:title" content="Admin Panel">
+    <meta property="og:description" content="Log in to access the admin dashboard.">
+    <meta property="og:url" content="https://jailbreakchangelogs.xyz/dashboard">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card meta tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Admin Panel">
+    <meta name="twitter:description" content="Log in to access the admin dashboard.">
+    <meta name="twitter:image" content="https://example.com/admin-thumbnail.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="stylesheet" href="styles/navbar.css" />
+    <link rel="stylesheet" href="styles/footer.css" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="styles/dashboard.css" />
+</head>
+
+<body class="d-flex flex-column text-light">
+
+    <!-- Navbar inclusion -->
+    <%- include('partials/nav') %>
+
+    <div class="text-center my-auto">
+        <h1>Admin Panel</h1>
+        <p>Please log in to access the admin dashboard.</p>
+        <button class="btn btn-primary mb-3">Login</button>
+        
+        <p>If you need access to the admin panel to add or edit changelogs and season entries, please <a href="https://example.com/apply" target="_blank" class="text-light">apply for the role here</a>.</p>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/main.js"></script>
+    <%- include('partials/footer') %>
+</body>
+</html>

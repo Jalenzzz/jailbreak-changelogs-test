@@ -1,0 +1,61 @@
+/* Color Palette */
+:root {
+    --dark-blue-gray: #2e3944;
+    --dark-grayish-blue: #2E3944;
+    --deep-teal: #124E66;    
+    --medium-grayish-blue: #ecedee;
+    --light-grayish-green: #D3D9D4;
+}
+
+/* Global Styles */
+body {
+    background-color: var(--dark-blue-gray);
+  }
+  
+/* Heading */
+h1 {
+    color: var(--light-grayish-green);
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Login Button */
+button {
+    background-color: var(--deep-teal) !important; /* Set the base color to deep-teal */
+    border: none !important;
+    color: var(--light-grayish-green);
+    padding: 15px 30px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    width: auto; /* Change from 100% to auto */
+    max-width: 250px; /* Set a max width for the button */
+    margin: 0 auto; /* Center the button */
+}
+
+/* Hover Effect */
+button:hover {
+    background-color: var(--medium-grayish-blue); /* Lighter color from the palette */
+    transform: translateY(-2px); /* Slight lift effect */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
+}
+
+
+/* Placeholder for applying for admin role */
+p {
+    color: var(--medium-grayish-blue);
+   
+
+}
+
+
+/* Apply a subtle background color to the text sections */
+h2 {
+    font-size: 1.5rem;
+    color: var(--light-grayish-green);
+    margin-top: 30px;
+}
+
+

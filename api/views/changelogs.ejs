@@ -157,7 +157,7 @@
             </div>
           </div>
           
-         <!-- Search Bar -->
+        <!-- Search Bar -->
 <div class="search-container flex-grow-1">
   <form class="d-flex position-relative" role="search" id="searchForm">
     <div class="position-relative w-100">
@@ -180,6 +180,7 @@
       </button>
     </div>
   </form>
+  
   <!-- Example queries and search results remain the same -->
   <div id="exampleQueries" class="mt-2 d-none" aria-hidden="true">
     <h6 class="example-queries-title">Example queries:</h6>
@@ -190,10 +191,12 @@
       <a href="#" class="example-query badge bg-secondary text-decoration-none" title="Search for mentions" aria-label="Search for mentions">has:mention</a>
     </div>
   </div>
+
   <div id="search-results" class="dropdown-menu w-100">
     <!-- Search results will be populated here -->
   </div>
 </div>
+
 
         <!-- Mobile Menu Toggle Button -->
 <button id="mobileMenuToggle" class="btn btn-primary d-lg-none mt-3" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenuItems" aria-expanded="false" aria-controls="mobileMenuItems">
@@ -234,63 +237,65 @@
     </div>
   </div>
 
-  <div id="main-container" class="container-fluid">
-    <div id="content-wrapper" class="row mt-3">
-      <!-- Main Content Section -->
-      <div class="col-12 col-sm-8 col-md-8">
-        <section id="content"></section>
-      </div>
   
-      <!-- Sidebar Section with Image and Comments -->
-      <div class="col-12 col-sm-4 col-md-4">
-        <!-- Sidebar Image -->
-        <img
-          id="sidebarImage"
-          class="img-fluid w-100 mb-3"
-          alt="Changelog Image"
-          style="height: auto"
-        />
-        
-        <!-- Comment Section -->
-        <div class="comment-container my-5">
-          <h2 class="comment-header" id="comment-header">Comments</h2>
-          <div class="row justify-content-center">
-            <div class="col-md-12">
-              <!-- Comment submission form -->
-              <form id="comment-form" class="mb-4">
-                <div class="input-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="commenter-text"
-                    disabled
-                    placeholder="Login to comment"
-                    required
-                  />
-                  <button
+<div id="main-container" class="container-fluid">
+  <div id="content-wrapper" class="row mt-3">
+    <div class="col-12 col-sm-8 col-md-8">
+      <!-- Main content section -->
+      <section id="content"></section>
+    </div>
+    <div class="col-12 col-sm-4 col-md-4">
+      <div id="sidebar-image-wrapper" class="row mb-3">
+        <div class="col-12">
+          <div class="card">
+            <!-- Sidebar Image -->
+            <img
+              id="sidebarImage"
+              class="card-img-top img-fluid"
+              alt="Changelog Image"
+              style="max-width: 100%; height: auto"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="comment-container my-5">
+        <h2 class="comment-header" id="comment-header">Comments</h2>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <!-- Comment submission form -->
+            <form id="comment-form" class="mb-4">
+              <div class="input-group">
+                <input
+                      type="text"
+                      class="form-control"
+                      id="commenter-text"
+                      disabled
+                      placeholder="Login to comment"
+                      required
+                    />
+                    <button
                     type="submit"
                     class="btn btn-primary"
                     id="submit-comment"
                     disabled
                   >
-                    <i class="bi bi-send-fill me-1"></i> Submit
-                  </button>
-                </div>
-              </form>
-        
-              <!-- Comment List -->
-              <ul id="comments-list" class="list-group">
-                <!-- Comments will be dynamically added here -->
-              </ul>
-              <div id="paginationControls" class="pagination d-flex align-items-center"></div>
-            </div>
+                  <i class="bi bi-send-fill me-1"></i> Submit
+                </button>
+              </div>
+            </form>
+      
+            <!-- Comment List -->
+            <ul id="comments-list" class="list-group shadow-sm">
+              <!-- Comments will be dynamically added here -->
+            </ul>
+            <div id="paginationControls" class="pagination d-flex align-items-center"></div>
           </div>
         </div>
       </div>
+      </div>
     </div>
   </div>
-  
-<%- include('partials/footer') %>
+</div>
 
 <!-- Date Filter Modal -->
 <div
@@ -357,6 +362,7 @@
     </div>
   </div>
 </div>
+<%- include('partials/footer') %>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>

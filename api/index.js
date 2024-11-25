@@ -194,6 +194,14 @@ app.get('/trading', (req, res) => {
   });
 });
 
+app.get('/dashboard', (req, res) => {
+  res.render('dashboard', {
+    title: 'Admin Control Panel / Changelogs',
+    logoUrl: 'assets/logos/Admin_Logo.png', //TODO: Add logo for trading page
+    logoAlt: 'Admin Page Logo',
+  });
+});
+
 app.get('/bot', (req, res) => {
   const randomNumber = Math.floor(Math.random() * 10) + 1;
   const image = `assets/backgrounds/background${randomNumber}.png`;

@@ -45,11 +45,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const userCard = document.createElement("div");
       let avatar = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
   
-      // Check if avatar is valid, otherwise use placeholder
-      if (!(await isValidImage(avatar))) {
-        avatar = "assets/profile-pic-placeholder.png";
-      }
-  
       userCard.className = "user-card";
       userCard.innerHTML = `
         <div class="card user-card mb-3 border-0 shadow-sm">

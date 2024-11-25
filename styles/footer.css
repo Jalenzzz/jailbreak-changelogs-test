@@ -51,6 +51,7 @@
   .footer-links a:hover {
     color: #ffd700 !important;
   }
+  
   @media (max-width: 768px) {
     .footer-heading {
       margin-top: 1rem;
