@@ -22,21 +22,6 @@ h1 {
     font-weight: bold;
 }
 
-/* Login Button */
-button {
-    background-color: var(--deep-teal) !important; /* Set the base color to deep-teal */
-    border: none !important;
-    color: var(--light-grayish-green);
-    padding: 15px 30px;
-    font-size: 18px;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: all 0.3s ease-in-out;
-    width: auto; /* Change from 100% to auto */
-    max-width: 250px; /* Set a max width for the button */
-    margin: 0 auto; /* Center the button */
-}
-
 /* Hover Effect */
 button:hover {
     background-color: var(--medium-grayish-blue); /* Lighter color from the palette */
@@ -44,14 +29,10 @@ button:hover {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
 }
 
-
 /* Placeholder for applying for admin role */
 p {
     color: var(--medium-grayish-blue);
-   
-
 }
-
 
 /* Apply a subtle background color to the text sections */
 h2 {
