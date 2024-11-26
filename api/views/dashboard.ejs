@@ -34,22 +34,552 @@
     <link rel="stylesheet" href="styles/footer.css" />
 </head>
 
-<body class="d-flex flex-column text-light">
-
+<body class="d-flex flex-column text-light bg-dark">
     <!-- Navbar inclusion -->
     <%- include('partials/nav') %>
 
-    <div class="text-center my-auto">
-        <h1>Admin Panel</h1>
-        <p>Please log in to access the admin dashboard.</p>
-        <a href="/login" class="btn btn-primary mb-3">Login</a>
-    
-        <p>If you need access to the admin panel to add or edit changelogs and season entries, please <a href="https://example.com/apply" target="_blank" class="text-light">apply for the role here</a>.</p>
+    <div class="container-fluid py-4">
+        <h1 class="text-center">Admin Panel</h1>
+
+        <!-- Tabs navigation -->
+        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="changelogs-tab" data-bs-toggle="tab" data-bs-target="#changelogs"
+                    type="button" role="tab">Changelogs</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="seasons-tab" data-bs-toggle="tab" data-bs-target="#seasons" type="button"
+                    role="tab">Seasons</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="rewards-tab" data-bs-toggle="tab" data-bs-target="#rewards" type="button" role="tab">Rewards</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button"
+                    role="tab">Users</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab">Comments</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="items-tab" data-bs-toggle="tab" data-bs-target="#items" type="button"
+                    role="tab">Items</button>
+            </li>
+        </ul>
+
+      <!-- Tabs content -->
+      <div class="tab-content mt-4 w-100" id="adminTabsContent">
+        
+       <!-- Changelogs Tab -->
+<div class="tab-pane fade show active" id="changelogs" role="tabpanel">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Changelogs</h3>
+        <button class="btn btn-primary btn-sm" onclick="addNewEntry('changelogs')">Add New</button>
     </div>
 
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+            <span class="me-2">Rows per page:</span>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                    10
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                    <li><a class="dropdown-item" href="#">10</a></li>
+                    <li><a class="dropdown-item" href="#">25</a></li>
+                    <li><a class="dropdown-item" href="#">50</a></li>
+                    <li><a class="dropdown-item" href="#">100</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Sections</th>
+                    <th>Image URL</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>April 21st 2017 / PUBLIC BETA RELEASE</td>
+                    <td>- The official public beta release of Jailbreak...</td>
+                    <td>https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/changelogs/changelog-image-1?_a=BAMCkGcc0</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="ellipsis">...</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Edit</a></li>
+                            <li><a class="dropdown-item" href="#">Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="#"><<</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#"><</a>
+            </li>
+            <li class="page-item">
+                <input type="text" class="page-input" value="1" placeholder="1" style="width: 40px; text-align: center; border: 1px solid #ccc; padding: 5px; border-radius: 5px;">
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">></a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">>></a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+        
+        <!-- Seasons Tab -->
+<div class="tab-pane fade" id="seasons" role="tabpanel">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Seasons</h3>
+        <button class="btn btn-primary btn-sm" onclick="addNewEntry('seasons')">Add New</button>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+            <span class="me-2">Rows per page:</span>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+                    10
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                    <li><a class="dropdown-item" href="#">10</a></li>
+                    <li><a class="dropdown-item" href="#">25</a></li>
+                    <li><a class="dropdown-item" href="#">50</a></li>
+                    <li><a class="dropdown-item" href="#">100</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Season</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>3</td>
+                    <td>3</td>
+                    <td>Looking Back</td>
+                    <td>The theme for this season was named "Season 3: Looking Back”, most likely to emphasize the theme of 'looking back' to older days of Jailbreak. The season began on April 3rd, 2021, which lasted for about 50 days.</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="ellipsis">...</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Edit</a></li>
+                            <li><a class="dropdown-item" href="#">Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="#"><<</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#"><</a>
+            </li>
+            <li class="page-item">
+                <input type="text" class="page-input" value="1" placeholder="1" style="width: 40px; text-align: center; border: 1px solid #ccc; padding: 5px; border-radius: 5px;">
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">></a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">>></a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+<!-- Rewards Tab -->
+<div class="tab-pane fade" id="rewards" role="tabpanel">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Rewards</h3>
+        <button class="btn btn-primary btn-sm" onclick="addNewEntry('rewards')">Add New</button>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+            <span class="me-2">Rows per page:</span>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-expanded="false">
+                    10
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
+                    <li><a class="dropdown-item" href="#">10</a></li>
+                    <li><a class="dropdown-item" href="#">25</a></li>
+                    <li><a class="dropdown-item" href="#">50</a></li>
+                    <li><a class="dropdown-item" href="#">100</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Season Number</th>
+                    <th>Item</th>
+                    <th>Requirement</th>
+                    <th>Link</th>
+                    <th>Exclusive</th>
+                    <th>Bonus</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>19</td>
+                    <td>3</td>
+                    <td>100% Rocket Fuel</td>
+                    <td>Level 2</td>
+                    <td>https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/Season/3/Level_2?_a=BAMCkGcc0</td>
+                    <td>False</td>
+                    <td>False</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="ellipsis">...</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Edit</a></li>
+                            <li><a class="dropdown-item" href="#">Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="#"><<</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#"><</a>
+            </li>
+            <li class="page-item">
+                <input type="text" class="page-input" value="1" placeholder="1" style="width: 40px; text-align: center; border: 1px solid #ccc; padding: 5px; border-radius: 5px;">
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">></a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">>></a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+<!-- Users Tab -->
+<div class="tab-pane fade" id="users" role="tabpanel">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Users</h3>
+        <button class="btn btn-primary btn-sm" onclick="addNewEntry('users')">Add New</button>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+            <span class="me-2">Rows per page:</span>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton5" data-bs-toggle="dropdown" aria-expanded="false">
+                    10
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton5">
+                    <li><a class="dropdown-item" href="#">10</a></li>
+                    <li><a class="dropdown-item" href="#">25</a></li>
+                    <li><a class="dropdown-item" href="#">50</a></li>
+                    <li><a class="dropdown-item" href="#">100</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Avatar</th>
+                    <th>Discriminator</th>
+                    <th>Public Flags</th>
+                    <th>Flags</th>
+                    <th>Banner</th>
+                    <th>Accent Color</th>
+                    <th>Global Name</th>
+                    <th>Banner Color</th>
+                    <th>Clan</th>
+                    <th>MFA Enabled</th>
+                    <th>Locale</th>
+                    <th>Premium Type</th>
+                    <th>Avatar Decoration Asset</th>
+                    <th>Avatar Decoration SKU ID</th>
+                    <th>Avatar Decoration Expires At</th>
+                    <th>Token</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1019539798383398946</td>
+                    <td>jalenzz</td>
+                    <td>dasdu9as9udh9ajd9oa</td>
+                    <td>0</td>
+                    <td>4194432</td>
+                    <td>4194432</td>
+                    <td>asdfad0iai0dja0jdi9asjjd</td>
+                    <td>1970961</td>
+                    <td>Jalen</td>
+                    <td>#1e1311</td>
+                    <td><null></td>
+                    <td>1</td>
+                    <td>en-GB</td>
+                    <td>2</td>
+                    <td><null></td>
+                    <td><null></td>
+                    <td><null></td>
+                    <td>AUHDASHDHAIDHUAHIHDHIA</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="ellipsis">...</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Edit</a></li>
+                            <li><a class="dropdown-item" href="#">Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="#"><<</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#"><</a>
+            </li>
+            <li class="page-item">
+                <input type="text" class="page-input" value="1" placeholder="1" style="width: 40px; text-align: center; border: 1px solid #ccc; padding: 5px; border-radius: 5px;">
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">></a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">>></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Comments Tab -->
+<div class="tab-pane fade" id="comments" role="tabpanel">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Items</h3>
+        <button class="btn btn-primary btn-sm" onclick="addNewEntry('rewards')">Add New</button>
+    </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center">
+                <span class="me-2">Rows per page:</span>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-expanded="false">
+                        10
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
+                        <li><a class="dropdown-item" href="#">10</a></li>
+                        <li><a class="dropdown-item" href="#">25</a></li>
+                        <li><a class="dropdown-item" href="#">50</a></li>
+                        <li><a class="dropdown-item" href="#">100</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+   
+
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Author</th>
+                <th>Content</th>
+                <th>Date</th>
+                <th>Item ID</th>
+                <th>Item Type</th>
+                <th>User ID</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>24</td>
+                <td>zoByuaBdmp1CziV5Ycl4IOLB</td>
+                <td>hi</td>
+                <td>1727735642</td>
+                <td>23</td>
+                <td>season</td>
+                <td>659865209741246514</td>
+                <td>
+                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="ellipsis">...</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Edit</a></li>
+                        <li><a class="dropdown-item" href="#">Delete</a></li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="#"><<</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#"><</a>
+            </li>
+            <li class="page-item">
+                <input type="text" class="page-input" value="1" placeholder="1" style="width: 40px; text-align: center; border: 1px solid #ccc; padding: 5px; border-radius: 5px;">
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">></a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">>></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<!-- Rows Tab -->
+<div class="tab-pane fade" id="items" role="tabpanel">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Items</h3>
+        <button class="btn btn-primary btn-sm" onclick="addNewEntry('items')">Add New</button>
+    </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center">
+                <span class="me-2">Rows per page:</span>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-expanded="false">
+                        10
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
+                        <li><a class="dropdown-item" href="#">10</a></li>
+                        <li><a class="dropdown-item" href="#">25</a></li>
+                        <li><a class="dropdown-item" href="#">50</a></li>
+                        <li><a class="dropdown-item" href="#">100</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+   
+
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Value</th>
+                <th>Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Bugatti</td>
+                <td>34,000,000</td>
+                <td>Vehicle</td>
+                <td>
+                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="ellipsis">...</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Edit</a></li>
+                        <li><a class="dropdown-item" href="#">Delete</a></li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="#"><<</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#"><</a>
+            </li>
+            <li class="page-item">
+                <input type="text" class="page-input" value="1" placeholder="1" style="width: 40px; text-align: center; border: 1px solid #ccc; padding: 5px; border-radius: 5px;">
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">></a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">>></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+        
+        
     <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="scripts/main.js"></script>
+    <script src="scripts/dashboard.js"></script>
     <%- include('partials/footer') %>
 </body>
 </html>
