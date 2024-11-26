@@ -3,7 +3,7 @@ body, html {
   padding: 0;
   height: 100%;
   font-family: 'Poppins', sans-serif;
-  background-color: #121212;
+  background-color: #212a3100; /* Main background */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,7 +23,7 @@ body::before {
   z-index: 1;
 }
 .login-container {
-  background: rgba(30, 30, 30, 0.8);
+  background: rgba(46, 57, 68, 0.9); /* Dark grayish-blue */
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   overflow: hidden;
@@ -39,17 +39,17 @@ body::before {
   margin-bottom: 2rem;
 }
 .login-header h1 {
-  color: #64b5f6;
+  color: #D3D9D4; /* Deep teal */
   font-size: 2rem;
   margin-bottom: 0.5rem;
 }
 .login-header p {
-  color: #e0e0e0;
+  color: #D3D9D4; /* Light grayish-green */
   font-size: 1rem;
 }
 .login-button {
-  background-color: #64b5f6;
-  color: #121212;
+  background-color: #124E66; /* Deep teal */
+  color: #D3D9D4; /* Light grayish-green */
   border: none;
   padding: 12px 20px;
   border-radius: 24px;
@@ -59,22 +59,28 @@ body::before {
   width: 100%;
   transition: background-color 0.3s ease;
 }
+.login-button i {
+  margin-right: 8px; /* Add space between the icon and the text */
+  font-size: 1.2rem; /* Adjust icon size */
+  vertical-align: middle;
+}
+
 .login-button:hover {
-  background-color: #42a5f5;
+  background-color: #212A31; /* Medium grayish-blue */
 }
 .features {
   margin-top: 2rem;
   padding: 1rem;
-  background-color: rgba(100, 181, 246, 0.1);
+  background-color: rgba(116, 141, 146, 0.1); /* Medium grayish-blue with transparency */
   border-radius: 8px;
 }
 .features h2 {
-  color: #64b5f6;
+  color: #D3D9D4; /* Deep teal */
   font-size: 1.2rem;
   margin-bottom: 1rem;
 }
 .features ul {
-  color: #e0e0e0;
+  color: #D3D9D4; /* Light grayish-green */
   padding-left: 1.5rem;
 }
 .footer {
@@ -82,13 +88,13 @@ body::before {
   text-align: center;
 }
 .footer a {
-  color: #64b5f6;
+  color: #D3D9D4; /* Deep teal */
   text-decoration: none;
   margin: 0 10px;
   font-size: 0.9rem;
   transition: color 0.3s ease, text-decoration 0.3s ease;
 }
 .footer a:hover {
-  color: #42a5f5;
+  color: #748D92; /* Medium grayish-blue */
   text-decoration: underline;
 }
