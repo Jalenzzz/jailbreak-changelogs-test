@@ -81,30 +81,6 @@
   <body>
     <%- include('partials/nav') %>
 
-    <div
-      class="alert alert-dark text-center p-2 p-sm-3"
-      role="alert"
-      style="
-        margin-bottom: 0;
-        background-color: #1a1a1a;
-        color: #f8f9fa;
-        border-color: #6c757d;
-        border-radius: 0px;
-      "
-    >
-      <div class="d-flex align-items-center justify-content-center flex-wrap">
-        <i
-          class="bi bi-exclamation-triangle-fill me-2"
-          style="color: #ffc107"
-        ></i>
-        <strong class="me-1">Beta Version:</strong>
-        <span class="d-inline-block">
-          Our Discord bot is currently under development and not yet online.
-        </span>
-        <span class="ms-1">Stay Tuned!</span>
-      </div>
-    </div>
-
     <div class="hero" style="background-image: url(<%= image %>);">
       <div class="hero-content">
         <h1>
@@ -115,11 +91,9 @@
           Your go-to resource for information and updates about our Discord bot!
         </p>
         <a
-          class="btn btn-primary btn-custom disabled"
-          href="#"
-          title="Invite to Your Server (Coming Soon)"
-          aria-disabled="true"
-          onclick="return false;"
+          class="btn btn-primary btn-custom"
+          href="/botinvite"
+          title="Invite to Your Server"
         >
           <i class="bi bi-person-plus-fill me-2"></i> Invite to Your Server
         </a>
@@ -135,7 +109,7 @@
               <i class="bi bi-people-fill"></i>
             </div>
             <h3>
-              Crew Tracking <small style="color: #adb5bd">(Coming Soon)</small>
+              Crew Tracking
             </h3>
             <p>
               View the stats of your jailbreak crew as well as other players'
