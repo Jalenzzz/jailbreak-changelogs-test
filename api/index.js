@@ -224,7 +224,7 @@ app.get('/faq', (req, res) => {
 app.get('/privacy', (req, res) => {
   res.render('privacy', {
     title: 'Privacy Policy / Changelogs',
-    logoUrl: 'assets/logos/changelogs_privacy_policy.png',
+    logoUrl: 'assets/logos/Privacy_Logo.png',
     logoAlt: 'Privacy Policy Page Logo'
   });
 });
@@ -232,7 +232,7 @@ app.get('/privacy', (req, res) => {
 app.get('/tos', (req, res) => {
   res.render('tos', {
     title: 'Terms Of Service / Changelogs',
-    logoUrl: 'assets/logos/changelogs_tos.png',
+    logoUrl: 'assets/logos/Tos_Logo.png',
     logoAlt: 'TOS Page Logo'
   });
 });

@@ -405,11 +405,6 @@ button {
   transition: background-color 0.3s, color 0.3s;
 }
 
-/* Style the main container for the comment section */
-.container {
-  border-radius: 15px; /* Rounded corners for the container */
-  padding: 30px; /* Add space inside the container */
-}
 /* Bigger View Details text */
 .view-details-btn {
   font-size: 1.7rem;
