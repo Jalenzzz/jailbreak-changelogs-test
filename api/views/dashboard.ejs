@@ -85,17 +85,17 @@
                     10
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                    <li><a class="dropdown-item" href="#">10</a></li>
-                    <li><a class="dropdown-item" href="#">25</a></li>
-                    <li><a class="dropdown-item" href="#">50</a></li>
-                    <li><a class="dropdown-item" href="#">100</a></li>
+                    <li><a class="dropdown-item" href="#" data-rows="10">10</a></li>
+                    <li><a class="dropdown-item" href="#" data-rows="25">25</a></li>
+                    <li><a class="dropdown-item" href="#" data-rows="50">50</a></li>
+                    <li><a class="dropdown-item" href="#" data-rows="100">100</a></li>
                 </ul>
             </div>
         </div>
     </div>
 
     <div style="overflow-x: auto;">
-        <table class="table table-dark table-striped">
+        <table id="Changelogs" class="table table-dark table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -105,43 +105,28 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>April 21st 2017 / PUBLIC BETA RELEASE</td>
-                    <td>- The official public beta release of Jailbreak...</td>
-                    <td>https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/changelogs/changelog-image-1?_a=BAMCkGcc0</td>
-                    <td>
-                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="ellipsis">...</span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Edit</a></li>
-                            <li><a class="dropdown-item" href="#">Delete</a></li>
-                        </ul>
-                    </td>
-                </tr>
+            <tbody id="changelog-table-body">
             </tbody>
         </table>
     </div>
 
     <!-- Pagination Controls -->
     <nav aria-label="Page navigation example">
-        <ul class="pagination">
+        <ul class="pagination" id="pagination">
             <li class="page-item">
-                <a class="page-link" href="#"><<</a>
+                <a class="page-link" href="#" id="firstPageBtn"><<</a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="#"><</a>
+                <a class="page-link" href="#" id="prevPageBtn"><</a>
             </li>
             <li class="page-item">
-                <input type="text" class="page-input" value="1" placeholder="1" style="width: 40px; text-align: center; border: 1px solid #ccc; padding: 5px; border-radius: 5px;">
+                <input type="text" class="page-input" id="currentPageInput" value="1" placeholder="1" style="width: 40px; text-align: center; border: 1px solid #ccc; padding: 5px; border-radius: 5px;">
             </li>
             <li class="page-item">
-                <a class="page-link" href="#">></a>
+                <a class="page-link" href="#" id="nextPageBtn">></a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="#">>></a>
+                <a class="page-link" href="#" id="lastPageBtn">>></a>
             </li>
         </ul>
     </nav>

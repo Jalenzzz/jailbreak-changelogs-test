@@ -23,6 +23,12 @@ h1 {
     margin-bottom: 20px;
     font-weight: bold;
 }
+
+textarea {
+  border: 1px solid var(--medium-grayish-blue); /* Light blue border color */
+  width: 100%;
+}
+
 /* Add borders to table cells */
 .table th, .table td {
   border: 1px solid #ddd; /* Light grey border color */
