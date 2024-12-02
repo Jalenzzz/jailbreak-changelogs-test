@@ -214,12 +214,33 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderPaginationControls(totalPages) {
         const paginationContainer = document.getElementById("paginationControls");
         paginationContainer.innerHTML = ""; // Clear existing controls
+
+        // Create double left arrow button
+        const doubleLeftArrow = document.createElement("button");
+        doubleLeftArrow.textContent = "<<";
+        doubleLeftArrow.classList.add("btn", "btn-outline-primary", "m-1");
+        doubleLeftArrow.disabled = currentPage === 1; // Disable if on the first page
+
+        doubleLeftArrow.style.backgroundColor = "#124E66"; // Deep teal / dark cyan for the background
+        doubleLeftArrow.style.color = "#D3D9D4"; // Very light grayish-green for the text
+
+        doubleLeftArrow.addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage = 1;
+                fetchUserComments(userId); // Fetch comments for the current page
+            }
+        });
+        paginationContainer.appendChild(doubleLeftArrow);
     
         // Create left arrow button
         const leftArrow = document.createElement("button");
         leftArrow.textContent = "<";
         leftArrow.classList.add("btn", "btn-outline-primary", "m-1");
         leftArrow.disabled = currentPage === 1; // Disable if on the first page
+
+        leftArrow.style.backgroundColor = "#124E66"; // Deep teal / dark cyan for the background
+        leftArrow.style.color = "#D3D9D4"; // Very light grayish-green for the text
+
         leftArrow.addEventListener("click", () => {
             if (currentPage > 1) {
                 currentPage--;
@@ -236,6 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
         pageInput.max = totalPages;
         pageInput.classList.add("form-control", "mx-1");
         pageInput.style.width = "60px"; // Set width for input
+        pageInput.style.marginTop = "10px"; // Add margin to the top
         pageInput.addEventListener("change", () => {
             const newPage = parseInt(pageInput.value);
             if (newPage >= 1 && newPage <= totalPages) {
@@ -252,6 +274,10 @@ document.addEventListener('DOMContentLoaded', function() {
         rightArrow.textContent = ">";
         rightArrow.classList.add("btn", "btn-outline-primary", "m-1");
         rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
+
+        rightArrow.style.backgroundColor = "#124E66"; // Deep teal / dark cyan for the background
+        rightArrow.style.color = "#D3D9D4"; // Very light grayish-green for the text
+
         rightArrow.addEventListener("click", () => {
             if (currentPage < totalPages) {
                 currentPage++;
@@ -259,6 +285,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         paginationContainer.appendChild(rightArrow);
+
+        // Create double right arrow button
+        const doubleRightArrow = document.createElement("button");
+        doubleRightArrow.textContent = ">>";
+        doubleRightArrow.classList.add("btn", "btn-outline-primary", "m-1");
+        doubleRightArrow.disabled = currentPage === totalPages; // Disable if on the last page
+
+        doubleRightArrow.style.backgroundColor = "#124E66"; // Deep teal / dark cyan for the background
+        doubleRightArrow.style.color = "#D3D9D4"; // Very light grayish-green for the text
+
+        doubleRightArrow.addEventListener("click", () => {
+            currentPage = totalPages;
+            fetchUserComments(userId);
+        });
+        paginationContainer.appendChild(doubleRightArrow);
     }
 
     let currentPage = 1;
