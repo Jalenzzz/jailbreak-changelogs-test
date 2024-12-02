@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(response => {
             if (response.ok) {  // Checks if the status code is in the 200-299 range
               console.log('Success:', response.status);  // Log status code (e.g., 200)
-              window.location.href = "/dashboard";
             } else {
               window.location.href = "/";  // Log status code for errors (e.g., 404, 500)
             }
