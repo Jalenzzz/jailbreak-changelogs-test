@@ -221,8 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
         doubleLeftArrow.classList.add("btn", "btn-outline-primary", "m-1");
         doubleLeftArrow.disabled = currentPage === 1; // Disable if on the first page
 
-        doubleLeftArrow.style.backgroundColor = "#124E66"; // Deep teal / dark cyan for the background
-        doubleLeftArrow.style.color = "#D3D9D4"; // Very light grayish-green for the text
+        doubleLeftArrow.style.outline = "2px solid #748D92"; // Set outline color and thickness
 
         doubleLeftArrow.addEventListener("click", () => {
             if (currentPage > 1) {
@@ -238,8 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
         leftArrow.classList.add("btn", "btn-outline-primary", "m-1");
         leftArrow.disabled = currentPage === 1; // Disable if on the first page
 
-        leftArrow.style.backgroundColor = "#124E66"; // Deep teal / dark cyan for the background
-        leftArrow.style.color = "#D3D9D4"; // Very light grayish-green for the text
+        leftArrow.style.outline = "2px solid #748D92"; // Set outline color and thickness
 
         leftArrow.addEventListener("click", () => {
             if (currentPage > 1) {
@@ -274,9 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
         rightArrow.textContent = ">";
         rightArrow.classList.add("btn", "btn-outline-primary", "m-1");
         rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
-
-        rightArrow.style.backgroundColor = "#124E66"; // Deep teal / dark cyan for the background
-        rightArrow.style.color = "#D3D9D4"; // Very light grayish-green for the text
+        rightArrow.style.outline = "2px solid #748D92"; // Set outline color and thickness
 
         rightArrow.addEventListener("click", () => {
             if (currentPage < totalPages) {
@@ -285,15 +281,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         paginationContainer.appendChild(rightArrow);
-
         // Create double right arrow button
         const doubleRightArrow = document.createElement("button");
         doubleRightArrow.textContent = ">>";
         doubleRightArrow.classList.add("btn", "btn-outline-primary", "m-1");
         doubleRightArrow.disabled = currentPage === totalPages; // Disable if on the last page
 
-        doubleRightArrow.style.backgroundColor = "#124E66"; // Deep teal / dark cyan for the background
-        doubleRightArrow.style.color = "#D3D9D4"; // Very light grayish-green for the text
+        doubleRightArrow.style.outline = "2px solid #748D92"; // Set outline color and thickness
 
         doubleRightArrow.addEventListener("click", () => {
             currentPage = totalPages;
