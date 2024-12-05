@@ -204,7 +204,7 @@ app.get('/dashboard', (req, res) => {
 
 app.get('/bot', (req, res) => {
   const randomNumber = Math.floor(Math.random() * 10) + 1;
-  const image = `https://cdn.jailbreakchangelogs.xyz/backgrounds/background${randomNumber}.png`;
+  const image = `https://cdn.jailbreakchangelogs.xyz/backgrounds/background${randomNumber}.webp`;
   res.render('bot', {
     title: 'Discord Bot / Changelogs',
     logoUrl: 'assets/logos/Discord_Bot_Logo.png',
@@ -220,9 +220,6 @@ app.get('/items', (req, res) => {
     logoAlt: 'Items Page Logo'
   });
 });
-
-
-
 
 app.get('/faq', (req, res) => {
   res.render('faq', {
@@ -587,7 +584,7 @@ app.get('/tradetracker', (req, res) => {
 
 app.get('/', (req, res) => {
   const randomNumber = Math.floor(Math.random() * 10) + 1;
-  const image = `https://cdn.jailbreakchangelogs.xyz/backgrounds/background${randomNumber}.png`;
+  const image = `https://cdn.jailbreakchangelogs.xyz/backgrounds/background${randomNumber}.webp`;
   res.render('index', {
     title: 'Home / Changelogs',
     logoUrl: 'assets/logos/Homepage_Logo.png',

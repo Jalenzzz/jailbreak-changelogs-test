@@ -7,7 +7,7 @@ body, html {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url('/assets/backgrounds/background4.png');
+  background-image: url('https://cdn.jailbreakchangelogs.xyz/backgrounds/background4.webp');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
