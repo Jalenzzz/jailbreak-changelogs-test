@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Function to get the token cookie
     function getCookie(name) {
         let cookieArr = document.cookie.split(";");
         for (let i = 0; i < cookieArr.length; i++) {
@@ -12,218 +13,482 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const token = getCookie("token");
     
+    if (!token) {
+        localStorage.setItem("redirectAfterLogin", "/dashboard"); // Store the redirect URL in local storage
+        window.location.href = "/login"; // Redirect to login page
+    }
     
-        if (!token) {
-            localStorage.setItem(
-                "redirectAfterLogin",
-                "/api"
-              ); // Store the redirect URL in local storage
-              window.location.href = "/login"; // Redirect to login page
-        }
     const userid = sessionStorage.getItem("userid");
     const url = `https://api.jailbreakchangelogs.xyz/owner/check?user=${userid}`;
-        
-    fetch(url)
-        .then(response => {
-            if (response.ok) {  // Checks if the status code is in the 200-299 range
-              console.log('Success:', response.status);  // Log status code (e.g., 200)
-            } else {
-              window.location.href = "/";  // Log status code for errors (e.g., 404, 500)
-            }
-          })
-            .catch(error => {
-            console.error('Request failed', error);  // Handle network or other errors
-          });
-
-    // Function to fetch and populate the table with changelogs
-
-
-
-    let changelogs = [];
-    let rowsPerPage = 10; // Default rows per page
+ 
+    const tabs = document.querySelectorAll('#adminTabs .nav-link');
+    const adminTabsContent = document.getElementById('adminTabsContent');
+    
+    // Pagination state variables
     let currentPage = 1;
+    let rowsPerPage = 10;  // Default rows per page
+    let currentData = [];
+    let cachedChangelogs = [];
+    let cachedSeasonData = [];
 
-    // Function to fetch and populate the table with changelogs
-    function loadChangelogs() {
-        const apiUrl = 'https://api.jailbreakchangelogs.xyz/changelogs/list';
+    // Function to update content based on selected tab
+    let currentTabId = tabs[0].getAttribute('id');
+    async function updateTabContent(tabId) {
+        currentTabId = tabId;
 
-        // Fetch the data from the API
-        fetch(apiUrl)
-            .then(response => response.json())  // Parse JSON from the response
-            .then(data => {
-                changelogs = data;  // Assuming the API returns an array of changelogs
-                updatePagination();
-                displayTable();
-            })
-            .catch(error => {
-                console.error('Error fetching changelogs:', error);
-            });
+        // Clear existing content
+        adminTabsContent.innerHTML = '';
+
+        // Create the header (h3 or h1) with the title of the selected tab
+        const header = document.createElement('div');
+        header.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-3');
+
+        const h3 = document.createElement('h3');
+        h3.textContent = tabId.charAt(0).toUpperCase() + tabId.slice(1); // Capitalize the first letter
+
+        // Create the "Add New" button
+        // Append h3 and button to the header
+        header.appendChild(h3);
+
+        // Append the header to the content area
+        adminTabsContent.appendChild(header);
+        
+        // If changelog tab is selected, fetch and display the changelogs with pagination
+        if (tabId === 'changelogs') {
+            const table = await parseChangelogData();
+            adminTabsContent.appendChild(table);
+        }
+        if (tabId ==='seasons') {
+            const table = await parseSeasonData();
+            adminTabsContent.appendChild(table);
+        }
     }
 
-    // Function to update pagination controls based on total rows and rows per page
-    function updatePagination() {
-        const totalRows = changelogs.length;
-        const totalPages = Math.ceil(totalRows / rowsPerPage);
-
-        // Disable or enable pagination buttons based on current page
-        const firstPageBtn = document.getElementById('firstPageBtn');
-        const prevPageBtn = document.getElementById('prevPageBtn');
-        const nextPageBtn = document.getElementById('nextPageBtn');
-        const lastPageBtn = document.getElementById('lastPageBtn');
-        const currentPageInput = document.getElementById('currentPageInput');
-
-        firstPageBtn.disabled = currentPage === 1;
-        prevPageBtn.disabled = currentPage === 1;
-        nextPageBtn.disabled = currentPage === totalPages;
-        lastPageBtn.disabled = currentPage === totalPages;
-
-        currentPageInput.value = currentPage;
+    // Fetch changelog data
+    async function parseChangelogData() {
+        try {
+            let data = null;
+            if (cachedChangelogs.length > 0) {
+                data = cachedChangelogs;
+            }
+            else {
+                const response = await fetch("https://api.jailbreakchangelogs.xyz/changelogs/list");
+                data = await response.json();
+                cachedChangelogs = data;
+            }
+            currentData = data; // Store the data globally for pagination
+            updatePagination();
+            return generateChangelogTable(currentData);
+        } catch (error) {
+            console.error("Error fetching changelogs:", error);
+        }
+    }
+    async function parseSeasonData() {
+        try {
+            let data = null;
+            if (cachedSeasonData.length > 0) {
+                data = cachedSeasonData;
+            }
+            else {
+                const response = await fetch("https://api.jailbreakchangelogs.xyz/seasons/list");
+                data = await response.json();
+                cachedSeasonData = data;
+            }
+            currentData = data; // Store the data globally for pagination
+            updatePagination();
+            return generateSeasonTable(currentData);
+        } catch (error) {
+            console.error("Error fetching seasons:", error);
+        }
     }
 
-    // Function to display the table based on rowsPerPage and currentPage
-    function displayTable() {
-        const tableBody = document.getElementById('changelog-table-body');
+    // Function to generate the table
+    function generateChangelogTable(changelogs) {
+        const table = document.createElement('table');
+        table.classList.add('table', 'table-striped');
+
+        // Create the thead
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        const headers = ['ID', 'Title', 'Sections', 'Image URL', 'Actions'];
+        headers.forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // Create the tbody
+        const tbody = document.createElement('tbody');
         const startIndex = (currentPage - 1) * rowsPerPage;
         const endIndex = startIndex + rowsPerPage;
         const paginatedData = changelogs.slice(startIndex, endIndex);
 
-        // Clear the table body before adding new rows
-        tableBody.innerHTML = '';
-
-        // Populate the table with the paginated data
         paginatedData.forEach(changelog => {
             const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${changelog.id}</td>
-                <td>${changelog.title}</td>
-                <td>${changelog.sections}</td>
-                <td>${changelog.image_url}</td>
-                <td>
-                    <button class="btn btn-sm btn-secondary edit-btn" data-id="${changelog.id}">Edit</button>
-                    <button class="btn btn-sm btn-primary save-btn" data-id="${changelog.id}" style="display:none;">Save</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
+            const idCell = document.createElement('td');
+            idCell.textContent = changelog.id;
+            row.appendChild(idCell);
+
+            const titleCell = document.createElement('td');
+            titleCell.textContent = changelog.title;
+            row.appendChild(titleCell);
+
+            const sectionsCell = document.createElement('td');
+            sectionsCell.textContent = changelog.sections; // Assuming sections is an array
+            row.appendChild(sectionsCell);
+
+            const imageUrlCell = document.createElement('td');
+            imageUrlCell.textContent = changelog.image_url || 'No Image';
+            row.appendChild(imageUrlCell);
+
+            const actionsCell = document.createElement('td');
+            const editButton = document.createElement('button');
+            editButton.classList.add('btn', 'btn-primary', 'btn-sm');
+            editButton.textContent = 'Edit';
+            editButton.onclick = () => { editChangelog(changelog.id); };
+            actionsCell.appendChild(editButton);
+            row.appendChild(actionsCell);
+
+            tbody.appendChild(row);
         });
 
-        // Reattach edit button event listeners after table update
-        attachEditSaveHandlers();
+        table.appendChild(tbody);
+        return table;
+    }
+    function generateSeasonTable(seasons) {
+        const table = document.createElement('table');
+        table.classList.add('table', 'table-striped');
+    
+        // Create the thead (header)
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        const headers = ['Season', 'Title', 'Description', 'Actions'];
+        headers.forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+    
+        // Create the tbody (body of the table)
+        const tbody = document.createElement('tbody');
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+        const paginatedData = seasons.slice(startIndex, endIndex);  // Slice data for pagination
+    
+        paginatedData.forEach(season => {
+            const row = document.createElement('tr');
+            
+            // ID Cell
+            const seasonnumber = document.createElement('td');
+            seasonnumber.textContent = season.season;
+            row.appendChild(seasonnumber);
+    
+            // Season Name Cell
+            const title = document.createElement('td');
+            title.textContent = season.title;
+            row.appendChild(title);
+    
+            // Start Date Cell
+            const description = document.createElement('td');
+            description.textContent = season.description;  // Assuming start_date is a string or date
+            row.appendChild(description);
+    
+    
+            // Actions Cell (Edit button)
+            const actionsCell = document.createElement('td');
+            const editButton = document.createElement('button');
+            editButton.classList.add('btn', 'btn-primary', 'btn-sm');
+            editButton.textContent = 'Edit';
+            editButton.onclick = () => { editSeason(season.season); };  // Placeholder edit function
+            actionsCell.appendChild(editButton);
+            row.appendChild(actionsCell);
+    
+            tbody.appendChild(row);
+        });
+    
+        table.appendChild(tbody);
+        return table;  // Return the newly generated table
     }
 
-    // Event listener for rows per page dropdown
-    document.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', function(event) {
-            rowsPerPage = parseInt(event.target.getAttribute('data-rows'));
-            currentPage = 1; // Reset to first page when changing rows per page
-            document.getElementById('dropdownMenuButton2').textContent = event.target.textContent;
-            updatePagination();
-            displayTable();
-        });
-    });
+    // Update pagination controls (next, prev, current page, rows per page)
+    function updatePagination() {
+        const totalPages = Math.ceil(currentData.length / rowsPerPage);
+        document.getElementById('currentPageInput').value = currentPage;
+        document.getElementById('nextPageBtn').disabled = currentPage === totalPages;
+        document.getElementById('prevPageBtn').disabled = currentPage === 1;
+        document.getElementById('firstPageBtn').disabled = currentPage === 1;
+        document.getElementById('lastPageBtn').disabled = currentPage === totalPages;
+    }
 
-    // Event listeners for pagination buttons
-    document.getElementById('firstPageBtn').addEventListener('click', function() {
+    // Handle pagination button clicks
+    document.getElementById('firstPageBtn').addEventListener('click', () => {
         currentPage = 1;
         updatePagination();
         displayTable();
     });
-
-    document.getElementById('prevPageBtn').addEventListener('click', function() {
+    document.getElementById('prevPageBtn').addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
             updatePagination();
             displayTable();
         }
     });
-
-    document.getElementById('nextPageBtn').addEventListener('click', function() {
-        const totalPages = Math.ceil(changelogs.length / rowsPerPage);
+    document.getElementById('nextPageBtn').addEventListener('click', () => {
+        const totalPages = Math.ceil(currentData.length / rowsPerPage);
         if (currentPage < totalPages) {
             currentPage++;
             updatePagination();
             displayTable();
         }
     });
-
-    document.getElementById('lastPageBtn').addEventListener('click', function() {
-        const totalPages = Math.ceil(changelogs.length / rowsPerPage);
+    document.getElementById('lastPageBtn').addEventListener('click', () => {
+        const totalPages = Math.ceil(currentData.length / rowsPerPage);
         currentPage = totalPages;
         updatePagination();
         displayTable();
     });
 
-    // Event listener for page input (directly entering page number)
+    // Handle rows per page selection
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', function(event) {
+            rowsPerPage = parseInt(event.target.textContent);
+            currentPage = 1; // Reset to the first page
+            const dropdownButton = document.getElementById('dropdownMenuButton');
+            dropdownButton.textContent = this.textContent; // Update the button text to the selected value
+            updatePagination();
+            displayTable();
+        });
+    });
+
+    // Handle current page input change
     document.getElementById('currentPageInput').addEventListener('change', function(event) {
         const inputPage = parseInt(event.target.value);
-        const totalPages = Math.ceil(changelogs.length / rowsPerPage);
+        const totalPages = Math.ceil(currentData.length / rowsPerPage);
         if (inputPage >= 1 && inputPage <= totalPages) {
             currentPage = inputPage;
             updatePagination();
             displayTable();
-        } else {
-            event.target.value = currentPage;
         }
     });
 
-    // Function to handle editing and saving (same as before)
-    function attachEditSaveHandlers() {
-      const editButtons = document.querySelectorAll('.edit-btn');
-      editButtons.forEach(button => {
-          button.addEventListener('click', function() {
-              const row = button.closest('tr');
-              const cells = row.querySelectorAll('td');
-              const saveButton = row.querySelector('.save-btn');
-  
-              cells.forEach((cell, index) => {
-                  if (index !== 4) { // Don't modify the actions column
-                      let input;
-                      if (index === 0) {  // ID field - convert to input field
-                          input = document.createElement('input');
-                          input.type = 'text';
-                          input.value = cell.textContent.trim();
-                      } else {  // Other fields - convert to textarea
-                          input = document.createElement('textarea');
-                          input.rows = 4;
-                          input.cols = 30;
-                          input.value = cell.textContent.trim();
-                      }
-                      cell.innerHTML = '';  // Clear the existing content
-                      cell.appendChild(input);
-                  }
-              });
-  
-              button.style.display = 'none';
-              saveButton.style.display = 'inline-block';
-          });
-      });
-  
-      const saveButtons = document.querySelectorAll('.save-btn');
-      saveButtons.forEach(button => {
-          button.addEventListener('click', function() {
-              const row = button.closest('tr');
-              const cells = row.querySelectorAll('td');
-  
-              const updatedChangelog = {
-                  id: row.querySelector('input').value, // ID field is an input
-                  title: cells[1].querySelector('textarea').value,
-                  sections: cells[2].querySelector('textarea').value,
-                  imageUrl: cells[3].querySelector('textarea').value
-              };
-  
-              // Call API or handle save action (e.g., update data in changelogs array)
-              console.log(updatedChangelog);
-  
-              // Now, update the table and revert the inputs back to text
-              cells[0].textContent = updatedChangelog.id; // ID is updated as text
-              cells[1].textContent = updatedChangelog.title;
-              cells[2].textContent = updatedChangelog.sections;
-              cells[3].textContent = updatedChangelog.imageUrl;
-  
-              button.style.display = 'none';
-              row.querySelector('.edit-btn').style.display = 'inline-block';
-          });
-      });
-  }
-  loadChangelogs();
-});
+    function createHeader(tabTitle) {
+        const header = document.createElement('div');
+        header.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-3');
+    
+        const h3 = document.createElement('h3');
+        h3.textContent = tabTitle.charAt(0).toUpperCase() + tabTitle.slice(1); // Capitalize the first letter of the tab title
+    
+        // Create the "Add New" button
+        // Append the h3 and the "Add New" button to the header
+        header.appendChild(h3);
+    
+        return header;
+    }
+    document.getElementById('add-new').addEventListener('click', () => {
+        addNewEntry(currentTabId);
+    });
 
+
+    function addNewEntry(tabId) {
+        const modalElement = document.getElementById('addEntry'); // Get the modal element
+        const modal = new bootstrap.Modal(modalElement); // Initialize Bootstrap modal
+    
+        // Get the modal's body and header
+        const modalBody = modalElement.querySelector('.modal-body');
+        const modalTitle = modalElement.querySelector('.modal-title');
+    
+        // Clear the modal body (to reset it each time)
+        modalBody.innerHTML = ''; 
+    
+        if (tabId === 'changelogs') {
+            // Create new input elements dynamically
+            const titleInput = document.createElement('input');
+            titleInput.setAttribute('type', 'text');
+            titleInput.classList.add('form-control');
+            titleInput.setAttribute('id', 'changelogTitle');
+            titleInput.placeholder = 'Enter title';
+    
+            const sectionsInput = document.createElement('textarea');
+            sectionsInput.classList.add('form-control');
+            sectionsInput.setAttribute('id', 'changelogSection');
+            sectionsInput.placeholder = 'Enter sections';
+    
+            const imageUrlInput = document.createElement('textarea');
+            imageUrlInput.classList.add('form-control');
+            imageUrlInput.setAttribute('id', 'changelogImageUrl');
+            imageUrlInput.placeholder = 'Enter Image URL';
+    
+            // Set the title for the modal
+            modalTitle.textContent = 'Add New Changelog';
+            const spacerDiv = document.createElement('div');
+            spacerDiv.classList.add('my-2');    
+            // Append the new inputs to the modal body
+            modalBody.appendChild(titleInput);
+            modalBody.appendChild(spacerDiv);
+            modalBody.appendChild(sectionsInput);
+            modalBody.appendChild(spacerDiv);
+            modalBody.appendChild(imageUrlInput);
+        }
+        if (tabId ==='seasons') {
+            // Create new input elements dynamically
+            const seasonInput = document.createElement('input');
+            seasonInput.setAttribute('type', 'number');
+            seasonInput.classList.add('form-control');
+            seasonInput.setAttribute('id','seasonNumber');
+            seasonInput.placeholder = 'Enter season number';
+            const titleInput = document.createElement('input');
+            titleInput.setAttribute('type', 'text');
+            titleInput.classList.add('form-control');
+            titleInput.setAttribute('id','seasonTitle');
+            titleInput.placeholder = 'Enter season title';
+            const descriptionInput = document.createElement('textarea');
+            descriptionInput.classList.add('form-control');
+            descriptionInput.setAttribute('id','seasonDescription');
+            descriptionInput.placeholder = 'Enter season description';
+
+            modalTitle.textContent = 'Add New Season';
+            const spacerDiv = document.createElement('div');
+            spacerDiv.classList.add('my-2');
+
+            modalBody.appendChild(seasonInput);
+            modalBody.appendChild(spacerDiv);
+            modalBody.appendChild(titleInput);
+            modalBody.appendChild(spacerDiv);
+            modalBody.appendChild(descriptionInput);
+        }
+    
+        // Show the modal
+        modal.show();
+    }
+
+
+
+    function editChangelog(changelogID) {
+        console.log('Editing Changelog:', changelogID);
+        
+        // Find the changelog from the cachedChangelogs array
+        const changelog = cachedChangelogs.find(c => c.id === changelogID);
+        
+        if (!changelog) {
+            console.error('Changelog not found:', changelogID);
+            return;
+        }
+    
+        // Get the modal element and initialize Bootstrap modal
+        const modalElement = document.getElementById('addEntry');
+        const modal = new bootstrap.Modal(modalElement);
+    
+        // Clear any existing content in the modal body
+        const modalBody = modalElement.querySelector('.modal-body');
+        modalBody.innerHTML = ''; 
+    
+        // Set the modal title
+        const modalTitle = modalElement.querySelector('.modal-title');
+        modalTitle.textContent = 'Edit Changelog';
+    
+        // Create input fields for the modal
+        const titleInput = document.createElement('input');
+        titleInput.id = 'changelogTitle';
+        titleInput.setAttribute('type', 'text');
+        titleInput.classList.add('form-control');
+        titleInput.value = changelog.title;
+    
+        const sectionsInput = document.createElement('textarea');
+        sectionsInput.id = 'changelogSections'; // Ensure this ID matches the query selector later
+        sectionsInput.classList.add('form-control');
+        sectionsInput.value = changelog.sections;
+    
+        const imageUrlInput = document.createElement('textarea');
+        imageUrlInput.id = 'changelogImageUrl'; // Ensure this ID matches the query selector later
+        imageUrlInput.classList.add('form-control');
+        imageUrlInput.value = changelog.image_url;
+
+
+        // Append inputs to modal body
+        modalBody.appendChild(titleInput);
+        modalBody.appendChild(document.createElement('br')); // Spacer
+        modalBody.appendChild(sectionsInput);
+        modalBody.appendChild(document.createElement('br')); // Spacer
+        modalBody.appendChild(imageUrlInput);
+
+    
+        // Show the modal
+        modal.show();
+        const submitModalButton = document.getElementById('submit-modal');
+        submitModalButton.addEventListener('click', function() {
+            // Ensure the required inputs are available
+            const modalElement = document.getElementById('addEntry');
+            const titleInput = modalElement.querySelector('#changelogTitle');
+            const sectionsInput = modalElement.querySelector('#changelogSections');
+            const imageUrlInput = modalElement.querySelector('#changelogImageUrl');
+            
+            // Log the updated values (you can replace this with an API call or form submission)
+            console.log('Updated Title:', titleInput.value);
+            console.log('Updated Sections:', sectionsInput.value);
+            console.log('Updated Image URL:', imageUrlInput.value);
+            
+            // Get the token from cookies (ensure getCookie() is defined somewhere)
+            const token = getCookie("token");
+        
+            // Send the PUT request to update the changelog
+            fetch(`https://api.jailbreakchangelogs.xyz/changelogs/update?id=${changelogID}&token=${token}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    header: titleInput.value,
+                    sections: sectionsInput.value,
+                    image_url: imageUrlInput.value
+                }),
+            })
+            .then(response => response.json())  // Ensure the response is parsed as JSON
+            .then(data => {
+                // Handle the response (e.g., show success message, update UI)
+                console.log('Changelog updated successfully:', data);
+                modal.hide();
+                window.location.reload(); // Refresh the page to update the table
+            })
+            .catch(error => {
+                // Handle any errors (e.g., network or server errors)
+                console.error('Error updating changelog:', error);
+            });
+        });
+
+    }
+    function editSeason(seasonID) {
+
+    }
+    function displayTable() {
+        adminTabsContent.innerHTML = ''; // Clear existing content
+        const header = createHeader(currentTabId);
+        adminTabsContent.appendChild(header);
+        if (currentTabId === 'changelogs') {
+            const table = generateChangelogTable(currentData);
+            adminTabsContent.appendChild(table);
+        }
+        if (currentTabId ==='seasons') {
+            const table = generateSeasonTable(currentData);
+            adminTabsContent.appendChild(table);
+        }
+    }
+
+
+    // Loop through all tab buttons and add event listeners
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function(event) {
+            const tabId = event.target.id.split('-')[0];
+            updateTabContent(tabId);  // Update content for the selected tab
+        });
+    });
+
+    // Optionally, set initial content for the active tab
+    const initialTab = document.querySelector('.nav-link.active');
+    if (initialTab) {
+        updateTabContent(initialTab.id.split('-')[0]);
+    }
+});

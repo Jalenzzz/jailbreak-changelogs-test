@@ -213,6 +213,17 @@ app.get('/bot', (req, res) => {
   });
 });
 
+app.get('/items', (req, res) => {
+  res.render('items', {
+    title: 'Items',
+    logoUrl: 'assets/logos/Items_Logo.png',
+    logoAlt: 'Items Page Logo'
+  });
+});
+
+
+
+
 app.get('/faq', (req, res) => {
   res.render('faq', {
     title: 'User FAQ',
