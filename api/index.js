@@ -83,8 +83,8 @@ app.get("/changelogs/:changelog", async (req, res) => {
       res.render("changelogs", {
         title: "Changelog not found",
         image_url:
-          "https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/changelogs/changelog-image-345?_a=BAMCkGcc0",
-        logoUrl: 'assets/logos/Changelogs_Logo.png',
+          "https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp",
+        logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Changelogs_Logo.webp',
         logoAlt: 'Changelogs Page Logo',
         changelogId
       });
@@ -100,7 +100,7 @@ app.get("/changelogs/:changelog", async (req, res) => {
     res.render("changelogs", { 
       title, 
       image_url,
-      logoUrl: 'assets/logos/Changelogs_Logo.png',
+      logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Changelogs_Logo.webp',
       logoAlt: 'Changelogs Page Logo',
       changelogId
     });
@@ -133,8 +133,8 @@ app.get("/seasons/:season", async (req, res) => {
       return res.render("seasons", {
         season: "???",
         title: "Season not found",
-        image_url: "https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/changelogs/changelog-image-345?_a=BAMCkGcc0",
-        logoUrl: "assets/logos/Seasons_Logo.png",
+        image_url: "https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp",
+        logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Seasons_Logo.webp",
         logoAlt: "Jailbreak Seasons Logo",
         seasonId
       });
@@ -150,8 +150,8 @@ app.get("/seasons/:season", async (req, res) => {
       return res.render("seasons", {
         season: "???",
         title: "Season not found",
-        image_url: "https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/changelogs/changelog-image-345?_a=BAMCkGcc0",
-        logoUrl: "assets/logos/Seasons_Logo.png",
+        image_url: "https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp",
+        logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Seasons_Logo.webpg",
         logoAlt: "Jailbreak Seasons Logo",
         seasonId
       });
@@ -166,7 +166,7 @@ app.get("/seasons/:season", async (req, res) => {
     );
 
     // Ensure we got the reward before accessing properties
-    let image_url = "https://res.cloudinary.com/dsvlphknq/image/upload/f_auto,q_auto,w_500/v1/changelogs/changelog-image-345?_a=BAMCkGcc0";
+    let image_url = "https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp";
     if (level_10_reward) {
       image_url = level_10_reward.link;
     }
@@ -176,7 +176,7 @@ app.get("/seasons/:season", async (req, res) => {
       season, 
       title,
       image_url,
-      logoUrl: "assets/logos/Seasons_Logo.png",
+      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Seasons_Logo.webp",
       logoAlt: "Jailbreak Seasons Logo",
       seasonId
     }); // Render the seasons page with the retrieved data
@@ -189,7 +189,7 @@ app.get("/seasons/:season", async (req, res) => {
 app.get('/trading', (req, res) => {
   res.render('trading', {
     title: 'Trading / Changelogs',
-    logoUrl: 'assets/logos/Trade_Ads_Logo.png', //TODO: Add logo for trading page
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Trade_Ads_Logo.webp',
     logoAlt: 'Trading Page Logo',
   });
 });
@@ -197,7 +197,7 @@ app.get('/trading', (req, res) => {
 app.get('/dashboard', (req, res) => {
   res.render('dashboard', {
     title: 'Admin Control Panel / Changelogs',
-    logoUrl: 'assets/logos/Admin_Logo.png', //TODO: Add logo for trading page
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Admin_Logo.webp', //TODO: Add logo for trading page
     logoAlt: 'Admin Page Logo',
   });
 });
@@ -207,7 +207,7 @@ app.get('/bot', (req, res) => {
   const image = `https://cdn.jailbreakchangelogs.xyz/backgrounds/background${randomNumber}.webp`;
   res.render('bot', {
     title: 'Discord Bot / Changelogs',
-    logoUrl: 'assets/logos/Discord_Bot_Logo.png',
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Discord_Bot_Logo.webp',
     logoAlt: 'Bot Page Logo',
     image
   });
@@ -216,7 +216,7 @@ app.get('/bot', (req, res) => {
 app.get('/items', (req, res) => {
   res.render('items', {
     title: 'Items',
-    logoUrl: 'assets/logos/Items_Logo.png',
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp',
     logoAlt: 'Items Page Logo'
   });
 });
@@ -224,7 +224,7 @@ app.get('/items', (req, res) => {
 app.get('/faq', (req, res) => {
   res.render('faq', {
     title: 'User FAQ',
-    logoUrl: 'assets/logos/FAQ_Logo.png',
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/FAQ_Logo.webp',
     logoAlt: 'FAQ Page Logo'
   });
 });
@@ -232,7 +232,7 @@ app.get('/faq', (req, res) => {
 app.get('/privacy', (req, res) => {
   res.render('privacy', {
     title: 'Privacy Policy / Changelogs',
-    logoUrl: 'assets/logos/Privacy_Logo.png',
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Privacy_Logo.webp',
     logoAlt: 'Privacy Policy Page Logo'
   });
 });
@@ -240,7 +240,7 @@ app.get('/privacy', (req, res) => {
 app.get('/tos', (req, res) => {
   res.render('tos', {
     title: 'Terms Of Service / Changelogs',
-    logoUrl: 'assets/logos/Tos_Logo.png',
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Tos_Logo.webp',
     logoAlt: 'TOS Page Logo'
   });
 });
@@ -252,7 +252,7 @@ app.get("/botinvite", (req, res) => {
 app.get('/keys', (req, res) => {
   res.render('keys', {
     title: 'API / Changelogs',
-    logoUrl: 'assets/logos/Api_Logo.png',
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Api_Logo.webp',
     logoAlt: 'API Page Logo'
   });
 });
@@ -284,7 +284,7 @@ app.get("/users/:user/followers", async (req, res) => {
     if (!user) {
     return res.render("usersearch", {
       title: 'User Search / Changelogs',
-      logoUrl: 'assets/logos/Users_Logo.png',
+      logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp',
       logoAlt: 'Users Page Logo'
     });
   }
@@ -308,7 +308,7 @@ app.get("/users/:user/followers", async (req, res) => {
       avatar,
       showfollowers,
       title: 'Followers / Changelogs',
-      logoUrl: 'assets/logos/Users_Logo.png',
+      logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp',
       logoAlt: 'Users Page Logo'
     });
   })
@@ -344,7 +344,7 @@ app.get("/users/:user/following", async (req, res) => {
   if (!user) {
     return res.render("usersearch", {
       title: 'User Search / Changelogs',
-      logoUrl: 'assets/logos/Users_Logo.png',
+      logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp',
       logoAlt: 'Users Page Logo'
     });
   }
@@ -368,7 +368,7 @@ app.get("/users/:user/following", async (req, res) => {
       avatar,
       showfollowing,
       title: 'Users - Following',
-      logoUrl: 'assets/logos/Users_Logo.png',
+      logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp',
       logoAlt: 'Users Page Logo'
     });
   })
@@ -494,7 +494,7 @@ app.get('/sitemap.xml', (req, res) => {
 app.get('/users', (req, res) => {
   res.render('usersearch',  { 
     title: 'Users',
-    logoUrl: 'assets/logos/Users_Logo.png',
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp',
     logoAlt: 'Users Page Logo'
   });
 });
@@ -522,7 +522,7 @@ app.get("/users/:user", async (req, res) => {
   if (!user) {
     return res.render("usersearch", {
       title: 'Users',
-      logoUrl: 'assets/logos/Users_Logo.png',
+      logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp',
       logoAlt: 'Users Page Logo'
     });
   }
@@ -581,7 +581,7 @@ app.get("/users/:user", async (req, res) => {
       avatar, 
       settings,
       title: 'User Profile',
-      logoUrl: 'assets/logos/Users_Logo.png',
+      logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp',
       logoAlt: 'User Profile Logo'
     });
   } catch (error) {
@@ -593,7 +593,7 @@ app.get("/users/:user", async (req, res) => {
 app.get('/timeline', (req, res) => {
   res.render('timeline', {
     title: 'Timeline / Changelogs',
-    logoUrl: 'assets/logos/Timeline_Logo.png',
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Timeline_Logo.webp',
     logoAlt: 'Timeline Page Logo'
   });
 });
@@ -601,7 +601,7 @@ app.get('/timeline', (req, res) => {
 app.get('/tradetracker', (req, res) => {
   res.render('tradetracker', {
     title: 'Trade Tracker',
-    logoUrl: 'assets/logos/Trade_Tracker_Logo.png',
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Trade_Tracker_Logo.webp',
     logoAlt: 'Trade Tracker Page Logo'
   });
 });
@@ -611,7 +611,7 @@ app.get('/', (req, res) => {
   const image = `https://cdn.jailbreakchangelogs.xyz/backgrounds/background${randomNumber}.webp`;
   res.render('index', {
     title: 'Home / Changelogs',
-    logoUrl: 'assets/logos/Homepage_Logo.png',
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Homepage_Logo.webp',
     logoAlt: 'Home Page Logo',
     image
   });
