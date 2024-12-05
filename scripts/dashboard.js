@@ -451,7 +451,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Handle the response (e.g., show success message, update UI)
                 console.log('Changelog updated successfully:', data);
                 modal.hide();
-                window.location.reload(); // Refresh the page to update the table
+               
             })
             .catch(error => {
                 // Handle any errors (e.g., network or server errors)
