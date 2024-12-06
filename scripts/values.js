@@ -24,18 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
   
         const image_type = item.type.toLowerCase();
-        let image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
-  
-        // Check if the image exists before setting it
-        const exists = await checkImageExists(image_url);
-        if (!exists) {
-          image_url = 'https://cdn.jailbreakchangelogs.xyz/backgrounds/background1.webp'; // Fallback URL
-        }
-  
+        const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
+    
         // Create the card's inner HTML
         cardDiv.innerHTML = `
           <div class="card shadow-sm">
-            <img src="${image_url}" class="card-img-top" alt="${item.name}">
+            <img onerror="handleimage(this)" id=${item.name} src="${image_url}" class="card-img-top" alt="${item.name}">
             <div class="card-body text-center">
               <span style="background-color: ${color}" class="badge">${item.type}</span>
               <h5 class="card-title">${item.name}</h5>
@@ -51,17 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error fetching data:', error);
     }
   }
-  
-  // Helper function to check if an image exists
-  async function checkImageExists(url) {
-    try {
-      const response = await fetch(url, { method: 'HEAD' }); // Use 'HEAD' to check headers without fetching the full content
-      return response.ok; // If status is OK (200), it exists
-    } catch {
-      return false; // If there was an error (e.g., network issue), assume it doesn't exist
-    }
-  }
-  
   // Shuffle function to randomize the order
   function shuffleArray(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
@@ -72,3 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadItems(); // Load items once the DOM is ready
 });
+function handleimage(element) {
+  element.src = 'https://cdn.jailbreakchangelogs.xyz/backgrounds/background1.webp';
+}

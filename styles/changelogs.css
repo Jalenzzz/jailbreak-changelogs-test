@@ -185,6 +185,14 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 #search-results::-webkit-scrollbar-thumb:hover {
   background-color: #2E3944;
 }
+.video-responsive {
+  width: 100%;
+  max-width: 100%;
+  max-height: 500px;
+  border-radius: 8px; /* Matches 'rounded' */
+  margin-top: 0.5rem; /* Matches 'mt-2' */
+  margin-bottom: 0.5rem; /* Matches 'mb-2' */
+}
 
 [data-bs-theme="dark"] #main-container {
   background-color: var(--common-bg-color);

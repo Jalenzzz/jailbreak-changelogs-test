@@ -83,6 +83,10 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error fetching changelogs:", error);
         }
     }
+    async function updateChangelogCache() {
+        cachedChangelogs = [];
+        await parseChangelogData();
+    }
     async function parseSeasonData() {
         try {
             let data = null;
@@ -106,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function generateChangelogTable(changelogs) {
         const table = document.createElement('table');
         table.classList.add('table', 'table-striped');
-
+    
         // Create the thead
         const thead = document.createElement('thead');
         const headerRow = document.createElement('tr');
@@ -118,31 +122,33 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         thead.appendChild(headerRow);
         table.appendChild(thead);
-
+    
         // Create the tbody
         const tbody = document.createElement('tbody');
         const startIndex = (currentPage - 1) * rowsPerPage;
         const endIndex = startIndex + rowsPerPage;
         const paginatedData = changelogs.slice(startIndex, endIndex);
-
+    
         paginatedData.forEach(changelog => {
             const row = document.createElement('tr');
+            row.id = `changelog-${changelog.id}`; // Assigning a unique ID to the row
+    
             const idCell = document.createElement('td');
             idCell.textContent = changelog.id;
             row.appendChild(idCell);
-
+    
             const titleCell = document.createElement('td');
             titleCell.textContent = changelog.title;
             row.appendChild(titleCell);
-
+    
             const sectionsCell = document.createElement('td');
             sectionsCell.textContent = changelog.sections; // Assuming sections is an array
             row.appendChild(sectionsCell);
-
+    
             const imageUrlCell = document.createElement('td');
             imageUrlCell.textContent = changelog.image_url || 'No Image';
             row.appendChild(imageUrlCell);
-
+    
             const actionsCell = document.createElement('td');
             const editButton = document.createElement('button');
             editButton.classList.add('btn', 'btn-primary', 'btn-sm');
@@ -150,13 +156,14 @@ document.addEventListener("DOMContentLoaded", () => {
             editButton.onclick = () => { editChangelog(changelog.id); };
             actionsCell.appendChild(editButton);
             row.appendChild(actionsCell);
-
+    
             tbody.appendChild(row);
         });
-
+    
         table.appendChild(tbody);
         return table;
     }
+    
     function generateSeasonTable(seasons) {
         const table = document.createElement('table');
         table.classList.add('table', 'table-striped');
@@ -377,51 +384,49 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error('Changelog not found:', changelogID);
             return;
         }
-    
+        
         // Get the modal element and initialize Bootstrap modal
         const modalElement = document.getElementById('addEntry');
         const modal = new bootstrap.Modal(modalElement);
-    
+        
         // Clear any existing content in the modal body
         const modalBody = modalElement.querySelector('.modal-body');
         modalBody.innerHTML = ''; 
-    
+        
         // Set the modal title
         const modalTitle = modalElement.querySelector('.modal-title');
         modalTitle.textContent = 'Edit Changelog';
-    
+        
         // Create input fields for the modal
         const titleInput = document.createElement('input');
         titleInput.id = 'changelogTitle';
         titleInput.setAttribute('type', 'text');
         titleInput.classList.add('form-control');
         titleInput.value = changelog.title;
-    
+        
         const sectionsInput = document.createElement('textarea');
         sectionsInput.id = 'changelogSections'; // Ensure this ID matches the query selector later
         sectionsInput.classList.add('form-control');
         sectionsInput.value = changelog.sections;
-    
+        
         const imageUrlInput = document.createElement('textarea');
         imageUrlInput.id = 'changelogImageUrl'; // Ensure this ID matches the query selector later
         imageUrlInput.classList.add('form-control');
         imageUrlInput.value = changelog.image_url;
-
-
+    
         // Append inputs to modal body
         modalBody.appendChild(titleInput);
         modalBody.appendChild(document.createElement('br')); // Spacer
         modalBody.appendChild(sectionsInput);
         modalBody.appendChild(document.createElement('br')); // Spacer
         modalBody.appendChild(imageUrlInput);
-
     
         // Show the modal
         modal.show();
+    
         const submitModalButton = document.getElementById('submit-modal');
         submitModalButton.addEventListener('click', function() {
             // Ensure the required inputs are available
-            const modalElement = document.getElementById('addEntry');
             const titleInput = modalElement.querySelector('#changelogTitle');
             const sectionsInput = modalElement.querySelector('#changelogSections');
             const imageUrlInput = modalElement.querySelector('#changelogImageUrl');
@@ -433,7 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             // Get the token from cookies (ensure getCookie() is defined somewhere)
             const token = getCookie("token");
-        
+    
             // Send the PUT request to update the changelog
             fetch(`https://api.jailbreakchangelogs.xyz/changelogs/update?id=${changelogID}&token=${token}`, {
                 method: 'PUT',
@@ -451,15 +456,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Handle the response (e.g., show success message, update UI)
                 console.log('Changelog updated successfully:', data);
                 modal.hide();
-                window.location.reload(); // Refresh the page to update the table
-               
+    
+                // Update the row directly with new values
+                const changelogrow = document.getElementById(`changelog-${changelogID}`);
+                
+                // Directly update the row cells with the new data
+                changelogrow.querySelector('td:nth-child(2)').textContent = titleInput.value;
+                changelogrow.querySelector('td:nth-child(3)').textContent = sectionsInput.value;
+                changelogrow.querySelector('td:nth-child(4)').textContent = imageUrlInput.value;
+    
+                // Optionally, if you want to update the actions button as well
+                const editButton = changelogrow.querySelector('.btn');
+                editButton.addEventListener('click', () => editChangelog(changelogID)); 
+                
+                updateChangelogCache();
             })
             .catch(error => {
                 // Handle any errors (e.g., network or server errors)
                 console.error('Error updating changelog:', error);
             });
         });
-
     }
     function editSeason(seasonID) {
 

@@ -747,7 +747,7 @@ function updateDropdownButton(text) {
           return `<img src="${imageUrl}" alt="Image" class="img-fluid mt-2 mb-2 rounded" style="max-height: 270px;">`; // Create image element
         } else if (line.startsWith("(video)")) {
           const videoUrl = line.substring(7).trim(); // Extract video URL
-          return `<video class="w-80 mt-2 mb-2 rounded" style="max-height: 500px;" controls><source src="${videoUrl}" type="video/mp4"></video>`; // Create video element
+          return `<video class="video-responsive w-80 mt-2 mb-2 rounded" style= "max-height: 500px;" controls><source src="${videoUrl}" type="video/webm"></video>`; // Create video element
         } else {
           return `<p class="lead mb-2">${wrapMentions(line)}</p>`; // Default to paragraph
         }

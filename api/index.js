@@ -213,11 +213,11 @@ app.get('/bot', (req, res) => {
   });
 });
 
-app.get('/items', (req, res) => {
-  res.render('items', {
-    title: 'Items',
+app.get('/values', (req, res) => {
+  res.render('values', {
+    title: 'Values',
     logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp',
-    logoAlt: 'Items Page Logo'
+    logoAlt: 'Values Page Logo'
   });
 });
 
