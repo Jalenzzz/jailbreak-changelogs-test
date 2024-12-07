@@ -746,8 +746,20 @@ function updateDropdownButton(text) {
           const imageUrl = line.substring(7).trim(); // Extract image URL
           return `<img src="${imageUrl}" alt="Image" class="img-fluid mt-2 mb-2 rounded" style="max-height: 270px;">`; // Create image element
         } else if (line.startsWith("(video)")) {
-          const videoUrl = line.substring(7).trim(); // Extract video URL
-          return `<video class="video-responsive w-80 mt-2 mb-2 rounded" style= "max-height: 500px;" controls><source src="${videoUrl}" type="video/webm"></video>`; // Create video element
+          const videoUrl = line.substring(7).trim();
+          return `
+            <div class="video-container">
+              <video 
+                class="video-responsive" 
+                controls
+                preload="metadata"
+                playsinline
+              >
+                <source src="${videoUrl}" type="video/webm">
+                Your browser does not support the video tag.
+              </video>
+            </div>`;
+
         } else {
           return `<p class="lead mb-2">${wrapMentions(line)}</p>`; // Default to paragraph
         }
