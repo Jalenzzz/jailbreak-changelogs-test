@@ -99,23 +99,23 @@
 
 
 <body>
-  <%- include('partials/nav') %>
-  <%- include('partials/newsticker') %>
-  <!-- Loading Overlay -->
-  <div id="loading-overlay" class="show">
-    <div class="text-center">
-      <img
-        src="https://cdn.jailbreakchangelogs.xyz/logos/Jailbreak_Logo.webp"
-        alt="Loading logo"
-        class="loading-logo"
-      />
-    </div>
-    <div class="d-flex justify-content-center mt-3">
-      <div class="spinner-border custom-spinner" role="status">
-        <span class="visually-hidden">Loading...</span>
+    <%- include('partials/nav') %>
+    <%- include('partials/newsticker') %>
+      <!-- Loading Overlay -->
+      <div id="loading-overlay" class="show">
+        <div class="text-center">
+          <img
+            src="https://cdn.jailbreakchangelogs.xyz/logos/Jailbreak_Logo.webp"
+            alt="Loading logo"
+            class="loading-logo"
+          />
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+          <div class="spinner-border custom-spinner" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
   <div class="container-fluid mt-3">
     <nav aria-label="breadcrumb">
@@ -125,10 +125,11 @@
       </ol>
     </nav>
     <div class="row">
-      <div class="col-12 col-lg-8"> <!-- This aligns with the content wrapper width -->
+      <div class="col-12 col-lg-8">
         <div class="row">
-          <!-- Options Dropdown (hidden on mobile) -->
+          <!-- Desktop Options Dropdown -->
           <div class="col-auto d-none d-lg-block me-2">
+            <!-- Your desktop buttons here -->
             <div class="d-flex gap-2 me-2">
               <button class="btn btn-primary" type="button" id="desktopOpenDateFilterModal" aria-label="Select date range" data-bs-toggle="tooltip" title="Select Date Range">
                 <i class="bi bi-calendar-range" aria-hidden="true"></i> <!-- Changed to calendar-range -->
@@ -157,227 +158,261 @@
             </div>
           </div>
           
-        <!-- Search Bar -->
-<div class="search-container flex-grow-1">
-  <form class="d-flex position-relative" role="search" id="searchForm">
-    <div class="position-relative w-100">
-      <i class="bi bi-search search-icon"></i> <!-- Move icon here -->
-      <input
-        id="search-input"
-        class="form-control custom-search-input pe-5"
-        type="text"
-        placeholder="Search changelogs..."
-        aria-label="Search changelogs"
-        autocomplete="off"
-      />
-      <button
-        id="clear-search-button"
-        class="btn btn-link position-absolute end-0 top-50 translate-middle-y"
-        type="button"
-        aria-label="Clear search"
-      >
-        <i class="bi bi-x-circle-fill"></i>
-      </button>
-    </div>
-  </form>
-  
-  <!-- Example queries and search results remain the same -->
-  <div id="exampleQueries" class="mt-2 d-none" aria-hidden="true">
-    <h6 class="example-queries-title">Example queries:</h6>
-    <div class="d-flex flex-wrap gap-2 mt-1">
-      <a href="#" class="example-query badge bg-secondary text-decoration-none" title="Search for audio content" aria-label="Search for audio content">has:audio</a>
-      <a href="#" class="example-query badge bg-secondary text-decoration-none" title="Search for video content" aria-label="Search for video content">has:video</a>
-      <a href="#" class="example-query badge bg-secondary text-decoration-none" title="Search for image content" aria-label="Search for image content">has:image</a>
-      <a href="#" class="example-query badge bg-secondary text-decoration-none" title="Search for mentions" aria-label="Search for mentions">has:mention</a>
-    </div>
-  </div>
-
-  <div id="search-results" class="dropdown-menu w-100">
-    <!-- Search results will be populated here -->
-  </div>
-</div>
-
-
-        <!-- Mobile Menu Toggle Button -->
-<button id="mobileMenuToggle" class="btn btn-primary d-lg-none mt-3" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenuItems" aria-expanded="false" aria-controls="mobileMenuItems">
-  <i class="bi bi-list me-2"></i> More Options
-</button>
-
-<!-- Mobile Menu Items (Collapsible) with Custom Background -->
-<div class="collapse mt-3 d-lg-none" id="mobileMenuItems">
-  <div class="d-grid gap-2" style="background-color: #212A31; padding: 15px; border-radius: 8px; width: calc(100% + 30px); margin-left: -15px; margin-right: -15px;">
-    <div class="btn-group" role="group" aria-label="Date Filter Options">
-      <button class="btn" style="background-color: #124E66; color: #D3D9D4;" id="mobileOpenDateFilterModal">
-        <i class="bi bi-calendar-event me-2"></i> Select Date
-      </button>
-    </div>
-    <button id="mobileLatestChangelogBtn" class="btn" style="background-color: #124E66; color: #D3D9D4;">
-      <i class="bi bi-rocket-takeoff me-2"></i> Jump to Latest
-    </button>
-    <div class="dropdown">
-      <button class="btn changelog-btn w-100 dropdown-toggle" id="mobileChangelogDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #124E66; color: #D3D9D4;">
-        <i class="bi bi-calendar-event me-2"></i> Changelog Versions
-      </button>
-      <ul class="dropdown-menu changelog-menu w-100" aria-labelledby="mobileChangelogDropdown" id="mobileChangelogList">
-        <!-- Dropdown items will be populated dynamically -->
-      </ul>
-    </div>
-    
-    <button id="mobileCopyChangelog" class="btn" style="background-color: #124E66; color: #D3D9D4;">
-      <i class="bi bi-clipboard me-2"></i> Copy Changelog
-    </button>
-    <button class="btn btn-primary" type="button" id="randomChangelogMobileBtn" aria-label="Get a random changelog" data-bs-toggle="tooltip" title="Random changelog">
-      <i class="bi bi-stars" aria-hidden="true"></i> Random Changelog
-    </button>
-    
-  </div>
-</div>
-
-      </div>
-    </div>
-  </div>
-
-  
-<div id="main-container" class="container-fluid">
-  <div id="content-wrapper" class="row mt-3">
-    <div class="col-12 col-sm-8 col-md-8">
-      <!-- Main content section -->
-      <section id="content"></section>
-    </div>
-    <div class="col-12 col-sm-4 col-md-4">
-      <div id="sidebar-image-wrapper" class="row mb-3">
-        <div class="col-12">
-          <div class="card">
-            <!-- Sidebar Image -->
-            <img
-              id="sidebarImage"
-              class="card-img-top img-fluid"
-              alt="Changelog Image"
-              style="max-width: 100%; height: auto"
-            />
-          </div>
-        </div>
-      </div>
-      <div class="comment-container my-5">
-        <h2 class="comment-header" id="comment-header">Comments</h2>
-        <div class="row justify-content-center">
-          <div class="col-md-12">
-            <!-- Comment submission form -->
-            <form id="comment-form" class="mb-4">
-              <div class="input-group">
+          <!-- Search Bar -->
+          <div class="search-container flex-grow-1">
+            <form class="d-flex position-relative" role="search" id="searchForm">
+              <!-- Your search input here -->
+              <div class="position-relative w-100">
+                <i class="bi bi-search search-icon"></i> <!-- Move icon here -->
                 <input
-                      type="text"
-                      class="form-control"
-                      id="commenter-text"
-                      disabled
-                      placeholder="Login to comment"
-                      required
-                    />
-                    <button
-                    type="submit"
-                    class="btn btn-primary"
-                    id="submit-comment"
-                    disabled
-                  >
-                  <i class="bi bi-send-fill me-1"></i> Submit
+                  id="search-input"
+                  class="form-control custom-search-input pe-5"
+                  type="text"
+                  placeholder="Search changelogs..."
+                  aria-label="Search changelogs"
+                  autocomplete="off"
+                />
+                <button
+                  id="clear-search-button"
+                  class="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+                  type="button"
+                  aria-label="Clear search"
+                >
+                  <i class="bi bi-x-circle-fill"></i>
                 </button>
               </div>
             </form>
-      
-            <!-- Comment List -->
-            <ul id="comments-list" class="list-group shadow-sm">
-              <!-- Comments will be dynamically added here -->
-            </ul>
-            <div id="paginationControls" class="pagination d-flex align-items-center"></div>
+            
+            <div id="exampleQueries" class="mt-2 d-none">
+              <!-- Example queries here -->
+              <h6 class="example-queries-title">Example queries:</h6>
+              <div class="d-flex flex-wrap gap-2 mt-1">
+                <a href="#" class="example-query badge bg-secondary text-decoration-none" title="Search for audio content" aria-label="Search for audio content">has:audio</a>
+                <a href="#" class="example-query badge bg-secondary text-decoration-none" title="Search for video content" aria-label="Search for video content">has:video</a>
+                <a href="#" class="example-query badge bg-secondary text-decoration-none" title="Search for image content" aria-label="Search for image content">has:image</a>
+                <a href="#" class="example-query badge bg-secondary text-decoration-none" title="Search for mentions" aria-label="Search for mentions">has:mention</a>
+              </div>
+            </div>
+    
+            <div id="search-results" class="dropdown-menu w-100">
+              <!-- Search results here -->
+            </div>
+          </div>
+    
+          <div class="col-12 d-lg-none">
+            <!-- Toggle Button -->
+            <button id="mobileMenuToggle" 
+                    class="btn btn-sm btn-primary mt-3" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#mobileMenuItems" 
+                    style="width: 220px;">
+              <i class="bi bi-list me-2"></i> More Options
+            </button>
+    
+            <!-- Collapsible Menu -->
+            <div class="collapse mt-3" id="mobileMenuItems">
+              <div class="mobile-menu-container" 
+                   style="background-color: #212A31; 
+                          padding: 10px; 
+                          border-radius: 8px; 
+                          width: 340px;
+                          display: flex; 
+                          flex-direction: column; 
+                          gap: 8px;">
+                <!-- Mobile menu buttons here -->
+                        <!-- Date Filter -->
+                        <button class="btn mobile-menu-btn" 
+                        id="mobileOpenDateFilterModal" 
+                        style="background-color: #124E66; 
+                              color: #D3D9D4;">
+                  <i class="bi bi-calendar-event me-2"></i> Select Date
+                </button>
+
+                <!-- Jump to Latest -->
+                <button class="btn mobile-menu-btn" 
+                        id="mobileLatestChangelogBtn" 
+                        style="background-color: #124E66; 
+                              color: #D3D9D4;">
+                  <i class="bi bi-rocket-takeoff me-2"></i> Jump to Latest
+                </button>
+
+                <!-- Changelog Versions Dropdown -->
+                <div class="dropdown">
+                  <button class="btn mobile-menu-btn dropdown-toggle w-100" 
+                          id="mobileChangelogDropdown" 
+                          data-bs-toggle="dropdown" 
+                          style="background-color: #124E66; 
+                                color: #D3D9D4;">
+                    <i class="bi bi-calendar-event me-2"></i> Changelog Versions
+                  </button>
+                  <ul class="dropdown-menu w-100" 
+                      id="mobileChangelogList">
+                  </ul>
+                </div>
+
+                <!-- Copy Changelog -->
+                <button class="btn mobile-menu-btn" 
+                        id="mobileCopyChangelog" 
+                        style="background-color: #124E66; 
+                              color: #D3D9D4;">
+                  <i class="bi bi-clipboard me-2"></i> Copy Changelog
+                </button>
+
+                <!-- Random Changelog -->
+                <button class="btn btn-primary mobile-menu-btn" 
+                        id="randomChangelogMobileBtn" 
+                        type="button">
+                  <i class="bi bi-stars me-2"></i> Random Changelog
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      </div>
     </div>
-  </div>
-</div>
+    
 
-<!-- Date Filter Modal -->
-<div
-  class="modal fade"
-  id="dateFilterModal"
-  tabindex="-1"
-  aria-labelledby="dateFilterModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="dateFilterModalLabel">Select Date Range</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+      <div id="main-container" class="container-fluid">
+        <div id="content-wrapper" class="row mt-3">
+          <div class="col-12 col-sm-8 col-md-8">
+            <!-- Main content section -->
+            <section id="content"></section>
+          </div>
+          <div class="col-12 col-sm-4 col-md-4">
+            <div id="sidebar-image-wrapper" class="row mb-3">
+              <div class="col-12">
+                <div class="card">
+                  <!-- Sidebar Image -->
+                  <img
+                    id="sidebarImage"
+                    class="card-img-top img-fluid"
+                    alt="Changelog Image"
+                    style="max-width: 100%; height: auto"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="comment-container my-5">
+              <h2 class="comment-header" id="comment-header">Comments</h2>
+              <div class="row justify-content-center">
+                <div class="col-md-12">
+                  <!-- Comment submission form -->
+                  <form id="comment-form" class="mb-4">
+                    <div class="input-group">
+                      <input
+                            type="text"
+                            class="form-control"
+                            id="commenter-text"
+                            disabled
+                            placeholder="Login to comment"
+                            required
+                          />
+                          <button
+                          type="submit"
+                          class="btn btn-primary"
+                          id="submit-comment"
+                          disabled
+                        >
+                        <i class="bi bi-send-fill me-1"></i> Submit
+                      </button>
+                    </div>
+                  </form>
+            
+                  <!-- Comment List -->
+                  <ul id="comments-list" class="list-group shadow-sm">
+                    <!-- Comments will be dynamically added here -->
+                  </ul>
+                  <div id="paginationControls" class="pagination d-flex align-items-center"></div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="modal-body">
-        <div id="dateRangeFilter" class="row g-2">
-          <div class="col-md-6">
-            <label for="startDate" class="form-label">Start Date:</label>
-            <div class="input-group">
-              <input type="date" id="startDate" class="form-control" style="display: none;">
-              <button id="startDateBtn" class="btn btn-outline-secondary w-100">
-                <i class="bi bi-calendar-event me-2"></i>
-                <span>Select Start Date</span>
+
+      <!-- Date Filter Modal -->
+      <div
+        class="modal fade"
+        id="dateFilterModal"
+        tabindex="-1"
+        aria-labelledby="dateFilterModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="dateFilterModalLabel">Select Date Range</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div id="dateRangeFilter" class="row g-2">
+                <div class="col-md-6">
+                  <label for="startDate" class="form-label">Start Date:</label>
+                  <div class="input-group">
+                    <input type="date" id="startDate" class="form-control" style="display: none;">
+                    <button id="startDateBtn" class="btn btn-outline-secondary w-100">
+                      <i class="bi bi-calendar-event me-2"></i>
+                      <span>Select Start Date</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="endDate" class="form-label">End Date:</label>
+                  <div class="input-group">
+                    <input type="date" id="endDate" class="form-control" style="display: none;">
+                    <button id="endDateBtn" class="btn btn-outline-secondary w-100">
+                      <i class="bi bi-calendar-event me-2"></i>
+                      <span>Select End Date</span>
+                    </button>
+                  </div>
+                </div>          
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-danger"
+                id="desktopClearDateFilter"
+              >
+                <i class="bi bi-x-circle me-2"></i> Clear Filter
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="button" class="btn btn-primary" id="applyDateFilter">
+                Apply Filter
               </button>
             </div>
           </div>
-          <div class="col-md-6">
-            <label for="endDate" class="form-label">End Date:</label>
-            <div class="input-group">
-              <input type="date" id="endDate" class="form-control" style="display: none;">
-              <button id="endDateBtn" class="btn btn-outline-secondary w-100">
-                <i class="bi bi-calendar-event me-2"></i>
-                <span>Select End Date</span>
-              </button>
-            </div>
-          </div>          
         </div>
       </div>
-      <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-outline-danger"
-          id="desktopClearDateFilter"
-        >
-          <i class="bi bi-x-circle me-2"></i> Clear Filter
-        </button>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          data-bs-dismiss="modal"
-        >
-          Close
-        </button>
-        <button type="button" class="btn btn-primary" id="applyDateFilter">
-          Apply Filter
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<%- include('partials/footer') %>
-<!-- Bootstrap Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+      <%- include('partials/footer') %>
+      <!-- Bootstrap Bundle -->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+      <!-- jQuery -->
+      <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
-<!-- Toastr (For Notifications) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+      <!-- Toastr (For Notifications) -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-<!-- Custom Scripts -->
-<script src="scripts/changelogs.js"></script>
-<script src="scripts/main.js"></script>
+      <!-- Custom Scripts -->
+      <script src="scripts/changelogs.js"></script>
+      <script src="scripts/main.js"></script>
 
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8152532464536367"
-     crossorigin="anonymous"></script>
-<script async src="https://fundingchoicesmessages.google.com/i/pub-8152532464536367?ers=1"></script><script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
-</body>
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8152532464536367"
+          crossorigin="anonymous"></script>
+      <script async src="https://fundingchoicesmessages.google.com/i/pub-8152532464536367?ers=1"></script><script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
+  </body>
 </html>
