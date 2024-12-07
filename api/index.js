@@ -493,7 +493,7 @@ app.get('/sitemap.xml', (req, res) => {
 // Render search page
 app.get('/users', (req, res) => {
   res.render('usersearch',  { 
-    title: 'Users',
+    title: 'Users / Changelogs',
     logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp',
     logoAlt: 'Users Page Logo'
   });
@@ -521,7 +521,7 @@ app.get("/users/:user", async (req, res) => {
 
   if (!user) {
     return res.render("usersearch", {
-      title: 'Users',
+      title: 'Users / Changelogs',
       logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp',
       logoAlt: 'Users Page Logo'
     });
@@ -580,7 +580,7 @@ app.get("/users/:user", async (req, res) => {
       userData, 
       avatar, 
       settings,
-      title: 'User Profile',
+      title: 'User Profile / Changelogs',
       logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp',
       logoAlt: 'User Profile Logo'
     });
@@ -600,7 +600,7 @@ app.get('/timeline', (req, res) => {
 
 app.get('/tradetracker', (req, res) => {
   res.render('tradetracker', {
-    title: 'Trade Tracker',
+    title: 'Trade Tracker / Changelogs',
     logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Trade_Tracker_Logo.webp',
     logoAlt: 'Trade Tracker Page Logo'
   });
