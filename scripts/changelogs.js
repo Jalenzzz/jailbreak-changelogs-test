@@ -988,21 +988,29 @@ function updateDropdownButton(text) {
     }
   }
 
-   // Add click event listener with slow mode for both buttons
-  //  const slowModeDelay = 4500;
+   const slowModeDelay = 4700;
    const buttons = ["#randomChangelogDesktopBtn", "#randomChangelogMobileBtn"]; // IDs of the buttons
  
    buttons.forEach(function (buttonSelector) {
-     $(buttonSelector).on("click", function () {
-       const $btn = $(this); // Cache the button element
- 
-      
- 
-       displayRandomChangelog(); // Call the random changelog function
- 
-       
-     });
-   });
+    $(buttonSelector).on("click", function () {
+      const $btn = $(this); // Cache the button element
+
+      // Check if the button is disabled
+      if ($btn.prop("disabled")) {
+        return; // Exit if already in slow mode
+      }
+
+      displayRandomChangelog(); // Call the random changelog function
+
+      // Disable the button and add a disabled class for styling
+      $btn.prop("disabled", true).addClass("disabled");
+
+      // Re-enable the button after the delay
+      setTimeout(function () {
+        $btn.prop("disabled", false).removeClass("disabled");
+      }, slowModeDelay);
+    });
+  });
 
 
   // Function to clean content for search
