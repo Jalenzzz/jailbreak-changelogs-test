@@ -84,7 +84,7 @@ function formatValue(value) {
 
     cardDiv.innerHTML = `
 <div class="card items-card shadow-sm" onclick="handleCardClick('${item.name}')" style="cursor: pointer;">
-  <img onerror="handleimage(this)" id="${item.name}" src="${image_url}" class="card-img-top" alt="${item.name}">
+  <img onerror="handleimage(this)" id="${item.name}" src="${image_url}" class="card-img-top" alt="${item.name}" style="width: 100%; height: auto; object-fit: contain;">
   <div class="card-body text-center">
     <span style="background-color: ${color}" class="badge">${item.type}</span>
     <h5 class="card-title">${item.name}</h5>

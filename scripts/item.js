@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let color = '#124E66';
         if (item.type === 'Vehicle') color = '#c82c2c';
         if (item.type === 'Spoiler') color = '#C18800';
-        if (item.type === 'Textures') color = '#C18800';
+        if (item.type === 'Texture') color = '#C18800';
     
         const image_type = item.type.toLowerCase();
         const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/">Home</a></li>
                         <li class="breadcrumb-item"><a href="/values">Values</a></li>
+                        <li class="breadcrumb-item"><a href="/values">${item.type}s</a></li>
                         <li class="breadcrumb-item active" aria-current="page">${item.name}</li>
                     </ol>
                 </nav>
@@ -66,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                              src="${image_url}" 
                              class="img-fluid rounded shadow" 
                              alt="${item.name}"
-                             style="width: 100%; height: 400px; object-fit: cover;">
+                             style="width: 100%; height: 400px; object-fit: contain;">
                     </div>
                     <!-- Right Side - Item Details -->
                     <div class="col-md-6 p-4">

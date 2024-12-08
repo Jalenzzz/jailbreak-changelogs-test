@@ -1,31 +1,33 @@
-.card {
+  .card {
     width: 100%; /* Ensures the card uses the full width of its container */
     border-radius: 12px;
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
-  
-.items-card:hover {
+
+  .items-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   }
-  
+
   .card-img-top {
-    height: 220px; /* Larger height for the image */
-    object-fit: cover; /* Ensures the image is cropped nicely */
+    height: 200px; /* Consistent height */
+    width: 100%;
+    object-fit: contain; /* Changed from cover to contain */
   }
-  
+
   .card-title {
     font-size: 1.2rem;
     font-weight: bold;
     margin: 10px 0;
   }
-  
+
   .card-text {
     font-size: 1rem;
     color: #555;
     margin-bottom: 8px;
   }
+
   .input-group {
     position: relative;
   }
