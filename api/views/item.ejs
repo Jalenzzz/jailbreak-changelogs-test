@@ -11,10 +11,8 @@
     <!-- Open Graph metadata for social media sharing -->
     <meta property="og:title" content="<%= title %>" />
     <meta property="og:description" content="View detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak, including its value, rarity, and trading information." />
-    <meta
-      property="og:image"
-      content="<%= item?.image || 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp' %>"
-    />
+    <meta property="og:image" content="<%= image_url %>">
+    
     <meta property="og:url" content="https://jailbreakchangelogs.xyz/item/<%= encodeURIComponent(itemName) %>" />
     <meta property="og:type" content="website" />
 
@@ -33,7 +31,6 @@
       name="twitter:image"
       content="<%= item?.image || 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp' %>"
     />
-
 
     <title><%= title %></title>
 

@@ -253,18 +253,24 @@ app.get("/item/:item", async (req, res) => {
 
     const item = await response.json();
     
+    // Construct the image URL
+    const image_type = item.type.toLowerCase();
+    const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
+
     res.render("item", {
       title: `${item.name} / Changelogs`,
       logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp',
       logoAlt: 'Item Page Logo',
       itemName,
-      item
+      item,
+      image_url // Pass the image URL to the template
     });
   } catch (error) {
     console.error("Error fetching item data:", error);
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 app.get('/faq', (req, res) => {
   res.render('faq', {
