@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let color = '#124E66';
         if (item.type === 'Vehicle') color = '#c82c2c';
         if (item.type === 'Spoiler') color = '#C18800';
+        if (item.type === 'Textures') color = '#C18800';
     
         const image_type = item.type.toLowerCase();
         const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
