@@ -1166,7 +1166,7 @@ function updateDropdownButton(text) {
   }
   function addComment(comment) {
     const listItem = document.createElement("li");
-    listItem.classList.add("list-group-item", "d-flex", "align-items-start");
+    listItem.classList.add("list-group-item", "d-flex", "align-items-start", "mb-3");
 
     const avatarElement = document.createElement("img");
     const defaultAvatarUrl = "/favicon.ico";
@@ -1175,41 +1175,57 @@ function updateDropdownButton(text) {
       : avatarUrl;
     avatarElement.classList.add("rounded-circle", "m-1");
     avatarElement.width = 32;
+    avatarElement.id = `avatar-${userdata.id}`
     avatarElement.height = 32;
-    avatarElement.onerror = function () {
-      console.error('Image loading failed, using default avatar');
-      avatarElement.src = defaultAvatarUrl;
-    };
+    avatarElement.onerror = handleinvalidImage;
 
     const commentContainer = document.createElement("div");
-    commentContainer.classList.add("ms-2", "comment-item"); // Add margin to the left of the comment
+    commentContainer.classList.add("ms-2", "comment-item", "w-100");
+    commentContainer.style.backgroundColor = "#2E3944";
+    commentContainer.style.padding = "12px";
+    commentContainer.style.borderRadius = "8px";
+    commentContainer.style.marginBottom = "8px";
+
+    const headerContainer = document.createElement("div");
+    headerContainer.classList.add("d-flex", "align-items-center", "flex-wrap");
 
     const usernameElement = document.createElement("a");
     usernameElement.href = `/users/${userdata.id}`; // Set the href to redirect to the user's page
     usernameElement.textContent = userdata.global_name; // Set the text to the user's global name
     usernameElement.style.fontWeight = "bold"; // Make the text bold
+    usernameElement.style.color = "#748D92";
+    usernameElement.style.textDecoration = "none";
+    usernameElement.style.transition = "color 0.2s ease";
+    usernameElement.style.fontWeight = "bold";
 
     usernameElement.addEventListener('mouseenter', () => {
+      usernameElement.style.color = "#D3D9D4";
       usernameElement.style.textDecoration = 'underline';
-    })
+    });
     usernameElement.addEventListener('mouseleave', () => {
+      usernameElement.style.color = "#748D92";
       usernameElement.style.textDecoration = 'none';
-    })
-    
-    const commentTextElement = document.createElement("p");
-    commentTextElement.textContent = comment.value;
-    commentTextElement.classList.add("mb-0", "comment-text");
+    });
+
 
     const date = Math.floor(Date.now() / 1000);
     const formattedDate = formatDate(date); // Assuming comment.date contains the date string
     const dateElement = document.createElement("small");
-    dateElement.textContent = formattedDate; // Add the formatted date
+    dateElement.textContent = ` · ${formattedDate}`;; // Add the formatted date
     dateElement.classList.add("text-muted"); // Optional: Add a class for styling
 
     // Append elements to the comment container
     commentContainer.appendChild(usernameElement);
-    commentContainer.appendChild(commentTextElement);
     commentContainer.appendChild(dateElement);
+
+    const commentTextElement = document.createElement("p");
+    commentTextElement.textContent = comment.value;
+    commentTextElement.classList.add("mb-0", "comment-text");
+    commentTextElement.style.color = "#D3D9D4";
+    commentTextElement.style.marginTop = "4px";
+
+    commentContainer.appendChild(headerContainer);
+    commentContainer.appendChild(commentTextElement);
 
     // Append avatar and comment container to the list item
     listItem.appendChild(avatarElement);
@@ -1297,7 +1313,7 @@ function updateDropdownButton(text) {
   const commentsPerPage = 7; // Number of comments per page
   let comments = []; // Declare the comments array globally
 
-  // Function to load comments
+// Function to load comments
 function loadComments(commentsData) {
   comments = commentsData; // Assign the fetched comments to the global variable
   commentsList.innerHTML = ""; // Clear existing comments
@@ -1341,9 +1357,15 @@ function loadComments(commentsData) {
       avatarElement.classList.add("rounded-circle", "m-1");
       avatarElement.width = 32;
       avatarElement.height = 32;
+      avatarElement.id = `avatar-${userdata.id}`
+      avatarElement.onerror = handleinvalidImage;
 
       const commentContainer = document.createElement("div");
       commentContainer.classList.add("ms-2", "comment-item", "w-100");
+      commentContainer.style.backgroundColor = "#2E3944";
+      commentContainer.style.padding = "12px";
+      commentContainer.style.borderRadius = "8px";
+      commentContainer.style.marginBottom = "8px";
 
       // Create a container for the username and date (on the same line)
       const headerContainer = document.createElement("div");
@@ -1352,14 +1374,21 @@ function loadComments(commentsData) {
       const usernameElement = document.createElement("a");
       usernameElement.href = `/users/${userData.id}`; // Set the href to redirect to the user's page
       usernameElement.textContent = userData.global_name; // Set the text to the user's global name
-      usernameElement.style.fontWeight = "bold"; // Make the text bold
+      usernameElement.style.fontWeight = "bold";
+      usernameElement.style.color = "#748D92";
+      usernameElement.style.textDecoration = "none";
+      usernameElement.style.transition = "color 0.2s ease";
+      usernameElement.style.fontWeight = "bold";
 
       usernameElement.addEventListener('mouseenter', () => {
+        usernameElement.style.color = "#D3D9D4";
         usernameElement.style.textDecoration = 'underline';
-      })
+      });
       usernameElement.addEventListener('mouseleave', () => {
+        usernameElement.style.color = "#748D92";
         usernameElement.style.textDecoration = 'none';
-      })
+      });
+  
 
       const dateElement = document.createElement("small");
       const formattedDate = formatDate(comment.date);
@@ -1373,6 +1402,8 @@ function loadComments(commentsData) {
       const commentTextElement = document.createElement("p");
       commentTextElement.textContent = comment.content;
       commentTextElement.classList.add("mb-0", "comment-text");
+      commentTextElement.style.color = "#D3D9D4";
+      commentTextElement.style.marginTop = "4px";
 
       // Append the avatar, header, and comment content to the list item
       commentContainer.appendChild(headerContainer);
@@ -1512,3 +1543,9 @@ function renderPaginationControls(totalPages) {
   bootstrap.Dropdown.getOrCreateInstance($("#mobileChangelogDropdown")[0]);
   bootstrap.Dropdown.getOrCreateInstance($("#desktopChangelogDropdown")[0]);
 });
+
+function handleinvalidImage() {
+  setTimeout(() => {
+    this.src = "/assets/profile-pic-placeholder.png"; // Set the placeholder after the delay
+  }, 0);  // Adjust the delay time as needed (500ms in this case)
+}

@@ -9,17 +9,17 @@
     <base href="/">
 
     <!-- Open Graph metadata for social media sharing -->
-    <meta property="og:title" content="Item Values and Trade Information for Traders" />
-    <meta property="og:description" content="Explore item values, view images, and make informed trade decisions with ease. Perfect for traders looking to buy, sell, or trade valuable items." />
+    <meta property="og:title" content="<%= title %>" />
+    <meta property="og:description" content="View detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak, including its value, rarity, and trading information." />
     <meta
       property="og:image"
-      content=""
+      content="<%= item?.image || 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp' %>"
     />
-    <meta property="og:url" content="https://jailbreakchangelogs.xyz/values" />
+    <meta property="og:url" content="https://jailbreakchangelogs.xyz/item/<%= encodeURIComponent(itemName) %>" />
     <meta property="og:type" content="website" />
 
     <!-- Additional metadata for SEO -->
-    <meta name="description" content="Explore item values, view images, and make informed trades. Perfect for traders looking to find valuable items and negotiate the best deals." />
+    <meta name="description" content="Learn everything about <%= title.replace(' / Changelogs', '') %> in Jailbreak. Find out its current value, rarity status, and make informed trading decisions." />
 
     <meta name="robots" content="index, follow" />
 
@@ -27,15 +27,15 @@
 
     <!-- Twitter Card metadata -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Item Values and Trade Information for Traders" />
-
-    <meta name="twitter:description" content="Browse item values, view images, and make informed trade decisions. Perfect for traders looking to negotiate the best deals." />
+    <meta name="twitter:title" content="<%= title %>" />
+    <meta name="twitter:description" content="Get detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. View its current value, rarity, and make smart trading decisions." />
     <meta
-    name="twitter:image"
-    content=""
+      name="twitter:image"
+      content="<%= item?.image || 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp' %>"
     />
 
-    <title>Items Page</title>
+
+    <title><%= title %></title>
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://jailbreakchangelogs.xyz/values" />

@@ -215,19 +215,55 @@ app.get('/bot', (req, res) => {
 
 app.get('/values', (req, res) => {
   res.render('values', {
-    title: 'Values',
+    title: 'Values / Changelogs',
     logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp',
     logoAlt: 'Values Page Logo'
   });
 });
 
-app.get('/item/:item', (req, res) => {
-  res.render('item', {
-    title: 'Item',
-    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp',
-    logoAlt: 'Item Page Logo',
-    itemName: req.params.item
-  });
+app.get("/item/:item", async (req, res) => {
+  let itemName = decodeURIComponent(req.params.item)
+    .trim()
+    .replace(/\s+/g, ' ');
+  const apiUrl = `https://api.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(itemName)}`;
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://jailbreakchangelogs.xyz",
+      },
+    });
+
+    if (response.status === 404) {
+      res.render("item", {
+        title: "Item not found",
+        logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp',
+        logoAlt: 'Item Page Logo',
+        itemName,
+        error: true
+      });
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+
+    const item = await response.json();
+    
+    res.render("item", {
+      title: `${item.name} / Changelogs`,
+      logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp',
+      logoAlt: 'Item Page Logo',
+      itemName,
+      item
+    });
+  } catch (error) {
+    console.error("Error fetching item data:", error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 app.get('/faq', (req, res) => {

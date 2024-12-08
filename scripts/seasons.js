@@ -427,6 +427,7 @@ const debouncedReloadComments = debounce(reloadcomments, 300);
     avatarElement.classList.add("rounded-circle", "m-1");
     avatarElement.width = 32;
     avatarElement.height = 32;
+    avatarElement.onerror = handleinvalidImage;
 
     const commentContainer = document.createElement("div");
     commentContainer.classList.add("ms-2", "comment-item"); // Add margin to the left of the comment
@@ -595,6 +596,7 @@ function loadComments(commentsData) {
       avatarElement.classList.add("rounded-circle", "m-1");
       avatarElement.width = 32;
       avatarElement.height = 32;
+      avatarElement.onerror = handleinvalidImage;
 
       const commentContainer = document.createElement("div");
       commentContainer.classList.add("ms-2", "comment-item", "w-100");
@@ -761,3 +763,9 @@ function renderPaginationControls(totalPages) {
     comment.value = ""; // Clear the comment input field
   });
 });
+
+function handleinvalidImage() {
+  setTimeout(() => {
+    this.src = "/assets/profile-pic-placeholder.png"; // Set the placeholder after the delay
+  }, 0);  // Adjust the delay time as needed (500ms in this case)
+}

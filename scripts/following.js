@@ -46,6 +46,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="col-auto me-3">
           <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" 
                class="user-avatar rounded-circle" 
+               id="avatar-${user.id}"
+               onerror="handleinvalidImage(this)"
                alt="${user.username}">
         </div>
         <div class="col">
@@ -67,3 +69,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         usersGrid.textContent = "This user isnt following anyone"; // Message when there are no followers
     }
 });
+function handleinvalidImage(imgElement) {
+  console.log("Invalid image");
+  console.log(imgElement.id); // This will now correctly print the id
+  setTimeout(() => {
+    imgElement.src = "/assets/profile-pic-placeholder.png"; // Set the placeholder after the delay
+  }, 0);  // Adjust the delay time as needed (500ms in this case)
+}
