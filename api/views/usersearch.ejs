@@ -94,35 +94,52 @@
           </ol>
         </nav>
         
-        <div class="text-center mb-4">
-          <h1>User Search</h1>
-        </div>
-        <div class="row justify-content-center">
-          <div class="col-12">
-            <div class="search-box card p-3 p-sm-2 mb-4">
-              <div class="input-group">
-                <input
-                  type="text"
-                  id="searchInput"
-                  placeholder="Search for a user..."
-                  class="form-control"
-                />
-                <button class="btn btn-primary" id="searchButton">Search</button>
+        <div class="container">
+          <div class="text-center mb-4">
+            <h1 class="display-5 fw-bold">
+              <i class="bi bi-people-fill me-2"></i>User Search
+            </h1>
+            <p class="text-muted">Find users by their username or display name</p>
+          </div>
+          
+          <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+              <div class="search-box shadow-sm p-3 mb-4">
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search for a user..."
+                    class="form-control ps-0"
+                    autocomplete="off"
+                  />
+                  <button class="btn btn-primary px-4" id="searchButton">
+                    <i class="bi bi-arrow-right"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="row justify-content-center">
-          <div class="col-12">
-            <div class="search-box card p-3 p-sm-2 results" style="display: none;" id="user-results">
-              <div id="loading-spinner" class="loading-spinner" style="display: none;">
-                <div class="custom-spinner"></div>
-              </div> 
-              <div id="usersGrid" class="user-grid">
+        
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <div id="user-results" class="results-container fade-in" style="display: none; background-color: #212A31; padding: 1.5rem;">
+                <div id="loading-spinner" class="loading-spinner" style="display: none;">
+                  <div class="custom-spinner"></div>
+                </div> 
+                <div id="usersGrid" class="user-grid">
+                </div>
               </div>
             </div>
           </div>
+          
+          
         </div>
+        
+        
       </div>
     </div>
 

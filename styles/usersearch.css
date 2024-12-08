@@ -1,17 +1,93 @@
-.btn-primary {
-  background-color: #032b44;
-  border-color: #032b44; /* Border color on hover */
-  color: #ffffff;
+:root {
+  --color-dark: #212A31;
+  --color-dark-blue: #2E3944;
+  --color-teal: #124E66;
+  --color-gray: #748D92;
+  --color-light: #D3D9D4;
 }
-.btn-primary:hover,
-.btn-primary:focus,
-.btn-primary:active,
-.btn-primary.active {
-  background-color: #212a31 !important; /* Hover state for primary button */
-  border-color: #212a31 !important; /* Border color on hover */
-}
+
+/* General Styles */
 body {
-  background-color: #2e3944;
+  background-color: var(--color-dark);
+  color: var(--color-light);
+}
+.results-container {
+  background-color: #212A31;
+}
+
+
+/* Search Box Styles */
+.search-box {
+  background: var(--color-dark);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.search-box:focus-within {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+.input-group-text {
+  border: none;
+  background: transparent;
+  color: var(--color-gray);
+  font-size: 1.2rem;
+}
+
+.form-control {
+  border: none;
+  background: transparent;
+  color: var(--color-light);
+  font-size: 1rem;
+}
+
+.form-control::placeholder {
+  color: var(--color-gray);
+}
+
+.form-control:focus {
+  background: transparent;
+  color: var(--color-light);
+  box-shadow: none;
+}
+
+.btn-primary {
+  background-color: var(--color-teal);
+  border-color: var(--color-teal);
+  border-radius: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #165d78;
+  border-color: #165d78;
+  transform: translateX(2px);
+}
+
+/* User Card Styles */
+.user-card {
+  background: var(--color-dark-blue);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.user-card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2) !important;
+}
+
+.user-avatar {
+  object-fit: cover;
+  border: 2px solid var(--color-dark-blue);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.user-name {
+  color: var(--color-light);
+}
+
+.user-username {
+  color: var(--color-gray) !important;
 }
 
 .loading-spinner {
@@ -19,18 +95,6 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 200px;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(
-    33,
-    42,
-    49,
-    0.8
-  ); /* Add this for a semi-transparent background */
 }
 
 .custom-spinner {
@@ -44,45 +108,7 @@ body {
   border-left-color: #ff341c;
   animation: spin 1s linear infinite;
 }
-.breadcrumb {
-  border-radius: 0.25rem;
-  padding: 12px 20px;
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  max-width: fit-content;
-  margin: 0;
-}
 
-.breadcrumb-item {
-  margin-right: 15px;
-  font-size: 16px;
-  position: relative;
-}
-
-.breadcrumb-item:not(:last-child)::after {
-  content: "›";
-  color: #6c757d;
-  margin-left: 15px;
-}
-
-.breadcrumb-item a {
-  text-decoration: none;
-  color: #ffffff;
-  transition: color 0.3s, opacity 0.3s;
-  opacity: 0.8;
-}
-
-.breadcrumb-item a:hover {
-  color: #ffffff;
-  opacity: 1;
-}
-
-.breadcrumb-item.active {
-  color: #ffffff;
-  font-weight: 600;
-  opacity: 1;
-}
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -92,124 +118,125 @@ body {
   }
 }
 
-.results {
-  min-height: 200px;
-  position: relative;
-}
-
-.cursive {
-  font-size: 0.8rem; /* make the text smaller */
-  font-style: italic; /* make the text cursive */
-}
-
-/* Adjust the body when menu is opened */
-body.menu-open {
-  overflow: hidden;
-}
-.user-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
-  margin-top: 15px;
-}
-.user-card {
-  background-color: #2C2F33;
-  border-radius: 12px;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  width: 100%; /* Ensure the card takes full width */
-}
-.user-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
-.user-avatar {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border: 2px solid #7289DA;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-.user-info {
-  flex-grow: 1;
-  min-width: 0; /* Allows text to wrap properly */
-}
-.user-name {
-  font-weight: 600;
-  color: #FFFFFF;
-  font-size: 1.1rem;
-  margin-bottom: 0.25rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.user-username {
-  font-size: 0.9rem;
-  color: #99AAB5;
-  margin-bottom: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.view-profile-btn {
-  background-color: #124E66;
-  border-color: #748D92;
-  color: #FFFFFF;
-  transition: background-color 0.3s ease-in-out;
-  white-space: nowrap;
-}
-
-
-.search-box {
-  background-color: #212529;
-}
-
+/* Message Styles */
+.search-message, 
 .no-results-message {
+  padding: 3rem;
   text-align: center;
-  font-size: 1.2rem;
-  color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  margin-top: 20px;
+  border-radius: 1rem;
 }
 
-@media (max-width: 767px) {
-  .search-box {
-    width: 100% !important;
+.search-message i, 
+.no-results-message i {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-teal);
+}
+
+.text-muted {
+  color: var(--color-gray) !important;
+}
+
+/* Heading Styles */
+h1.display-5 {
+  color: var(--color-light);
+}
+
+h1 .bi {
+  color: var(--color-teal);
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  #loading-overlay .loading-logo {
-    width: 200px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Add these media queries at the end of your usersearch.css */
+
+/* Small devices (phones) */
+@media (max-width: 576px) {
+  /* Adjust search box */
+  .search-box {
+    padding: 0.5rem;
+  }
+
+  .form-control {
+    font-size: 0.9rem;
+  }
+
+  .input-group-text {
+    font-size: 1rem;
+  }
+
+  /* Adjust heading */
+  h1.display-5 {
+    font-size: 1.8rem;
+  }
+
+  .user-avatar {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  .card-body {
+    padding: 0.75rem !important;
+  }
+
+  .user-name {
+    font-size: 0.9rem !important;
+  }
+  .user-username {
+    font-size: 0.75rem !important;
+  }
+
+  /* Adjust user cards */
+  .user-card {
+    margin: 0.5rem 0;
   }
   .custom-spinner {
     width: 30px;
     height: 30px;
   }
+
+  /* Adjust messages */
+  .search-message, 
+  .no-results-message {
+    padding: 2rem 1rem;
+  }
 }
-@media (max-width: 576px) {
-  .user-card {
-    width: 100%;
+
+/* Medium devices (tablets) */
+@media (max-width: 768px) {
+  /* Adjust container padding */
+  .results-container {
+    padding: 1rem !important;
   }
-  .user-avatar {
-    width: 50px;
-    height: 50px;
+
+  /* Adjust user grid */
+  .user-grid {
+    gap: 1rem;
   }
-  .user-name {
-    font-size: 1rem;
+
+  /* Disable hover effects on touch devices */
+  .user-card:hover {
+    transform: none;
+    box-shadow: none !important;
   }
-  .user-username {
-    font-size: 0.8rem;
+
+  .search-box:focus-within {
+    transform: none;
   }
-  .view-profile-btn {
-    font-size: 0.8rem;
-    padding: 0.25rem 0.5rem;
-  }
-  .breadcrumb {
-    padding: 10px 15px;
-  }
-  .breadcrumb-item {
-    font-size: 14px;
-    margin-right: 10px;
-  }
-  .breadcrumb-item:not(:last-child)::after {
-    margin-left: 10px;
+
+  .btn-primary:hover {
+    transform: none;
   }
 }

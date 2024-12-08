@@ -1,119 +1,156 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const searchInput = document.getElementById("searchInput");
-  const searchButton = document.getElementById("searchButton");
+// Constants
+const API_BASE_URL = 'https://api.jailbreakchangelogs.xyz';
+const DISCORD_CDN = 'https://cdn.discordapp.com';
+const MIN_SEARCH_LENGTH = 3;
 
-  const displayUsers = async (users) => {
-    const searchTerm = searchInput.value.trim();
-    const usersGrid = document.getElementById("usersGrid");
-    const loadingSpinner = document.getElementById("loading-spinner");
-  
-    loadingSpinner.style.display = "none";
-    usersGrid.style.display = "block";
-    usersGrid.innerHTML = ""; // Clear previous results
-  
-    if (users.length === 0) {
-      // Display "No results found :(" message
-      const noResultsMessage = document.createElement("div");
-      noResultsMessage.className = "no-results-message";
-      noResultsMessage.textContent = "No results found :(";
-      usersGrid.appendChild(noResultsMessage);
-      return;
-    }
-  
-    if (users.length === 1) {
-      return (window.location.href = `/users/${users[0].id}`);
-    }
-    const exact_match = users.filter(
-      (user) => user.username === searchTerm.toLowerCase()
-    );
-    if (exact_match.length > 0) {
-      return (window.location.href = `/users/${exact_match[0].id}`);
-    }
-  
-    // Helper to check if a URL returns 404
-    const isValidImage = async (url) => {
-      try {
-        const response = await fetch(url, { method: "HEAD" });
-        return response.ok; // True if status is 200-299
-      } catch {
-        return false; // Any fetch error will result in false
-      }
-    };
-  
-    // Process each user
-    for (const user of users) {
-      const userCard = document.createElement("div");
-      let avatar = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-  
-      userCard.className = "user-card";
-      userCard.innerHTML = `
-        <div class="card user-card mb-3 border-0 shadow-sm">
-          <div class="card-body p-3">
-            <div class="d-flex align-items-center">
-              <img src="${avatar}"
-                   class="user-avatar rounded-circle me-3" 
-                   alt="${user.username}">
-              <div class="user-info">
-                <h5 class="user-name">${user.global_name}</h5>
-                <p class="user-username mb-0">@${user.username}</p>
-              </div>
-              <div class="ms-auto">
-                <a href="/users/${user.id}" class="btn btn-primary btn-sm view-profile-btn">
-                  View Profile
-                </a>
-              </div>
-            </div>
+const elements = {
+  searchInput: document.getElementById('searchInput'),
+  searchButton: document.getElementById('searchButton'),
+  usersGrid: document.getElementById('usersGrid'),
+  loadingSpinner: document.getElementById('loading-spinner'),
+  userResults: document.getElementById('user-results')
+};
+
+// Message Templates
+const messages = {
+  minLength: `
+    <div class="col-12 text-center py-5">
+      <div class="search-message text-muted">
+        <i class="bi bi-info-circle me-2"></i>
+        Please enter at least ${MIN_SEARCH_LENGTH} characters to search
+      </div>
+    </div>
+  `,
+  noResults: `
+    <div class="col-12 text-center py-5">
+      <div class="no-results-message text-muted">
+        <i class="bi bi-search me-2"></i>
+        No results found :(
+      </div>
+    </div>
+  `
+};
+
+// User Card Template
+const createUserCard = (user) => {
+  const avatar = `${DISCORD_CDN}/avatars/${user.id}/${user.avatar}.png`;
+  return `
+   <div class="col-12 col-md-6 col-lg-4">
+    <div class="card user-card border-0 shadow-sm h-100">
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center gap-2">
+          <img 
+            src="${avatar}"
+            class="user-avatar rounded-circle flex-shrink-0" 
+            alt="${user.username}"
+            width="60"
+            height="60"
+            onerror="this.src='/assets/profile-pic-placeholder.png'"
+          >
+          <div class="user-info overflow-hidden flex-grow-1">
+            <h5 class="user-name text-truncate mb-1 fs-6">${user.global_name}</h5>
+            <p class="user-username text-muted small mb-0">@${user.username}</p>
           </div>
+          <a href="/users/${user.id}" class="btn btn-primary btn-sm rounded-pill ms-2">
+            View
+          </a>
         </div>
-      `;
-  
-      usersGrid.appendChild(userCard);
+      </div>
+    </div>
+  </div>
+
+  `;
+};
+
+// Display Functions
+const showLoading = () => {
+  elements.usersGrid.style.display = 'none';
+  elements.loadingSpinner.style.display = 'flex';
+  elements.userResults.style.display = 'block';
+};
+
+const hideLoading = () => {
+  elements.loadingSpinner.style.display = 'none';
+  elements.usersGrid.style.display = 'block';
+};
+
+const showMessage = (message) => {
+  elements.loadingSpinner.style.display = 'none';
+  elements.usersGrid.innerHTML = message;
+  elements.usersGrid.style.display = 'block';
+  elements.userResults.style.display = 'block';
+};
+
+// User Display Logic
+const displayUsers = (users) => {
+  // Display user grid
+  elements.usersGrid.innerHTML = `
+    <div class="row g-4">
+      ${users.map(user => createUserCard(user)).join('')}
+    </div>
+  `;
+};
+
+// API Functions
+const searchUsers = async (searchTerm) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/get/name?name=${searchTerm}`);
+    if (!response.ok) {
+      throw new Error(response.status === 404 ? 'No users found' : 'Server error');
     }
-  };
+    return await response.json();
+  } catch (error) {
+    console.error('Search error:', error);
+    return [];
+  }
+};
+
+// Event Handlers
+const handleSearch = async () => {
+  const searchTerm = elements.searchInput.value.trim();
   
+  // Show minimum character message without loading spinner
+  if (searchTerm.length < MIN_SEARCH_LENGTH) {
+    showMessage(messages.minLength);
+    return;
+  }
 
-  // Function to handle search requests
-  const handleSearch = async () => {
-    const usersGrid = document.getElementById("usersGrid");
-    usersGrid.style.display = "none";
-    const searchTerm = searchInput.value.trim();
-    const loadingSpinner = document.getElementById("loading-spinner");
-    const userResults = document.getElementById("user-results");
+  // Only show loading spinner for actual searches
+  showLoading();
+  const users = await searchUsers(searchTerm);
+  
+  if (users.length === 0) {
+    showMessage(messages.noResults);
+  } else {
+    displayUsers(users);
+    hideLoading();
+  }
+};
 
-    if (searchTerm) {
-      userResults.style.display = "block";
-      loadingSpinner.style.display = "flex"; // Changed to 'flex'
-      try {
-        const response = await fetch(
-          `https://api.jailbreakchangelogs.xyz/users/get/name?name=${searchTerm}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          displayUsers(data);
-        } else {
-          if (response.status === 404) {
-            displayUsers([]);
-          } else {
-            console.error("Error fetching users:", response.statusText);
-          }
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        loadingSpinner.style.display = "none";
-      }
-    } else {
-      alert("Please enter a username to search.");
-    }
-  };
+document.addEventListener('DOMContentLoaded', () => {
+  showMessage(messages.minLength);
+  elements.searchButton.addEventListener('click', handleSearch);
 
-  // Event listener for search button click
-  searchButton.addEventListener("click", handleSearch);
-
-  // Event listener for Enter key press inside the input
-  searchInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
+  // Enter key to search
+  elements.searchInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
       handleSearch();
     }
+  });
+
+  // Handle real-time search as user types
+  let searchTimeout;
+  elements.searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    const searchTerm = elements.searchInput.value.trim();
+    
+    // Immediately show minimum character message if < 3 characters
+    if (searchTerm.length < MIN_SEARCH_LENGTH) {
+      showMessage(messages.minLength);
+      return;
+    }
+    
+    // Debounce actual searches
+    searchTimeout = setTimeout(handleSearch, 300);
   });
 });
