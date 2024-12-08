@@ -8,6 +8,128 @@
   border-bottom: 3px solid #124E66; /* Deep teal accent border */
   overflow: hidden;
 }
+/* Base footer styles */
+.jb-footer {
+  position: relative;
+}
+
+.jb-footer__heading {
+  font-weight: 600;
+  color: #fa331b;
+  font-size: 1.25rem;
+}
+
+/* Container adjustments */
+.jb-footer__container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Link styles */
+.jb-footer__link {
+  color: #ffffff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9375rem;
+}
+
+.jb-footer__link:hover {
+  opacity: 0.8;
+}
+
+/* Social/platform specific link hover colors */
+.jb-footer__link--reddit:hover {
+  color: #FF4500;
+}
+
+.jb-footer__link--discord:hover {
+  color: #7289DA;
+}
+
+.jb-footer__link--wiki:hover {
+  color: #00ff00;
+}
+
+.jb-footer__link--docs:hover {
+  color: #61dafb;
+}
+
+/* Button styles */
+.jb-footer__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.jb-footer__button {
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  font-size: 0.9375rem;
+  padding: 0.5rem 1rem;
+}
+
+.jb-footer__button:hover {
+  transform: translateY(-2px);
+}
+
+/* Maintainer link styles */
+.jb-footer__maintainer-link {
+  color: #61dafb;
+  text-decoration: none;
+}
+
+.jb-footer__maintainer-link:hover {
+  text-decoration: underline;
+}
+
+/* Legal link styles */
+.jb-footer__legal-link {
+  color: #ffffff;
+  text-decoration: underline;
+  transition: opacity 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.jb-footer__legal-link:hover {
+  opacity: 0.8;
+}
+
+/* Version and timestamp styles */
+.jb-footer__version,
+.jb-footer__updated {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+}
+
+.jb-footer__link--version {
+  color: #fff !important;
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+.jb-footer__link--version:hover {
+  opacity: 0.8;
+}
+
+.jb-footer__timestamp {
+  color: #fff;
+}
+
+/* Text styles */
+.jb-footer__text,
+.jb-footer__disclaimer,
+.jb-footer__maintainers,
+.jb-footer__timezone-text,
+.jb-footer__copyright {
+  font-size: 0.9375rem;
+}
+
+.jb-footer__timezone-text {
+  color: rgba(255, 255, 255, 0.6);
+}
 
 .custom-newsticker i {
   font-size: 20px; /* Icon size */
@@ -376,6 +498,52 @@
     .breadcrumb-item:not(:last-child)::after {
       margin-left: 15px;
     }
+    .jb-footer__section {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  
+    .jb-footer__heading {
+      font-size: 1.125rem;
+    }
+  
+    .jb-footer__link {
+      font-size: 0.875rem;
+    }
+  
+    .jb-footer__buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .jb-footer__button {
+      width: 100%;
+      max-width: 280px;
+    }
+  
+    .jb-footer__legal-link {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+  
+    .jb-footer__links {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  
+    .jb-footer__text,
+    .jb-footer__disclaimer,
+    .jb-footer__maintainers,
+    .jb-footer__timezone-text,
+    .jb-footer__copyright {
+      font-size: 0.875rem;
+    }
+  
+    .jb-footer__list-item {
+      margin-bottom: 0.75rem;
+    }
   }
 
   @media (max-width: 576px) {
@@ -395,5 +563,20 @@
 @media (max-width: 400px) {
     .navbar-logo {
       height: 30px; /* Adjusted height for extra small screens */
+    }
+    .jb-footer__heading {
+      font-size: 1.3rem;
+    }
+  
+    .jb-footer__link {
+      font-size: 0.9rem;
+    }
+  
+    .jb-footer__text,
+    .jb-footer__disclaimer,
+    .jb-footer__maintainers,
+    .jb-footer__timezone-text,
+    .jb-footer__copyright {
+      font-size: 0.8125rem;
     }
   }

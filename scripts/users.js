@@ -1,17 +1,11 @@
-
-
 document.addEventListener('DOMContentLoaded', function() {
     const permissions = JSON.parse(settings)
     const udata = JSON.parse(userData)
-    const recent_comments_tab = document.getElementById('recent-comments-tab');
+    
     const userDateBio = document.getElementById('description-updated-date');
     const recent_comments_button = document.getElementById('recent-comments-button');
 
-    // Lol! these are backwards, true = false, false = true
-    if (permissions.show_recent_comments === true) {
-        recent_comments_tab.remove();
-        recent_comments_button.remove();
-    }
+   
     const input = document.getElementById('bannerInput');
     const loggedinuserId = sessionStorage.getItem('userid');
     const pathSegments = window.location.pathname.split("/");
@@ -214,88 +208,120 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderPaginationControls(totalPages) {
         const paginationContainer = document.getElementById("paginationControls");
         paginationContainer.innerHTML = ""; // Clear existing controls
-
-        // Create double left arrow button
-        const doubleLeftArrow = document.createElement("button");
-        doubleLeftArrow.textContent = "<<";
-        doubleLeftArrow.classList.add("btn", "btn-outline-primary", "m-1");
-        doubleLeftArrow.disabled = currentPage === 1; // Disable if on the first page
-
-        doubleLeftArrow.style.outline = "2px solid #748D92"; // Set outline color and thickness
-
-        doubleLeftArrow.addEventListener("click", () => {
+    
+        // Common button styles with your color palette
+        const buttonClasses = "btn m-1";
+        const buttonStyle = `
+            background-color: #2E3944; 
+            color: #D3D9D4;
+            border: 1px solid #748D92;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.5rem;
+            transition: all 0.2s ease;
+        `;
+        const buttonHoverStyle = `
+            background-color: #124E66;
+            color: #D3D9D4;
+            border-color: #D3D9D4;
+        `;
+    
+        // Helper function to create buttons
+        function createButton(text, isDisabled, onClick) {
+            const button = document.createElement("button");
+            button.textContent = text;
+            button.classList.add(...buttonClasses.split(' '));
+            button.style.cssText = buttonStyle;
+            button.disabled = isDisabled;
+    
+            if (!isDisabled) {
+                button.addEventListener("mouseover", () => {
+                    button.style.cssText = buttonStyle + buttonHoverStyle;
+                });
+                button.addEventListener("mouseout", () => {
+                    button.style.cssText = buttonStyle;
+                });
+                button.addEventListener("click", onClick);
+            } else {
+                button.style.opacity = "0.5";
+                button.style.cursor = "not-allowed";
+            }
+    
+            return button;
+        }
+    
+        // Double left arrow
+        const doubleLeftArrow = createButton("<<", currentPage === 1, () => {
             if (currentPage > 1) {
                 currentPage = 1;
-                fetchUserComments(userId); // Fetch comments for the current page
+                fetchUserComments(userId);
             }
         });
         paginationContainer.appendChild(doubleLeftArrow);
     
-        // Create left arrow button
-        const leftArrow = document.createElement("button");
-        leftArrow.textContent = "<";
-        leftArrow.classList.add("btn", "btn-outline-primary", "m-1");
-        leftArrow.disabled = currentPage === 1; // Disable if on the first page
-
-        leftArrow.style.outline = "2px solid #748D92"; // Set outline color and thickness
-
-        leftArrow.addEventListener("click", () => {
+        // Left arrow
+        const leftArrow = createButton("<", currentPage === 1, () => {
             if (currentPage > 1) {
                 currentPage--;
-                fetchUserComments(userId); // Fetch comments for the current page
+                fetchUserComments(userId);
             }
         });
         paginationContainer.appendChild(leftArrow);
     
-        // Page number input
+        // Page input
         const pageInput = document.createElement("input");
         pageInput.type = "number";
         pageInput.value = currentPage;
         pageInput.min = 1;
         pageInput.max = totalPages;
         pageInput.classList.add("form-control", "mx-1");
-        pageInput.style.width = "60px"; // Set width for input
-        pageInput.style.marginTop = "10px"; // Add margin to the top
+        pageInput.style.cssText = `
+            width: 50px;
+            height: 31px;
+            font-size: 0.875rem;
+            padding: 0.25rem;
+            background-color: #2E3944;
+            color: #D3D9D4;
+            border: 1px solid #748D92;
+            text-align: center;
+        `;
         pageInput.addEventListener("change", () => {
             const newPage = parseInt(pageInput.value);
             if (newPage >= 1 && newPage <= totalPages) {
                 currentPage = newPage;
-                fetchUserComments(userId); // Fetch comments for the new page
+                fetchUserComments(userId);
             } else {
-                pageInput.value = currentPage; // Reset input if invalid
+                pageInput.value = currentPage;
             }
         });
         paginationContainer.appendChild(pageInput);
     
-        // Create right arrow button
-        const rightArrow = document.createElement("button");
-        rightArrow.textContent = ">";
-        rightArrow.classList.add("btn", "btn-outline-primary", "m-1");
-        rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
-        rightArrow.style.outline = "2px solid #748D92"; // Set outline color and thickness
-
-        rightArrow.addEventListener("click", () => {
+        // Right arrow
+        const rightArrow = createButton(">", currentPage === totalPages, () => {
             if (currentPage < totalPages) {
                 currentPage++;
-                fetchUserComments(userId); // Fetch comments for the current page
+                fetchUserComments(userId);
             }
         });
         paginationContainer.appendChild(rightArrow);
-        // Create double right arrow button
-        const doubleRightArrow = document.createElement("button");
-        doubleRightArrow.textContent = ">>";
-        doubleRightArrow.classList.add("btn", "btn-outline-primary", "m-1");
-        doubleRightArrow.disabled = currentPage === totalPages; // Disable if on the last page
-
-        doubleRightArrow.style.outline = "2px solid #748D92"; // Set outline color and thickness
-
-        doubleRightArrow.addEventListener("click", () => {
+    
+        // Double right arrow
+        const doubleRightArrow = createButton(">>", currentPage === totalPages, () => {
             currentPage = totalPages;
             fetchUserComments(userId);
         });
         paginationContainer.appendChild(doubleRightArrow);
+    
+        // Add total pages display
+        const totalPagesSpan = document.createElement("span");
+        totalPagesSpan.textContent = ` of ${totalPages}`;
+        totalPagesSpan.style.cssText = `
+            color: #D3D9D4;
+            margin-left: 0.5rem;
+            font-size: 0.875rem;
+        `;
+        paginationContainer.appendChild(totalPagesSpan);
     }
-
+    
     let currentPage = 1;
     const commentsPerPage = 3;
     
@@ -324,10 +350,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             const totalPages = Math.ceil(totalComments / commentsPerPage); // Calculate total pages
-    
-            // Clear existing comments
-            
-             // Render pagination controls
     
             // Slice the comments array for the current page
             const startIndex = (currentPage - 1) * commentsPerPage;
@@ -365,26 +387,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 commentElement.className = 'list-group-item';
                 // the actual comments
                 commentElement.innerHTML = `
-<div class="card mb-3 comment-card">
-    <div class="card-body">
-        <div class="comment-container">
-            <div class="comment-image-container d-none d-md-block">
-                <img src="${image_url}" alt="Comment Image" class="comment-image"/>
-            </div>
-            <div class="comment-content-container">
-                <div class="comment-header">
-                    <h6 class="card-title">${capitalizeFirstLetter(comment.item_type)} ${comment.item_id}</h6>
-                    <small class="text-muted">${formattedDate}</small>
+              <div class="card mb-3 comment-card shadow-lg" style="background-color: #212A31; color: #D3D9D4;">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Image Section -->
+                        <div class="col-md-4 d-none d-md-block">
+                            <img src="${image_url}" alt="Comment Image" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
+                        </div>
+                        
+                        <!-- Content Section -->
+                        <div class="col-md-8">
+                            <div class="comment-header mb-2">
+                                <h6 class="card-title" style="color: #748D92;">${capitalizeFirstLetter(comment.item_type)} ${comment.item_id}</h6>
+                                <small class="text-muted" style="color: #748D92;">${formattedDate}</small>
+                            </div>
+                            <h5 class="card-subtitle mb-2" style="color: #748D92;">${item.title}</h5>
+                            <p class="card-text" style="color: #D3D9D4;">${comment.content}</p>
+                            <a href="/${comment.item_type}s/${comment.item_id}" class="btn btn-outline-primary btn-sm mt-3" style="color: #124E66; border-color: #124E66; background-color: transparent;">
+                                View ${capitalizeFirstLetter(comment.item_type)}
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <h5 class="card-subtitle fw-bold">${item.title}</h5>
-                <p class="card-text comment-text">${comment.content}</p>
-                <a href="/${comment.item_type}s/${comment.item_id}" class="btn btn-outline-primary btn-sm">
-                    View ${capitalizeFirstLetter(comment.item_type)}
-                </a>
             </div>
-        </div>
-    </div>
-</div>
+
 `;
 
                 comments_to_add.push(commentElement); // Add the new comment to the array
@@ -500,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function() {
     message_button.addEventListener('click', async function() {
         await AlertToast("This feature is not yet implemented.")
     });
-    const about_button = document.getElementById('about-button');
+  
     if (loggedinuserId === userId) {
         message_button.style.display = 'none';
         follow_button.style.display = 'none';
@@ -513,6 +539,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const userBio = document.getElementById('userBio');
     const character_count = document.getElementById('character-count');
     fetchUserBio(userId)
+
+    if (permissions.show_recent_comments === false) {
+        card_pagination.style.display = 'block';
+       
+        fetchUserComments(userId);
+    }
+
     userAvatar = document.getElementById('user-avatar');
     if (!udata.accent_color) {
         userAvatar.style.border = '4px solid #000'; // Default blue border color
@@ -603,48 +636,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     const description_tab = document.getElementById('description-tab');
-    recent_comments_button.addEventListener('click', function () {
-        const recentComments = document.getElementById('comments-list');
-        // Remove 'active' class from About button and reset aria-selected
-        about_button.classList.remove('active');
-        about_button.setAttribute('aria-selected', 'false');
-        const loading_spinner = document.getElementById('loading-spinner');
-        if (!loading_spinner) {
-            card_pagination.innerHTML += '<span id="loading-spinner" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>';
-            recentComments.innerHTML = '<span id="loading-spinner" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>';
-        }
-        card_pagination.style.display = 'block'; // Reset pagination controls
-        description_tab.style.display = 'none';
-        recent_comments_tab.style.display = 'block'; // Show recent comments tab
-        fetchUserComments(userId); // Fetch recent comments
-
-        // Add 'active' class to Recent Comments button and update aria-selected
-        recent_comments_button.classList.add('active');
-        recent_comments_button.setAttribute('aria-selected', 'true');
-
-        // Optional: Any additional functionality you want to perform when this button is clicked
-    });
-    about_button.addEventListener('click', function () {
-        const recentComments = document.getElementById('comments-list');
-        // Remove 'active' class from Recent Comments button and reset aria-selected
-        if (document.getElementById('paginationControls')) {
-            document.getElementById('paginationControls').innerHTML = ''; // Reset pagination controls
-        }
-        recent_comments_button.classList.remove('active');
-        recentComments.innerHTML = ''; // Reset recent comments
-        recent_comments_button.setAttribute('aria-selected', 'false');
-        if (card_pagination) {
-            card_pagination.style.display = 'none';
-        }
-        recent_comments_tab.style.display = 'none'; // Reset recent comments tab
-        description_tab.style.display = 'block'; // Show description tab
-
-        // Add 'active' class to About button and update aria-selected
-        about_button.classList.add('active');
-        about_button.setAttribute('aria-selected', 'true');
-
-        // Optional: Any additional functionality you want to perform when this button is clicked
-    });
+    
+   
     async function fetchUserFollowers(userId) {
         try {
             const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/followers/get?user=${userId}`);
@@ -809,9 +802,6 @@ document.addEventListener('DOMContentLoaded', function() {
         hide_following_button.classList.add('btn-secondary');
         hide_followers_button.classList.add('btn-secondary');
         use_discord_banner_button.classList.add('btn-secondary');
-
-     
-        
 
         profile_public_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span><span id="button-text"></span>'
         show_comments_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span><span id="button-text"></span>'
@@ -1008,25 +998,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return 'None'; // Error or invalid URL
         }
     }
-    document.getElementById('open-chat-button').addEventListener('click', function() {
-        document.getElementById('chat-popup').style.display = 'flex';
-        document.getElementById('open-chat-button').style.display = 'none';
-    });
-    
-    document.getElementById('close-chat-popup').addEventListener('click', function() {
-        document.getElementById('chat-popup').style.display = 'none';
-        document.getElementById('open-chat-button').style.display = 'block';
-    });
-    
-    document.getElementById('send-chat-message').addEventListener('click', function() {
-        sendMessage();
-    });
-    
-    document.getElementById('chat-input').addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            sendMessage();
-        }
-    });
+  
     const save_settings_button = document.getElementById('settings-submit');
     const save_settings_loading = document.getElementById('settings-loading');
     save_settings_button.addEventListener('click', async function(event) {
