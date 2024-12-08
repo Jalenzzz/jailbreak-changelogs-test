@@ -221,6 +221,15 @@ app.get('/values', (req, res) => {
   });
 });
 
+app.get('/item/:item', (req, res) => {
+  res.render('item', {
+    title: 'Item',
+    logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp',
+    logoAlt: 'Item Page Logo',
+    itemName: req.params.item
+  });
+});
+
 app.get('/faq', (req, res) => {
   res.render('faq', {
     title: 'User FAQ',

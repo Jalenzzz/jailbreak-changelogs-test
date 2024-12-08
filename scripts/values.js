@@ -57,6 +57,16 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePaginationUI();
     updateTotalItemsCount();
 }
+
+function formatValue(value) {
+  console.log('Formatting value:', value);
+  if (isNaN(value) || value === 0 || value === null || value === undefined) {
+    return value; // Return the value as-is if it's not a number
+  }
+  
+  // Convert the value to a number, then format it with commas
+  return value.toLocaleString();
+}
   
   function createItemCard(item) {
     const cardDiv = document.createElement('div');
@@ -68,20 +78,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const image_type = item.type.toLowerCase();
     const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
+    const value = formatValue(item.cash_value);
+    const duped_value = formatValue(item.duped_value);
 
     cardDiv.innerHTML = `
-      <div class="card shadow-sm">
-        <img onerror="handleimage(this)" id="${item.name}" src="${image_url}" class="card-img-top" alt="${item.name}">
-        <div class="card-body text-center">
-          <span style="background-color: ${color}" class="badge">${item.type}</span>
-          <h5 class="card-title">${item.name}</h5>
-          <p class="card-text">Value: ${item.value}</p>
-        </div>
-      </div>
-    `;
+<div class="card items-card shadow-sm" onclick="handleCardClick('${item.name}')" style="cursor: pointer;">
+  <img onerror="handleimage(this)" id="${item.name}" src="${image_url}" class="card-img-top" alt="${item.name}">
+  <div class="card-body text-center">
+    <span style="background-color: ${color}" class="badge">${item.type}</span>
+    <h5 class="card-title">${item.name}</h5>
+    <p class="card-text" style="color: #00ff00">Cash Value: ${value}</p>
+    <p class="card-text" style="color: #FF0000">Duped Value: ${duped_value}</p>
+  </div>
+</div>`;
 
     return cardDiv;
   }
+  
 
   function updatePaginationUI() {
     const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
@@ -213,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
             itemsContainer.appendChild(itemsRow);
         }
         itemsRow.innerHTML = `
+            
             <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
                 <div class="no-results">
                     <h4>No items found for "${searchTerm}"</h4>
@@ -268,4 +282,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // Default Image
 function handleimage(element) {
   element.src = 'https://cdn.jailbreakchangelogs.xyz/backgrounds/background1.webp';
+}
+
+function handleCardClick(itemName) {
+  window.location.href =  '/item/' + itemName.toLowerCase();
 }

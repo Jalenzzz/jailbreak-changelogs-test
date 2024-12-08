@@ -1176,6 +1176,10 @@ function updateDropdownButton(text) {
     avatarElement.classList.add("rounded-circle", "m-1");
     avatarElement.width = 32;
     avatarElement.height = 32;
+    avatarElement.onerror = function () {
+      console.error('Image loading failed, using default avatar');
+      avatarElement.src = defaultAvatarUrl;
+    };
 
     const commentContainer = document.createElement("div");
     commentContainer.classList.add("ms-2", "comment-item"); // Add margin to the left of the comment

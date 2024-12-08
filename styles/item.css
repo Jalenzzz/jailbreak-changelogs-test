@@ -1,3 +1,23 @@
+.custom-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid transparent;
+  border-radius: 50%;
+  border-top-color: #31b1ff;
+  border-right-color: #31b1ff;
+  border-bottom-color: #ff341c;
+  border-left-color: #ff341c;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .card {
     width: 100%; /* Ensures the card uses the full width of its container */
     border-radius: 12px;
@@ -5,8 +25,8 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   
-.items-card:hover {
-    transform: translateY(-5px);
+  .card:hover {
+    
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   }
   
