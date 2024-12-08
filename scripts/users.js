@@ -492,9 +492,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
 
-
-
-
     const settings_button = document.getElementById('settings-button');
     const editbio_button = document.getElementById('edit-bio-button');
     editbio_button.innerHTML = '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>'

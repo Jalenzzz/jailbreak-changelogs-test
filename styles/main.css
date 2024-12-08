@@ -37,7 +37,7 @@
 
 .breadcrumb {
   border-radius: 0.25rem;
-  padding: 12px 20px;
+  padding: 8px 12px; /* Smaller padding by default */
   list-style: none;
   display: flex;
   flex-wrap: wrap;
@@ -46,15 +46,15 @@
 }
 
 .breadcrumb-item {
-  margin-right: 15px;
-  font-size: 16px;
+  margin-right: 10px; /* Smaller margin by default */
+  font-size: 14px; /* Smaller font size by default */
   position: relative;
 }
 
 .breadcrumb-item:not(:last-child)::after {
   content: "›";
   color: #6c757d;
-  margin-left: 15px;
+  margin-left: 10px; /* Smaller margin by default */
 }
 
 .breadcrumb-item a {
@@ -74,6 +74,7 @@
   font-weight: 600;
   opacity: 1;
 }
+
 /* NAVBAR STYLING */
 /* Logo Styling */
 .navbar-logo {
@@ -360,10 +361,20 @@
     color: #ffd700 !important;
   }
 
-  
   @media (max-width: 768px) {
     .footer-heading {
       margin-top: 1rem;
+    }
+    .breadcrumb {
+      padding: 12px 20px;
+    }
+  
+    .breadcrumb-item {
+      font-size: 14px;
+    }
+  
+    .breadcrumb-item:not(:last-child)::after {
+      margin-left: 15px;
     }
   }
 
