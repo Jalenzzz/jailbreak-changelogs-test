@@ -224,9 +224,8 @@ function createItemCard(item) {
   window.filterItems = function() {
     const searchTerm = document.getElementById('search-bar').value.toLowerCase();
     const searchBar = document.getElementById('search-bar');
-    const sortValue = document.getElementById('sort-dropdown').value; // Get current category
+    const sortValue = document.getElementById('sort-dropdown').value;
 
-    const minCharacters = 3;
     const itemsContainer = document.querySelector('#items-container');
     const searchMessages = document.getElementById('search-messages');
 
@@ -247,12 +246,10 @@ function createItemCard(item) {
         });
     }
 
-
     if (searchTerm.length === 0) {
-        filteredItems = categoryFilteredItems; // Keep category filter but reset search
+        filteredItems = categoryFilteredItems;
         searchBar.classList.remove('is-invalid');
         
-        // Ensure the row structure exists
         let itemsRow = itemsContainer.querySelector('.row');
         if (!itemsRow) {
             itemsRow = document.createElement('div');
@@ -267,11 +264,15 @@ function createItemCard(item) {
         return;
     }
 
+    // Check if current category is Rims
+    const isRimsCategory = sortValue === 'name-rims';
+    const minCharacters = isRimsCategory ? 1 : 3;
+
     if (searchTerm.length < minCharacters) {
         if (searchMessages) {
             searchMessages.innerHTML = `
                 <div class="search-feedback">
-                    Please enter at least ${minCharacters} characters to search
+                    Please enter at least ${minCharacters} character${minCharacters > 1 ? 's' : ''} to search
                 </div>
             `;
         }
@@ -285,30 +286,29 @@ function createItemCard(item) {
 
     // No results message if no items found
     if (filteredItems.length === 0) {
-      let itemsRow = itemsContainer.querySelector('.row');
-      if (!itemsRow) {
-          itemsRow = document.createElement('div');
-          itemsRow.classList.add('row');
-          itemsContainer.appendChild(itemsRow);
-      }
+        let itemsRow = itemsContainer.querySelector('.row');
+        if (!itemsRow) {
+            itemsRow = document.createElement('div');
+            itemsRow.classList.add('row');
+            itemsContainer.appendChild(itemsRow);
+        }
 
-      // Get current category name for the message
-      const sortValue = document.getElementById('sort-dropdown').value;
-      const categoryParts = sortValue.split('-');
-      const categoryName = categoryParts.slice(1).join(' ');
-      const categoryMessage = sortValue !== 'name-all-items' 
-          ? ` under category "${categoryName.replace(/-/g, ' ')}"`
-          : '';
+        const sortValue = document.getElementById('sort-dropdown').value;
+        const categoryParts = sortValue.split('-');
+        const categoryName = categoryParts.slice(1).join(' ');
+        const categoryMessage = sortValue !== 'name-all-items' 
+            ? ` under category "${categoryName.replace(/-/g, ' ')}"`
+            : '';
 
-      itemsRow.innerHTML = `
-          <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
-              <div class="no-results">
-                  <h4>No items found for "${searchTerm}"${categoryMessage}</h4>
-                  <p class="text-muted">Try different keywords or check the spelling</p>
-              </div>
-          </div>
-      `;
-      return;
+        itemsRow.innerHTML = `
+            <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
+                <div class="no-results">
+                    <h4>No items found for "${searchTerm}"${categoryMessage}</h4>
+                    <p class="text-muted">Try different keywords or check the spelling</p>
+                </div>
+            </div>
+        `;
+        return;
     }
 
     currentPage = 1;
@@ -333,19 +333,15 @@ function createItemCard(item) {
       
       // Clear search bar when switching categories
       if (searchBar) {
-        searchBar.value = '';
+          searchBar.value = '';
       }
 
       // Clear localStorage if "All Items" is selected, otherwise store the current value
       if (itemType === 'all-items') {
-        localStorage.removeItem('lastSort');
+          localStorage.removeItem('lastSort');
       } else {
-        localStorage.setItem('lastSort', sortValue);
+          localStorage.setItem('lastSort', sortValue);
       }
-
-      console.log('Sort Value:', sortValue);
-      console.log('Sort Type:', sortType);
-      console.log('Item Type:', itemType);
 
       if (itemType === 'all-items') {
           // Shuffle the array when showing all items
@@ -358,10 +354,56 @@ function createItemCard(item) {
           });
       }
 
+      // Handle empty category case
+      if (filteredItems.length === 0) {
+          const itemsContainer = document.querySelector('#items-container');
+          let itemsRow = itemsContainer.querySelector('.row');
+          if (!itemsRow) {
+              itemsRow = document.createElement('div');
+              itemsRow.classList.add('row');
+              itemsContainer.appendChild(itemsRow);
+          }
+
+          // Get category name for display
+          const categoryName = itemType.split('-').map(word => 
+              word.charAt(0).toUpperCase() + word.slice(1)
+          ).join(' ');
+
+          itemsRow.innerHTML = `
+              <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
+                  <div class="no-results text-center">
+                      <h4>No items available under ${categoryName}</h4>
+                      <p class="text-muted">This category is currently empty. Please check back later.</p>
+                  </div>
+              </div>
+          `;
+
+          // Update total items count to 0
+          const totalItemsElement = document.getElementById('total-items');
+          if (totalItemsElement) {
+              totalItemsElement.textContent = '0';
+          }
+
+          // Clear pagination
+          const paginationContainer = document.getElementById('pagination-container');
+          if (paginationContainer) {
+              paginationContainer.style.display = 'none';
+          }
+
+          return;
+      }
+
+      // Reset pagination container display if it was hidden
+      const paginationContainer = document.getElementById('pagination-container');
+      if (paginationContainer) {
+          paginationContainer.style.display = '';
+      }
+
       currentPage = 1;
       displayItems();
       setupPagination();
     }
+
     loadItems(); // Initial load
 });
 
