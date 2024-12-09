@@ -43,7 +43,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     
         // Determine media element based on type - following values.js pattern
         let element = '';
-       // Inside displayItemDetails function, replace the existing drift video element with:
         if (item.type === 'Drift') {
             element = `
                 <div class="media-container" style="position: relative;">

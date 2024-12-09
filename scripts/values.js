@@ -93,7 +93,6 @@ function createItemCard(item) {
   const image_type = item.type.toLowerCase();
   const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}`;
 
-  // Use backticks for string interpolation
   let element = '';
   if (item.type === 'Drift') {
     element = `
