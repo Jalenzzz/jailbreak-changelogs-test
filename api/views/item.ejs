@@ -10,14 +10,14 @@
 
     <!-- Open Graph metadata for social media sharing -->
     <meta property="og:title" content="<%= title %>" />
-    <meta property="og:description" content="View detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak, including its value, rarity, and trading information." />
+    <meta property="og:description" content="View detailed information about this <%= itemType %> item: <%= title.replace(' / Changelogs', '') %> in Jailbreak, including its value, rarity, and trading information." />
     <meta property="og:image" content="<%= image_url %>">
-    
-    <meta property="og:url" content="https://jailbreakchangelogs.xyz/item/<%= encodeURIComponent(itemName) %>" />
+
+    <meta property="og:url" content="https://jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(itemName) %>" />
     <meta property="og:type" content="website" />
 
     <!-- Additional metadata for SEO -->
-    <meta name="description" content="Learn everything about <%= title.replace(' / Changelogs', '') %> in Jailbreak. Find out its current value, rarity status, and make informed trading decisions." />
+    <meta name="description" content="View information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. Find out its current value, rarity status, and make informed trading decisions." />
 
     <meta name="robots" content="index, follow" />
 
@@ -26,7 +26,7 @@
     <!-- Twitter Card metadata -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="<%= title %>" />
-    <meta name="twitter:description" content="Get detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. View its current value, rarity, and make smart trading decisions." />
+    <meta name="twitter:description" content="Get detailed information about this <%= itemType %> item: <%= title.replace(' / Changelogs', '') %> in Jailbreak. View its current value, rarity, and make smart trading decisions." />
     <meta
       name="twitter:image"
       content="<%= item?.image || 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp' %>"

@@ -221,10 +221,14 @@ app.get('/values', (req, res) => {
   });
 });
 
-app.get("/item/:item", async (req, res) => {
+app.get("/item/:type/:item", async (req, res) => {
   let itemName = decodeURIComponent(req.params.item)
     .trim()
     .replace(/\s+/g, ' ');
+  let itemType = decodeURIComponent(req.params.type)
+    .trim()
+    .toLowerCase();
+
   const apiUrl = `https://api.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(itemName)}`;
 
   try {
@@ -242,6 +246,7 @@ app.get("/item/:item", async (req, res) => {
         logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp',
         logoAlt: 'Item Page Logo',
         itemName,
+        itemType,
         error: true
       });
       return;
@@ -253,23 +258,68 @@ app.get("/item/:item", async (req, res) => {
 
     const item = await response.json();
     
-    // Construct the image URL
-    const image_type = item.type.toLowerCase();
-    const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
+    // Verify that the item type matches the URL parameter
+    if (item.type.toLowerCase() !== itemType) {
+      res.render("item", {
+        title: "Item type mismatch",
+        logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp',
+        logoAlt: 'Item Page Logo',
+        itemName,
+        itemType,
+        error: true,
+        errorMessage: `This item is of type "${item.type}" not "${itemType}"`
+      });
+      return;
+    }
+
+    // Construct the image URL using the validated type
+    const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${itemType}s/${item.name}.webp`;
 
     res.render("item", {
       title: `${item.name} / Changelogs`,
       logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp',
       logoAlt: 'Item Page Logo',
       itemName,
+      itemType,
       item,
-      image_url // Pass the image URL to the template
+      image_url
     });
   } catch (error) {
     console.error("Error fetching item data:", error);
     res.status(500).send("Internal Server Error");
   }
 });
+
+// Keep the old route for backward compatibility
+app.get("/item/:item", async (req, res) => {
+  // Redirect to the new route structure
+  const itemName = decodeURIComponent(req.params.item);
+  
+  // First, fetch the item to get its type
+  const apiUrl = `https://api.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(itemName)}`;
+  
+  try {
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://jailbreakchangelogs.xyz",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+
+    const item = await response.json();
+    // Redirect to the new URL structure
+    res.redirect(`/item/${item.type.toLowerCase()}/${itemName}`);
+  } catch (error) {
+    console.error("Error fetching item data:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 
 
 app.get('/faq', (req, res) => {
