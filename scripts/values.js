@@ -122,7 +122,7 @@ function createItemCard(item) {
     <span style="
       background-color: ${color}; 
       position: absolute;
-      top: 240px;
+      top: 234px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 2;
