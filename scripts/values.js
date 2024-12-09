@@ -68,33 +68,50 @@ function formatValue(value) {
   return value.toLocaleString();
 }
   
-  function createItemCard(item) {
-    const cardDiv = document.createElement('div');
-    cardDiv.classList.add('col-md-4', 'col-lg-3', 'mb-4');
-    let color = '#124E66';
+function createItemCard(item) {
+  const cardDiv = document.createElement('div');
+  cardDiv.classList.add('col-md-4', 'col-lg-3', 'mb-4');
+  let color = '#124E66';
 
-    if (item.type === 'Vehicle') color = '#c82c2c';
-    if (item.type === 'Spoiler') color = '#C18800';
-    if (item.type === 'Textures') color = '#FFFFFF';
+  // Determine color based on item type
+  if (item.type === 'Vehicle') color = '#c82c2c';
+  if (item.type === 'Spoiler') color = '#C18800';
+  if (item.type === 'Rim') color = '#6335B1';
+  if (item.type === 'Tire Sticker') color = '#1CA1BD';
+  if (item.type === 'Drift') color = '#FF4500';
+  if (item.type === 'Color') color = '#8A2BE2';
+  if (item.type === 'Texture') color = '#708090';
 
-    const image_type = item.type.toLowerCase();
-    const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
-    const value = formatValue(item.cash_value);
-    const duped_value = formatValue(item.duped_value);
+  // Determine the image type and URL
+  const image_type = item.type.toLowerCase();
+  const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}`;
 
-    cardDiv.innerHTML = `
-<div class="card items-card shadow-sm" onclick="handleCardClick('${item.name}')" style="cursor: pointer;">
-  <img onerror="handleimage(this)" id="${item.name}" src="${image_url}" class="card-img-top" alt="${item.name}" style="width: 100%; height: auto; object-fit: contain;">
-  <div class="card-body text-center">
-    <span style="background-color: ${color}" class="badge">${item.type}</span>
-    <h5 class="card-title">${item.name}</h5>
-    <p class="card-text" style="color: #00ff00">Cash Value: ${value}</p>
-    <p class="card-text" style="color: #FF0000">Duped Value: ${duped_value}</p>
-  </div>
-</div>`;
-
-    return cardDiv;
+  // Use backticks for string interpolation
+  let element = '';
+  if (item.type === 'Drift') {
+    element = `<video autoplay muted loop src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm" id="${item.name}" class="card-img-top" style="width: 100%; height: auto; object-fit: contain;"></video>`;
+  } else {
+    element = `<img onerror="handleimage(this)" id="${item.name}" src="${image_url}.webp" class="card-img-top" alt="${item.name}" style="width: 100%; height: auto; object-fit: contain;">`;
   }
+
+  // Format values
+  const value = formatValue(item.cash_value);
+  const duped_value = formatValue(item.duped_value);
+
+  // Create card HTML
+  cardDiv.innerHTML = `
+    <div class="card items-card shadow-sm" onclick="handleCardClick('${item.name}')" style="cursor: pointer;">
+      ${element}
+      <div class="card-body text-center">
+        <span style="background-color: ${color}" class="badge">${item.type}</span>
+        <h5 class="card-title">${item.name}</h5>
+        <p class="card-text" style="color: #00ff00">Cash Value: ${value}</p>
+        <p class="card-text" style="color: #FF0000">Duped Value: ${duped_value}</p>
+      </div>
+    </div>`;
+
+  return cardDiv;
+}
   
 
   function updatePaginationUI() {
