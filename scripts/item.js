@@ -35,16 +35,67 @@ document.addEventListener('DOMContentLoaded', async () => {
         let color = '#124E66';
         if (item.type === 'Vehicle') color = '#c82c2c';
         if (item.type === 'Spoiler') color = '#C18800';
-        if (item.type === 'Texture') color = '#C18800';
+        if (item.type === 'Rim') color = '#6335B1';
+        if (item.type === 'Tire Sticker') color = '#1CA1BD';
+        if (item.type === 'Drift') color = '#FF4500';
+        if (item.type === 'Color') color = '#8A2BE2';
+        if (item.type === 'Texture') color = '#708090';
     
-        const image_type = item.type.toLowerCase();
-        const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
-        console.log('Attempting to load image:', image_url)
+        // Determine media element based on type - following values.js pattern
+        let element = '';
+       // Inside displayItemDetails function, replace the existing drift video element with:
+        if (item.type === 'Drift') {
+            element = `
+                <div class="media-container" style="position: relative;">
+                    <img 
+                        src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${item.name}.webp"
+                        class="img-fluid rounded thumbnail"
+                        alt="${item.name}"
+                        style="width: 100%; height: 300px; object-fit: contain;"
+                        onerror="handleimage(this)"
+                    >
+                    <video 
+                        src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm"
+                        class="img-fluid rounded video-player"
+                        style="width: 100%; height: 300px; object-fit: contain; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease;"
+                        playsinline 
+                        muted 
+                        loop
+                    ></video>
+                </div>`;
+
+            // Add event listeners after the HTML is inserted
+            setTimeout(() => {
+                const mediaContainer = document.querySelector('.media-container');
+                const video = mediaContainer.querySelector('video');
+                
+                mediaContainer.addEventListener('mouseenter', () => {
+                    video.style.opacity = '1';
+                    video.play();
+                });
+
+                mediaContainer.addEventListener('mouseleave', () => {
+                    video.style.opacity = '0';
+                    video.pause();
+                    video.currentTime = 0;
+                });
+            }, 0);
+        } else {
+            const image_type = item.type.toLowerCase();
+            element = `<img 
+                        onerror="handleimage(this)" 
+                        id="${item.name}" 
+                        src="https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp" 
+                        class="img-fluid rounded" 
+                        alt="${item.name}"
+                        style="width: 100%; height: 300px; object-fit: contain;">`;
+        }
+
+    
         const value = formatValue(item.cash_value);
         const duped_value = formatValue(item.duped_value);
     
         container.innerHTML = `
-
             <!-- Breadcrumb Navigation -->
             <div class="container-fluid mt-3">
                 <nav aria-label="breadcrumb">
@@ -56,30 +107,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </ol>
                 </nav>
             </div>
-
+    
             <div class="container-fluid mt-5">
                 <!-- Main Item Info Section -->
                 <div class="row mb-4">
-                    <!-- Left Side - Image -->
-                    <div class="col-md-6 p-4">
-                        <img onerror="handleimage(this)" 
-                             id="${item.name}" 
-                             src="${image_url}" 
-                             class="img-fluid rounded shadow" 
-                             alt="${item.name}"
-                             style="width: 100%; height: 400px; object-fit: contain;">
+                   
+                    <div class="col-md-5 p-3">
+                        ${element}
                     </div>
                     <!-- Right Side - Item Details -->
-                    <div class="col-md-6 p-4">
+                    <div class="col-md-7 p-3">
                         <div class="d-flex align-items-center mb-3">
-                            <h1 class="mb-0 me-3">${item.name}</h1>
+                            <h1 class="mb-0 me-3 h2">${item.name}</h1>
                             <span style="background-color: ${color};
                                          font-weight: 600;
-                                         padding: 8px 16px;
-                                         font-size: 1.2rem;
+                                         padding: 6px 12px;
+                                         font-size: 1rem;
                                          letter-spacing: 0.5px;" class="badge">${item.type}</span>
                         </div>
-                        <div class="border-top border-bottom py-4 my-4">
+                        <div class="border-top border-bottom py-3 my-3">
                             <div class="row">
                                 <div class="col-6">
                                     <h4>Cash Value</h4>
@@ -93,51 +139,50 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </div>
                     </div>
                 </div>
-    
-               <!-- Combined Graph Section -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Value History & Trade Activity</h3>
-                            </div>
-                            <div class="card-body">
-                                <div id="combinedChart" style="height: 400px;">
-                                    <!-- Combined graph will be inserted here -->
-                                </div>
-                            </div>
+            </div>
+        
+            <!-- Combined Graph Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Value History & Trade Activity</h3>
                         </div>
-                    </div>
-                </div>
-
-    
-                <!-- Comments Section -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Comments for ${item.name}</h3>
-                            </div>
-                            <div class="card-body">
-                                <!-- Add Comment Form -->
-                                <form id="commentForm" class="mb-4">
-                                    <div class="mb-3">
-                                        <textarea class="form-control" id="commentText" rows="3" 
-                                                  placeholder="Add your comment..."></textarea>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Post Comment</button>
-                                </form>
-    
-                                <!-- Comments List -->
-                                <div id="commentsList">
-                                    <!-- Comments will be dynamically loaded here -->
-                                </div>
+                        <div class="card-body">
+                            <div id="combinedChart" style="height: 400px;">
+                                <!-- Combined graph will be inserted here -->
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        `;
+
+            <!-- Comments Section -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Comments for ${item.name}</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- Add Comment Form -->
+                            <form id="commentForm" class="mb-4">
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="commentText" rows="3" 
+                                                placeholder="Add your comment..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Post Comment</button>
+                            </form>
+
+                            <!-- Comments List -->
+                            <div id="commentsList">
+                                <!-- Comments will be dynamically loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
     }
     
     function showErrorMessage(message) {

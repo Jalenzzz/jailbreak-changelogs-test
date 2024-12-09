@@ -96,11 +96,24 @@ function createItemCard(item) {
   // Use backticks for string interpolation
   let element = '';
   if (item.type === 'Drift') {
-    element = `<video autoplay playsinline muted loop src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm" 
-      id="${item.name}" 
-      class="card-img-top" 
-      style="width: 100%; height: 250px; object-fit: cover;">
-    </video>`;
+    element = `
+      <div class="media-container" style="position: relative;">
+        <img 
+          src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${item.name}.webp"
+          class="card-img-top thumbnail"
+          alt="${item.name}"
+          style="width: 100%; height: 250px; object-fit: cover;"
+          onerror="handleimage(this)"
+        >
+        <video 
+          src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm"
+          class="card-img-top video-player"
+          style="width: 100%; height: 250px; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease;"
+          playsinline 
+          muted 
+          loop
+        ></video>
+      </div>`;
   } else {
     element = `<img 
       onerror="handleimage(this)" 
@@ -129,7 +142,7 @@ function createItemCard(item) {
       font-size: 0.95rem;
       padding: 0.4rem 0.8rem;
     " class="badge">${item.type}</span>
-    <div class="item-card-body text-center" style="padding-top: 32px;"> <!-- Slightly reduced padding-top -->
+    <div class="item-card-body text-center" style="padding-top: 32px;">
       <h5 class="card-title">${item.name}</h5>
       <div class="value-container">
         <div class="d-flex justify-content-between align-items-center mb-2" style="padding: 4px 8px; background: rgba(0, 255, 0, 0.1); border-radius: 4px;">
@@ -143,9 +156,26 @@ function createItemCard(item) {
       </div>
     </div>
   </div>`;
+
+  // Add hover event listeners for drift videos
+  if (item.type === 'Drift') {
+    const card = cardDiv.querySelector('.card');
+    const video = cardDiv.querySelector('video');
+    
+    card.addEventListener('mouseenter', () => {
+      video.style.opacity = '1';
+      video.play();
+    });
+
+    card.addEventListener('mouseleave', () => {
+      video.style.opacity = '0';
+      video.pause();
+      video.currentTime = 0;
+    });
+  }
+
   return cardDiv;
 }
-
 
   function updatePaginationUI() {
     const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
