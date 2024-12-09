@@ -96,7 +96,7 @@ function createItemCard(item) {
   // Use backticks for string interpolation
   let element = '';
   if (item.type === 'Drift') {
-    element = `<video autoplay muted loop src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm" 
+    element = `<video autoplay playsinline muted loop src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm" 
       id="${item.name}" 
       class="card-img-top" 
       style="width: 100%; height: 250px; object-fit: cover;">
