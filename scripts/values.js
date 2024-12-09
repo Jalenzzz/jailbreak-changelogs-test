@@ -269,31 +269,32 @@ function createItemCard(item) {
     return array;
 }
 
-  window.sortItems = function() {
-    const sortValue = document.getElementById('sort-dropdown').value;
-    const parts = sortValue.split('-');
-    const sortType = parts[0];
-    const itemType = parts.slice(1).join('-');
+    window.sortItems = function() {
+      const sortValue = document.getElementById('sort-dropdown').value;
+      const parts = sortValue.split('-');
+      const sortType = parts[0];
+      const itemType = parts.slice(1).join('-');
 
-    console.log('Sort Value:', sortValue);
-    console.log('Sort Type:', sortType);
-    console.log('Item Type:', itemType);
+      console.log('Sort Value:', sortValue);
+      console.log('Sort Type:', sortType);
+      console.log('Item Type:', itemType);
 
-    if (itemType === 'all-items') {
-        // Shuffle the array when showing all items
-        filteredItems = shuffleArray([...allItems]);
-    } else {
-        filteredItems = allItems.filter(item => 
-            item.type.toLowerCase() === itemType.slice(0, -1)
-        );
+      if (itemType === 'all-items') {
+          // Shuffle the array when showing all items
+          filteredItems = shuffleArray([...allItems]);
+      } else {
+          filteredItems = allItems.filter(item => {
+              const normalizedItemType = item.type.toLowerCase().replace(' ', '-');
+              const normalizedFilterType = itemType.slice(0, -1);
+              return normalizedItemType === normalizedFilterType;
+          });
+      }
+
+      currentPage = 1;
+      displayItems();
+      setupPagination();
     }
-
-    currentPage = 1;
-    displayItems();
-    setupPagination();
-  }
-
-  loadItems(); // Initial load
+    loadItems(); // Initial load
 });
 
 
