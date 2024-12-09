@@ -272,14 +272,13 @@ app.get("/item/:type/:item", async (req, res) => {
       return;
     }
 
-    // Construct the image URL using the validated type
     const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${itemType}s/${item.name}.webp`;
 
     res.render("item", {
       title: `${item.name} / Changelogs`,
       logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp',
       logoAlt: 'Item Page Logo',
-      itemName,
+      itemName: item.name,  // Use the proper case here
       itemType,
       item,
       image_url

@@ -8,29 +8,23 @@
     <meta name="google-adsense-account" content="ca-pub-8152532464536367">
     <base href="/">
 
-    <!-- Open Graph metadata for social media sharing -->
-    <meta property="og:title" content="<%= title %>" />
-    <meta property="og:description" content="View detailed information about this <%= itemType %> item: <%= title.replace(' / Changelogs', '') %> in Jailbreak, including its value, rarity, and trading information." />
-    <meta property="og:image" content="<%= image_url %>">
-
-    <meta property="og:url" content="https://jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(itemName) %>" />
-    <meta property="og:type" content="website" />
-
-    <!-- Additional metadata for SEO -->
+    <!-- Primary Meta Tags -->
     <meta name="description" content="View information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. Find out its current value, rarity status, and make informed trading decisions." />
-
+    <meta name="keywords" content="item values, item trading, trade deals, trading platform, item marketplace, trading items, item trades, trading information, valuable items, trade negotiation" />
     <meta name="robots" content="index, follow" />
 
-    <meta name="keywords" content="item values, item trading, trade deals, trading platform, item marketplace, trading items, item trades, trading information, valuable items, trade negotiation" />
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="<%= title %>" />
+    <meta property="og:description" content="View detailed information about this <%= itemType %> item: <%= title.replace(' / Changelogs', '') %> in Jailbreak, including its value, rarity, and trading information." />
+    <meta property="og:image" content="<%= image_url %>" />
+    <meta property="og:url" content="https://jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(itemName) %>" />
 
-    <!-- Twitter Card metadata -->
+    <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="<%= title %>" />
     <meta name="twitter:description" content="Get detailed information about this <%= itemType %> item: <%= title.replace(' / Changelogs', '') %> in Jailbreak. View its current value, rarity, and make smart trading decisions." />
-    <meta
-      name="twitter:image"
-      content="<%= item?.image || 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp' %>"
-    />
+    <meta name="twitter:image" content="<%= item?.image || 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp' %>" />
 
     <title><%= title %></title>
 
