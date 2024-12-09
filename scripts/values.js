@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     itemsRow.innerHTML = ''; // Clear existing items
+    itemstoadd = [];
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -58,11 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     itemsToDisplay.forEach(item => {
         const cardDiv = createItemCard(item);
-        itemsRow.appendChild(cardDiv);
+        itemstoadd.push(cardDiv);
     });
+    itemsRow.append(...itemstoadd); // Add new items to the row
 
     updatePaginationUI();
     updateTotalItemsCount();
+}
+
+function loadimage(image_url) {
+  if(image_url) {
+    const image = new Image();
+    image.src = image_url;
+  }
 }
 
 function formatValue(value) {
@@ -433,7 +442,25 @@ function createItemCard(item) {
       setupPagination();
     }
 
+    function preloadItemImages() {
+      for (const item of allItems) {
+        const image_type = item.type.toLowerCase();
+        const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}`;
+        
+        // Check if the item type is 'drift', if it is, skip the current iteration
+        if (item.type === 'drift') {
+          continue; // Skip this item and move to the next one
+        } else {
+          console.log('preloading' + item.name)
+          const img = new Image();
+          img.src = image_url; // Preload the image
+        }
+      }
+    }
+
     loadItems(); // Initial load
+    // Preload images for better performance
+    preloadItemImages();
 });
 
 // Default Image
