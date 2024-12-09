@@ -4,6 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const itemsPerPage = 12;
   let filteredItems = [];
 
+  // Reset sort dropdown to "All Items"
+  const sortDropdown = document.getElementById('sort-dropdown');
+  if (sortDropdown) {
+      sortDropdown.value = 'name-all-items';
+      localStorage.removeItem('lastSort'); // Clear any stored sort preference
+  }
+
   // Clear search input
   const searchBar = document.getElementById('search-bar');
   if (searchBar) {
@@ -89,30 +96,56 @@ function createItemCard(item) {
   // Use backticks for string interpolation
   let element = '';
   if (item.type === 'Drift') {
-    element = `<video autoplay muted loop src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm" id="${item.name}" class="card-img-top" style="width: 100%; height: auto; object-fit: contain;"></video>`;
+    element = `<video autoplay muted loop src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm" 
+      id="${item.name}" 
+      class="card-img-top" 
+      style="width: 100%; height: 250px; object-fit: cover;">
+    </video>`;
   } else {
-    element = `<img onerror="handleimage(this)" id="${item.name}" src="${image_url}.webp" class="card-img-top" alt="${item.name}" style="width: 100%; height: auto; object-fit: contain;">`;
+    element = `<img 
+      onerror="handleimage(this)" 
+      id="${item.name}" 
+      src="${image_url}.webp" 
+      class="card-img-top" 
+      alt="${item.name}" 
+      style="width: 100%; height: 250px; object-fit: cover;">`;
   }
 
   // Format values
   const value = formatValue(item.cash_value);
   const duped_value = formatValue(item.duped_value);
 
-  // Create card HTML
+  // Create card
   cardDiv.innerHTML = `
-    <div class="card items-card shadow-sm" onclick="handleCardClick('${item.name}')" style="cursor: pointer;">
-      ${element}
-      <div class="card-body text-center">
-        <span style="background-color: ${color}" class="badge">${item.type}</span>
-        <h5 class="card-title">${item.name}</h5>
-        <p class="card-text" style="color: #00ff00">Cash Value: ${value}</p>
-        <p class="card-text" style="color: #FF0000">Duped Value: ${duped_value}</p>
+  <div class="card items-card shadow-sm" onclick="handleCardClick('${item.name}')" style="cursor: pointer; height: 450px; position: relative;">
+    ${element}
+    <span style="
+      background-color: ${color}; 
+      position: absolute;
+      top: 240px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      font-size: 0.95rem;
+      padding: 0.4rem 0.8rem;
+    " class="badge">${item.type}</span>
+    <div class="item-card-body text-center" style="padding-top: 32px;"> <!-- Slightly reduced padding-top -->
+      <h5 class="card-title">${item.name}</h5>
+      <div class="value-container">
+        <div class="d-flex justify-content-between align-items-center mb-2" style="padding: 4px 8px; background: rgba(0, 255, 0, 0.1); border-radius: 4px;">
+          <span>Cash Value:</span>
+          <span style="color: #00aa00; font-weight: bold;">${value}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center" style="padding: 4px 8px; background: rgba(255, 0, 0, 0.1); border-radius: 4px;">
+          <span>Duped Value:</span>
+          <span style="color: #aa0000; font-weight: bold;">${duped_value}</span>
+        </div>
       </div>
-    </div>`;
-
+    </div>
+  </div>`;
   return cardDiv;
 }
-  
+
 
   function updatePaginationUI() {
     const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
@@ -191,6 +224,8 @@ function createItemCard(item) {
   window.filterItems = function() {
     const searchTerm = document.getElementById('search-bar').value.toLowerCase();
     const searchBar = document.getElementById('search-bar');
+    const sortValue = document.getElementById('sort-dropdown').value; // Get current category
+
     const minCharacters = 3;
     const itemsContainer = document.querySelector('#items-container');
     const searchMessages = document.getElementById('search-messages');
@@ -200,8 +235,21 @@ function createItemCard(item) {
         searchMessages.innerHTML = '';
     }
 
+    // First, apply category filter
+    let categoryFilteredItems = [...allItems];
+    if (sortValue !== 'name-all-items') {
+        const parts = sortValue.split('-');
+        const itemType = parts.slice(1).join('-');
+        categoryFilteredItems = allItems.filter(item => {
+            const normalizedItemType = item.type.toLowerCase().replace(' ', '-');
+            const normalizedFilterType = itemType.slice(0, -1);
+            return normalizedItemType === normalizedFilterType;
+        });
+    }
+
+
     if (searchTerm.length === 0) {
-        filteredItems = shuffleArray([...allItems]);
+        filteredItems = categoryFilteredItems; // Keep category filter but reset search
         searchBar.classList.remove('is-invalid');
         
         // Ensure the row structure exists
@@ -231,28 +279,36 @@ function createItemCard(item) {
     }
 
     searchBar.classList.remove('is-invalid');
-    filteredItems = allItems.filter(item => 
+    filteredItems = categoryFilteredItems.filter(item => 
         item.name.toLowerCase().includes(searchTerm)
     );
 
     // No results message if no items found
     if (filteredItems.length === 0) {
-        let itemsRow = itemsContainer.querySelector('.row');
-        if (!itemsRow) {
-            itemsRow = document.createElement('div');
-            itemsRow.classList.add('row');
-            itemsContainer.appendChild(itemsRow);
-        }
-        itemsRow.innerHTML = `
-            
-            <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
-                <div class="no-results">
-                    <h4>No items found for "${searchTerm}"</h4>
-                    <p class="text-muted">Try different keywords or check the spelling</p>
-                </div>
-            </div>
-        `;
-        return;
+      let itemsRow = itemsContainer.querySelector('.row');
+      if (!itemsRow) {
+          itemsRow = document.createElement('div');
+          itemsRow.classList.add('row');
+          itemsContainer.appendChild(itemsRow);
+      }
+
+      // Get current category name for the message
+      const sortValue = document.getElementById('sort-dropdown').value;
+      const categoryParts = sortValue.split('-');
+      const categoryName = categoryParts.slice(1).join(' ');
+      const categoryMessage = sortValue !== 'name-all-items' 
+          ? ` under category "${categoryName.replace(/-/g, ' ')}"`
+          : '';
+
+      itemsRow.innerHTML = `
+          <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
+              <div class="no-results">
+                  <h4>No items found for "${searchTerm}"${categoryMessage}</h4>
+                  <p class="text-muted">Try different keywords or check the spelling</p>
+              </div>
+          </div>
+      `;
+      return;
     }
 
     currentPage = 1;
@@ -274,6 +330,18 @@ function createItemCard(item) {
       const parts = sortValue.split('-');
       const sortType = parts[0];
       const itemType = parts.slice(1).join('-');
+      
+      // Clear search bar when switching categories
+      if (searchBar) {
+        searchBar.value = '';
+      }
+
+      // Clear localStorage if "All Items" is selected, otherwise store the current value
+      if (itemType === 'all-items') {
+        localStorage.removeItem('lastSort');
+      } else {
+        localStorage.setItem('lastSort', sortValue);
+      }
 
       console.log('Sort Value:', sortValue);
       console.log('Sort Type:', sortType);
@@ -296,7 +364,6 @@ function createItemCard(item) {
     }
     loadItems(); // Initial load
 });
-
 
 // Default Image
 function handleimage(element) {
