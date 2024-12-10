@@ -122,20 +122,30 @@
               <!-- Search Bar -->
               <div class="col-md-6">
                 <div class="input-group">
-                  <span class="input-group-text" style="background-color: #212A31; color: #D3D9D4; border-color: #748D92;">
-                    <i class="bi bi-search"></i>
-                  </span>
-                  <input type="text" 
-                         id="search-bar" 
-                         class="form-control" 
-                         placeholder="Search items..." 
-                         oninput="filterItems()"
-                         style="background-color: #212A31; color: #D3D9D4; border-color: #748D92;">
+                    <span class="input-group-text" style="background-color: #212A31; color: #D3D9D4; border-color: #748D92;">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" 
+                           id="search-bar" 
+                           class="form-control" 
+                           placeholder="Search items..." 
+                           oninput="filterItems()"
+                           style="background-color: #212A31; color: #D3D9D4; border-color: #748D92;">
+                    <button class="btn btn-outline-secondary clear-button" 
+                            type="button" 
+                            id="clear-search" 
+                            onclick="clearSearch()"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="top"
+                            title="Clear search"
+                            style="display: none; background-color: #212A31; color: #D3D9D4; border-color: #748D92;">
+                        <i class="bi bi-x"></i>
+                    </button>
                 </div>
                 <div id="search-messages" class="mt-1">
-                  <!-- Feedback text will be inserted here dynamically -->
+                    <!-- Feedback text will be inserted here dynamically -->
                 </div>
-              </div>
+            </div>
     
               <!-- Sort Dropdown -->
               <div class="col-md-6">

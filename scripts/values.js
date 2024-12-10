@@ -13,10 +13,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Clear search input
   const searchBar = document.getElementById('search-bar');
+  const clearButton = document.getElementById('clear-search');
   if (searchBar) {
-      searchBar.value = '';
-  }
-
+    searchBar.value = '';
+    // Add event listener for showing/hiding clear button
+    searchBar.addEventListener('input', function() {
+        if (clearButton) {
+            clearButton.style.display = this.value.length > 0 ? 'block' : 'none';
+        }
+    });
+}
   async function loadItems() {
     try {
       const response = await fetch('https://api.jailbreakchangelogs.xyz/items/list');
@@ -467,6 +473,21 @@ function createItemCard(item) {
 function handleimage(element) {
   element.src = 'https://cdn.jailbreakchangelogs.xyz/backgrounds/background1.webp';
 }
+
+function clearSearch() {
+  const searchBar = document.getElementById('search-bar');
+  const clearButton = document.getElementById('clear-search');
+  
+  if (searchBar) {
+      searchBar.value = '';
+      filterItems();
+  }
+  
+  if (clearButton) {
+      clearButton.style.display = 'none';
+  }
+}
+
 
 function handleCardClick(itemName) {
   window.location.href =  '/item/' + itemName.toLowerCase();

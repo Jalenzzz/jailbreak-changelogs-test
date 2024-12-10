@@ -1,151 +1,158 @@
-  .card {
-    width: 100%;
-    height: 400px;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  } 
-
-  .items-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  }
-
-  .card-img-top {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-  }
-
-  .card-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin: 10px 0;
-  }
-  .card-body {
-    padding: 1rem;
-    height: 150px;
-    overflow: hidden;
-  }
-  .card-text {
-    font-size: 1rem;
-    color: #555;
-    margin-bottom: 8px;
-  }
-
-  .input-group {
-    position: relative;
-  }
-  [data-bs-theme="dark"] body {
-    background-color: #2e3944;
-  }
-  .input-group-text,
-  .form-control,
-  .form-select,
-  .page-link {
-    transition: all 0.2s ease;
-   }
-
-  .input-group-text:hover,
-  .form-control:hover,
-  .form-select:hover {
-    border-color: #124E66;
-  }
-
-  .input-group-text {
-      border-right: none;
-  }
-  .form-control::placeholder {
-    color: #748D92;
+.clear-button:hover {
+  background-color: #748D92 !important;
+  color: #D3D9D4 !important;
+  border-color: #748D92 !important;
+  transition: all 0.3s ease;
 }
 
-  .form-control:focus,
-  .form-select:focus {
-      border-color: #dee2e6;
-      box-shadow: none;
-  }
+.card {
+  width: 100%;
+  height: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+} 
 
-  .form-control {
-      border-left: none;
-  }
-
-  .form-select option {
-    background-color: #212A31;
-    color: #D3D9D4;
+.items-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-  .page-link {
-      color: #212529;
-      padding: 0.375rem 0.75rem;
-  }
-
-  .page-link:hover {
-    background-color: #124E66;
-    color: #D3D9D4;
-    border-color: #748D92;
+.card-img-top {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
 }
 
-  .pagination {
-      margin-bottom: 0;
-  }
-
-  .page-input:focus {
-      outline: none;
-      border-color: #0d6efd;
-  }
-
-  .badge {
-    display: inline-block;
-    background-color: #124E66; /* Deep teal (from your palette) */
-    color: #D3D9D4; /* Very light grayish-green (for good contrast) */
-    font-size: 0.9rem;
-    font-weight: 600;
-    padding: 5px 10px;
-    border-radius: 20px;
-    margin-bottom: 10px; /* Adds space between badge and title */
-  }
-  .pagination li {
-    margin-right: 10px; /* Adjust the margin as needed */
-  }
-  .no-results {
-    color: #dc3545;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .no-results h4 {
-    color: #dc3545;
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-  }
-  .no-results p {
-    color: #6c757d;
-    font-size: 1rem;
+.card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 10px 0;
 }
-  #search-messages {
-    margin-top: -5px !important; /* Move message up */
-    color: #dc3545; /* Bootstrap's danger color */
-    font-size: 0.875rem;
-    position: absolute;
+.card-body {
+  padding: 1rem;
+  height: 150px;
+  overflow: hidden;
+}
+.card-text {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 8px;
 }
 
-  .search-feedback {
-    color: #dc3545;
-    padding: 2px 0;
+.input-group {
+  position: relative;
+}
+[data-bs-theme="dark"] body {
+  background-color: #2e3944;
+}
+.input-group-text,
+.form-control,
+.form-select,
+.page-link {
+  transition: all 0.2s ease;
   }
 
-  .is-invalid {
-      border-color: #dc3545;
-  }
-  .credits-link:hover {
-    color: #D3D9D4 !important;
-    text-decoration: underline !important;
+.input-group-text:hover,
+.form-control:hover,
+.form-select:hover {
+  border-color: #124E66;
 }
 
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
-    .pagination-container {
-      margin-top: 20px;
-    }
+.input-group-text {
+    border-right: none;
+}
+.form-control::placeholder {
+  color: #748D92;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #dee2e6;
+    box-shadow: none;
+}
+
+.form-control {
+    border-left: none;
+}
+
+.form-select option {
+  background-color: #212A31;
+  color: #D3D9D4;
+}
+
+.page-link {
+    color: #212529;
+    padding: 0.375rem 0.75rem;
+}
+
+.page-link:hover {
+  background-color: #124E66;
+  color: #D3D9D4;
+  border-color: #748D92;
+}
+
+.pagination {
+    margin-bottom: 0;
+}
+
+.page-input:focus {
+    outline: none;
+    border-color: #0d6efd;
+}
+
+.badge {
+  display: inline-block;
+  background-color: #124E66; /* Deep teal (from your palette) */
+  color: #D3D9D4; /* Very light grayish-green (for good contrast) */
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px; /* Adds space between badge and title */
+}
+.pagination li {
+  margin-right: 10px; /* Adjust the margin as needed */
+}
+.no-results {
+  color: #dc3545;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.no-results h4 {
+  color: #dc3545;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.no-results p {
+  color: #6c757d;
+  font-size: 1rem;
+}
+#search-messages {
+  margin-top: -5px !important; /* Move message up */
+  color: #dc3545; /* Bootstrap's danger color */
+  font-size: 0.875rem;
+  position: absolute;
+}
+
+.search-feedback {
+  color: #dc3545;
+  padding: 2px 0;
+}
+
+.is-invalid {
+    border-color: #dc3545;
+}
+.credits-link:hover {
+  color: #D3D9D4 !important;
+  text-decoration: underline !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .pagination-container {
+    margin-top: 20px;
   }
-    
+}
+  
