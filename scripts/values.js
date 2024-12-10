@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+  showSkeletonCards();
   let allItems = []; // Store all items
   let currentPage = 1;
   const itemsPerPage = 12;
@@ -34,10 +35,68 @@ document.addEventListener('DOMContentLoaded', () => {
       setupPagination();
       updateTotalItemsCount();
       updateTotalItemsLabel('all-items');
+
+      preloadItemImages();
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   }
+
+  function showSkeletonCards() {
+    const itemsContainer = document.querySelector('#items-container');
+    if (!itemsContainer) return;
+  
+    let itemsRow = itemsContainer.querySelector('.row');
+    if (!itemsRow) {
+      itemsRow = document.createElement('div');
+      itemsRow.classList.add('row');
+      itemsContainer.appendChild(itemsRow);
+    }
+  
+    // Create 12 skeleton cards
+    const skeletonCards = Array(12).fill(null).map(() => {
+      const cardDiv = document.createElement('div');
+      cardDiv.classList.add('col-md-4', 'col-lg-3', 'mb-4');
+      cardDiv.innerHTML = `
+        <div class="card items-card shadow-sm" style="cursor: pointer; height: 450px; position: relative;">
+          <div class="media-container" style="position: relative;">
+            <div class="skeleton-loader" style="width: 100%; height: 250px; border-radius: 8px 8px 0 0;"></div>
+          </div>
+          <span style="
+            background-color: #2E3944; 
+            position: absolute;
+            top: 234px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            font-size: 0.95rem;
+            padding: 0.4rem 0.8rem;
+            width: 100px;
+            animation: pulse 2s infinite ease-in-out;
+          " class="badge"></span>
+          <div class="item-card-body text-center" style="padding-top: 32px;">
+            <h5 class="card-title" style="visibility: hidden;">Placeholder</h5>
+            <div class="value-container" style="visibility: hidden;">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span>Cash Value:</span>
+                <span>0</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span>Duped Value:</span>
+                <span>0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      return cardDiv;
+    });
+  
+    itemsRow.innerHTML = '';
+    itemsRow.append(...skeletonCards);
+  }
+  
+  
 
   function updateTotalItemsCount() {
     const totalItemsElement = document.getElementById('total-items');
@@ -114,7 +173,9 @@ function createItemCard(item) {
   let element = '';
   if (item.type === 'Drift') {
     element = `
-      <div class="media-container" style="position: relative;">
+     <div class="media-container" style="position: relative;">
+        <div class="skeleton-loader" style="width: 100%; height: 250px; border-radius: 8px 8px 0 0; position: absolute; top: 0; left: 0; z-index: 2;">
+        </div>
         <img 
           src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${item.name}.webp"
           class="card-img-top thumbnail"
@@ -129,16 +190,24 @@ function createItemCard(item) {
           playsinline 
           muted 
           loop
+          onloadeddata="this.parentElement.querySelector('.skeleton-loader').style.display='none'"
         ></video>
       </div>`;
   } else {
-    element = `<img 
-      onerror="handleimage(this)" 
-      id="${item.name}" 
-      src="${image_url}.webp" 
-      class="card-img-top" 
-      alt="${item.name}" 
-      style="width: 100%; height: 250px; object-fit: cover;">`;
+    element = `
+      <div style="position: relative;">
+       <div class="skeleton-loader" style="width: 100%; height: 250px; border-radius: 8px;">
+        </div>
+        <img 
+          onerror="handleimage(this)" 
+          id="${item.name}" 
+          src="${image_url}.webp" 
+          class="card-img-top" 
+          alt="${item.name}" 
+          style="width: 100%; height: 250px; object-fit: cover; opacity: 0; transition: opacity 0.3s ease;"
+          onload="this.style.opacity='1'; this.previousElementSibling.style.display='none'"
+        >
+      </div>`;
   }
 
   // Format values
@@ -455,24 +524,47 @@ function createItemCard(item) {
     }
 
     function preloadItemImages() {
-      for (const item of allItems) {
-        const image_type = item.type.toLowerCase();
-        const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}`;
-        
-        // Check if the item type is 'drift', if it is, skip the current iteration
-        if (item.type === 'drift') {
-          continue; // Skip this item and move to the next one
-        } else {
-          console.log('preloading' + item.name)
-          const img = new Image();
-          img.src = image_url; // Preload the image
-        }
+      if (!allItems || allItems.length === 0) {
+        console.log('No items to preload');
+        return;
       }
+    
+      console.log(`Starting to preload images for ${allItems.length} items...`);
+      const imagePromises = [];
+      
+      for (const item of allItems) {
+        if (item.type.toLowerCase() === 'drift') continue;
+        
+        const image_type = item.type.toLowerCase();
+        const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
+        
+        const promise = new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => {
+            console.log(`Successfully loaded: ${item.name}`);
+            resolve(image_url);
+          };
+          img.onerror = () => {
+            console.log(`Failed to load: ${item.name}`);
+            reject(image_url);
+          };
+          img.src = image_url;
+        });
+        
+        imagePromises.push(promise);
+      }
+    
+      Promise.allSettled(imagePromises).then(results => {
+        const loaded = results.filter(r => r.status === 'fulfilled').length;
+        const failed = results.filter(r => r.status === 'rejected').length;
+        console.log(`Preloading complete: ${loaded} images loaded, ${failed} failed`);
+      });
     }
+    
 
     loadItems(); // Initial load
     // Preload images for better performance
-    preloadItemImages();
+   
 });
 
 // Default Image
