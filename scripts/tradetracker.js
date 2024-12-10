@@ -82,24 +82,81 @@ function displayData() {
   const sortedData = sortData(filteredData);
   const paginatedData = paginateData(sortedData);
 
-  paginatedData.forEach((item) => {
-    const row = tableBody.insertRow();
-    const cells = [
-      item.Type,
-      item.Name,
-      item.TimesTraded.toLocaleString(),
-      item.UniqueCirculation.toLocaleString(),
-      item.DemandMultiple.toPrecision(6),
-    ];
-
-    cells.forEach((cellData) => {
+  if (filteredData.length === 0) {
+      const row = tableBody.insertRow();
       const cell = row.insertCell();
-      cell.textContent = cellData;
-    });
-  });
+      cell.colSpan = 5;
+      cell.className = 'text-center p-4';
+      
+      // Get the current filter type and search term
+      const filterType = document.getElementById("filterType").value;
+      const searchTerm = document.getElementById("searchInput").value;
+      
+      // Create a styled message container
+      const messageContainer = document.createElement('div');
+      messageContainer.className = 'd-flex flex-column align-items-center justify-content-center';
+      
+      // Add an icon
+      const icon = document.createElement('i');
+      icon.className = 'bi bi-exclamation-circle mb-3';
+      icon.style.fontSize = '2.5rem';
+      icon.style.color = '#ff6b6b'; // Lighter, more vibrant red
+      
+      // Create and style the message
+      const messageText = document.createElement('div');
+      messageText.style.color = '#ff4757'; // Softer red for text
+      messageText.style.fontSize = '1.1rem';
+      messageText.style.fontWeight = '500';
+      
+      // Customize message based on whether there's a filter, search term, or both
+      let message = "No results found";
+      if (filterType && searchTerm) {
+          message += ` for "${searchTerm}" in ${filterType} category`;
+      } else if (filterType) {
+          message += ` in ${filterType} category`;
+      } else if (searchTerm) {
+          message += ` for "${searchTerm}"`;
+      }
+      
+      messageText.textContent = message;
+      
+      // Add a very light red background and subtle border
+      cell.style.backgroundColor = '#fff5f5'; // Very light red background
+      cell.style.border = '1px solid #ffd9d9'; // Light red border
+      cell.style.borderRadius = '4px';
+      
+      // Add a suggestion text
+      const suggestionText = document.createElement('div');
+      suggestionText.style.color = '#ff8787'; // Even lighter red for secondary text
+      suggestionText.style.fontSize = '0.9rem';
+      suggestionText.style.marginTop = '8px';
+      suggestionText.textContent = 'Try adjusting your search or filters';
+      
+      // Assemble the message container
+      messageContainer.appendChild(icon);
+      messageContainer.appendChild(messageText);
+      messageContainer.appendChild(suggestionText);
+      cell.appendChild(messageContainer);
+  } else {
+      paginatedData.forEach((item) => {
+          const row = tableBody.insertRow();
+          const cells = [
+              item.Type,
+              item.Name,
+              item.TimesTraded.toLocaleString(),
+              item.UniqueCirculation.toLocaleString(),
+              item.DemandMultiple.toPrecision(6),
+          ];
 
+          cells.forEach((cellData) => {
+              const cell = row.insertCell();
+              cell.textContent = cellData;
+          });
+      });
+  }
   updatePagination(filteredData.length);
 }
+
 function clearFilters() {
   document.getElementById("searchInput").value = "";
   document.getElementById("filterType").value = "";
