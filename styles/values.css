@@ -154,5 +154,16 @@
   .pagination-container {
     margin-top: 20px;
   }
+  .pagination {
+    margin: 0;
+  }
+  
+  .page-link {
+    min-width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
   

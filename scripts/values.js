@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.removeItem('lastSort'); // Clear any stored sort preference
   }
 
+  updateSearchPlaceholder();
+
   // Clear search input
   const searchBar = document.getElementById('search-bar');
   const clearButton = document.getElementById('clear-search');
@@ -371,6 +373,7 @@ function createItemCard(item) {
 
     window.sortItems = function() {
       const sortValue = document.getElementById('sort-dropdown').value;
+      updateSearchPlaceholder();
       const parts = sortValue.split('-');
       const sortType = parts[0];
       const itemType = parts.slice(1).join('-');
@@ -487,6 +490,29 @@ function clearSearch() {
       clearButton.style.display = 'none';
   }
 }
+function updateSearchPlaceholder() {
+  const sortValue = document.getElementById('sort-dropdown').value;
+  const searchBar = document.getElementById('search-bar');
+  
+  // Extract category from sort value (e.g., 'name-vehicles' -> 'vehicles')
+  const category = sortValue.split('-').slice(1).join('-');
+  
+  // Define placeholders for different categories
+  const placeholders = {
+      'all-items': 'Search items...',
+      'vehicles': 'Search vehicles (e.g., Brulee, Torpedo)...',
+      'spoilers': 'Search spoilers (e.g., Rocket, Wing)...',
+      'rims': 'Search rims (e.g., Star, Spinner)...',
+      'tire-stickers': 'Search tire stickers (e.g., Badonuts, Blue 50)...',
+      'drifts': 'Search drifts... (e.g., Cartoon, Melons)...',
+      'body-colors': 'Search colors (e.g., Red, Blue)...',
+      'textures': 'Search textures (e.g., Aurora, Checkers)...'
+  };
+  
+  // Set the placeholder text
+  searchBar.placeholder = placeholders[category] || 'Search items...';
+}
+
 
 
 function handleCardClick(itemName) {
