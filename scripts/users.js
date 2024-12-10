@@ -1,11 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const permissions = JSON.parse(settings)
     const udata = JSON.parse(userData)
-    
     const userDateBio = document.getElementById('description-updated-date');
     const recent_comments_button = document.getElementById('recent-comments-button');
-
-   
     const input = document.getElementById('bannerInput');
     const loggedinuserId = sessionStorage.getItem('userid');
     const pathSegments = window.location.pathname.split("/");
@@ -23,6 +20,68 @@ document.addEventListener('DOMContentLoaded', function() {
         // Return the hex color with a # prefix
         return `#${hex}`;
     }
+    // Toast control mechanism
+    const toastControl = {
+        lastToastTime: 0,
+        minInterval: 1000, // Minimum time between toasts (1 second)
+        queue: [],
+        isProcessing: false,
+
+        async showToast(type, message, title) {
+            const currentTime = Date.now();
+            
+            // If trying to show toast too soon after the last one, queue it
+            if (currentTime - this.lastToastTime < this.minInterval) {
+                this.queue.push({ type, message, title });
+                if (!this.isProcessing) {
+                    this.processQueue();
+                }
+                return;
+            }
+
+            // Show the toast
+            this.displayToast(type, message, title);
+            this.lastToastTime = currentTime;
+        },
+
+        async processQueue() {
+            if (this.queue.length === 0) {
+                this.isProcessing = false;
+                return;
+            }
+
+            this.isProcessing = true;
+            const { type, message, title } = this.queue.shift();
+            this.displayToast(type, message, title);
+            this.lastToastTime = Date.now();
+
+            // Process next toast after interval
+            setTimeout(() => this.processQueue(), this.minInterval);
+        },
+
+        displayToast(type, message, title) {
+            const toastOptions = {
+                positionClass: "toast-bottom-right",
+                timeOut: 3000,
+                closeButton: true,
+                progressBar: true,
+                preventDuplicates: true
+            };
+
+            switch (type) {
+                case 'success':
+                    toastr.success(message, title, toastOptions);
+                    break;
+                case 'error':
+                    toastr.error(message, title, toastOptions);
+                    break;
+                case 'info':
+                    toastr.info(message, title, toastOptions);
+                    break;
+            }
+        }
+    };
+
     async function fetchUserBanner(userId) {
         try {
             
@@ -663,28 +722,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     function alreadyFollowingToast(message) {
-        toastr.error(message, "Follow", {
-          positionClass: "toast-bottom-right", // Position at the bottom right
-          timeOut: 3000, // Toast will disappear after 3 seconds
-          closeButton: true, // Add a close button
-          progressBar: true, // Show a progress bar
-        });
+        toastControl.showToast('error', message, "Follow");
       }
     function FollowToast(message) {
-        toastr.success(message, "Follow", {
-          positionClass: "toast-bottom-right", // Position at the bottom right
-          timeOut: 3000, // Toast will disappear after 3 seconds
-          closeButton: true, // Add a close button
-          progressBar: true, // Show a progress bar
-        });
+        toastControl.showToast('success', message, "Follow");
       }
       function NotFollowingToast(message) {
-        toastr.error(message, "Error", {
-          positionClass: "toast-bottom-right", // Position at the bottom right
-          timeOut: 3000, // Toast will disappear after 3 seconds
-          closeButton: true, // Add a close button
-          progressBar: true, // Show a progress bar
-        });
+        toastControl.showToast('error', message, "Error");
       }
     async function addFollow(userId) {
         try {
@@ -726,38 +770,41 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     follow_button.addEventListener('click', function() {
+        if (follow_button.disabled) return;
+        follow_button.disabled = true;
+
         const user = getCookie('token');
-    
         if (!user) {
             // User is not logged in
             NotFollowingToast("You are not logged in to perform this action.");
+            follow_button.disabled = false;
             return;
         }
         if (follow_button.textContent === 'Follow') {
-            addFollow(userId);
-            FollowToast("User followed successfully.");
-            follow_button.textContent = 'Unfollow';
+            addFollow(userId)
+                .then(() => {
+                    FollowToast("User followed successfully.");
+                    follow_button.textContent = 'Unfollow';
+                })
+                .finally(() => {
+                    follow_button.disabled = false;
+                });
         } else {
-            removeFollow(userId);
-            FollowToast("User unfollowed successfully.");
-            follow_button.textContent = 'Follow';
+            removeFollow(userId)
+                .then(() => {
+                    FollowToast("User unfollowed successfully.");
+                    follow_button.textContent = 'Follow';
+                })
+                .finally(() => {
+                    follow_button.disabled = false;
+                });
         }
     });
     function AlertToast(message) {
-        toastr.info(message, "Alert", {
-          positionClass: "toast-bottom-right", // Position at the bottom right
-          timeOut: 3000, // Toast will disappear after 3 seconds
-          closeButton: true, // Add a close button
-          progressBar: true, // Show a progress bar
-        });
+        toastControl.showToast('info', message, "Alert");
       }
       function SuccessToast(message) {
-        toastr.success(message, "Alert", {
-          positionClass: "toast-bottom-right", // Position at the bottom right
-          timeOut: 3000, // Toast will disappear after 3 seconds
-          closeButton: true, // Add a close button
-          progressBar: true, // Show a progress bar
-        });
+        toastControl.showToast('success', message, "Alert");
       }
 
       crown.addEventListener('click', function() {

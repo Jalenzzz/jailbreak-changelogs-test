@@ -132,17 +132,21 @@
         
               <!-- Action Buttons -->
               <div class="action-buttons text-end">
-                <button class="btn btn-light btn-hover me-2" id="message-button">
-                  <i class="bi bi-envelope-fill me-1"></i> Message
+                <button class="btn btn-light btn-hover me-2 action-button" id="message-button">
+                    <i class="bi bi-envelope-fill"></i>
+                    <span>Message</span>
                 </button>
-                <button class="btn btn-primary btn-hover" id="follow-button">
-                  <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                  <span id="button-text">Loading</span>
+                <button class="btn btn-primary btn-hover action-button" id="follow-button">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span id="button-text">Loading</span>
                 </button>
-                <button id="settings-button" class="btn btn-link btn-hover ms-2" style="display: none;">
-                  <i class="bi bi-gear-fill"></i>
+                <button id="settings-button" class="btn btn-secondary btn-hover action-button ms-2" style="display: none;">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>Settings</span>
                 </button>
-              </div>
+            </div>
+            
+            
         
               <!-- User Details -->
               <div class="user-name-container">
@@ -328,6 +332,8 @@
             </div>
           </div>
         </div>
+
+      <%- include('partials/footer') %>
       
       <!-- JavaScript -->
       <script async src="https://fundingchoicesmessages.google.com/i/pub-8152532464536367?ers=1"></script><script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
@@ -336,6 +342,5 @@
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
       <script src="/scripts/main.js"></script>
       <script src="/scripts/users.js"></script>
-      <%- include('partials/footer') %>
   </body>
 </html>

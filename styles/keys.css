@@ -90,46 +90,6 @@ body {
   border-color: var(--button-primary-bg) !important; /* Primary button border */
   color: var(--button-primary-text) !important; /* Primary button text color */
 }
-.breadcrumb {
-  border-radius: 0.25rem;
-  padding: 12px 20px;
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  max-width: fit-content;
-  margin: 0;
-}
-
-.breadcrumb-item {
-  margin-right: 15px;
-  font-size: 16px;
-  position: relative;
-}
-
-.breadcrumb-item:not(:last-child)::after {
-  content: "›";
-  color: #6c757d;
-  margin-left: 15px;
-}
-
-.breadcrumb-item a {
-  text-decoration: none;
-  color: #ffffff;
-  transition: color 0.3s, opacity 0.3s;
-  opacity: 0.8;
-}
-
-.breadcrumb-item a:hover {
-  color: #ffffff;
-  opacity: 1;
-}
-
-.breadcrumb-item.active {
-  color: #ffffff;
-  font-weight: 600;
-  opacity: 1;
-}
-
 /* Off-screen Side Menu Styles */
 .side-menu {
   position: fixed;
@@ -330,17 +290,5 @@ h1 {
 @media (max-width: 768px) {
   .quick-links .btn-link {
     font-size: 0.9rem; /* Font size for quick links */
-  }
-}
-@media (max-width: 576px) {
-  .breadcrumb {
-    padding: 10px 15px;
-  }
-  .breadcrumb-item {
-    font-size: 14px;
-    margin-right: 10px;
-  }
-  .breadcrumb-item:not(:last-child)::after {
-    margin-left: 10px;
   }
 }

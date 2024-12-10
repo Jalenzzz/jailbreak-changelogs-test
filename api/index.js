@@ -83,7 +83,7 @@ app.get("/changelogs/:changelog", async (req, res) => {
       res.render("changelogs", {
         title: "Changelog not found",
         image_url:
-          "https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp",
+          "https://cdn.jailbreakchangelogs.xyz/images/changelogs/346.webp",
         logoUrl: 'https://cdn.jailbreakchangelogs.xyz/logos/Changelogs_Logo.webp',
         logoAlt: 'Changelogs Page Logo',
         changelogId
@@ -133,7 +133,7 @@ app.get("/seasons/:season", async (req, res) => {
       return res.render("seasons", {
         season: "???",
         title: "Season not found",
-        image_url: "https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp",
+        image_url: "https://cdn.jailbreakchangelogs.xyz/images/changelogs/346.webp",
         logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Seasons_Logo.webp",
         logoAlt: "Jailbreak Seasons Logo",
         seasonId
@@ -150,7 +150,7 @@ app.get("/seasons/:season", async (req, res) => {
       return res.render("seasons", {
         season: "???",
         title: "Season not found",
-        image_url: "https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp",
+        image_url: "https://cdn.jailbreakchangelogs.xyz/images/changelogs/346.webp",
         logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Seasons_Logo.webpg",
         logoAlt: "Jailbreak Seasons Logo",
         seasonId
@@ -166,7 +166,7 @@ app.get("/seasons/:season", async (req, res) => {
     );
 
     // Ensure we got the reward before accessing properties
-    let image_url = "https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp";
+    let image_url = "https://cdn.jailbreakchangelogs.xyz/images/changelogs/346.webp";
     if (level_10_reward) {
       image_url = level_10_reward.link;
     }

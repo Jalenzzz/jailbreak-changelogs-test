@@ -529,46 +529,6 @@ span {
   color: var(--heading-color);
   font-family: "Luckiest Guy", "Bangers", Arial, Helvetica, sans-serif;
 }
-.breadcrumb {
-  /* background-color: #212529; */
-  border-radius: 0.25rem;
-  padding: 12px 20px;
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  max-width: fit-content;
-  margin: 0;
-}
-
-.breadcrumb-item {
-  margin-right: 15px;
-  font-size: 16px;
-  position: relative;
-}
-
-.breadcrumb-item:not(:last-child)::after {
-  content: "›";
-  color: #6c757d;
-  margin-left: 15px;
-}
-
-.breadcrumb-item a {
-  text-decoration: none;
-  color: #ffffff;
-  transition: color 0.3s, opacity 0.3s;
-  opacity: 0.8;
-}
-
-.breadcrumb-item a:hover {
-  color: #ffffff;
-  opacity: 1;
-}
-
-.breadcrumb-item.active {
-  color: #ffffff;
-  font-weight: 600;
-  opacity: 1;
-}
 .custom-prizes-title {
   border-bottom: 4px solid var(--subheading-color);
   font-size: 2.5rem;
@@ -700,16 +660,6 @@ body.menu-open {
   .season-rewards .d-flex {
     flex-direction: row;
     flex-wrap: nowrap;
-  }
-  .breadcrumb {
-    padding: 10px 15px;
-  }
-  .breadcrumb-item {
-    font-size: 14px;
-    margin-right: 10px;
-  }
-  .breadcrumb-item:not(:last-child)::after {
-    margin-left: 10px;
   }
   #loading-overlay .loading-logo {
     width: 200px;

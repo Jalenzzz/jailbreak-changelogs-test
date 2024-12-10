@@ -47,45 +47,6 @@
   display: block; /* Show when the 'show' class is added */
 }
 
-.breadcrumb {
-  border-radius: 0.25rem;
-  padding: 12px 20px;
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  max-width: fit-content;
-  margin: 0;
-}
-
-.breadcrumb-item {
-  margin-right: 15px;
-  font-size: 16px;
-  position: relative;
-}
-
-.breadcrumb-item:not(:last-child)::after {
-  content: "›";
-  color: #6c757d;
-  margin-left: 15px;
-}
-
-.breadcrumb-item a {
-  text-decoration: none;
-  color: #ffffff;
-  transition: color 0.3s, opacity 0.3s;
-  opacity: 0.8;
-}
-
-.breadcrumb-item a:hover {
-  color: #ffffff;
-  opacity: 1;
-}
-
-.breadcrumb-item.active {
-  color: #ffffff;
-  font-weight: 600;
-  opacity: 1;
-}
 #backToTop:hover {
   background-color: var(--button-primary-hover-bg);
 }
@@ -610,17 +571,5 @@ button {
   .custom-spinner {
     width: 30px;
     height: 30px;
-  }
-}
-@media (max-width: 576px) {
-  .breadcrumb {
-    padding: 10px 15px;
-  }
-  .breadcrumb-item {
-    font-size: 14px;
-    margin-right: 10px;
-  }
-  .breadcrumb-item:not(:last-child)::after {
-    margin-left: 10px;
   }
 }
