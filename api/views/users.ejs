@@ -140,9 +140,9 @@
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     <span id="button-text">Loading</span>
                 </button>
-                <button id="settings-button" class="btn btn-secondary btn-hover action-button ms-2" style="display: none;">
-                    <i class="bi bi-gear-fill"></i>
-                    <span>Settings</span>
+                <button id="settings-button" class="btn btn-secondary action-button btn-sm ms-2" style="display: none;">
+                  <i class="bi bi-gear-fill"></i>
+                  <span class="d-none d-md-inline">Settings</span>
                 </button>
             </div>
             
@@ -168,7 +168,6 @@
           <!-- Main Content Container -->
           <div class="container">
             <!-- User Stats and About Section -->
-            <!-- User Stats and About Section -->
             <div class="row mb-4">
               <!-- About Column (Full width) -->
               <div class="col-12 mb-3">
@@ -177,16 +176,24 @@
                     <div class="d-flex justify-content-between align-items-start mb-0">
                       <h5 class="card-title">About</h5>
                       <div>
-                        <button class="btn btn-outline-light btn-sm hidden" id="canceledit">
+                        <button class="btn btn-danger btn-sm" id="canceledit" style="display: none;">
                           <i class="bi bi-x-lg"></i>
+                          <span class="d-none d-md-inline">Cancel</span>
                         </button>
-                        <button class="btn btn-outline-light btn-sm hidden" id="edit-bio-button">
-                          <i class="bi bi-pencil-fill"></i>
+              
+                        <button class="btn btn-outline-light btn-sm" id="edit-bio-button" style="display: none;" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Edit About">
+                            <i class="bi bi-pencil-fill"></i>
                         </button>
-                        <button class="btn btn-outline-light btn-sm hidden" id="save-bio-button">
+
+                        <button class="btn btn-success btn-sm" id="save-bio-button" style="display: none;">
                           <i class="bi bi-save"></i>
+                          <span class="d-none d-md-inline">Save</span>
                         </button>
-                      </div>
+                    </div>
+
                     </div>
                     <p class="card-text mb-4" id="userBio"></p>
                     <div class="d-flex justify-content-between align-items-center mt-1">

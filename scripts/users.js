@@ -570,8 +570,6 @@ document.addEventListener('DOMContentLoaded', function() {
           followers.innerHTML = ''; // Clear existing content
           followers.appendChild(followersLink); // Add the link to followers
       
-          // Hide loading icons
-      
         } catch (error) {
           console.error('Error updating user counts:', error);
         }
