@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
       displayItems();
       setupPagination();
       updateTotalItemsCount();
+      updateTotalItemsLabel('all-items');
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -302,7 +303,8 @@ function createItemCard(item) {
             itemsRow.classList.add('row');
             itemsContainer.appendChild(itemsRow);
         }
-        
+        const itemType = sortValue.split('-').slice(1).join('-');
+        updateTotalItemsLabel(itemType);
         currentPage = 1;
         displayItems();
         setupPagination();
@@ -446,6 +448,7 @@ function createItemCard(item) {
           paginationContainer.style.display = '';
       }
 
+      updateTotalItemsLabel(itemType);
       currentPage = 1;
       displayItems();
       setupPagination();
@@ -490,6 +493,24 @@ function clearSearch() {
       clearButton.style.display = 'none';
   }
 }
+
+function updateTotalItemsLabel(itemType) {
+  const totalItemsLabel = document.getElementById('total-items-label');
+  if (totalItemsLabel) {
+      if (itemType === 'all-items') {
+          totalItemsLabel.textContent = 'Total Items: ';
+      } else {
+    
+          const categoryName = itemType
+              .slice(0, -1)
+              .split('-')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+          totalItemsLabel.textContent = `Total ${categoryName}s: `;
+      }
+  }
+}
+
 function updateSearchPlaceholder() {
   const sortValue = document.getElementById('sort-dropdown').value;
   const searchBar = document.getElementById('search-bar');
@@ -512,8 +533,6 @@ function updateSearchPlaceholder() {
   // Set the placeholder text
   searchBar.placeholder = placeholders[category] || 'Search items...';
 }
-
-
 
 function handleCardClick(itemName) {
   window.location.href =  '/item/' + itemName.toLowerCase();
