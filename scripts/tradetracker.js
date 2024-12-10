@@ -2,6 +2,27 @@ let allData = [];
 let currentPage = 1;
 const itemsPerPage = 20;
 
+const searchInput = document.getElementById('searchInput');
+const clearSearchBtn = document.getElementById('clearSearch');
+
+// Show/hide clear button based on input content
+searchInput.addEventListener('input', function() {
+    if (this.value) {
+        clearSearchBtn.classList.remove('d-none');
+    } else {
+        clearSearchBtn.classList.add('d-none');
+    }
+});
+
+// Clear search input
+clearSearchBtn.addEventListener('click', function() {
+    searchInput.value = '';
+    clearSearchBtn.classList.add('d-none');
+    searchInput.focus();
+    displayData(); // Refresh the table data
+});
+
+
 function configureToastr() {
   toastr.options = {
     closeButton: true,
@@ -105,7 +126,9 @@ document.getElementById("clearFilters").addEventListener("click", clearFilters);
 
 function filterData(data) {
   const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+  // Updated filter type event listener
   const filterType = document.getElementById("filterType").value;
+
 
   return data.filter(
     (item) =>
@@ -167,6 +190,28 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("searchInput").addEventListener("input", displayData);
   document.getElementById("filterType").addEventListener("change", displayData);
   document.getElementById("sortBy").addEventListener("change", displayData);
+
+  // Filter type change handler
+  const filterType = document.getElementById("filterType");
+  filterType.addEventListener("change", () => {
+      const searchInput = document.getElementById('searchInput');
+      searchInput.value = '';
+      clearSearchBtn.classList.add('d-none');
+      currentPage = 1;
+      displayData();
+  });
+
+  // Sort change handler
+  const sortBy = document.getElementById("sortBy");
+  sortBy.addEventListener("change", () => {
+      const searchInput = document.getElementById('searchInput');
+      searchInput.value = '';
+      clearSearchBtn.classList.add('d-none');
+      localStorage.setItem("sortPreference", sortBy.value);
+      currentPage = 1;
+      displayData();
+  });
+
   document.getElementById("prevPage").addEventListener("click", () => {
     if (currentPage > 1) {
       currentPage--;
@@ -181,15 +226,10 @@ document.addEventListener("DOMContentLoaded", () => {
       displayData();
     }
   });
-  const sortBy = document.getElementById("sortBy");
-  sortBy.addEventListener("change", () => {
-    localStorage.setItem("sortPreference", sortBy.value);
-    displayData();
-  });
 
-  // Load saved sort preference
-  const savedSort = localStorage.getItem("sortPreference");
-  if (savedSort) {
-    sortBy.value = savedSort;
-  }
+   // Load saved sort preference
+   const savedSort = localStorage.getItem("sortPreference");
+   if (savedSort) {
+       sortBy.value = savedSort;
+   }
 });

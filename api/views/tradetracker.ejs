@@ -113,175 +113,131 @@
       </div>
     </div>
   </div>
-  
-  <div
-      class="offcanvas offcanvas-end"
-      tabindex="-1"
-      id="discordOffcanvas"
-      aria-labelledby="discordOffcanvasLabel"
-    >
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="discordOffcanvasLabel">
-          Join the Changelogs Discord
-        </h5>
-        <button
-          type="button"
-          class="btn-close text-reset"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="offcanvas-body">
-        <iframe
-          src="https://discord.com/widget?id=1286064050135896064&theme=dark"
-          width="100%"
-          height="100%"
-          allowtransparency="true"
-          frameborder="0"
-          sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-        >
-        </iframe>
-      </div>
-    </div>
       
     <div class="container-fluid py-4">
       <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
+          <!-- Breadcrumb -->
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="/">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">Trade Tracker</li>
             </ol>
           </nav>
+    
           <section id="content">
+            <!-- Page Title -->
             <h1>Trade Tracker</h1>
+    
+            <!-- Info Alert -->
             <div class="alert alert-info mb-2" role="alert">
               <i class="bi bi-info-circle-fill me-2"></i>
               <strong>Data Update Schedule:</strong> This dataset refreshes every 24 hours at midnight 
               <a href="https://time.is/UTC" target="_blank" class="alert-link">UTC time</a>.
             </div>
+    
+            <!-- Warning Alert -->
             <div class="alert alert-warning" role="alert">
               <i class="bi bi-exclamation-triangle-fill me-2"></i>
               Note: This dataset exclusively contains information about vehicles, including their customization items and the vehicles themselves.
             </div>
-          
-          <div class="card shadow">
-            <div class="card-body">
-              <div class="row mb-3">
-                <div class="col-12 col-md-6 mb-3 mb-md-0">
-                  <input type="text" id="searchInput" class="form-control" placeholder="Search by Name or Type">
+    
+            <!-- Main Card -->
+            <div class="card shadow">
+              <div class="card-body">
+                <!-- Filters Row -->
+                <div class="row g-3 mb-3">
+                  <!-- Search Input -->
+                  <div class="col-12 col-md-4">
+                    <form autocomplete="off">
+                        <div class="position-relative search-container">
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                class="form-control pe-5" 
+                                placeholder="Search by Name or Type..."
+                                autocomplete="off"
+                                autocomplete="new-password"
+                                name="search_${Date.now()}"
+                            >
+                            <!-- Clear Search Button -->
+                            <button 
+                                id="clearSearch" 
+                                class="btn position-absolute top-50 end-0 translate-middle-y clear-search-btn d-none"
+                                type="button"
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                title="Clear search"
+                                aria-label="Clear search">
+                                <i class="bi bi-x-circle-fill"></i>
+                            </button>
+                        </div>
+                    </form>
+                  </div>
+
+                  <!-- Type Filter -->
+                  <div class="col-12 col-md-3">
+                    <select id="filterType" class="form-select">
+                      <option value="">All Types</option>
+                    </select>
+                  </div>
+    
+                  <!-- Sort Dropdown -->
+                  <div class="col-12 col-md-3">
+                    <select id="sortBy" class="form-select">
+                      <option value="TimesTraded_desc">Times Traded (High to Low)</option>
+                      <option value="TimesTraded_asc">Times Traded (Low to High)</option>
+                      <option value="UniqueCirculation_desc">Unique Circulation (High to Low)</option>
+                      <option value="UniqueCirculation_asc">Unique Circulation (Low to High)</option>
+                      <option value="DemandMultiple_desc">Demand Multiple (High to Low)</option>
+                      <option value="DemandMultiple_asc">Demand Multiple (Low to High)</option>
+                    </select>
+                  </div>
+    
+                 <!-- Clear Filters Button -->
+                <div class="col-12 col-md-2">
+                  <button 
+                      id="clearFilters" 
+                      class="btn btn-secondary w-100"
+                      data-bs-toggle="tooltip" 
+                      data-bs-placement="top" 
+                      title="Clear all filters">
+                      <i class="bi bi-x-circle me-2"></i>Clear
+                  </button>
                 </div>
-                <div class="col-12 col-md-3 mb-3 mb-md-0">
-                  <select id="filterType" class="form-select">
-                    <option value="">All Types</option>
-                  </select>
+    
+                <!-- Table -->
+                <div class="table-responsive">
+                  <table id="tradeDataTable" class="table table-dark table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>Times Traded</th>
+                        <th>Unique Circulation</th>
+                        <th>Demand Multiple</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Data will be inserted here by JavaScript -->
+                    </tbody>
+                  </table>
                 </div>
-                <div class="col-12 col-md-3">
-                  <select id="sortBy" class="form-select">
-                    <option value="TimesTraded_desc">Times Traded (High to Low)</option>
-                    <option value="TimesTraded_asc">Times Traded (Low to High)</option>
-                    <option value="UniqueCirculation_desc">Unique Circulation (High to Low)</option>
-                    <option value="UniqueCirculation_asc">Unique Circulation (Low to High)</option>
-                    <option value="DemandMultiple_desc">Demand Multiple (High to Low)</option>
-                    <option value="DemandMultiple_asc">Demand Multiple (Low to High)</option>
-                  </select>
-                </div>
-                <div class="col-12 col-md-3 mt-3">
-                  <button id="clearFilters" class="btn btn-secondary w-100">Clear Filters</button>
-                </div>
+    
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center align-items-center mt-3">
+                  <button id="prevPage" class="btn btn-custom-outline me-2">Previous</button>
+                  <span id="currentPage" class="mx-2">Page 1</span>
+                  <button id="nextPage" class="btn btn-custom-outline ms-2">Next</button>
               </div>
-              <div class="table-responsive">
-                <table id="tradeDataTable" class="table table-dark table-bordered table-striped">
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Name</th>
-                      <th>Times Traded</th>
-                      <th>Unique Circulation</th>
-                      <th>Demand Multiple</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- Data will be inserted here by JavaScript -->
-                  </tbody>
-                </table>
               </div>
-              
-              <div class="d-flex justify-content-center align-items-center mt-3">
-                <button id="prevPage" class="btn btn-outline-primary me-2">Previous</button>
-                <span id="currentPage" class="mx-2">Page 1</span>
-                <button id="nextPage" class="btn btn-outline-primary ms-2">Next</button>
-              </div>
-              
             </div>
-          </div>
+          </section>
         </div>
       </div>
-      </section>
     </div>
 
 <%- include('partials/footer') %>
-
-<!-- Date Filter Modal -->
-<div
-  class="modal fade"
-  id="dateFilterModal"
-  tabindex="-1"
-  aria-labelledby="dateFilterModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="dateFilterModalLabel">Select Date Range</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="modal-body">
-        <div id="dateRangeFilter" class="row g-2">
-          <div class="col-md-6">
-            <label for="startDateBtn" class="form-label">Start Date:</label>
-            <button
-              id="startDateBtn"
-              class="btn btn-outline-secondary w-100"
-            >
-              <i class="bi bi-calendar-event me-2"></i>
-              <span>Select Start Date</span>
-            </button>
-            <input type="hidden" id="startDate" />
-          </div>
-          <div class="col-md-6">
-            <label for="endDateBtn" class="form-label">End Date:</label>
-            <button
-              id="endDateBtn"
-              class="btn btn-outline-secondary w-100"
-            >
-              <i class="bi bi-calendar-event me-2"></i>
-              <span>Select End Date</span>
-            </button>
-            <input type="hidden" id="endDate" />
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          data-bs-dismiss="modal"
-        >
-          Close
-        </button>
-        <button type="button" class="btn btn-primary" id="applyDateFilter">
-          Apply Filter
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
