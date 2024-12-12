@@ -266,10 +266,7 @@ body {
   border-bottom-color: #ff341c; /* Orange */
   border-left-color: #ff341c; /* Orange */
 }
-/* Adjust the body when menu is opened */
-body.menu-open {
-  overflow: hidden;
-}
+
 #loading-overlay {
   position: fixed;
   top: 0;

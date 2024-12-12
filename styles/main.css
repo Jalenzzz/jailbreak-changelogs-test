@@ -239,6 +239,11 @@
     border: none;
     transition: background-color 0.3s ease;
   }
+  .nav-link:hover {
+    background-color: rgba(211, 217, 212, 0.1); /* Slightly lighter background on hover */
+    color: #ffffff; /* Brighter text color on hover */
+    border-radius: 5px;
+  }
   
   /* Burger Menu Icon */
   .burger-menu-icon {
@@ -289,6 +294,10 @@
   .navbar-toggler:focus {
     box-shadow: none; /* Remove focus outline */
   }
+  body.menu-open {
+    overflow: hidden;
+  }
+  
   /* Off-screen Side Menu Styles */
   .side-menu {
     position: fixed;

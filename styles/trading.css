@@ -75,51 +75,6 @@
     background-color: var(--common-bg-color);
   }
   
-  .nav-link {
-    color: #d3d9d4; /* Light color for button text */
-    border: none;
-    transition: background-color 0.3s ease;
-  }
-  .nav-link:hover {
-    background-color: rgba(211, 217, 212, 0.1); /* Slightly lighter background on hover */
-    color: #ffffff; /* Brighter text color on hover */
-    border-radius: 5px;
-  }
-  
-  /* Burger Menu Icon Styles */
-  .burger-menu-icon {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    z-index: 1001; /* Ensure it's above the fullscreen menu */
-  }
-  
-  /* Adjust the body when menu is opened */
-  body.menu-open {
-    overflow: hidden;
-  }
-
-  /* Second navbar toggler - Dark theme */
-  .navbar-toggler.btn-dark {
-    padding: 0.375rem 0.75rem;
-    background-color: #343a40; /* Dark background */
-    border-color: #495057; /* Dark border */
-    transition: all 0.15s ease-in-out;
-  }
-  
-  .navbar-toggler.btn-dark:active,
-  .navbar-toggler.btn-dark[aria-expanded="true"] {
-    background-color: #495057; /* Slightly lighter for active state */
-    border-color: #6c757d; /* Adjusted border for active state */
-    transform: translateY(1px);
-  }
-  
-  .navbar-toggler.btn-dark .bi-menu-button-wide {
-    color: #f8f9fa; /* Light icon color */
-    font-size: 1.25rem;
-  }
-  
   .btn-primary {
     background-color: var(
       --button-primary-bg
@@ -218,16 +173,12 @@
     margin-right: 0; /* Reset right margin */
   }
 
-  
   /* Body Text Styles */
   body,
   p,
   span {
     color: var(--text-color); /* Default text color */
   }
-  
-  
-
   
   /* Remove Outline for All Elements */
   * {
@@ -241,7 +192,6 @@
   select:focus {
     box-shadow: none; /* Remove box shadow on focus */
   }
-  
   
   /* Button Styles */
   button {
@@ -271,17 +221,5 @@
     .custom-spinner {
       width: 30px;
       height: 30px;
-    }
-  }
-  @media (max-width: 576px) {
-    .breadcrumb {
-      padding: 10px 15px;
-    }
-    .breadcrumb-item {
-      font-size: 14px;
-      margin-right: 10px;
-    }
-    .breadcrumb-item:not(:last-child)::after {
-      margin-left: 10px;
     }
   }

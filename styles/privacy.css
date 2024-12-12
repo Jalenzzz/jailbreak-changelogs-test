@@ -61,8 +61,3 @@ a:hover {
 .home-button:hover {
   background-color: #212a31 !important;
 }
-
-/* Adjust the body when menu is opened */
-body.menu-open {
-  overflow: hidden;
-}

@@ -609,11 +609,6 @@ span {
   overflow-wrap: break-word;
 }
 
-/* Adjust the body when menu is opened */
-body.menu-open {
-  overflow: hidden;
-}
-
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .comment-container {
