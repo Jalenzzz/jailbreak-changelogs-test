@@ -87,6 +87,9 @@ body {
 .user-info-section {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between; /* This helps push items to edges */
+  position: relative; /* For absolute positioning context */
 }
 
 .user-header {
@@ -99,6 +102,14 @@ body {
 
 .user-name-container {
   flex: 1;
+  min-width: 0; /* Prevents flex item from overflowing */
+}
+#settings-button {
+  position: absolute;
+  right: 0;
+  top: 1rem; /* Aligns with username */
+  margin: 0; /* Reset margins */
+  z-index: 1000;
 }
 
 /* Typography */
@@ -242,10 +253,11 @@ body {
   }
   
   .user-name-container {
-    width: 100%;
+    width: calc(100% - 60px);
     margin-top: 1rem;
     text-align: left;
     margin-left: 1rem;
+    margin-right: 60px
   }
   
   .user-info { padding-top: 30px; }
@@ -254,6 +266,14 @@ body {
     width: 100%;
     margin-left: 1rem;
     margin-bottom: 1.5rem;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    clear: both; /* Ensure it clears other elements */
+  }
+  #settings-button {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
   }
 }
 
@@ -297,7 +317,37 @@ body {
     flex: 1 1 auto;
     justify-content: center;
   }
+
+  /* Container for title and pagination */
+  .d-flex.flex-wrap.justify-content-between {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Pagination container */
+  .card-pagination {
+    width: 100%;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  /* Pagination controls */
+  #paginationControls {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .card-pagination {
+    display: flex;
+    align-items: center;
+  }
   
+  #paginationControls.pagination {
+    margin-bottom: 0;
+    gap: 0.5rem; /* Adds some space between pagination items */
+  }
+
   .card-body { padding: 12px !important; }
   #comments-list { padding-right: 0; }
   .container { padding: 0 8px; }

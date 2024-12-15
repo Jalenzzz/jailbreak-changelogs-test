@@ -369,16 +369,6 @@ document.addEventListener('DOMContentLoaded', function() {
             fetchUserComments(userId);
         });
         paginationContainer.appendChild(doubleRightArrow);
-    
-        // Add total pages display
-        const totalPagesSpan = document.createElement("span");
-        totalPagesSpan.textContent = ` of ${totalPages}`;
-        totalPagesSpan.style.cssText = `
-            color: #D3D9D4;
-            margin-left: 0.5rem;
-            font-size: 0.875rem;
-        `;
-        paginationContainer.appendChild(totalPagesSpan);
     }
     
     let currentPage = 1;
