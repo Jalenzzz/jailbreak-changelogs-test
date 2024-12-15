@@ -123,47 +123,46 @@
               <img id="banner" src="" class="banner-image" alt="">
             </div>
             
-            <!-- User Info Section -->
-            <div class="user-info-section">
-              <!-- Avatar -->
-              <div class="avatar-wrapper">
-                <img src="<%= avatar %>" id="user-avatar" class="user-avatar" alt="User Avatar">
-              </div>
-        
-              <!-- Action Buttons -->
-              <div class="action-buttons text-end">
-                <button class="btn btn-light btn-hover me-2 action-button" id="message-button">
-                    <i class="bi bi-envelope-fill"></i>
-                    <span>Message</span>
-                </button>
-                <button class="btn btn-primary btn-hover action-button" id="follow-button">
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    <span id="button-text">Loading</span>
-                </button>
-                <button id="settings-button" class="btn btn-secondary action-button btn-sm ms-2" style="display: none;">
-                  <i class="bi bi-gear-fill"></i>
-                  <span class="d-none d-md-inline">Settings</span>
-                </button>
+          <!-- User Info Section -->
+          <div class="user-info-section">
+            <!-- Avatar -->
+            <div class="avatar-wrapper">
+              <img src="<%= avatar %>" id="user-avatar" class="user-avatar" alt="User Avatar">
             </div>
-            
-            
-        
-              <!-- User Details -->
-              <div class="user-name-container">
-                <h2 class="user-display-name d-flex align-items-center">
-                  <%= userData.global_name %>
-                  <span id="crown" class="ms-2 crown-wrapper" style="display: none;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="crown-icon">
-                      <path fill="#ffd700" d="m12 6l4 6l5-4l-2 10H5L3 8l5 4z" />
-                    </svg>
-                  </span>
-                </h2>
-                <a class="username-link" href="https://discord.com/users/<%= userData.id %>">
-                  @<%= userData.username %>
-                </a>
-              </div>
+
+            <!-- User Details -->
+            <div class="user-name-container">
+              <h2 class="user-display-name d-flex align-items-center">
+                <%= userData.global_name %>
+                <span id="crown" class="ms-2 crown-wrapper" style="display: none;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="crown-icon">
+                    <path fill="#ffd700" d="m12 6l4 6l5-4l-2 10H5L3 8l5 4z" />
+                  </svg>
+                </span>
+              </h2>
+              <a class="username-link" href="https://discord.com/users/<%= userData.id %>">
+                @<%= userData.username %>
+              </a>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+              <button class="btn btn-light btn-hover me-2 action-button" id="message-button">
+                  <i class="bi bi-envelope-fill"></i>
+                  <span>Message</span>
+              </button>
+              <button class="btn btn-primary btn-hover action-button" id="follow-button">
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <span id="button-text">Loading</span>
+              </button>
+              <button id="settings-button" class="btn btn-secondary action-button btn-sm ms-2" style="display: none;">
+                <i class="bi bi-gear-fill"></i>
+                <span class="d-none d-md-inline">Settings</span>
+              </button>
             </div>
           </div>
+
+
         
           <!-- Main Content Container -->
           <div class="container">
