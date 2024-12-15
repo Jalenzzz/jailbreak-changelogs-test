@@ -239,27 +239,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function fetchCommentItem(comment) {
         try {
+            let url;
+            // Check if comment and item_type exist before accessing
+            if (!comment || !comment.item_type) {
+                console.error('Invalid comment data:', comment);
+                return null;
+            }
+    
+            // Set the URL based on item type
             if (comment.item_type === "changelog") {
                 url = `https://api.jailbreakchangelogs.xyz/changelogs/get?id=${comment.item_id}`;
             } else if (comment.item_type === "season") {
                 url = `https://api.jailbreakchangelogs.xyz/seasons/get?season=${comment.item_id}`;
+            } else {
+                console.error('Unknown item type:', comment.item_type);
+                return null;
             }
-            const response = await fetch(url);
+    
+            // Add timeout to fetch request
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
+            const response = await fetch(url, {
+                signal: controller.signal,
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            clearTimeout(timeoutId);
+    
             if (!response.ok) {
                 if (response.status === 404) {
-                    return " ";
+                    console.warn(`Item not found for comment:`, comment);
+                    return null;
                 }
-                else {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+    
             const result = await response.json();
-            return result
+            return result;
+    
         } catch (error) {
-            console.error('Error:', error);
-            return 'Error fetching comment title.';
+            if (error.name === 'AbortError') {
+                console.error('Request timed out:', url);
+            } else {
+                console.error('Error fetching comment item:', error);
+            }
+            return null;
         }
     }
+    
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
     }
@@ -375,95 +406,90 @@ document.addEventListener('DOMContentLoaded', function() {
     const commentsPerPage = 3;
     
     async function fetchUserComments(userId) {
-        const recentComments = document.getElementById('comments-list'); // Ensure this is the correct ID
+        const recentComments = document.getElementById('comments-list');
         let loadingSpinner = document.getElementById('loading-spinner');
-        recentComments.innerHTML = ""; // Clear existing comments
-        recentComments.innerHTML = '<span id="loading-spinner" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>';
+       
         try {
+            recentComments.innerHTML = `
+            <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 200px;">
+                <span class="text-light mb-2">Loading comments...</span>
+                <span id="loading-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </div>`;
+            
             const response = await fetch(`https://api.jailbreakchangelogs.xyz/comments/get/user?author=${userId}`);
     
             if (!response.ok) {
-                if (response.status === 404) {
-                    recentComments.innerHTML = "<div>No recent comments.</div>"; // Use innerHTML for the list
-                } else {
-                    recentComments.innerHTML = "<div>Error fetching comments.</div>"; // Update the message for other errors
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return; // Exit the function if there is an error
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
     
-            const comments = await response.json(); // Assuming the API returns a JSON array of comments
-            const totalComments = comments.length; // Get the total number of comments
-            if (!totalComments) {
-                recentComments.innerHTML = "<div>No recent comments.</div>"; // No comments found
+            const comments = await response.json();
+            
+            if (!comments || comments.length === 0) {
+                recentComments.innerHTML = "<div>No recent comments.</div>";
                 return;
             }
-            const totalPages = Math.ceil(totalComments / commentsPerPage); // Calculate total pages
     
-            // Slice the comments array for the current page
+            // Calculate pagination
+            const totalComments = comments.length;
+            const totalPages = Math.ceil(totalComments / commentsPerPage);
             const startIndex = (currentPage - 1) * commentsPerPage;
             const paginatedComments = comments.slice(startIndex, startIndex + commentsPerPage);
     
-            // Check if comments are available
-            if (paginatedComments.length === 0) {
-                recentComments.innerHTML = "<div>No comments found.</div>"; // Message if no comments
-                return;
-            }
-            const comments_to_add = []; // Array to store elements to add to the DOM
+            // Clear existing content
+            recentComments.innerHTML = "";
+            const comments_to_add = [];
     
-            // Iterate over paginated comments and create elements to display
-            for (const comment of paginatedComments) { // Use for...of to allow await
-                const item = await fetchCommentItem(comment); // Await the fetchCommentItem
+            // Process each comment
+            for (const comment of paginatedComments) {
+                const item = await fetchCommentItem(comment);
+                
+                if (!item) {
+                    continue; // Skip this comment if we couldn't fetch its details
+                }
+    
                 const formattedDate = formatDate(comment.date);
                 const commentElement = document.createElement('div');
-                let url; // Placeholder URL for season rewards
+                
+                // Get the correct image URL
+                let imageUrl;
                 if (comment.item_type === "season") {
-                    let rewards = await fetchSeasonRewards(comment.item_id); // Await the fetchSeasonRewards
-                    if (!Array.isArray(rewards)) {
-                        if (typeof rewards === 'object' && rewards !== null) {
-                            rewards = Object.values(rewards); // Convert object properties to an array
-                        } else {
-                            rewards = []; // Initialize as empty array if rewards is null or undefined
-                        }
-                    }
-                    
-            
-                    const level10Reward = rewards.find(reward => reward.requirement === "Level 10");
-                    url = level10Reward.link
+                    const rewards = await fetchSeasonRewards(comment.item_id);
+                    const level10Reward = rewards?.find?.(reward => reward.requirement === "Level 10");
+                    imageUrl = level10Reward?.link || 'https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp';
+                } else {
+                    imageUrl = item.image_url || 'https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp';
                 }
-
-                const image_url = item.image_url || url; // Placeholder image URL
+    
                 commentElement.className = 'list-group-item';
-                // the actual comments
+                // Create the comment card with the correct image URL
                 commentElement.innerHTML = `
-              <div class="card mb-3 comment-card shadow-lg" style="background-color: #212A31; color: #D3D9D4;">
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Image Section -->
-                        <div class="col-md-4 d-none d-md-block">
-                            <img src="${image_url}" alt="Comment Image" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
-                        </div>
-                        
-                        <!-- Content Section -->
-                        <div class="col-md-8">
-                            <div class="comment-header mb-2">
-                                <h6 class="card-title" style="color: #748D92;">${capitalizeFirstLetter(comment.item_type)} ${comment.item_id}</h6>
-                                <small class="text-muted" style="color: #748D92;">${formattedDate}</small>
+                  <div class="card mb-3 comment-card shadow-lg" style="background-color: #212A31; color: #D3D9D4;">
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Image Section -->
+                            <div class="col-md-4 d-none d-md-block">
+                                <img src="${imageUrl}" alt="Comment Image" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
                             </div>
-                            <h5 class="card-subtitle mb-2" style="color: #748D92;">${item.title}</h5>
-                            <p class="card-text" style="color: #D3D9D4;">${comment.content}</p>
-                            <a href="/${comment.item_type}s/${comment.item_id}" class="btn btn-outline-primary btn-sm mt-3" style="color: #124E66; border-color: #124E66; background-color: transparent;">
-                                View ${capitalizeFirstLetter(comment.item_type)}
-                            </a>
+                            
+                            <!-- Content Section -->
+                            <div class="col-md-8">
+                                <div class="comment-header mb-2">
+                                    <h6 class="card-title" style="color: #748D92;">${capitalizeFirstLetter(comment.item_type)} ${comment.item_id}</h6>
+                                    <small class="text-muted" style="color: #748D92;">${formattedDate}</small>
+                                </div>
+                                <h5 class="card-subtitle mb-2" style="color: #748D92;">${item.title}</h5>
+                                <p class="card-text" style="color: #D3D9D4;">${comment.content}</p>
+                                <a href="/${comment.item_type}s/${comment.item_id}" class="btn btn-outline-primary btn-sm mt-3" style="color: #124E66; border-color: #124E66; background-color: transparent;">
+                                    View ${capitalizeFirstLetter(comment.item_type)}
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-`;
-
-                comments_to_add.push(commentElement); // Add the new comment to the array
+                </div>`;
+    
+                comments_to_add.push(commentElement);
             }
+    
             // Add all comments to the DOM
             recentComments.innerHTML = ""; 
             const tempDiv = document.createElement('div');
@@ -474,15 +500,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             card_pagination.innerHTML = tempDiv.innerHTML; // Clear existing pagination controls
             renderPaginationControls(totalPages);
-            recentComments.append(...comments_to_add); // Use spread operator to add multiple elements at once
+            recentComments.append(...comments_to_add);
     
         } catch (error) {
             console.error('Error fetching comments:', error);
-            recentComments.innerHTML = "<div>Internal Server Error.</div>"; // Display error message
+            recentComments.innerHTML = "<div>Error loading comments. Please try again later.</div>";
         } finally {
-            loadingSpinner.remove(); // Hide the loading spinner after the fetch operation
+            if (loadingSpinner) {
+                loadingSpinner.remove();
+            }
         }
     }
+    
     function getCookie(name) {
         let cookieArr = document.cookie.split(";");
         for (let i = 0; i < cookieArr.length; i++) {
@@ -496,74 +525,95 @@ document.addEventListener('DOMContentLoaded', function() {
       const follow_button = document.getElementById('follow-button');
       async function updateUserCounts(userId) {
         try {
-            let followersLoading = document.getElementById('followers-loading');
-            if (!followersLoading) {
-              followersLoading = document.createElement('span');
-              followersLoading.className = 'loading-icon';
-              followersLoading.id = 'followers-loading';
-              followersLoading.innerHTML = '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>'; // Replace with your loading icon
-              document.getElementById('followers').prepend(followersLoading);
-            }
-        
-            let followingLoading = document.getElementById('following-loading');
-            if (!followingLoading) {
-              followingLoading = document.createElement('span');
-              followingLoading.className = 'loading-icon';
-              followingLoading.id = 'following-loading';
-              followingLoading.innerHTML = '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>'; // Replace with your loading icon
-              document.getElementById('following').prepend(followingLoading);
-            }
+            // Create loading spinners first
+            const followersLoading = document.createElement('span');
+            followersLoading.className = 'loading-icon';
+            followersLoading.id = 'followers-loading';
+            followersLoading.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+    
+            const followingLoading = document.createElement('span');
+            followingLoading.className = 'loading-icon';
+            followingLoading.id = 'following-loading';
+            followingLoading.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+    
+            // Clear existing content and add loading spinners
+            const following = document.getElementById('following');
+            const followers = document.getElementById('followers');
+            following.innerHTML = '';
+            followers.innerHTML = '';
+            following.appendChild(followingLoading);
+            followers.appendChild(followersLoading);
+    
+            // Special case for owner display
             if (userId === "659865209741246514" || userId === "1019539798383398946") {
-                
                 const crown = document.getElementById('crown');
                 crown.style.display = 'inline-block';
             }
-        
-            // Show loading icons
-            followersLoading.style.display = 'inline';
-            followingLoading.style.display = 'inline';
-          // Await the fetching of user following and followers
-          const followingArray = await fetchUserFollowing(userId); 
-          const followersArray = await fetchUserFollowers(userId); 
-      
-          const isFollowing = followersArray.some(follower => follower.follower_id === loggedinuserId);
-          follow_button.textContent = isFollowing? "Unfollow" : "Follow";
-      
-          // Check if they are valid arrays
-          const followingCount = Array.isArray(followingArray) ? followingArray.length : 0; 
-          const followersCount = Array.isArray(followersArray) ? followersArray.length : 0; 
-      
-          // Update the DOM elements with the counts
-
-          const following = document.getElementById('following');
-          const followers = document.getElementById('followers');
-          
-          // Create <a> tags for Following
-          const followingLink = document.createElement('a');
-          if (permissions.hide_following === false) {
-            followingLink.href = `/users/${userId}/following`; // Link to the following page
-          }
-          followingLink.textContent = `${followingCount} Following`; // Set the text for following
-          followingLink.classList.add('text-decoration-none', 'text-muted', 'text-bold'); // Add classes for styling
-          
-          // Create <a> tags for Followers
-          const followersLink = document.createElement('a');
-          if (permissions.hide_followers === false) {
-            followersLink.href = `/users/${userId}/followers`; // Link to the followers page
-          }
-          followersLink.textContent = `${followersCount} Followers`; // Set the text for followers
-          followersLink.classList.add('text-decoration-none', 'text-muted', 'text-bold'); // Add classes for styling
-          
-          // Clear existing content and append links
-          following.innerHTML = ''; // Clear existing content
-          following.appendChild(followingLink); // Add the link to following
-          followers.innerHTML = ''; // Clear existing content
-          followers.appendChild(followersLink); // Add the link to followers
-      
+    
+            // Fetch data
+            const [followingArray, followersArray] = await Promise.all([
+                fetchUserFollowing(userId),
+                fetchUserFollowers(userId)
+            ]);
+    
+            // Update follow button state
+            const isFollowing = followersArray.some(follower => follower.follower_id === loggedinuserId);
+            follow_button.textContent = isFollowing ? "Unfollow" : "Follow";
+    
+            // Calculate counts
+            const followingCount = Array.isArray(followingArray) ? followingArray.length : 0;
+            const followersCount = Array.isArray(followersArray) ? followersArray.length : 0;
+    
+            // Create following link
+            const followingLink = document.createElement('a');
+            if (permissions.hide_following === false) {
+                followingLink.href = `/users/${userId}/following`;
+            }
+            const followingCount_span = document.createElement('span');
+            followingCount_span.textContent = followingCount;
+            followingCount_span.classList.add('fw-bold');
+            followingCount_span.style.color = '#748D92';
+            followingCount_span.setAttribute('data-bs-toggle', 'tooltip');
+            followingCount_span.setAttribute('data-bs-placement', 'top');
+            followingCount_span.setAttribute('title', followingCount.toLocaleString());
+    
+            followingLink.appendChild(followingCount_span);
+            followingLink.appendChild(document.createTextNode(' Following'));
+            followingLink.classList.add('text-decoration-none');
+            followingLink.style.color = '#D3D9D4';
+    
+            // Create followers link
+            const followersLink = document.createElement('a');
+            if (permissions.hide_followers === false) {
+                followersLink.href = `/users/${userId}/followers`;
+            }
+            const followersCount_span = document.createElement('span');
+            followersCount_span.textContent = followersCount;
+            followersCount_span.classList.add('fw-bold');
+            followersCount_span.style.color = '#748D92';
+            followersCount_span.setAttribute('data-bs-toggle', 'tooltip');
+            followersCount_span.setAttribute('data-bs-placement', 'top');
+            followersCount_span.setAttribute('title', followersCount.toLocaleString());
+    
+            followersLink.appendChild(followersCount_span);
+            followersLink.appendChild(document.createTextNode(' Followers'));
+            followersLink.classList.add('text-decoration-none');
+            followersLink.style.color = '#D3D9D4';
+    
+            // Clear containers and add new content
+            following.innerHTML = '';
+            followers.innerHTML = '';
+            following.appendChild(followingLink);
+            followers.appendChild(followersLink);
+    
         } catch (error) {
-          console.error('Error updating user counts:', error);
+            console.error('Error updating user counts:', error);
+            // Show error state
+            following.innerHTML = 'Error loading';
+            followers.innerHTML = 'Error loading';
         }
-      }
+    }
+    
 
     const settings_button = document.getElementById('settings-button');
     const editbio_button = document.getElementById('edit-bio-button');

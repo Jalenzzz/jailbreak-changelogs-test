@@ -44,6 +44,7 @@
 
     <!-- Custom stylesheet -->
     <base href="/">
+    <link rel="stylesheet" href="styles/main.css" />
     <link rel="stylesheet" href="styles/users.css" />
     <link rel="stylesheet" href="styles/main.css" />
 
@@ -104,25 +105,26 @@
 <body>
         <%- include('partials/nav') %>
         <%- include('partials/newsticker') %>
-        <!-- Breadcrumb Navigation -->
-        <div class="container mt-4">
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="/">Home</a></li>
-              <li class="breadcrumb-item"><a href="/users">Users</a></li>
-              <li class="breadcrumb-item active" aria-current="page">@<%= userData.username %></li>
-            </ol>
-          </nav>
+       <!-- Breadcrumb Navigation -->
+      <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/users">Users</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@<%= userData.username %></li>
+          </ol>
+        </nav>
+      </div>
+
+      <!-- User Profile Section -->
+      <div class="user-profile">
+        <!-- Banner Section - Full Width -->
+        <div class="banner-container">
+          <img id="banner" src="" class="banner-image" alt="">
+          <div class="banner-overlay"></div>
         </div>
-        
-        <!-- User Header Section - Container Width -->
+
         <div class="container">
-          <!-- Banner Section -->
-          <div class="user-header-wrapper">
-            <div class="banner-container">
-              <img id="banner" src="" class="banner-image" alt="">
-            </div>
-            
           <!-- User Info Section -->
           <div class="user-info-section">
             <!-- Avatar -->
@@ -130,7 +132,6 @@
               <img src="<%= avatar %>" id="user-avatar" class="user-avatar" alt="User Avatar">
             </div>
 
-            <!-- User Details -->
             <div class="user-name-container">
               <h2 class="user-display-name d-flex align-items-center">
                 <%= userData.global_name %>
@@ -148,12 +149,12 @@
             <!-- Action Buttons -->
             <div class="action-buttons">
               <button class="btn btn-light btn-hover me-2 action-button" id="message-button">
-                  <i class="bi bi-envelope-fill"></i>
-                  <span>Message</span>
+                <i class="bi bi-envelope-fill"></i>
+                <span>Message</span>
               </button>
               <button class="btn btn-primary btn-hover action-button" id="follow-button">
-                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  <span id="button-text">Loading</span>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span id="button-text">Loading</span>
               </button>
               <button id="settings-button" class="btn btn-secondary action-button btn-sm ms-2" style="display: none;">
                 <i class="bi bi-gear-fill"></i>
@@ -161,14 +162,14 @@
               </button>
             </div>
           </div>
-          
-          <!-- Main Content Container -->
-          <div class="container">
-            <!-- User Stats and About Section -->
+
+          <!-- User Content -->
+          <div class="user-content mt-4">
+            <!-- About Section -->
             <div class="row mb-4">
-              <!-- About Column (Full width) -->
               <div class="col-12 mb-3">
                 <div class="card bg-dark text-light" id="description-tab">
+                  <!-- About card content... -->
                   <div class="card-body position-relative" id="description-box">
                     <div class="d-flex justify-content-between align-items-start mb-0">
                       <h5 class="card-title">About</h5>
@@ -200,10 +201,11 @@
                   </div>
                 </div>
               </div>
-            
-              <!-- Stats Column (Full width) -->
+
+              <!-- Stats Section -->
               <div class="col-12">
                 <div class="card bg-dark text-light">
+                  <!-- Stats card content... -->
                   <div class="card-body">
                     <div class="user-stats">
                       <div class="stat-box">
@@ -229,10 +231,11 @@
                 </div>
               </div>
             </div>
-        
-            <!-- Recent Comments Section -->
-            <div class="row">
+
+            <!-- Comments Section -->
+            <div class="row mb-4">
               <div class="col-12">
+                <!-- Comments content... -->
                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                   <h5 class="mb-2 mb-sm-0">Recent Comments</h5>
                   <div class="card-pagination" id="card-pagination" style="display: none; align-items: center; margin-bottom: 0;">
@@ -255,6 +258,7 @@
             </div>
           </div>
         </div>
+      </div>
         
         <!-- Settings Modal -->
         <div class="modal" id="settingsModal">

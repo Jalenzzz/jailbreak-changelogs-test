@@ -50,8 +50,9 @@ body {
 .banner-container {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 300px;
   overflow: hidden;
+  background-color: var(--bg-secondary);
 }
 
 .banner-image {
@@ -74,7 +75,12 @@ body {
   position: relative;
   margin: -75px 1rem 1rem;
 }
-
+/* Profile Layout */
+.user-profile {
+  position: relative;
+  width: 100%;
+  margin-bottom: 2rem;
+}
 .user-avatar {
   width: 150px;
   height: 150px;
