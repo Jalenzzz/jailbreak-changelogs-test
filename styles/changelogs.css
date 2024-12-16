@@ -329,7 +329,7 @@ body.menu-open {
 
 /* Button styling */
 .changelog-btn {
-  background: linear-gradient(45deg, #2E3944, #124E66);
+  background: linear-gradient(45deg, #212A31, #124E66);
   justify-content: center;
   border: none;
   color: #fff;
@@ -343,7 +343,7 @@ body.menu-open {
 }
 
 .changelog-btn:hover, .changelog-btn:focus {
-  background: linear-gradient(45deg, #124E66, #2E3944);
+  background: linear-gradient(45deg, #124E66, #212A31);
   color: #e9ecef;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
