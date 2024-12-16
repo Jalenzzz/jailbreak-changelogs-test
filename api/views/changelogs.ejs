@@ -160,9 +160,8 @@
           <!-- Search Bar -->
           <div class="search-container flex-grow-1">
             <form class="d-flex position-relative" role="search" id="searchForm">
-              <!-- Your search input here -->
               <div class="position-relative w-100">
-                <i class="bi bi-search search-icon"></i> <!-- Move icon here -->
+                <i class="bi bi-search search-icon"></i>
                 <input
                   id="search-input"
                   class="form-control custom-search-input pe-5"
@@ -171,16 +170,17 @@
                   aria-label="Search changelogs"
                   autocomplete="off"
                 />
-                <button
-                  id="clear-search-button"
-                  class="btn btn-link position-absolute end-0 top-50 translate-middle-y"
-                  type="button"
-                  aria-label="Clear search"
+                <button 
+                  type="button" 
+                  class="btn-clear-search" 
+                  id="clearSearch" 
+                  style="display: none;"
                 >
-                  <i class="bi bi-x-circle-fill"></i>
+                  <i class="bi bi-x"></i>
                 </button>
               </div>
             </form>
+            
             
             <div id="exampleQueries" class="mt-2 d-none">
               <!-- Example queries here -->

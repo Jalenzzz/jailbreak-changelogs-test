@@ -16,7 +16,6 @@ $(document).ready(function () {
   const mobileOpenModalBtn = document.getElementById('mobileOpenDateFilterModal');
   const dateFilterModal = new bootstrap.Modal(document.getElementById('dateFilterModal'));
   
-  
   // Caching variables
   const CACHE_KEY = "changelogsCache";
   const CACHE_EXPIRY = 60 * 60 * 1000; // 1 hour in milliseconds
@@ -360,10 +359,9 @@ function populateChangelogDropdown(changelogs, buttonText) {
     }
   }
 
-  // jQuery references for search input and UI elements
   const $searchInput = $('input[aria-label="Search changelogs"]');
   const $exampleQueries = $("#exampleQueries");
-  const $clearButton = $("#clear-search-button");
+  const $clearButton = $("#clearSearch");
 
   // Event listener for input in the search field
   $searchInput.on("input", function () {
@@ -371,16 +369,23 @@ function populateChangelogDropdown(changelogs, buttonText) {
     const query = $(this).val().trim(); // Get the trimmed query
     $exampleQueries.addClass("d-none"); // Hide example queries
 
+    $clearButton.toggle(query.length > 0);
+
     debounceTimer = setTimeout(() => {
       performSearch(); // Call performSearch after the delay
-      toggleClearButton(); // Toggle clear button visibility
     }, 300); // 300 milliseconds delay
   });
 
   // Event listener for the clear button
   $clearButton.on("click", function () {
     $searchInput.val(""); // Clear the search input
-    clearSearch(); // Call clearSearch function
+    $clearButton.hide(); // Hide the clear button
+    
+    // Trigger input event to update search results
+    $searchInput.trigger("input");
+    
+    // Focus back on the input
+    $searchInput.focus();
   });
 
   // Handle Enter key press or mobile 'Go' button
@@ -389,6 +394,11 @@ function populateChangelogDropdown(changelogs, buttonText) {
       e.preventDefault(); // Prevent default form submission behavior
       focusOnSearchResults(); // Focus on the search results
       dismissKeyboard(); // Dismiss the keyboard on mobile
+    } else if (e.key === "Escape" && $(this).val()) {
+      // Clear on Escape key if there's text
+      $searchInput.val(""); // Clear the input
+      $clearButton.hide(); // Hide the clear button
+      $searchInput.trigger("input"); // Trigger input event to update search
     }
   });
 
@@ -703,26 +713,6 @@ function updateDropdownButton(text) {
     });
   }
 
-  // Function to toggle the visibility of the clear button based on input
-  function toggleClearButton() {
-    $clearButton.toggle($searchInput.val().length > 0); // Show/hide clear button based on input length
-  }
-
-  // Function to hide search results and focus on the input
-  function hideSearchResults() {
-    $("#search-results").hide(); // Hide search results
-    $searchInput.focus(); // Focus on the search input
-  }
-
-  // Function to clear the search input and reset UI elements
-  function clearSearch() {
-    $searchInput.val(""); // Clear the input value
-
-    toggleClearButton(); // Update clear button visibility
-    hideSearchResults(); // Hide search results
-    dismissKeyboard(); // Dismiss the keyboard
-  }
-
   // Function to highlight specific text in a string based on a query
   function highlightText(text, query) {
     const words = query
@@ -793,18 +783,15 @@ function updateDropdownButton(text) {
         } else if (line.startsWith("(video)")) {
           const videoUrl = line.substring(7).trim();
           return `
-            <div class="video-container">
-              <video 
+            <video 
                 class="video-responsive" 
                 controls
                 preload="metadata"
                 playsinline
-              >
+            >
                 <source src="${videoUrl}" type="video/webm">
                 Your browser does not support the video tag.
-              </video>
-            </div>`;
-
+            </video>`;
         } else {
           return `<p class="lead mb-2">${wrapMentions(line)}</p>`; // Default to paragraph
         }
@@ -938,11 +925,6 @@ function updateDropdownButton(text) {
   function performSearch() {
     const query = $searchInput.val().trim().toLowerCase(); // Get and normalize the search query
 
-    if (query.length === 0) {
-      hideSearchResults(); // Hide search results if the input is empty
-      return; // Exit the function early
-    }
-
     let searchResults = []; // Initialize an array for search results
 
     if (query.startsWith("has:")) {
@@ -976,118 +958,117 @@ function updateDropdownButton(text) {
     }
 
     displaySearchResults(searchResults, query); // Display the search results
-    toggleClearButton(); // Update clear button visibility
-  }
-
-  // Function to hide the search results container and focus on the search input
-  function hideSearchResults() {
-    $searchResultsContainer.hide(); // Hide the search results container
-    $searchInput.focus(); // Focus on the search input
   }
 
   // Function to display search results based on the user's query
-function displaySearchResults(results, query) {
-  $searchResultsContainer.empty(); // Clear previous results
+  function displaySearchResults(results, query) {
+    $searchResultsContainer.empty(); // Clear previous results
 
-  if (results.length === 0) {
-      $searchResultsContainer.html('<p class="p-3">No results found.</p>'); // Show message if no results
-  } else {
-      const $resultsList = $("<ul>").addClass("list-group list-group-flush"); // Create a list for results
-      results.forEach((changelog) => {
-          const $listItem = $("<li>").addClass(
-              "list-group-item custom-search-item"
-          ); // Create a list item
+    if (results.length === 0) {
+        $searchResultsContainer.html('<p class="p-3">No results found.</p>'); // Show message if no results
+    } else {
+        const $resultsList = $("<ul>").addClass("list-group list-group-flush"); // Create a list for results
+        results.forEach((changelog) => {
+            const $listItem = $("<li>").addClass(
+                "list-group-item custom-search-item"
+            ); // Create a list item
 
-          let previewText = "";
-          let highlightedPreview = "";
+            let previewText = "";
+            let highlightedPreview = "";
 
-          if (query.startsWith("has:")) {
-              // Handle special query for media types and mentions
-              const mediaType = query.split(":")[1].trim();
-              switch (mediaType) {
-                  case "audio":
-                  case "video":
-                  case "image":
-                      const mediaRegex = new RegExp(`\\(${mediaType}\\)`, "g"); // Create regex for media type
-                      const mediaCount = (changelog.sections.match(mediaRegex) || [])
-                          .length; // Count occurrences
-                      previewText = `${mediaCount} ${mediaType}${
-                          mediaCount !== 1 ? "s" : ""
-                      } found`; // Prepare preview text
-                      highlightedPreview = previewText; // No highlighting for media types
-                      break;
-                  case "mention":
-                      const mentionMatches = [
-                          ...new Set(changelog.sections.match(/@\w+/g) || []),
-                      ]; // Find unique mentions
-                      if (mentionMatches.length > 0) {
-                          previewText = `Mentions found: ${mentionMatches.join(", ")}`; // Prepare mention preview
-                          highlightedPreview = highlightText(previewText, query); // Highlight mentions
-                      } else {
-                          previewText = "No mentions found"; // No mentions case
-                          highlightedPreview = previewText;
-                      }
-                      break;
-              }
-          } else {
-              // Regular search preview logic
-              const cleanedSections = cleanContentForSearch(changelog.sections); // Clean content for search
-              const queryPosition = cleanedSections.toLowerCase().indexOf(query); // Find query position
-              if (queryPosition !== -1) {
-                  const startPos = Math.max(0, queryPosition - 50); // Determine start position for preview
-                  const endPos = Math.min(
-                      cleanedSections.length,
-                      queryPosition + query.length + 50
-                  ); // Determine end position
-                  previewText = cleanedSections.substring(startPos, endPos); // Create preview text
-                  if (startPos > 0) previewText = "..." + previewText; // Add ellipsis if needed
-                  if (endPos < cleanedSections.length) previewText += "..."; // Add ellipsis if needed
-              } else {
-                  previewText =
-                      cleanedSections.substring(0, 100) +
-                      (cleanedSections.length > 100 ? "..." : ""); // Default preview
-              }
-              highlightedPreview = highlightText(previewText, query); // Highlight the preview text
-          }
+            if (query.startsWith("has:")) {
+                // Handle special query for media types and mentions
+                const mediaType = query.split(":")[1].trim();
+                switch (mediaType) {
+                    case "audio":
+                    case "video":
+                    case "image":
+                        const mediaRegex = new RegExp(`\\(${mediaType}\\)`, "g"); // Create regex for media type
+                        const mediaCount = (changelog.sections.match(mediaRegex) || [])
+                            .length; // Count occurrences
+                        previewText = `${mediaCount} ${mediaType}${
+                            mediaCount !== 1 ? "s" : ""
+                        } found`; // Prepare preview text
+                        highlightedPreview = previewText; // No highlighting for media types
+                        break;
+                    case "mention":
+                        const mentionMatches = [
+                            ...new Set(changelog.sections.match(/@\w+/g) || []),
+                        ]; // Find unique mentions
+                        if (mentionMatches.length > 0) {
+                            previewText = `Mentions found: ${mentionMatches.join(", ")}`; // Prepare mention preview
+                            highlightedPreview = highlightText(previewText, query); // Highlight mentions
+                        } else {
+                            previewText = "No mentions found"; // No mentions case
+                            highlightedPreview = previewText;
+                        }
+                        break;
+                }
+            } else {
+                // Regular search preview logic
+                const cleanedSections = cleanContentForSearch(changelog.sections); // Clean content for search
+                const queryPosition = cleanedSections.toLowerCase().indexOf(query); // Find query position
+                if (queryPosition !== -1) {
+                    const startPos = Math.max(0, queryPosition - 50); // Determine start position for preview
+                    const endPos = Math.min(
+                        cleanedSections.length,
+                        queryPosition + query.length + 50
+                    ); // Determine end position
+                    previewText = cleanedSections.substring(startPos, endPos); // Create preview text
+                    if (startPos > 0) previewText = "..." + previewText; // Add ellipsis if needed
+                    if (endPos < cleanedSections.length) previewText += "..."; // Add ellipsis if needed
+                } else {
+                    previewText =
+                        cleanedSections.substring(0, 100) +
+                        (cleanedSections.length > 100 ? "..." : ""); // Default preview
+                }
+                highlightedPreview = highlightText(previewText, query); // Highlight the preview text
+            }
 
-          const highlightedTitle = highlightText(changelog.title, query); // Highlight the changelog title
+            const highlightedTitle = highlightText(changelog.title, query); // Highlight the changelog title
 
-          // Create media labels based on available sections
-          const hasAudio = changelog.sections.includes("(audio)");
-          const hasVideo = changelog.sections.includes("(video)");
-          const hasImage = changelog.sections.includes("(image)");
-          const hasMention = /@\w+/.test(changelog.sections); 
-          const mediaLabels = [
-              hasAudio ? '<span class="badge audio-badge me-1">Audio</span>' : "",
-              hasVideo ? '<span class="badge video-badge me-1">Video</span>' : "",
-              hasImage ? '<span class="badge image-badge me-1">Image</span>' : "",
-              hasMention ? '<span class="badge mention-badge me-1">Mention</span>' : "",
-             
-          ].join("");
+            // Create media labels based on available sections
+            const hasAudio = changelog.sections.includes("(audio)");
+            const hasVideo = changelog.sections.includes("(video)");
+            const hasImage = changelog.sections.includes("(image)");
+            const hasMention = /@\w+/.test(changelog.sections); 
+            const mediaLabels = [
+                hasAudio ? '<span class="badge audio-badge me-1">Audio</span>' : "",
+                hasVideo ? '<span class="badge video-badge me-1">Video</span>' : "",
+                hasImage ? '<span class="badge image-badge me-1">Image</span>' : "",
+                hasMention ? '<span class="badge mention-badge me-1">Mention</span>' : "",
+              
+            ].join("");
 
-          $listItem.html(`
-              <h5 class="mb-1">${highlightedTitle} ${mediaLabels}</h5>
-              <p class="mb-1 small">${highlightedPreview}</p>
-          `);
+            $listItem.html(`
+                <h5 class="mb-1">${highlightedTitle} ${mediaLabels}</h5>
+                <p class="mb-1 small">${highlightedPreview}</p>
+            `);
 
-          // Click event to display the selected changelog
-          $listItem.on("click", () => {
+            // Click event to display the selected changelog
+            $listItem.on("click", () => {
               // Update the URL without reloading the page
               const newUrl = `/changelogs/${changelog.id}`;
               history.pushState({}, '', newUrl);
               
+              // Hide search results but keep the query
+              $searchResultsContainer.hide();
+              
+              // Keep clear button visible since we're keeping the query
+              $searchInput.show();
+          
               displayChangelog(changelog); // Display the selected changelog
               updateChangelogBreadcrumb(changelog.id); // Update the breadcrumb
-              clearSearch(); // Clear the search input
               dismissKeyboard(); // Dismiss the keyboard
-          });
+            });
 
-          $resultsList.append($listItem); // Append the list item to the results list
-      });
-      $searchResultsContainer.append($resultsList); // Append the results list to the container
+
+            $resultsList.append($listItem); // Append the list item to the results list
+        });
+        $searchResultsContainer.append($resultsList); // Append the results list to the container
+    }
+    $searchResultsContainer.show(); // Show the search results container
   }
-  $searchResultsContainer.show(); // Show the search results container
-}
 
 
   // Prevent body scrolling when interacting with the search results container
@@ -1098,6 +1079,7 @@ function displaySearchResults(results, query) {
   $searchResultsContainer.on("touchstart touchmove", function (event) {
     event.stopPropagation(); // Prevent body scrolling on touch devices
   });
+
   function truncateText(text, maxLength) {
     if (text.length <= maxLength) return text;
     return text.substr(0, maxLength) + "...";
