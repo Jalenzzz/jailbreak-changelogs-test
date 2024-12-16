@@ -98,10 +98,6 @@
   padding-top: var(--jb-footer-spacing-lg);
 }
 
-.jb-footer__disclaimer {
-  color: var(--jb-footer-text-muted);
-}
-
 .jb-footer__maintainer-link {
   color: var(--jb-footer-link-hover);
   text-decoration: none;
@@ -133,7 +129,7 @@
 
 /* Utility classes */
 .jb-footer__text-muted {
-  color: var(--jb-footer-text-muted);
+  color: var(--jb-footer-text-primary);
 }
 
 .custom-newsticker {

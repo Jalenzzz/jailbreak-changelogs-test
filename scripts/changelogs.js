@@ -1224,17 +1224,23 @@ function updateDropdownButton(text) {
     });
   }
   function addComment(comment) {
+
+    if (!userdata) { // Changed from userData to userdata
+      throw_error("Please login to comment");
+      return;
+    }
+
     const listItem = document.createElement("li");
     listItem.classList.add("list-group-item", "d-flex", "align-items-start", "mb-3");
 
     const avatarElement = document.createElement("img");
-    const defaultAvatarUrl = "/favicon.ico";
+    const defaultAvatarUrl = "/assets/profile-pic-placeholder.png";
     avatarElement.src = avatarUrl.endsWith("null.png")
       ? defaultAvatarUrl
       : avatarUrl;
     avatarElement.classList.add("rounded-circle", "m-1");
     avatarElement.width = 32;
-    avatarElement.id = `avatar-${userData.id}`
+    avatarElement.id = `avatar-${userdata.id}`
     avatarElement.height = 32;
     avatarElement.onerror = handleinvalidImage;
 
@@ -1249,7 +1255,7 @@ function updateDropdownButton(text) {
     headerContainer.classList.add("d-flex", "align-items-center", "flex-wrap");
 
     const usernameElement = document.createElement("a");
-    usernameElement.href = `/users/${userData.id}`; // Set the href to redirect to the user's page
+    usernameElement.href = `/users/${userdata.id}`; // Set the href to redirect to the user's page
     usernameElement.textContent = userdata.global_name; // Set the text to the user's global name
     usernameElement.style.fontWeight = "bold"; // Make the text bold
     usernameElement.style.color = "#748D92";
@@ -1435,7 +1441,7 @@ function loadComments(commentsData) {
       avatarElement.classList.add("rounded-circle", "m-1");
       avatarElement.width = 32;
       avatarElement.height = 32;
-      avatarElement.id = `avatar-${userData.id}`; // Fixed: userData instead of userdata
+      avatarElement.id = `avatar-${userdata.id}`; // Fixed: userData instead of userdata
       avatarElement.onerror = handleinvalidImage;
 
       const commentContainer = document.createElement("div");
@@ -1452,7 +1458,7 @@ function loadComments(commentsData) {
       headerContainer.classList.add("d-flex", "align-items-center", "flex-wrap");
 
       const usernameElement = document.createElement("a");
-      usernameElement.href = `/users/${userData.id}`;
+      usernameElement.href = `/users/${userdata.id}`;
       usernameElement.textContent = userData.global_name || 'Unknown User';
       usernameElement.style.cssText = `
         font-weight: bold;
