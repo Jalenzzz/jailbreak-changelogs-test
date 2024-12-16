@@ -59,11 +59,14 @@ $(document).ready(function () {
 
   // Displays the most recent changelog entry.
   function displayLatestChangelog() {
-    if (changelogsData.length > 0) {
+    if (changelogsData && changelogsData.length > 0) {
       const latestChangelog = changelogsData[0]; // Get the first (latest) changelog
       displayChangelog(latestChangelog); // Display the changelog content
       updateDropdownButton("default"); // Reset the dropdown button to its default state
       changelogToast("Showing latest changelog"); // Show a toast notification
+    } else {
+      console.warn("No changelog data available to display latest entry.");
+      changelogToast("No changelog data available.");
     }
   }
 
@@ -522,14 +525,20 @@ function updateDropdownButton(text) {
   const mobileCopyChangelogBtn = $("#mobileCopyChangelog");
   const desktopCopyChangelogBtn = $("#desktopCopyChangelog");
 
-  // Combined function to handle copying the changelog content
   function copyChangelog() {
+    // Get the content of the changelog
+    const changelogContent = $("#content").clone();
+    
+    // Check if there's actual changelog content to copy
+    if (changelogContent.find("h1.display-4").length === 0 || changelogContent.find(".api-error-container").length > 0) {
+      console.warn("No changelog data available to copy");
+      alert("No changelog data available to copy!");
+      return;
+    }
+
     // Disable buttons to prevent spamming
     mobileCopyChangelogBtn.prop("disabled", true);
     desktopCopyChangelogBtn.prop("disabled", true);
-
-    // Get the content of the changelog
-    const changelogContent = $("#content").clone();
 
     // Get the current page URL
     const currentPageUrl = window.location.href;
@@ -596,6 +605,7 @@ function updateDropdownButton(text) {
         }, 5000); // 5 seconds delay
       });
   }
+
   // Attach the combined function to both copy changelog buttons
   mobileCopyChangelogBtn.on("click", copyChangelog);
   desktopCopyChangelogBtn.on("click", copyChangelog);
@@ -805,7 +815,8 @@ function updateDropdownButton(text) {
     hideLoadingOverlay();
   }
 
-  function fetchDataFromAPI() {
+  // Make the function globally accessible
+  window.fetchDataFromAPI = function() {
     return $.getJSON(apiUrl)
       .done((data) => {
         setCache(data);
@@ -813,12 +824,60 @@ function updateDropdownButton(text) {
       })
       .fail((jqXHR, textStatus, errorThrown) => {
         console.error("Error fetching changelogs:", errorThrown);
-        $("#content").html(
-          "<p>Error loading changelogs. Please try again later.</p>"
-        );
+        
+        const errorMessage = getErrorMessage(jqXHR.status);
+        
+        // Update main content
+        $("#content").html(`
+          <div class="api-error-container">
+            <div class="api-error-icon">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <h2 class="api-error-title">Unable to Load Data</h2>
+            <p class="api-error-message">
+              We're having trouble loading the changelog information. This might be due to a temporary connection issue or server maintenance.
+            </p>
+            <button class="api-retry-button" id="retryButton">Try Again</button>
+            <p class="api-error-details">
+              If the problem persists, please refresh the page or try again later.<br>
+              You can check our service status at <a href="https://status.jailbreakchangelogs.xyz/" target="_blank" class="status-link">status.jailbreakchangelogs.xyz</a>
+            </p>
+          </div>
+        `);
+
+        // Update sidebar image
+        $("#sidebarImage").html(`
+          <div class="api-error-container">
+            <div class="api-error-icon">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <h2 class="api-error-title">Unable to Load Changelog Image</h2>
+          </div>
+        `);
+
+        // Add event listener after inserting the button
+        $("#retryButton").on("click", () => {
+          fetchDataFromAPI();
+        });
+        
         hideLoadingOverlay();
       });
   }
+  function getErrorMessage(statusCode) {
+    switch (statusCode) {
+      case 404:
+        return "The requested information could not be found. Please check back later.";
+      case 403:
+        return "You don't have permission to access this information. Please check your credentials.";
+      case 500:
+        return "We're experiencing server issues. Our team has been notified and is working on it.";
+      case 0:
+        return "Unable to connect to the server. Please check your internet connection.";
+      default:
+        return "We're having trouble loading the changelog information. This might be due to a temporary connection issue or server maintenance.";
+    }
+  }
+
 
   // Check cache before fetching
   const cachedData = getCache();
