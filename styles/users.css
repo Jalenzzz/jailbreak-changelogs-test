@@ -53,12 +53,14 @@ body {
   height: 300px;
   overflow: hidden;
   background-color: var(--bg-secondary);
+  max-width: 100vw;
 }
 
 .banner-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  max-width: 100%;
 }
 
 .banner-overlay {
@@ -302,7 +304,14 @@ body {
 }
 
 @media (max-width: 575.98px) {
-  .banner-container { height: 150px; }
+  .banner-container {
+    height: 150px;
+    width: 100%;
+  }
+  .user-profile {
+    overflow-x: hidden;
+    width: 100%;
+  }
   
   .user-avatar {
     width: 100px;
