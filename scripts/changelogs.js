@@ -1315,6 +1315,12 @@ function updateDropdownButton(text) {
 
 // Function to load comments
 function loadComments(commentsData) {
+  
+  if (!commentsData || !Array.isArray(commentsData)) {
+    console.error('Invalid comments data received');
+    return;
+  }
+
   comments = commentsData; // Assign the fetched comments to the global variable
   commentsList.innerHTML = ""; // Clear existing comments
   comments.sort((a, b) => b.date - a.date);
@@ -1328,10 +1334,20 @@ function loadComments(commentsData) {
   const commentsToDisplay = comments.slice(startIndex, endIndex);
 
   const userDataPromises = commentsToDisplay.map((comment) => {
+    if (!comment.user_id) {
+      console.error('Comment missing user_id:', comment);
+      return null;
+    }
+
     return fetch(
-      "https://api.jailbreakchangelogs.xyz/users/get?id=" + comment.user_id
+      `https://api.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`
     )
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((userData) => ({ comment, userData }))
       .catch((error) => {
         console.error("Error fetching user data:", error);
@@ -1343,69 +1359,76 @@ function loadComments(commentsData) {
     const validResults = results.filter((result) => result !== null);
 
     validResults.forEach(({ comment, userData }) => {
-      const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+      if (!userData || !userData.id) {
+        console.error('Invalid user data:', userData);
+        return;
+      }
+
+      const avatarUrl = userData.avatar 
+        ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`
+        : "assets/profile-pic-placeholder.png";
 
       const listItem = document.createElement("li");
       listItem.classList.add("list-group-item", "d-flex", "align-items-start", "mb-3");
 
       const avatarElement = document.createElement("img");
-      const defaultAvatarUrl = "assets/profile-pic-placeholder.png";
-
-      avatarElement.src = avatarUrl.endsWith("null.png")
-        ? defaultAvatarUrl
-        : avatarUrl;
+      avatarElement.src = avatarUrl;
       avatarElement.classList.add("rounded-circle", "m-1");
       avatarElement.width = 32;
       avatarElement.height = 32;
-      avatarElement.id = `avatar-${userData.id}`
+      avatarElement.id = `avatar-${userData.id}`; // Fixed: userData instead of userdata
       avatarElement.onerror = handleinvalidImage;
 
       const commentContainer = document.createElement("div");
       commentContainer.classList.add("ms-2", "comment-item", "w-100");
-      commentContainer.style.backgroundColor = "#2E3944";
-      commentContainer.style.padding = "12px";
-      commentContainer.style.borderRadius = "8px";
-      commentContainer.style.marginBottom = "8px";
+      commentContainer.style.cssText = `
+        background-color: #2E3944;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+      `;
 
-      // Create a container for the username and date (on the same line)
+      // Create a container for the username and date
       const headerContainer = document.createElement("div");
       headerContainer.classList.add("d-flex", "align-items-center", "flex-wrap");
 
       const usernameElement = document.createElement("a");
-      usernameElement.href = `/users/${userData.id}`; // Set the href to redirect to the user's page
-      usernameElement.textContent = userData.global_name; // Set the text to the user's global name
-      usernameElement.style.fontWeight = "bold";
-      usernameElement.style.color = "#748D92";
-      usernameElement.style.textDecoration = "none";
-      usernameElement.style.transition = "color 0.2s ease";
-      usernameElement.style.fontWeight = "bold";
+      usernameElement.href = `/users/${userData.id}`;
+      usernameElement.textContent = userData.global_name || 'Unknown User';
+      usernameElement.style.cssText = `
+        font-weight: bold;
+        color: #748D92;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      `;
 
       usernameElement.addEventListener('mouseenter', () => {
         usernameElement.style.color = "#D3D9D4";
         usernameElement.style.textDecoration = 'underline';
       });
+      
       usernameElement.addEventListener('mouseleave', () => {
         usernameElement.style.color = "#748D92";
         usernameElement.style.textDecoration = 'none';
       });
-  
 
       const dateElement = document.createElement("small");
       const formattedDate = formatDate(comment.date);
-      dateElement.textContent = ` · ${formattedDate}`; // Format date with the separator
+      dateElement.textContent = ` · ${formattedDate}`;
       dateElement.classList.add("text-muted");
 
-      // Append the username and date together in the header container
       headerContainer.appendChild(usernameElement);
       headerContainer.appendChild(dateElement);
 
       const commentTextElement = document.createElement("p");
       commentTextElement.textContent = comment.content;
       commentTextElement.classList.add("mb-0", "comment-text");
-      commentTextElement.style.color = "#D3D9D4";
-      commentTextElement.style.marginTop = "4px";
+      commentTextElement.style.cssText = `
+        color: #D3D9D4;
+        margin-top: 4px;
+      `;
 
-      // Append the avatar, header, and comment content to the list item
+      // Append elements
       commentContainer.appendChild(headerContainer);
       commentContainer.appendChild(commentTextElement);
       listItem.appendChild(avatarElement);
@@ -1415,6 +1438,8 @@ function loadComments(commentsData) {
 
     // Render pagination controls
     renderPaginationControls(totalPages);
+  }).catch(error => {
+    console.error('Error processing comments:', error);
   });
 }
 
