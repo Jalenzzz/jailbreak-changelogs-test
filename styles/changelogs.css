@@ -957,9 +957,9 @@ button {
     }
 
     .comment-container {
-        padding: 10px; /* Minimal padding for extra small screens */
-        width: 100%; /* Full width for very small screens */
-        margin: 0 10px; /* Optional: add a little margin on the sides */
+      width: auto;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .comment-header {
