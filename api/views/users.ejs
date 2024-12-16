@@ -165,91 +165,100 @@
 
           <!-- User Content -->
           <div class="user-content mt-4">
+           <!-- About Section -->
+           <div class="row">
             <!-- About Section -->
-            <div class="row mb-4">
-              <div class="col-12 mb-3">
-                <div class="card bg-dark text-light" id="description-tab">
-                  <!-- About card content... -->
-                  <div class="card-body position-relative" id="description-box">
-                    <div class="d-flex justify-content-between align-items-start mb-0">
-                      <h5 class="card-title">About</h5>
-                      <div>
-                        <button class="btn btn-danger btn-sm" id="canceledit" style="display: none;">
-                          <i class="bi bi-x-lg"></i>
-                          <span class="d-none d-md-inline">Cancel</span>
-                        </button>
-              
-                        <button class="btn btn-outline-light btn-sm" id="edit-bio-button" style="display: none;" 
-                            data-bs-toggle="tooltip" 
-                            data-bs-placement="top" 
-                            title="Edit About">
-                            <i class="bi bi-pencil-fill"></i>
-                        </button>
-
-                        <button class="btn btn-success btn-sm" id="save-bio-button" style="display: none;">
-                          <i class="bi bi-save"></i>
-                          <span class="d-none d-md-inline">Save</span>
-                        </button>
+            <div class="col-12 mb-3">
+              <div class="card bg-dark text-light" id="description-tab">
+                <div class="card-body position-relative" id="description-box">
+                  <!-- Header with Title and Buttons -->
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title fs-6 fs-md-5">About</h5>
+                    <div class="btn-group">
+                      <!-- Cancel Button -->
+                      <button class="btn btn-danger btn-sm py-1 px-2" id="canceledit" style="display: none;">
+                        <i class="bi bi-x-lg"></i>
+                        <span class="d-none d-sm-inline ms-1">Cancel</span>
+                      </button>
+                      
+                      <!-- Edit Button -->
+                      <button class="btn btn-outline-light btn-sm py-1 px-2" 
+                              id="edit-bio-button" 
+                              style="display: none;" 
+                              data-bs-toggle="tooltip" 
+                              data-bs-placement="top" 
+                              title="Edit About">
+                        <i class="bi bi-pencil-fill"></i>
+                      </button>
+          
+                      <!-- Save Button -->
+                      <button class="btn btn-success btn-sm py-1 px-2" 
+                              id="save-bio-button" 
+                              style="display: none;">
+                        <i class="bi bi-save"></i>
+                        <span class="d-none d-sm-inline ms-1">Save</span>
+                      </button>
                     </div>
-
-                    </div>
-                    <p class="card-text mb-4" id="userBio"></p>
-                    <div class="d-flex justify-content-between align-items-center mt-1">
-                      <small class="text-muted" id="description-updated-date"></small>
-                      <small class="text-muted" id="character-count"></small>
-                    </div>
+                  </div>
+          
+                  <!-- Bio Text -->
+                  <p class="card-text mb-3 fs-6" id="userBio"></p>
+          
+                  <!-- Footer Info -->
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted fs-7" id="description-updated-date"></small>
+                    <small class="text-muted fs-7" id="character-count"></small>
                   </div>
                 </div>
               </div>
-
-              <!-- Stats Section -->
-              <div class="col-12">
-                <div class="card bg-dark text-light">
-                  <!-- Stats card content... -->
-                  <div class="card-body">
-                    <div class="user-stats">
-                      <div class="stat-box">
-                        <h3 class="h5 mb-0" id="followers">
-                          <span class="loading-icon" id="followers-loading" style="display: none;">
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                          </span>
-                          <span class="stat-number"></span>
-                          <span class="stat-text">Followers</span>
-                        </h3>
-                      </div>
-                      <div class="stat-box">
-                        <h3 class="h5 mb-0" id="following">
-                          <span class="loading-icon" id="following-loading" style="display: none;">
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                          </span>
-                          <span class="stat-number"></span>
-                          <span class="stat-text">Following</span>
-                        </h3>
-                      </div>
+            </div>
+          
+            <!-- Stats Section -->
+            <div class="col-12 mb-3">
+              <div class="card bg-dark text-light">
+                <div class="card-body">
+                  <div class="user-stats">
+                    <div class="stat-box">
+                      <h3 class="h5 mb-0" id="followers">
+                        <span class="loading-icon" id="followers-loading" style="display: none;">
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        </span>
+                        <span class="stat-number"></span>
+                        <span class="stat-text">Followers</span>
+                      </h3>
+                    </div>
+                    <div class="stat-box">
+                      <h3 class="h5 mb-0" id="following">
+                        <span class="loading-icon" id="following-loading" style="display: none;">
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        </span>
+                        <span class="stat-number"></span>
+                        <span class="stat-text">Following</span>
+                      </h3>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Comments Section -->
-            <div class="row mb-4">
-              <div class="col-12">
-                <!-- Comments content... -->
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-                  <h5 class="mb-2 mb-sm-0">Recent Comments</h5>
-                  <div class="card-pagination" id="card-pagination" style="display: none; align-items: center; margin-bottom: 0;">
-                    <div id="paginationControls" class="pagination d-flex align-items-center hidden"></div>
-                  </div>
+          <!-- Comments Section -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <!-- Comments content... -->
+              <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <h5 class="mb-2 mb-sm-0">Recent Comments</h5>
+                <div class="card-pagination" id="card-pagination" style="display: none; align-items: center; margin-bottom: 0;">
+                  <div id="paginationControls" class="pagination d-flex align-items-center hidden"></div>
                 </div>
-                
-                <div class="card bg-dark text-light">
-                  <div class="card-body p-0">
-                    <div id="comments-list" class="comments-container">
-                      <div class="comments-loading">
-                        <div class="spinner-wrapper">
-                          <span id="loading-spinner" class="spinner-border" role="status" aria-hidden="true"></span>
-                        </div>
+              </div>
+              
+              <div class="card bg-dark text-light">
+                <div class="card-body p-0">
+                  <div id="comments-list" class="comments-container">
+                    <div class="comments-loading">
+                      <div class="spinner-wrapper">
+                        <span id="loading-spinner" class="spinner-border" role="status" aria-hidden="true"></span>
                       </div>
                     </div>
                   </div>
@@ -259,86 +268,87 @@
           </div>
         </div>
       </div>
-        
-        <!-- Settings Modal -->
-        <div class="modal" id="settingsModal">
-          <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h2 class="modal-title">Profile Settings</h2>
-                <button type="button" class="btn-close" id="close-settings" aria-label="Close"></button>
+    </div>
+      
+<!-- Settings Modal -->
+<div class="modal" id="settingsModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Profile Settings</h2>
+        <button type="button" class="btn-close" id="close-settings" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="settingsForm">
+          <div class="container-fluid">
+            <div class="row mb-3 align-items-center">
+              <div class="col-9">
+                <strong>Profile Public</strong>
               </div>
-              <div class="modal-body">
-                <form id="settingsForm">
-                  <div class="container-fluid">
-                    <div class="row mb-3 align-items-center">
-                      <div class="col-9">
-                        <strong>Profile Public</strong>
-                      </div>
-                      <div class="col-3 text-end">
-                        <button id="profile-public-button" class="btn btn-danger">
-                          <i class="bi bi-x-lg"></i>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="row mb-3 align-items-center">
-                      <div class="col-9">
-                        <label for="showComments">Show Recent Comments</label>
-                      </div>
-                      <div class="col-3 text-end">
-                        <button id="show-comments-button" class="btn btn-danger">
-                          <i class="bi bi-x-lg"></i>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="row mb-3 align-items-center">
-                      <div class="col-9">
-                        <label for="hideFollowing">Hide Following</label>
-                      </div>
-                      <div class="col-3 text-end">
-                        <button id="hide-following-button" class="btn btn-danger">
-                          <i class="bi bi-x-lg"></i>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="row mb-3 align-items-center">
-                      <div class="col-9">
-                        <label for="hideFollowers">Hide Followers</label>
-                      </div>
-                      <div class="col-3 text-end">
-                        <button id="hide-followers-button" class="btn btn-danger">
-                          <i class="bi bi-x-lg"></i>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="row mb-3 align-items-center">
-                      <div class="col-9">
-                        <label for="usediscordBanner">Discord Banner</label>
-                      </div>
-                      <div class="col-3 text-end">
-                        <button id="usediscordBanner" class="btn btn-danger">
-                          <i class="bi bi-x-lg"></i>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="row mb-3" id="input-for-banner" style="display: none;">
-                      <div class="col-12">
-                        <label for="bannerInput" class="form-label">Banner</label>
-                        <input type="text" id="bannerInput" class="form-control" placeholder="Banner URL here" name="Banner input">
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </div>
-              <div class="modal-footer">
-                <button id="settings-loading" type="submit" style="display: none;" class="btn btn-secondary disabled">
-                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <div class="col-3 text-end">
+                <button id="profile-public-button" class="btn btn-danger">
+                  <i class="bi bi-x-lg"></i>
                 </button>
-                <button id="settings-submit" type="submit" class="btn btn-primary">Save Changes</button>
+              </div>
+            </div>
+            <div class="row mb-3 align-items-center">
+              <div class="col-9">
+                <label for="showComments">Show Recent Comments</label>
+              </div>
+              <div class="col-3 text-end">
+                <button id="show-comments-button" class="btn btn-danger">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+            </div>
+            <div class="row mb-3 align-items-center">
+              <div class="col-9">
+                <label for="hideFollowing">Hide Following</label>
+              </div>
+              <div class="col-3 text-end">
+                <button id="hide-following-button" class="btn btn-danger">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+            </div>
+            <div class="row mb-3 align-items-center">
+              <div class="col-9">
+                <label for="hideFollowers">Hide Followers</label>
+              </div>
+              <div class="col-3 text-end">
+                <button id="hide-followers-button" class="btn btn-danger">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+            </div>
+            <div class="row mb-3 align-items-center">
+              <div class="col-9">
+                <label for="usediscordBanner">Discord Banner</label>
+              </div>
+              <div class="col-3 text-end">
+                <button id="usediscordBanner" class="btn btn-danger">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+            </div>
+            <div class="row mb-3" id="input-for-banner" style="display: none;">
+              <div class="col-12">
+                <label for="bannerInput" class="form-label">Banner</label>
+                <input type="text" id="bannerInput" class="form-control" placeholder="Banner URL here" name="Banner input">
               </div>
             </div>
           </div>
-        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="settings-loading" type="submit" style="display: none;" class="btn btn-secondary disabled">
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </button>
+        <button id="settings-submit" type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 
       <%- include('partials/footer') %>
       

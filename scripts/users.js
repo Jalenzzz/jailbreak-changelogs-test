@@ -479,14 +479,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                                 <h5 class="card-subtitle mb-2" style="color: #748D92;">${item.title}</h5>
                                 <p class="card-text" style="color: #D3D9D4;">${comment.content}</p>
-                                <a href="/${comment.item_type}s/${comment.item_id}" class="btn btn-outline-primary btn-sm mt-3" style="color: #124E66; border-color: #124E66; background-color: transparent;">
+                                <a href="/${comment.item_type}s/${comment.item_id}" class="btn btn-sm mt-3 view-item-btn">
                                     View ${capitalizeFirstLetter(comment.item_type)}
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>`;
-    
+
                 comments_to_add.push(commentElement);
             }
     

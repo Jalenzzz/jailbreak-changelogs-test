@@ -21,6 +21,39 @@
   --selection-bg: var(--accent);
   --selection-text: var(--text-primary);
 }
+.fs-7 {
+  font-size: 0.75rem !important;
+}
+
+.view-item-btn {
+  color: #D3D9D4 !important;
+  border: 1px solid #124E66 !important;
+  background-color: #2E3944 !important;
+  transition: all 0.3s ease !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+}
+
+.view-item-btn:hover {
+  color: #212A31 !important;
+  background-color: #748D92 !important;
+  border-color: #748D92 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(33, 42, 49, 0.3);
+}
+
+.view-item-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+  background-color: #124E66 !important;
+  border-color: #124E66 !important;
+  color: #D3D9D4 !important;
+}
+
+.view-item-btn:focus {
+  box-shadow: 0 0 0 2px #2E3944, 0 0 0 4px rgba(116, 141, 146, 0.4) !important;
+  outline: none;
+}
 
 /* Layout & Container */
 body {
@@ -44,7 +77,9 @@ body {
   border-radius: 16px;
 }
 
-.card-body { padding: 16px !important; }
+.card-body {
+  padding: 16px !important; 
+}
 
 /* Banner Section */
 .banner-container {
@@ -301,6 +336,9 @@ body {
     margin-left: auto;
     text-align: end;
   }
+  .card-body {
+    padding: 1.25rem;
+  }
 }
 
 @media (max-width: 575.98px) {
@@ -346,6 +384,15 @@ body {
     justify-content: center;
     margin-top: 1rem;
   }
+  /* Improve button spacing on mobile */
+  .btn-group .btn {
+    margin-left: 0.25rem;
+  }
+
+  /* Add some breathing room to the card */
+  .card-body {
+    padding: 1rem;
+  }
 
   /* Pagination controls */
   #paginationControls {
@@ -363,7 +410,13 @@ body {
     gap: 0.5rem; /* Adds some space between pagination items */
   }
 
-  .card-body { padding: 12px !important; }
+  .btn-sm {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .card-title { font-size: 1rem; }
+  .card-text { font-size: 0.875rem; }
   #comments-list { padding-right: 0; }
   .container { padding: 0 8px; }
   .action-button { min-width: 50px; }
