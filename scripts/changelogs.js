@@ -1189,21 +1189,32 @@ function updateDropdownButton(text) {
   const userdata = JSON.parse(sessionStorage.getItem("user"));
   const commentsList = document.getElementById("comments-list");
   const userid = sessionStorage.getItem("userid");
+
   if (userid) {
-    commentinput.placeholder = "Comment as " + userdata.global_name;
-    commentbutton.disabled = false;
-    commentinput.disabled = false;
+      commentinput.placeholder = "Comment as " + userdata.global_name;
+      commentbutton.disabled = false;
+      commentinput.disabled = false;
   } else {
-    commentbutton.disabled = false;
-    commentbutton.textContent = "Log in";
-    commentbutton.addEventListener("click", function (event) {
-      localStorage.setItem(
-        "redirectAfterLogin",
-        "/changelogs/" + localStorage.getItem("selectedChangelogId")
-      ); // Store the redirect URL in local storage
-      window.location.href = "/login"; // Redirect to login page
-    });
+      commentinput.disabled = true;
+      commentinput.placeholder = "Login to comment";
+      commentbutton.disabled = false;
+      commentbutton.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Login';
+      
+      // Remove any existing event listeners from the form
+      const newForm = CommentForm.cloneNode(true);
+      CommentForm.parentNode.replaceChild(newForm, CommentForm);
+      
+      // Add click event to the button for login redirect
+      newForm.querySelector("#submit-comment").addEventListener("click", function (event) {
+          event.preventDefault();
+          localStorage.setItem(
+              "redirectAfterLogin",
+              "/changelogs/" + localStorage.getItem("selectedChangelogId")
+          );
+          window.location.href = "/login";
+      });
   }
+
 
   function getCookie(name) {
     let cookieArr = document.cookie.split(";");
@@ -1413,7 +1424,7 @@ function loadComments(commentsData) {
         }
         return response.json();
       })
-      .then((userData) => ({ comment, userData }))
+      .then((userdata) => ({ comment, userdata }))
       .catch((error) => {
         console.error("Error fetching user data:", error);
         return null;
@@ -1423,14 +1434,14 @@ function loadComments(commentsData) {
   Promise.all(userDataPromises).then((results) => {
     const validResults = results.filter((result) => result !== null);
 
-    validResults.forEach(({ comment, userData }) => {
-      if (!userData || !userData.id) {
-        console.error('Invalid user data:', userData);
+    validResults.forEach(({ comment, userdata }) => {
+      if (!userdata || !userdata.id) {
+        console.error('Invalid user data:', userdata);
         return;
       }
 
-      const avatarUrl = userData.avatar 
-        ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`
+      const avatarUrl = userdata.avatar 
+        ? `https://cdn.discordapp.com/avatars/${userdata.id}/${userdata.avatar}.png`
         : "assets/profile-pic-placeholder.png";
 
       const listItem = document.createElement("li");
@@ -1459,7 +1470,7 @@ function loadComments(commentsData) {
 
       const usernameElement = document.createElement("a");
       usernameElement.href = `/users/${userdata.id}`;
-      usernameElement.textContent = userData.global_name || 'Unknown User';
+      usernameElement.textContent = userdata.global_name || 'Unknown User';
       usernameElement.style.cssText = `
         font-weight: bold;
         color: #748D92;

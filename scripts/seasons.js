@@ -4,7 +4,7 @@ $(document).ready(function () {
   const $carouselInner = $("#carousel-inner");
   const $loadingOverlay = $("#loading-overlay");
   const $seasonList = $("#seasonList"); // Reference to the season dropdown
-  let userData = null;
+  // let userdata = null;
 
   function toggleLoadingOverlay(show) {
     if (show) {
@@ -25,6 +25,8 @@ $(document).ready(function () {
         timeout = setTimeout(later, wait);
     };
 }
+
+  const debouncedReloadComments = debounce(reloadcomments, 300);
 
   function fetchAndCacheAllSeasons() {
     return fetch("https://api.jailbreakchangelogs.xyz/seasons/list")
@@ -161,6 +163,8 @@ $(document).ready(function () {
             <div class="rewards-list">${rewardsHTML}</div>
           </div>`
         );
+
+        debouncedReloadComments();
       
       } else {
         // If no rewards for this season, display a message and disable comments
@@ -286,7 +290,7 @@ $(document).ready(function () {
       // If data was from cache, hide the overlay immediately
       toggleLoadingOverlay(false);
       try {
-        reloadcomments();
+        debouncedReloadComments();
       } catch (error) {
         console.error("Failed to load comments:", error);
         $("#comments-list").html(
@@ -298,7 +302,7 @@ $(document).ready(function () {
       Promise.resolve().then(() => {
         toggleLoadingOverlay(false);
         try {
-          reloadcomments();
+          debouncedReloadComments();
         } catch (error) {
           console.error("Failed to load comments:", error);
           $("#comments-list").html(
@@ -338,7 +342,7 @@ $(document).ready(function () {
       if (dataFromCache) {
         toggleLoadingOverlay(false);
         try {
-          reloadcomments();
+          debouncedReloadComments();
         } catch (error) {
           console.error("Failed to load comments:", error);
           $("#comments-list").html(
@@ -352,7 +356,7 @@ $(document).ready(function () {
     .then(() => {
       toggleLoadingOverlay(false);
       try {
-        reloadcomments();
+        debouncedReloadComments();
       } catch (error) {
         console.error("Failed to load comments:", error);
         $("#comments-list").html(
@@ -378,29 +382,40 @@ $(document).ready(function () {
       $("#comment-form").hide();
     });
 
-  const CommentForm = document.getElementById("comment-form");
-  const CommentHeader = document.getElementById("comment-header");
-  const commentinput = document.getElementById("commenter-text");
-  const commentbutton = document.getElementById("submit-comment");
-  const avatarUrl = sessionStorage.getItem("avatar");
-  const userdata = JSON.parse(sessionStorage.getItem("user"));
-  const commentsList = document.getElementById("comments-list");
-  const userid = sessionStorage.getItem("userid");
-  if (userid) {
-    commentinput.placeholder = "Comment as " + userdata.global_name;
-    commentbutton.disabled = false;
-    commentinput.disabled = false;
-  } else {
-    commentbutton.disabled = false;
-    commentbutton.textContent = "Log in";
-    commentbutton.addEventListener("click", function (event) {
-      localStorage.setItem(
-        "redirectAfterLogin",
-        "/seasons?season=" + localStorage.getItem("selectedSeason")
-      ); // Store the redirect URL in local storage
-      window.location.href = "/login"; // Redirect to login page
-    });
-  }
+    const CommentForm = document.getElementById("comment-form");
+    const CommentHeader = document.getElementById("comment-header")
+    const commentinput = document.getElementById("commenter-text");
+    const commentbutton = document.getElementById("submit-comment");
+    const avatarUrl = sessionStorage.getItem("avatar");
+    const userdata = JSON.parse(sessionStorage.getItem("user"));
+    const commentsList = document.getElementById("comments-list");
+    const userid = sessionStorage.getItem("userid");
+  
+    if (userid) {
+        commentinput.placeholder = "Comment as " + userdata.global_name;
+        commentbutton.disabled = false;
+        commentinput.disabled = false;
+    } else {
+        commentinput.disabled = true;
+        commentinput.placeholder = "Login to comment";
+        commentbutton.disabled = false;
+        commentbutton.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Login';
+        
+        // Remove any existing event listeners from the form
+        const newForm = CommentForm.cloneNode(true);
+        CommentForm.parentNode.replaceChild(newForm, CommentForm);
+        
+        // Add click event to the button for login redirect
+        newForm.querySelector("#submit-comment").addEventListener("click", function (event) {
+            event.preventDefault();
+            localStorage.setItem(
+                "redirectAfterLogin",
+                "/changelogs/" + localStorage.getItem("selectedChangelogId")
+            );
+            window.location.href = "/login";
+        });
+    }
+  
   function getCookie(name) {
     let cookieArr = document.cookie.split(";");
     for (let i = 0; i < cookieArr.length; i++) {
@@ -521,7 +536,7 @@ $(document).ready(function () {
 
         if (response.ok) {
           commentsList.prepend(listItem);
-          reloadcomments();
+          debouncedReloadComments();
         } else {
           // Handle other non-429 errors (e.g., validation)
           throw_error(data.error || "An error occurred.");
@@ -591,7 +606,7 @@ $(document).ready(function () {
         "https://api.jailbreakchangelogs.xyz/users/get?id=" + comment.user_id
       )
         .then((response) => response.json())
-        .then((userData) => ({ comment, userData }))
+        .then((userdata) => ({ comment, userdata }))
         .catch((error) => {
           console.error("Error fetching user data:", error);
           return null;
@@ -601,14 +616,14 @@ $(document).ready(function () {
     Promise.all(userDataPromises).then((results) => {
       const validResults = results.filter((result) => result !== null);
 
-      validResults.forEach(({ comment, userData }) => {
-        if (!userData || !userData.id) {
-          console.error('Invalid user data:', userData);
+      validResults.forEach(({ comment, userdata }) => {
+        if (!userdata || !userdata.id) {
+          console.error('Invalid user data:', userdata);
           return;
         }
 
-        const avatarUrl = userData.avatar 
-          ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`
+        const avatarUrl = userdata.avatar 
+          ? `https://cdn.discordapp.com/avatars/${userdata.id}/${userdata.avatar}.png`
           : "assets/profile-pic-placeholder.png";
 
         const listItem = document.createElement("li");
@@ -636,8 +651,8 @@ $(document).ready(function () {
         headerContainer.classList.add("d-flex", "align-items-center", "flex-wrap");
 
         const usernameElement = document.createElement("a");
-        usernameElement.href = `/users/${userData.id}`;
-        usernameElement.textContent = userData.global_name || 'Unknown User';
+        usernameElement.href = `/users/${userdata.id}`;
+        usernameElement.textContent = userdata.global_name || 'Unknown User';
         usernameElement.style.cssText = `
           font-weight: bold;
           color: #748D92;
