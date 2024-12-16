@@ -6,6 +6,13 @@ $(document).ready(function () {
   const $seasonList = $("#seasonList"); // Reference to the season dropdown
   // let userdata = null;
 
+  function updateBreadcrumb(season) {
+    const seasonBreadcrumb = document.querySelector('.season-breadcrumb');
+    if (seasonBreadcrumb) {
+        seasonBreadcrumb.textContent = `Season ${season}`;
+    }
+  }
+
   function toggleLoadingOverlay(show) {
     if (show) {
       $loadingOverlay.show();
@@ -249,7 +256,6 @@ $(document).ready(function () {
   }
 
   // Modify the loadSeasonDetails function
-  // Modify the loadSeasonDetails function
   function loadSeasonDetails(season) {
     const allSeasons = getCachedData("allSeasons");
     const allRewards = getCachedData("allRewards");
@@ -260,6 +266,7 @@ $(document).ready(function () {
     );
     displaySeasonDetails(season, seasonData, seasonRewards);
     updateCarousel(seasonRewards);
+    updateBreadcrumb(season);
     
     // Add this line to update the document title
     document.title = `Season ${season} - ${seasonData.title}`;

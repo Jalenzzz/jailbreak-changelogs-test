@@ -37,6 +37,17 @@ $(document).ready(function () {
   let currentFilterState = null;
   let debounceTimer;
 
+  function updateChangelogBreadcrumb(changelogId) {
+    const breadcrumbHtml = `
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/changelogs">Changelogs</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Changelog ${changelogId}</li>
+        </ol>
+    `;
+    document.querySelector('nav[aria-label="breadcrumb"]').innerHTML = breadcrumbHtml;
+}
+
   // Function to get cache from localStorage
   function getCache() {
     const cache = localStorage.getItem(CACHE_KEY);
@@ -60,13 +71,19 @@ $(document).ready(function () {
   // Displays the most recent changelog entry.
   function displayLatestChangelog() {
     if (changelogsData && changelogsData.length > 0) {
-      const latestChangelog = changelogsData[0]; // Get the first (latest) changelog
-      displayChangelog(latestChangelog); // Display the changelog content
-      updateDropdownButton("default"); // Reset the dropdown button to its default state
-      changelogToast("Showing latest changelog"); // Show a toast notification
+        const latestChangelog = changelogsData[0]; // Get the first (latest) changelog
+        
+        // Update the URL without reloading the page
+        const newUrl = `/changelogs/${latestChangelog.id}`;
+        history.pushState({}, '', newUrl);
+        
+        displayChangelog(latestChangelog); // Display the changelog content
+        updateChangelogBreadcrumb(latestChangelog.id); // Update the breadcrumb
+        updateDropdownButton("default"); // Reset the dropdown button to its default state
+        changelogToast("Showing latest changelog"); // Show a toast notification
     } else {
-      console.warn("No changelog data available to display latest entry.");
-      changelogToast("No changelog data available.");
+        console.warn("No changelog data available to display latest entry.");
+        changelogToast("No changelog data available.");
     }
   }
 
@@ -78,6 +95,7 @@ $(document).ready(function () {
     e.preventDefault(); // Prevent default action if the button is a link
     displayLatestChangelog(); // Show the latest changelog
   });
+
 
   // Function to show the loading overlay
   function showLoadingOverlay() {
@@ -251,7 +269,7 @@ clearFilterBtn.addEventListener('click', function() {
   clearedFilterToast('The date filter has been cleared successfully!');
 });
 
-// Function to populate the changelog dropdowns for mobile and desktop
+/// Function to populate the changelog dropdowns for mobile and desktop
 function populateChangelogDropdown(changelogs, buttonText) {
   const $mobileDropdown = $("#mobileChangelogList");
   const $desktopDropdown = $("#desktopChangelogList");
@@ -301,8 +319,26 @@ function populateChangelogDropdown(changelogs, buttonText) {
       $mobileDropdownButton.html(`${iconHtml}${buttonText}`);
       $desktopDropdownButton.html(`${iconHtml}${buttonText}`);
     }
+
+    // Add click event handlers for the dropdown items
+    $('.changelog-dropdown-item').on('click', function(e) {
+      e.preventDefault();
+      const changelogId = $(this).data('changelog-id');
+      
+      // Update the URL without reloading the page
+      const newUrl = `/changelogs/${changelogId}`;
+      history.pushState({}, '', newUrl);
+      
+      // Find the selected changelog
+      const selectedChangelog = changelogs.find(cl => cl.id == changelogId);
+      if (selectedChangelog) {
+        displayChangelog(selectedChangelog);
+        updateChangelogBreadcrumb(changelogId);
+      }
+    });
   }
 }
+
 
   // Function to preprocess Markdown text
   const preprocessMarkdown = (markdown) => {
@@ -784,6 +820,7 @@ function updateDropdownButton(text) {
       '<span class="mention fw-bold"><span class="at">@</span><span class="username">$1</span></span>' // Highlight mentions
     );
   };
+
   function processChangelogData(data) {
     changelogsData = data;
   
@@ -803,6 +840,16 @@ function updateDropdownButton(text) {
         selectedChangelog = data[0]; // Fallback to first changelog if no match
       }
   
+      // Update breadcrumb here, using selectedChangelog.id
+      const breadcrumbHtml = `
+          <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item"><a href="/changelogs">Changelogs</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Changelog ${selectedChangelog.id}</li>
+          </ol>
+      `;
+      document.querySelector('nav[aria-label="breadcrumb"]').innerHTML = breadcrumbHtml;
+
       displayChangelog(selectedChangelog);
   
       // Toggle button visibility based on whether the selected changelog is the latest one
@@ -813,7 +860,8 @@ function updateDropdownButton(text) {
     }
   
     hideLoadingOverlay();
-  }
+}
+
 
   // Make the function globally accessible
   window.fetchDataFromAPI = function() {
@@ -939,100 +987,108 @@ function updateDropdownButton(text) {
   }
 
   // Function to display search results based on the user's query
-  function displaySearchResults(results, query) {
-    $searchResultsContainer.empty(); // Clear previous results
+function displaySearchResults(results, query) {
+  $searchResultsContainer.empty(); // Clear previous results
 
-    if (results.length === 0) {
+  if (results.length === 0) {
       $searchResultsContainer.html('<p class="p-3">No results found.</p>'); // Show message if no results
-    } else {
+  } else {
       const $resultsList = $("<ul>").addClass("list-group list-group-flush"); // Create a list for results
       results.forEach((changelog) => {
-        const $listItem = $("<li>").addClass(
-          "list-group-item custom-search-item"
-        ); // Create a list item
+          const $listItem = $("<li>").addClass(
+              "list-group-item custom-search-item"
+          ); // Create a list item
 
-        let previewText = "";
-        let highlightedPreview = "";
+          let previewText = "";
+          let highlightedPreview = "";
 
-        if (query.startsWith("has:")) {
-          // Handle special query for media types and mentions
-          const mediaType = query.split(":")[1].trim();
-          switch (mediaType) {
-            case "audio":
-            case "video":
-            case "image":
-              const mediaRegex = new RegExp(`\\(${mediaType}\\)`, "g"); // Create regex for media type
-              const mediaCount = (changelog.sections.match(mediaRegex) || [])
-                .length; // Count occurrences
-              previewText = `${mediaCount} ${mediaType}${
-                mediaCount !== 1 ? "s" : ""
-              } found`; // Prepare preview text
-              highlightedPreview = previewText; // No highlighting for media types
-              break;
-            case "mention":
-              const mentionMatches = [
-                ...new Set(changelog.sections.match(/@\w+/g) || []),
-              ]; // Find unique mentions
-              if (mentionMatches.length > 0) {
-                previewText = `Mentions found: ${mentionMatches.join(", ")}`; // Prepare mention preview
-                highlightedPreview = highlightText(previewText, query); // Highlight mentions
-              } else {
-                previewText = "No mentions found"; // No mentions case
-                highlightedPreview = previewText;
+          if (query.startsWith("has:")) {
+              // Handle special query for media types and mentions
+              const mediaType = query.split(":")[1].trim();
+              switch (mediaType) {
+                  case "audio":
+                  case "video":
+                  case "image":
+                      const mediaRegex = new RegExp(`\\(${mediaType}\\)`, "g"); // Create regex for media type
+                      const mediaCount = (changelog.sections.match(mediaRegex) || [])
+                          .length; // Count occurrences
+                      previewText = `${mediaCount} ${mediaType}${
+                          mediaCount !== 1 ? "s" : ""
+                      } found`; // Prepare preview text
+                      highlightedPreview = previewText; // No highlighting for media types
+                      break;
+                  case "mention":
+                      const mentionMatches = [
+                          ...new Set(changelog.sections.match(/@\w+/g) || []),
+                      ]; // Find unique mentions
+                      if (mentionMatches.length > 0) {
+                          previewText = `Mentions found: ${mentionMatches.join(", ")}`; // Prepare mention preview
+                          highlightedPreview = highlightText(previewText, query); // Highlight mentions
+                      } else {
+                          previewText = "No mentions found"; // No mentions case
+                          highlightedPreview = previewText;
+                      }
+                      break;
               }
-              break;
-          }
-        } else {
-          // Regular search preview logic
-          const cleanedSections = cleanContentForSearch(changelog.sections); // Clean content for search
-          const queryPosition = cleanedSections.toLowerCase().indexOf(query); // Find query position
-          if (queryPosition !== -1) {
-            const startPos = Math.max(0, queryPosition - 50); // Determine start position for preview
-            const endPos = Math.min(
-              cleanedSections.length,
-              queryPosition + query.length + 50
-            ); // Determine end position
-            previewText = cleanedSections.substring(startPos, endPos); // Create preview text
-            if (startPos > 0) previewText = "..." + previewText; // Add ellipsis if needed
-            if (endPos < cleanedSections.length) previewText += "..."; // Add ellipsis if needed
           } else {
-            previewText =
-              cleanedSections.substring(0, 100) +
-              (cleanedSections.length > 100 ? "..." : ""); // Default preview
+              // Regular search preview logic
+              const cleanedSections = cleanContentForSearch(changelog.sections); // Clean content for search
+              const queryPosition = cleanedSections.toLowerCase().indexOf(query); // Find query position
+              if (queryPosition !== -1) {
+                  const startPos = Math.max(0, queryPosition - 50); // Determine start position for preview
+                  const endPos = Math.min(
+                      cleanedSections.length,
+                      queryPosition + query.length + 50
+                  ); // Determine end position
+                  previewText = cleanedSections.substring(startPos, endPos); // Create preview text
+                  if (startPos > 0) previewText = "..." + previewText; // Add ellipsis if needed
+                  if (endPos < cleanedSections.length) previewText += "..."; // Add ellipsis if needed
+              } else {
+                  previewText =
+                      cleanedSections.substring(0, 100) +
+                      (cleanedSections.length > 100 ? "..." : ""); // Default preview
+              }
+              highlightedPreview = highlightText(previewText, query); // Highlight the preview text
           }
-          highlightedPreview = highlightText(previewText, query); // Highlight the preview text
-        }
 
-        const highlightedTitle = highlightText(changelog.title, query); // Highlight the changelog title
+          const highlightedTitle = highlightText(changelog.title, query); // Highlight the changelog title
 
-        // Create media labels based on available sections
-        const hasAudio = changelog.sections.includes("(audio)");
-        const hasVideo = changelog.sections.includes("(video)");
-        const hasImage = changelog.sections.includes("(image)");
-        const mediaLabels = [
-          hasAudio ? '<span class="badge audio-badge me-1">Audio</span>' : "",
-          hasVideo ? '<span class="badge video-badge me-1">Video</span>' : "",
-          hasImage ? '<span class="badge image-badge me-1">Image</span>' : "",
-        ].join("");
+          // Create media labels based on available sections
+          const hasAudio = changelog.sections.includes("(audio)");
+          const hasVideo = changelog.sections.includes("(video)");
+          const hasImage = changelog.sections.includes("(image)");
+          const hasMention = changelog.sections.includes("(mention)");
+          const mediaLabels = [
+              hasAudio ? '<span class="badge audio-badge me-1">Audio</span>' : "",
+              hasVideo ? '<span class="badge video-badge me-1">Video</span>' : "",
+              hasImage ? '<span class="badge image-badge me-1">Image</span>' : "",
+              hasMention ? '<span class="badge mention-badge me-1">Mention</span>' : "",
+          ].join("");
 
-        $listItem.html(`
+          $listItem.html(`
               <h5 class="mb-1">${highlightedTitle} ${mediaLabels}</h5>
               <p class="mb-1 small">${highlightedPreview}</p>
           `);
 
-        // Click event to display the selected changelog
-        $listItem.on("click", () => {
-          displayChangelog(changelog); // Display the selected changelog
-          clearSearch(); // Clear the search input
-          dismissKeyboard(); // Dismiss the keyboard
-        });
+          // Click event to display the selected changelog
+          $listItem.on("click", () => {
+              // Update the URL without reloading the page
+              const newUrl = `/changelogs/${changelog.id}`;
+              history.pushState({}, '', newUrl);
+              
+              displayChangelog(changelog); // Display the selected changelog
+              updateChangelogBreadcrumb(changelog.id); // Update the breadcrumb
+              clearSearch(); // Clear the search input
+              dismissKeyboard(); // Dismiss the keyboard
+          });
 
-        $resultsList.append($listItem); // Append the list item to the results list
+          $resultsList.append($listItem); // Append the list item to the results list
       });
       $searchResultsContainer.append($resultsList); // Append the results list to the container
-    }
-    $searchResultsContainer.show(); // Show the search results container
   }
+  $searchResultsContainer.show(); // Show the search results container
+}
+
 
   // Prevent body scrolling when interacting with the search results container
   $searchResultsContainer.on("wheel", function (event) {
@@ -1049,15 +1105,22 @@ function updateDropdownButton(text) {
 
   function displayRandomChangelog() {
     if (changelogsData && changelogsData.length > 0) {
-      const randomIndex = Math.floor(Math.random() * changelogsData.length);
-      const randomChangelog = changelogsData[randomIndex];
-      displayChangelog(randomChangelog);
-      changelogToast("Showing a random changelog");
-    }else {
-      console.warn("No changelog data available to display a random entry.");
-      changelogToast("No changelog data available.")
+        const randomIndex = Math.floor(Math.random() * changelogsData.length);
+        const randomChangelog = changelogsData[randomIndex];
+        
+        // Update the URL without reloading the page
+        const newUrl = `/changelogs/${randomChangelog.id}`;
+        history.pushState({}, '', newUrl);
+        
+        displayChangelog(randomChangelog);
+        updateChangelogBreadcrumb(randomChangelog.id); // Update the breadcrumb
+        changelogToast("Showing a random changelog");
+    } else {
+        console.warn("No changelog data available to display a random entry.");
+        changelogToast("No changelog data available.")
     }
-  }
+}
+
 
    const slowModeDelay = 4700;
    const buttons = ["#randomChangelogDesktopBtn", "#randomChangelogMobileBtn"]; // IDs of the buttons
