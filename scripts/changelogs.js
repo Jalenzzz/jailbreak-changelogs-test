@@ -445,7 +445,6 @@ function populateChangelogDropdown(changelogs, buttonText) {
     return new bootstrap.Dropdown(dropdownToggleEl); // Create Bootstrap dropdown instances
   });
 
-
   /**
  * Formats a date object for display on a button.
  * 
@@ -1057,12 +1056,13 @@ function displaySearchResults(results, query) {
           const hasAudio = changelog.sections.includes("(audio)");
           const hasVideo = changelog.sections.includes("(video)");
           const hasImage = changelog.sections.includes("(image)");
-          const hasMention = changelog.sections.includes("(mention)");
+          const hasMention = /@\w+/.test(changelog.sections); 
           const mediaLabels = [
               hasAudio ? '<span class="badge audio-badge me-1">Audio</span>' : "",
               hasVideo ? '<span class="badge video-badge me-1">Video</span>' : "",
               hasImage ? '<span class="badge image-badge me-1">Image</span>' : "",
               hasMention ? '<span class="badge mention-badge me-1">Mention</span>' : "",
+             
           ].join("");
 
           $listItem.html(`

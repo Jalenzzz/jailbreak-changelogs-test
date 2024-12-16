@@ -287,19 +287,25 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   background-color: var(--common-bg-color);
 }
 [data-bs-theme="dark"] .audio-badge {
-  background-color: #3498db; /* Dark blue for audio tags */
+  background-color: #3498db;
 }
 
 [data-bs-theme="dark"] .video-badge {
-  background-color: #2ecc71; /* Dark green for video tags */
+  background-color: #e74c3c;
 }
 
 [data-bs-theme="dark"] .image-badge {
-  background-color: #ff9900; /* Dark orange for image tags */
+  background-color: #9b59b6;
 }
+
+[data-bs-theme="dark"] .mention-badge {
+  background-color: #e6bf23;
+}
+
 [data-bs-theme="dark"] .badge {
-  color: var(--text-color); /* White text for dark theme */
+  color: var(--text-color);
 }
+
 
 .nav-link {
   color: #d3d9d4; /* Light color for button text */
