@@ -1175,7 +1175,7 @@ function updateDropdownButton(text) {
       : avatarUrl;
     avatarElement.classList.add("rounded-circle", "m-1");
     avatarElement.width = 32;
-    avatarElement.id = `avatar-${userdata.id}`
+    avatarElement.id = `avatar-${userData.id}`
     avatarElement.height = 32;
     avatarElement.onerror = handleinvalidImage;
 
@@ -1190,7 +1190,7 @@ function updateDropdownButton(text) {
     headerContainer.classList.add("d-flex", "align-items-center", "flex-wrap");
 
     const usernameElement = document.createElement("a");
-    usernameElement.href = `/users/${userdata.id}`; // Set the href to redirect to the user's page
+    usernameElement.href = `/users/${userData.id}`; // Set the href to redirect to the user's page
     usernameElement.textContent = userdata.global_name; // Set the text to the user's global name
     usernameElement.style.fontWeight = "bold"; // Make the text bold
     usernameElement.style.color = "#748D92";
@@ -1357,7 +1357,7 @@ function loadComments(commentsData) {
       avatarElement.classList.add("rounded-circle", "m-1");
       avatarElement.width = 32;
       avatarElement.height = 32;
-      avatarElement.id = `avatar-${userdata.id}`
+      avatarElement.id = `avatar-${userData.id}`
       avatarElement.onerror = handleinvalidImage;
 
       const commentContainer = document.createElement("div");
