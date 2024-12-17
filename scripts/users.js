@@ -619,13 +619,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const editbio_button = document.getElementById('edit-bio-button');
     editbio_button.innerHTML = '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>'
     editbio_button.disabled = true;
-    const message_button = document.getElementById('message-button');
-    message_button.addEventListener('click', async function() {
-        await AlertToast("This feature is not yet implemented.")
-    });
   
     if (loggedinuserId === userId) {
-        message_button.style.display = 'none';
         follow_button.style.display = 'none';
         settings_button.style.display = 'inline-block';
         editbio_button.style.display = 'inline-block';

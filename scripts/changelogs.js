@@ -371,18 +371,23 @@ function populateChangelogDropdown(changelogs, buttonText) {
 
     $clearButton.toggle(query.length > 0);
 
-    debounceTimer = setTimeout(() => {
-      performSearch(); // Call performSearch after the delay
-    }, 300); // 300 milliseconds delay
+    if (query.length > 0) { // Only search if there's actual input
+      debounceTimer = setTimeout(() => {
+        performSearch(); // Call performSearch after the delay
+      }, 300); // 300 milliseconds delay
+    }
   });
 
   // Event listener for the clear button
   $clearButton.on("click", function () {
     $searchInput.val(""); // Clear the search input
     $clearButton.hide(); // Hide the clear button
+    $searchResultsContainer.empty(); // Clear the search results
+    $searchResultsContainer.hide();
+    $exampleQueries.removeClass("d-none");
     
     // Trigger input event to update search results
-    $searchInput.trigger("input");
+    // $searchInput.trigger("input");
     
     // Focus back on the input
     $searchInput.focus();

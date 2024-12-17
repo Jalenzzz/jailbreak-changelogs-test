@@ -147,19 +147,12 @@ body {
   flex: 1;
   min-width: 0; /* Prevents flex item from overflowing */
 }
-#settings-button {
-  position: absolute;
-  right: 0;
-  top: 1rem; /* Aligns with username */
-  margin: 0; /* Reset margins */
-  z-index: 1000;
-}
 
 /* Typography */
 .user-display-name {
   margin-bottom: 0.25rem;
   color: var(--text-primary);
-  font-size: 1.75rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 
@@ -284,58 +277,106 @@ body {
   .container { max-width: 100%; }
   .user-header { margin-top: -30px; }
 }
-
 @media (max-width: 767.98px) {
   .user-info-section {
+    display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    padding: 0 1rem;
   }
-  
+
   .avatar-wrapper {
-    width: 100%;
-    margin-right: 0;
+    margin: -50px 0 1rem 0;
+    width: auto;
   }
-  
+
+  .user-avatar {
+    width: 80px;
+    height: 80px;
+  }
+
   .user-name-container {
-    width: calc(100% - 60px);
-    margin-top: 1rem;
-    text-align: left;
-    margin-left: 1rem;
-    margin-right: 60px
-  }
-  
-  .user-info { padding-top: 30px; }
-  
-  .action-buttons {
     width: 100%;
-    margin-left: 1rem;
-    margin-bottom: 1.5rem;
-    margin-top: 0.5rem;
-    padding-top: 1rem;
-    clear: both; /* Ensure it clears other elements */
   }
-  #settings-button {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
+
+  /* This is the key change - making the top line a flex container */
+  .name-and-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+
+  .display-name {
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Username now sits below the name-and-button container */
+  .username-link {
+    font-size: 0.9rem;
+    display: block;
+    margin-top: 0.25rem;
+  }
+
+  .action-button {
+    min-width: auto;
+    height: 32px;
+    padding: 0.25rem 1rem;
   }
 }
 
 @media (min-width: 768px) {
   .user-info-section {
-    flex-wrap: nowrap;
+    display: flex;
     align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1rem;
   }
-  
+
+  .avatar-wrapper {
+    flex-shrink: 0;
+  }
+
   .user-name-container {
-    flex: 0 1 auto;
-    padding-top: 1rem;
+    flex-grow: 1;
   }
-  
+
+  .name-and-button {
+    display: flex;
+    align-items: center;
+    gap: 33rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .user-display-name {
+    margin: 0;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+  }
+
   .action-buttons {
-    margin-top: 1rem;
-    margin-left: auto;
-    text-align: end;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
+
+  .action-button {
+    height: 36px;
+  }
+
+  /* Ensure buttons maintain reasonable width */
+  #follow-button {
+    min-width: 100px;
+  }
+
+  #settings-button {
+    min-width: auto;
+  } 
   .card-body {
     padding: 1.25rem;
   }
