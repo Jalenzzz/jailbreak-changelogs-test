@@ -6,16 +6,20 @@ $(document).ready(function () {
   const sectionsElement = document.getElementById("content");
   const titleElement = document.getElementById("changelogTitle");
   const CommentHeader = document.getElementById("comment-header");
-  const startDateBtn = document.getElementById('startDateBtn');
-  const endDateBtn = document.getElementById('endDateBtn');
-  const startDateInput = document.getElementById('startDate');
-  const endDateInput = document.getElementById('endDate');
-  const applyFilterBtn = document.getElementById('applyDateFilter');
-  const clearFilterBtn = document.getElementById('desktopClearDateFilter');
-  const openModalBtn = document.getElementById('desktopOpenDateFilterModal');
-  const mobileOpenModalBtn = document.getElementById('mobileOpenDateFilterModal');
-  const dateFilterModal = new bootstrap.Modal(document.getElementById('dateFilterModal'));
-  
+  const startDateBtn = document.getElementById("startDateBtn");
+  const endDateBtn = document.getElementById("endDateBtn");
+  const startDateInput = document.getElementById("startDate");
+  const endDateInput = document.getElementById("endDate");
+  const applyFilterBtn = document.getElementById("applyDateFilter");
+  const clearFilterBtn = document.getElementById("desktopClearDateFilter");
+  const openModalBtn = document.getElementById("desktopOpenDateFilterModal");
+  const mobileOpenModalBtn = document.getElementById(
+    "mobileOpenDateFilterModal"
+  );
+  const dateFilterModal = new bootstrap.Modal(
+    document.getElementById("dateFilterModal")
+  );
+
   // Caching variables
   const CACHE_KEY = "changelogsCache";
   const CACHE_EXPIRY = 60 * 60 * 1000; // 1 hour in milliseconds
@@ -36,6 +40,41 @@ $(document).ready(function () {
   let currentFilterState = null;
   let debounceTimer;
 
+  function escapeHtml(text) {
+    // First preserve any existing highlight spans by using temporary markers
+    text = text.replace(
+      /<span class="highlight">(.*?)<\/span>/g,
+      "§§H§§$1§§/H§§"
+    );
+    text = text.replace(
+      /<span class="highlight mention">(.*?)<\/span>/g,
+      "§§M§§$1§§/M§§"
+    );
+
+    // Escape HTML entities
+    const div = document.createElement("div");
+    div.textContent = text;
+    text = div.innerHTML;
+
+    // Decode any existing HTML entities to prevent double encoding
+    text = text
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">");
+
+    // Restore highlight spans
+    text = text.replace(
+      /§§H§§(.*?)§§\/H§§/g,
+      '<span class="highlight">$1</span>'
+    );
+    text = text.replace(
+      /§§M§§(.*?)§§\/M§§/g,
+      '<span class="highlight mention">$1</span>'
+    );
+
+    return text;
+  }
+
   function updateChangelogBreadcrumb(changelogId) {
     const breadcrumbHtml = `
         <ol class="breadcrumb">
@@ -44,8 +83,9 @@ $(document).ready(function () {
             <li class="breadcrumb-item active" aria-current="page">Changelog ${changelogId}</li>
         </ol>
     `;
-    document.querySelector('nav[aria-label="breadcrumb"]').innerHTML = breadcrumbHtml;
-}
+    document.querySelector('nav[aria-label="breadcrumb"]').innerHTML =
+      breadcrumbHtml;
+  }
 
   // Function to get cache from localStorage
   function getCache() {
@@ -70,19 +110,19 @@ $(document).ready(function () {
   // Displays the most recent changelog entry.
   function displayLatestChangelog() {
     if (changelogsData && changelogsData.length > 0) {
-        const latestChangelog = changelogsData[0]; // Get the first (latest) changelog
-        
-        // Update the URL without reloading the page
-        const newUrl = `/changelogs/${latestChangelog.id}`;
-        history.pushState({}, '', newUrl);
-        
-        displayChangelog(latestChangelog); // Display the changelog content
-        updateChangelogBreadcrumb(latestChangelog.id); // Update the breadcrumb
-        updateDropdownButton("default"); // Reset the dropdown button to its default state
-        changelogToast("Showing latest changelog"); // Show a toast notification
+      const latestChangelog = changelogsData[0]; // Get the first (latest) changelog
+
+      // Update the URL without reloading the page
+      const newUrl = `/changelogs/${latestChangelog.id}`;
+      history.pushState({}, "", newUrl);
+
+      displayChangelog(latestChangelog); // Display the changelog content
+      updateChangelogBreadcrumb(latestChangelog.id); // Update the breadcrumb
+      updateDropdownButton("default"); // Reset the dropdown button to its default state
+      changelogToast("Showing latest changelog"); // Show a toast notification
     } else {
-        console.warn("No changelog data available to display latest entry.");
-        changelogToast("No changelog data available.");
+      console.warn("No changelog data available to display latest entry.");
+      changelogToast("No changelog data available.");
     }
   }
 
@@ -95,7 +135,6 @@ $(document).ready(function () {
     displayLatestChangelog(); // Show the latest changelog
   });
 
-
   // Function to show the loading overlay
   function showLoadingOverlay() {
     loadingOverlay.classList.add("show");
@@ -106,196 +145,220 @@ $(document).ready(function () {
     loadingOverlay.classList.remove("show");
   }
 
-
   showLoadingOverlay();
-  mobileOpenModalBtn.addEventListener('click', function() {
+  mobileOpenModalBtn.addEventListener("click", function () {
     dateFilterModal.show();
-});
+  });
 
-   // Open modal when clicking the "Select Date Range" button
-   openModalBtn.addEventListener('click', function() {
+  // Open modal when clicking the "Select Date Range" button
+  openModalBtn.addEventListener("click", function () {
     dateFilterModal.show();
-});
+  });
 
-// Function to create and open a date picker
-function openDatePicker(inputId, buttonId) {
-  const input = document.getElementById(inputId);
-  const button = document.getElementById(buttonId);
-  
-  // Show the date input
-  input.style.display = 'block';
-  button.style.display = 'none';
-  
-  // Focus and click to open the date picker
-  input.focus();
-  input.click();
-  
-  // Add an event listener to hide the input when it loses focus
-  input.addEventListener('blur', function() {
-    input.style.display = 'none';
-    button.style.display = 'block';
-  }, { once: true });
-}
+  // Function to create and open a date picker
+  function openDatePicker(inputId, buttonId) {
+    const input = document.getElementById(inputId);
+    const button = document.getElementById(buttonId);
 
-function updateButtonText(buttonId, date) {
-  const btn = document.getElementById(buttonId);
-  if (date) {
-    const formattedDate = formatDateForButton(date);
-    btn.querySelector('span').textContent = formattedDate;
-  } else {
-    btn.querySelector('span').textContent = buttonId === 'startDateBtn' ? 'Select Start Date' : 'Select End Date';
+    // Show the date input
+    input.style.display = "block";
+    button.style.display = "none";
+
+    // Focus and click to open the date picker
+    input.focus();
+    input.click();
+
+    // Add an event listener to hide the input when it loses focus
+    input.addEventListener(
+      "blur",
+      function () {
+        input.style.display = "none";
+        button.style.display = "block";
+      },
+      { once: true }
+    );
   }
-}
 
-// Event listeners for the date buttons
-document.getElementById('startDateBtn').addEventListener('click', (e) => {
-  e.preventDefault();
-  openDatePicker('startDate', 'startDateBtn');
-});
-
-document.getElementById('endDateBtn').addEventListener('click', (e) => {
-  e.preventDefault();
-  openDatePicker('endDate', 'endDateBtn');
-});
-
-// Event listeners for the date inputs
-document.getElementById('startDate').addEventListener('change', function() {
-  updateButtonText('startDateBtn', new Date(this.value));
-  this.style.display = 'none';
-  document.getElementById('startDateBtn').style.display = 'block';
-});
-
-document.getElementById('endDate').addEventListener('change', function() {
-  updateButtonText('endDateBtn', new Date(this.value));
-  this.style.display = 'none';
-  document.getElementById('endDateBtn').style.display = 'block';
-});
-
-// Function to update button text
-function updateButtonText(buttonId, date) {
+  function updateButtonText(buttonId, date) {
     const btn = document.getElementById(buttonId);
     if (date) {
-        const formattedDate = formatDateForButton(date);
-        btn.querySelector('span').textContent = formattedDate;
+      const formattedDate = formatDateForButton(date);
+      btn.querySelector("span").textContent = formattedDate;
     } else {
-        btn.querySelector('span').textContent = buttonId === 'startDateBtn' ? 'Select Start Date' : 'Select End Date';
+      btn.querySelector("span").textContent =
+        buttonId === "startDateBtn" ? "Select Start Date" : "Select End Date";
     }
-}
-
-// Function to format date for button display
-function formatDate(date) {
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-/**
- * Generates a formatted date range string based on provided start and end dates.
- * 
- * @param {Date} startDate - The start date of the range
- * @param {Date} endDate - The end date of the range
- * @returns {string} A formatted string representing the date range.
- */
-function getDateRangeText(startDate, endDate) {
-  // Helper function to format a date in the desired format (e.g., "Jan 1, 2023")
-  const formatDate = (date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-  // Check different combinations of start and end dates
-  if (startDate && endDate) {
-    // Both start and end dates are provided
-    return `${formatDate(startDate)} - ${formatDate(endDate)}`;
-  } else if (startDate) {
-    // Only start date is provided
-    return `From ${formatDate(startDate)}`;
-  } else if (endDate) {
-    // Only end date is provided
-    return `Until ${formatDate(endDate)}`;
   }
 
-  // Neither start nor end date is provided
-  return 'Invalid date range';
-}
+  // Event listeners for the date buttons
+  document.getElementById("startDateBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    openDatePicker("startDate", "startDateBtn");
+  });
 
-// Apply filter button click handler
-applyFilterBtn.addEventListener('click', function() {
-  // Convert input values to Date objects, using UTC to avoid timezone issues
-  // If no date is selected, the value will be null
-  const startDate = startDateInput.value ? new Date(startDateInput.value + 'T00:00:00Z') : null;
-  const endDate = endDateInput.value ? new Date(endDateInput.value + 'T00:00:00Z') : null;
+  document.getElementById("endDateBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    openDatePicker("endDate", "endDateBtn");
+  });
 
-  // Validate that at least one date is selected
-  if (!startDate && !endDate) {
-    alert("Please select at least one date before applying the filter.");
-    return; // Exit the function if no dates are selected
+  // Event listeners for the date inputs
+  document.getElementById("startDate").addEventListener("change", function () {
+    updateButtonText("startDateBtn", new Date(this.value));
+    this.style.display = "none";
+    document.getElementById("startDateBtn").style.display = "block";
+  });
+
+  document.getElementById("endDate").addEventListener("change", function () {
+    updateButtonText("endDateBtn", new Date(this.value));
+    this.style.display = "none";
+    document.getElementById("endDateBtn").style.display = "block";
+  });
+
+  // Function to update button text
+  function updateButtonText(buttonId, date) {
+    const btn = document.getElementById(buttonId);
+    if (date) {
+      const formattedDate = formatDateForButton(date);
+      btn.querySelector("span").textContent = formattedDate;
+    } else {
+      btn.querySelector("span").textContent =
+        buttonId === "startDateBtn" ? "Select Start Date" : "Select End Date";
+    }
   }
 
-  // Filter changelogs based on the selected date range
-  const filteredChangelogs = filterChangelogsByDate(startDate, endDate);
-
-  // Determine the appropriate button text based on the selected date range
-  let buttonText;
-  if (startDate && endDate) {
-    // Both start and end dates are selected
-    buttonText = `${formatDateForButton(startDate)} - ${formatDateForButton(endDate)}`;
-  } else if (startDate) {
-    // Only start date is selected
-    buttonText = `From ${formatDateForButton(startDate)}`;
-  } else if (endDate) {
-    // Only end date is selected
-    buttonText = `Until ${formatDateForButton(endDate)}`;
+  // Function to format date for button display
+  function formatDate(date) {
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   }
 
-  // Store the current filter state for potential future use
-  currentFilterState = buttonText;
+  /**
+   * Generates a formatted date range string based on provided start and end dates.
+   *
+   * @param {Date} startDate - The start date of the range
+   * @param {Date} endDate - The end date of the range
+   * @returns {string} A formatted string representing the date range.
+   */
+  function getDateRangeText(startDate, endDate) {
+    // Helper function to format a date in the desired format (e.g., "Jan 1, 2023")
+    const formatDate = (date) =>
+      date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
 
-  // Update the changelog dropdown with filtered results and new button text
-  populateChangelogDropdown(filteredChangelogs, buttonText);
+    // Check different combinations of start and end dates
+    if (startDate && endDate) {
+      // Both start and end dates are provided
+      return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+    } else if (startDate) {
+      // Only start date is provided
+      return `From ${formatDate(startDate)}`;
+    } else if (endDate) {
+      // Only end date is provided
+      return `Until ${formatDate(endDate)}`;
+    }
 
-  // Open the changelog dropdown after a short delay
-  // This delay ensures that the dropdown is populated before opening
-  setTimeout(openChangelogDropdown, 100);
+    // Neither start nor end date is provided
+    return "Invalid date range";
+  }
 
-  // Hide the date filter modal after applying the filter
-  dateFilterModal.hide();
-});
+  // Apply filter button click handler
+  applyFilterBtn.addEventListener("click", function () {
+    // Convert input values to Date objects, using UTC to avoid timezone issues
+    // If no date is selected, the value will be null
+    const startDate = startDateInput.value
+      ? new Date(startDateInput.value + "T00:00:00Z")
+      : null;
+    const endDate = endDateInput.value
+      ? new Date(endDateInput.value + "T00:00:00Z")
+      : null;
 
-// Clear filter button click handler
-clearFilterBtn.addEventListener('click', function() {
-  startDateInput.value = '';
-  endDateInput.value = '';
-  updateButtonText('startDateBtn', null);
-  updateButtonText('endDateBtn', null);
-  currentFilterState = null; // Clear the filter state
-  populateChangelogDropdown(changelogsData, 'Select a Changelog');
-  clearedFilterToast('The date filter has been cleared successfully!');
-});
+    // Validate that at least one date is selected
+    if (!startDate && !endDate) {
+      alert("Please select at least one date before applying the filter.");
+      return; // Exit the function if no dates are selected
+    }
 
-/// Function to populate the changelog dropdowns for mobile and desktop
-function populateChangelogDropdown(changelogs, buttonText) {
-  const $mobileDropdown = $("#mobileChangelogList");
-  const $desktopDropdown = $("#desktopChangelogList");
-  const $mobileDropdownButton = $("#mobileChangelogDropdown");
-  const $desktopDropdownButton = $("#desktopChangelogDropdown");
+    // Filter changelogs based on the selected date range
+    const filteredChangelogs = filterChangelogsByDate(startDate, endDate);
 
-  $mobileDropdown.empty();
-  $desktopDropdown.empty();
+    // Determine the appropriate button text based on the selected date range
+    let buttonText;
+    if (startDate && endDate) {
+      // Both start and end dates are selected
+      buttonText = `${formatDateForButton(startDate)} - ${formatDateForButton(
+        endDate
+      )}`;
+    } else if (startDate) {
+      // Only start date is selected
+      buttonText = `From ${formatDateForButton(startDate)}`;
+    } else if (endDate) {
+      // Only end date is selected
+      buttonText = `Until ${formatDateForButton(endDate)}`;
+    }
 
-  if (changelogs.length === 0) {
-    const noDataItem = `
+    // Store the current filter state for potential future use
+    currentFilterState = buttonText;
+
+    // Update the changelog dropdown with filtered results and new button text
+    populateChangelogDropdown(filteredChangelogs, buttonText);
+
+    // Open the changelog dropdown after a short delay
+    // This delay ensures that the dropdown is populated before opening
+    setTimeout(openChangelogDropdown, 100);
+
+    // Hide the date filter modal after applying the filter
+    dateFilterModal.hide();
+  });
+
+  // Clear filter button click handler
+  clearFilterBtn.addEventListener("click", function () {
+    startDateInput.value = "";
+    endDateInput.value = "";
+    updateButtonText("startDateBtn", null);
+    updateButtonText("endDateBtn", null);
+    currentFilterState = null; // Clear the filter state
+    populateChangelogDropdown(changelogsData, "Select a Changelog");
+    clearedFilterToast("The date filter has been cleared successfully!");
+  });
+
+  /// Function to populate the changelog dropdowns for mobile and desktop
+  function populateChangelogDropdown(changelogs, buttonText) {
+    const $mobileDropdown = $("#mobileChangelogList");
+    const $desktopDropdown = $("#desktopChangelogList");
+    const $mobileDropdownButton = $("#mobileChangelogDropdown");
+    const $desktopDropdownButton = $("#desktopChangelogDropdown");
+
+    $mobileDropdown.empty();
+    $desktopDropdown.empty();
+
+    if (changelogs.length === 0) {
+      const noDataItem = `
       <li>
           <span class="dropdown-item-text">No data for selected dates</span>
       </li>
     `;
-    $mobileDropdown.append(noDataItem);
-    $desktopDropdown.append(noDataItem);
-    $mobileDropdownButton.html('<i class="bi bi-calendar-event me-2"></i>No data for selected dates');
-    $desktopDropdownButton.html('<i class="bi bi-calendar-event me-2"></i>No data for selected dates');
-  } else {
-    const sortedChangelogs = changelogs.sort((a, b) => b.id - a.id);
+      $mobileDropdown.append(noDataItem);
+      $desktopDropdown.append(noDataItem);
+      $mobileDropdownButton.html(
+        '<i class="bi bi-calendar-event me-2"></i>No data for selected dates'
+      );
+      $desktopDropdownButton.html(
+        '<i class="bi bi-calendar-event me-2"></i>No data for selected dates'
+      );
+    } else {
+      const sortedChangelogs = changelogs.sort((a, b) => b.id - a.id);
 
-    sortedChangelogs.forEach((changelog) => {
-      const fullTitle = changelog.title;
-      const truncatedTitle = truncateText(fullTitle, 37);
+      sortedChangelogs.forEach((changelog) => {
+        const fullTitle = changelog.title;
+        const truncatedTitle = truncateText(fullTitle, 37);
 
-      $mobileDropdown.append(`
+        $mobileDropdown.append(`
         <li class="w-100">
             <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}" title="${fullTitle}">
                 <span class="changelog-title">${truncatedTitle}</span>
@@ -303,54 +366,52 @@ function populateChangelogDropdown(changelogs, buttonText) {
         </li>
       `);
 
-      $desktopDropdown.append(`
+        $desktopDropdown.append(`
         <li class="w-100">
             <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
                 <span class="changelog-title">${fullTitle}</span>
             </a>
         </li>
       `);
-    });
+      });
 
-    // Update the dropdown button text
-    if (buttonText) {
-      const iconHtml = '<i class="bi bi-calendar-event me-2"></i>';
-      $mobileDropdownButton.html(`${iconHtml}${buttonText}`);
-      $desktopDropdownButton.html(`${iconHtml}${buttonText}`);
-    }
-
-    // Add click event handlers for the dropdown items
-    $('.changelog-dropdown-item').on('click', function(e) {
-      e.preventDefault();
-      const changelogId = $(this).data('changelog-id');
-      
-      // Update the URL without reloading the page
-      const newUrl = `/changelogs/${changelogId}`;
-      history.pushState({}, '', newUrl);
-      
-      // Find the selected changelog
-      const selectedChangelog = changelogs.find(cl => cl.id == changelogId);
-      if (selectedChangelog) {
-        displayChangelog(selectedChangelog);
-        updateChangelogBreadcrumb(changelogId);
+      // Update the dropdown button text
+      if (buttonText) {
+        const iconHtml = '<i class="bi bi-calendar-event me-2"></i>';
+        $mobileDropdownButton.html(`${iconHtml}${buttonText}`);
+        $desktopDropdownButton.html(`${iconHtml}${buttonText}`);
       }
-    });
-  }
-}
 
+      // Add click event handlers for the dropdown items
+      $(".changelog-dropdown-item").on("click", function (e) {
+        e.preventDefault();
+        const changelogId = $(this).data("changelog-id");
+
+        // Update the URL without reloading the page
+        const newUrl = `/changelogs/${changelogId}`;
+        history.pushState({}, "", newUrl);
+
+        // Find the selected changelog
+        const selectedChangelog = changelogs.find((cl) => cl.id == changelogId);
+        if (selectedChangelog) {
+          displayChangelog(selectedChangelog);
+          updateChangelogBreadcrumb(changelogId);
+        }
+      });
+    }
+  }
 
   // Function to preprocess Markdown text
   const preprocessMarkdown = (markdown) => {
     return markdown
-      .replace(/^ - /gm, '\n- ')   // Format top-level list items
-      .replace(/^ - - /gm, '\n  - ') // Format nested list items (indent with two spaces)
-      .replace(/^## /gm, '\n## ')  // Format second-level headers
-      .replace(/^### /gm, '\n### ') // Format third-level headers
-      .replace(/\(audio\) /g, '\n(audio) ') // Format audio references
-      .replace(/\(video\) /g, '\n(video) ') // Format video references
-      .replace(/\(image\) /g, '\n(image) '); // Format image references
+      .replace(/^ - /gm, "\n- ") // Format top-level list items
+      .replace(/^ - - /gm, "\n  - ") // Format nested list items (indent with two spaces)
+      .replace(/^## /gm, "\n## ") // Format second-level headers
+      .replace(/^### /gm, "\n### ") // Format third-level headers
+      .replace(/\(audio\) /g, "\n(audio) ") // Format audio references
+      .replace(/\(video\) /g, "\n(video) ") // Format video references
+      .replace(/\(image\) /g, "\n(image) "); // Format image references
   };
-  
 
   // Function to dismiss the keyboard on mobile
   function dismissKeyboard() {
@@ -371,7 +432,8 @@ function populateChangelogDropdown(changelogs, buttonText) {
 
     $clearButton.toggle(query.length > 0);
 
-    if (query.length > 0) { // Only search if there's actual input
+    if (query.length > 0) {
+      // Only search if there's actual input
       debounceTimer = setTimeout(() => {
         performSearch(); // Call performSearch after the delay
       }, 300); // 300 milliseconds delay
@@ -385,10 +447,10 @@ function populateChangelogDropdown(changelogs, buttonText) {
     $searchResultsContainer.empty(); // Clear the search results
     $searchResultsContainer.hide();
     $exampleQueries.removeClass("d-none");
-    
+
     // Trigger input event to update search results
     // $searchInput.trigger("input");
-    
+
     // Focus back on the input
     $searchInput.focus();
   });
@@ -461,115 +523,125 @@ function populateChangelogDropdown(changelogs, buttonText) {
   });
 
   /**
- * Formats a date object for display on a button.
- * 
- * @param {Date} date - The date to be formatted.
- * @returns {string} A formatted date string (e.g., "Jan 1, 2023").
- */
-function formatDateForButton(date) {
-  const options = {
-    year: "numeric",   // Include the full year (e.g., 2023)
-    month: "short",    // Use abbreviated month name (e.g., Jan)
-    day: "numeric",    // Include the day of the month
-    timeZone: "UTC"    // Use UTC to avoid time zone discrepancies
-  };
-  return date.toLocaleDateString("en-US", options);
-}
-
-/**
- * Parses a date from a changelog title string.
- * 
- * @param {string} title - The changelog title containing the date (e.g., "January 1st 2023").
- * @returns {Date|null} A Date object representing the parsed date, or null if parsing fails.
- */
-function parseDateFromTitle(title) {
-  // Object mapping month names to their numeric representations (0-11)
-  const months = {
-    'January': 0, 'February': 1, 'March': 2, 'April': 3, 'May': 4, 'June': 5,
-    'July': 6, 'August': 7, 'September': 8, 'October': 9, 'November': 10, 'December': 11
-  };
-  
-  // Regular expression to match the date format in the title
-  // Captures: (month name) (day) (year)
-  // Ignores ordinal suffixes (st, nd, rd, th)
-  const match = title.match(/(\w+)\s(\d+)(?:st|nd|rd|th)\s(\d{4})/);
-  
-  if (match) {
-    // Destructure the matched groups
-    const [, month, day, year] = match;
-    
-    // Create a new Date object using UTC to avoid timezone issues
-    // months[month] converts the month name to its numeric value (0-11)
-    return new Date(Date.UTC(parseInt(year), months[month], parseInt(day)));
+   * Formats a date object for display on a button.
+   *
+   * @param {Date} date - The date to be formatted.
+   * @returns {string} A formatted date string (e.g., "Jan 1, 2023").
+   */
+  function formatDateForButton(date) {
+    const options = {
+      year: "numeric", // Include the full year (e.g., 2023)
+      month: "short", // Use abbreviated month name (e.g., Jan)
+      day: "numeric", // Include the day of the month
+      timeZone: "UTC", // Use UTC to avoid time zone discrepancies
+    };
+    return date.toLocaleDateString("en-US", options);
   }
-  
-  // Return null if no valid date format is found in the title
-  return null;
-}
-/**
- * Filters changelogs based on a given date range.
- * 
- * @param {Date|null} startDate - The start date of the range (inclusive), or null if no start date.
- * @param {Date|null} endDate - The end date of the range (inclusive), or null if no end date.
- * @returns {Array} An array of changelog objects that fall within the specified date range.
- */
-function filterChangelogsByDate(startDate, endDate) {
-  return changelogsData.filter(changelog => {
-    // Parse the date from the changelog title
-    const changelogDate = parseDateFromTitle(changelog.title);
-    
-    // If the date couldn't be parsed, exclude this changelog
-    if (!changelogDate) return false;
 
-    // Apply different filtering logic based on the provided date range
-    if (startDate && endDate) {
-      // Both start and end dates provided: check if changelog is within range
-      return changelogDate >= startDate && changelogDate <= endDate;
-    } else if (startDate) {
-      // Only start date provided: check if changelog is on or after start date
-      return changelogDate >= startDate;
-    } else if (endDate) {
-      // Only end date provided: check if changelog is on or before end date
-      return changelogDate <= endDate;
+  /**
+   * Parses a date from a changelog title string.
+   *
+   * @param {string} title - The changelog title containing the date (e.g., "January 1st 2023").
+   * @returns {Date|null} A Date object representing the parsed date, or null if parsing fails.
+   */
+  function parseDateFromTitle(title) {
+    // Object mapping month names to their numeric representations (0-11)
+    const months = {
+      January: 0,
+      February: 1,
+      March: 2,
+      April: 3,
+      May: 4,
+      June: 5,
+      July: 6,
+      August: 7,
+      September: 8,
+      October: 9,
+      November: 10,
+      December: 11,
+    };
+
+    // Regular expression to match the date format in the title
+    // Captures: (month name) (day) (year)
+    // Ignores ordinal suffixes (st, nd, rd, th)
+    const match = title.match(/(\w+)\s(\d+)(?:st|nd|rd|th)\s(\d{4})/);
+
+    if (match) {
+      // Destructure the matched groups
+      const [, month, day, year] = match;
+
+      // Create a new Date object using UTC to avoid timezone issues
+      // months[month] converts the month name to its numeric value (0-11)
+      return new Date(Date.UTC(parseInt(year), months[month], parseInt(day)));
     }
-    
-    // If no dates are provided, include all changelogs
-    return true;
-  });
-}
 
-/**
- * Updates the text of the changelog dropdown buttons on both mobile and desktop views.
- * 
- * @param {string} text - The text to display on the buttons. Use "default" for the default text.
- */
-function updateDropdownButton(text) {
-  // Select the dropdown buttons for mobile and desktop views
-  const $mobileDropdownButton = $("#mobileChangelogDropdown");
-  const $desktopDropdownButton = $("#desktopChangelogDropdown");
+    // Return null if no valid date format is found in the title
+    return null;
+  }
+  /**
+   * Filters changelogs based on a given date range.
+   *
+   * @param {Date|null} startDate - The start date of the range (inclusive), or null if no start date.
+   * @param {Date|null} endDate - The end date of the range (inclusive), or null if no end date.
+   * @returns {Array} An array of changelog objects that fall within the specified date range.
+   */
+  function filterChangelogsByDate(startDate, endDate) {
+    return changelogsData.filter((changelog) => {
+      // Parse the date from the changelog title
+      const changelogDate = parseDateFromTitle(changelog.title);
 
-  // Start with the calendar icon
-  let buttonText = '<i class="bi bi-calendar-event me-2"></i>';
+      // If the date couldn't be parsed, exclude this changelog
+      if (!changelogDate) return false;
 
-  // Set the button text based on the input
-  if (text === "default") {
-    buttonText += "Select a Changelog";
-  } else {
-    buttonText += text;
+      // Apply different filtering logic based on the provided date range
+      if (startDate && endDate) {
+        // Both start and end dates provided: check if changelog is within range
+        return changelogDate >= startDate && changelogDate <= endDate;
+      } else if (startDate) {
+        // Only start date provided: check if changelog is on or after start date
+        return changelogDate >= startDate;
+      } else if (endDate) {
+        // Only end date provided: check if changelog is on or before end date
+        return changelogDate <= endDate;
+      }
+
+      // If no dates are provided, include all changelogs
+      return true;
+    });
   }
 
-  // Update both mobile and desktop buttons with the new text
-  $mobileDropdownButton.html(buttonText);
-  $desktopDropdownButton.html(buttonText);
-}
+  /**
+   * Updates the text of the changelog dropdown buttons on both mobile and desktop views.
+   *
+   * @param {string} text - The text to display on the buttons. Use "default" for the default text.
+   */
+  function updateDropdownButton(text) {
+    // Select the dropdown buttons for mobile and desktop views
+    const $mobileDropdownButton = $("#mobileChangelogDropdown");
+    const $desktopDropdownButton = $("#desktopChangelogDropdown");
 
-    // Initialize the dropdown instance for Bootstrap
-    var dropdownElementList = [].slice.call(
-      document.querySelectorAll(".dropdown-toggle") // Select all dropdown toggle elements
-    );
-    var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-      return new bootstrap.Dropdown(dropdownToggleEl); // Create Bootstrap dropdown instances
-    });
+    // Start with the calendar icon
+    let buttonText = '<i class="bi bi-calendar-event me-2"></i>';
+
+    // Set the button text based on the input
+    if (text === "default") {
+      buttonText += "Select a Changelog";
+    } else {
+      buttonText += text;
+    }
+
+    // Update both mobile and desktop buttons with the new text
+    $mobileDropdownButton.html(buttonText);
+    $desktopDropdownButton.html(buttonText);
+  }
+
+  // Initialize the dropdown instance for Bootstrap
+  var dropdownElementList = [].slice.call(
+    document.querySelectorAll(".dropdown-toggle") // Select all dropdown toggle elements
+  );
+  var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+    return new bootstrap.Dropdown(dropdownToggleEl); // Create Bootstrap dropdown instances
+  });
 
   // Define buttons for copying changelog
   const mobileCopyChangelogBtn = $("#mobileCopyChangelog");
@@ -578,9 +650,12 @@ function updateDropdownButton(text) {
   function copyChangelog() {
     // Get the content of the changelog
     const changelogContent = $("#content").clone();
-    
+
     // Check if there's actual changelog content to copy
-    if (changelogContent.find("h1.display-4").length === 0 || changelogContent.find(".api-error-container").length > 0) {
+    if (
+      changelogContent.find("h1.display-4").length === 0 ||
+      changelogContent.find(".api-error-container").length > 0
+    ) {
       console.warn("No changelog data available to copy");
       alert("No changelog data available to copy!");
       return;
@@ -630,7 +705,7 @@ function updateDropdownButton(text) {
     processedContent.push(
       "",
       "",
-      `This changelog was copied from ${currentPageUrl}`,
+      `This changelog was copied from ${currentPageUrl}`
     );
 
     // Join the processed content with newlines
@@ -720,31 +795,33 @@ function updateDropdownButton(text) {
 
   // Function to highlight specific text in a string based on a query
   function highlightText(text, query) {
+    // First escape any HTML in the original text
+    let highlightedText = escapeHtml(text);
+
     const words = query
       .split(/\s+/)
       .map((word) => word.trim())
-      .filter((word) => word.length > 0); // Split query into words
+      .filter((word) => word.length > 0);
 
-    let highlightedText = text; // Initialize highlighted text
+    // Highlight other query words in the text first
+    words.forEach((word) => {
+      if (word !== "has:" && word !== "mention") {
+        // Modified regex to avoid matching within HTML tags
+        const regex = new RegExp(`(?![^<]*>)(${word})`, "gi");
+        highlightedText = highlightedText.replace(
+          regex,
+          '<span class="highlight">$1</span>'
+        );
+      }
+    });
 
-    // Highlight @mentions in the text
+    // Highlight @mentions in the text last
     highlightedText = highlightedText.replace(
       /@(\w+)/g,
       '<span class="highlight mention">@$1</span>'
     );
 
-    // Highlight other query words in the text
-    words.forEach((word) => {
-      if (word !== "has:" && word !== "mention") {
-        const regex = new RegExp(`(${word})`, "gi"); // Create a regex for the word
-        highlightedText = highlightedText.replace(
-          regex,
-          '<span class="highlight">$1</span>' // Highlight the word
-        );
-      }
-    });
-
-    return highlightedText; // Return the highlighted text
+    return highlightedText;
   }
 
   // Function to convert Markdown text to HTML
@@ -814,23 +891,23 @@ function updateDropdownButton(text) {
 
   function processChangelogData(data) {
     changelogsData = data;
-  
+
     if (Array.isArray(data) && data.length > 0) {
       populateChangelogDropdown(data);
-  
+
       // Get changelogId from the URL path, e.g., /changelogs/{changelog id}
       const pathSegments = window.location.pathname.split("/");
       const changelogId = pathSegments[pathSegments.length - 1];
-      
+
       // If changelogId exists in the path, find it in the data
       let selectedChangelog = changelogId
         ? changelogsData.find((cl) => cl.id == changelogId)
         : data[0]; // Default to the first changelog if no id is found
-  
+
       if (!selectedChangelog) {
         selectedChangelog = data[0]; // Fallback to first changelog if no match
       }
-  
+
       // Update breadcrumb here, using selectedChangelog.id
       const breadcrumbHtml = `
           <ol class="breadcrumb">
@@ -839,23 +916,23 @@ function updateDropdownButton(text) {
               <li class="breadcrumb-item active" aria-current="page">Changelog ${selectedChangelog.id}</li>
           </ol>
       `;
-      document.querySelector('nav[aria-label="breadcrumb"]').innerHTML = breadcrumbHtml;
+      document.querySelector('nav[aria-label="breadcrumb"]').innerHTML =
+        breadcrumbHtml;
 
       displayChangelog(selectedChangelog);
-  
+
       // Toggle button visibility based on whether the selected changelog is the latest one
       desktopLatestChangelogBtn.style.display =
         selectedChangelog.id === data[0].id ? "none" : "block";
       mobileLatestChangelogBtn.style.display =
         selectedChangelog.id === data[0].id ? "none" : "block";
     }
-  
-    hideLoadingOverlay();
-}
 
+    hideLoadingOverlay();
+  }
 
   // Make the function globally accessible
-  window.fetchDataFromAPI = function() {
+  window.fetchDataFromAPI = function () {
     return $.getJSON(apiUrl)
       .done((data) => {
         setCache(data);
@@ -863,9 +940,9 @@ function updateDropdownButton(text) {
       })
       .fail((jqXHR, textStatus, errorThrown) => {
         console.error("Error fetching changelogs:", errorThrown);
-        
+
         const errorMessage = getErrorMessage(jqXHR.status);
-        
+
         // Update main content
         $("#content").html(`
           <div class="api-error-container">
@@ -898,10 +975,10 @@ function updateDropdownButton(text) {
         $("#retryButton").on("click", () => {
           fetchDataFromAPI();
         });
-        
+
         hideLoadingOverlay();
       });
-  }
+  };
   function getErrorMessage(statusCode) {
     switch (statusCode) {
       case 404:
@@ -916,7 +993,6 @@ function updateDropdownButton(text) {
         return "We're having trouble loading the changelog information. This might be due to a temporary connection issue or server maintenance.";
     }
   }
-
 
   // Check cache before fetching
   const cachedData = getCache();
@@ -970,111 +1046,112 @@ function updateDropdownButton(text) {
     $searchResultsContainer.empty(); // Clear previous results
 
     if (results.length === 0) {
-        $searchResultsContainer.html('<p class="p-3">No results found.</p>'); // Show message if no results
+      $searchResultsContainer.html('<p class="p-3">No results found.</p>'); // Show message if no results
     } else {
-        const $resultsList = $("<ul>").addClass("list-group list-group-flush"); // Create a list for results
-        results.forEach((changelog) => {
-            const $listItem = $("<li>").addClass(
-                "list-group-item custom-search-item"
-            ); // Create a list item
+      const $resultsList = $("<ul>").addClass("list-group list-group-flush"); // Create a list for results
+      results.forEach((changelog) => {
+        const $listItem = $("<li>").addClass(
+          "list-group-item custom-search-item"
+        ); // Create a list item
 
-            let previewText = "";
-            let highlightedPreview = "";
+        let previewText = "";
+        let highlightedPreview = "";
 
-            if (query.startsWith("has:")) {
-                // Handle special query for media types and mentions
-                const mediaType = query.split(":")[1].trim();
-                switch (mediaType) {
-                    case "audio":
-                    case "video":
-                    case "image":
-                        const mediaRegex = new RegExp(`\\(${mediaType}\\)`, "g"); // Create regex for media type
-                        const mediaCount = (changelog.sections.match(mediaRegex) || [])
-                            .length; // Count occurrences
-                        previewText = `${mediaCount} ${mediaType}${
-                            mediaCount !== 1 ? "s" : ""
-                        } found`; // Prepare preview text
-                        highlightedPreview = previewText; // No highlighting for media types
-                        break;
-                    case "mention":
-                        const mentionMatches = [
-                            ...new Set(changelog.sections.match(/@\w+/g) || []),
-                        ]; // Find unique mentions
-                        if (mentionMatches.length > 0) {
-                            previewText = `Mentions found: ${mentionMatches.join(", ")}`; // Prepare mention preview
-                            highlightedPreview = highlightText(previewText, query); // Highlight mentions
-                        } else {
-                            previewText = "No mentions found"; // No mentions case
-                            highlightedPreview = previewText;
-                        }
-                        break;
-                }
-            } else {
-                // Regular search preview logic
-                const cleanedSections = cleanContentForSearch(changelog.sections); // Clean content for search
-                const queryPosition = cleanedSections.toLowerCase().indexOf(query); // Find query position
-                if (queryPosition !== -1) {
-                    const startPos = Math.max(0, queryPosition - 50); // Determine start position for preview
-                    const endPos = Math.min(
-                        cleanedSections.length,
-                        queryPosition + query.length + 50
-                    ); // Determine end position
-                    previewText = cleanedSections.substring(startPos, endPos); // Create preview text
-                    if (startPos > 0) previewText = "..." + previewText; // Add ellipsis if needed
-                    if (endPos < cleanedSections.length) previewText += "..."; // Add ellipsis if needed
-                } else {
-                    previewText =
-                        cleanedSections.substring(0, 100) +
-                        (cleanedSections.length > 100 ? "..." : ""); // Default preview
-                }
-                highlightedPreview = highlightText(previewText, query); // Highlight the preview text
-            }
+        if (query.startsWith("has:")) {
+          // Handle special query for media types and mentions
+          const mediaType = query.split(":")[1].trim();
+          switch (mediaType) {
+            case "audio":
+            case "video":
+            case "image":
+              const mediaRegex = new RegExp(`\\(${mediaType}\\)`, "g"); // Create regex for media type
+              const mediaCount = (changelog.sections.match(mediaRegex) || [])
+                .length; // Count occurrences
+              previewText = `${mediaCount} ${mediaType}${
+                mediaCount !== 1 ? "s" : ""
+              } found`; // Prepare preview text
+              highlightedPreview = previewText; // No highlighting for media types
+              break;
+            case "mention":
+              const mentionMatches = [
+                ...new Set(changelog.sections.match(/@\w+/g) || []),
+              ]; // Find unique mentions
+              if (mentionMatches.length > 0) {
+                previewText = `Mentions found: ${mentionMatches.join(", ")}`; // Prepare mention preview
+                highlightedPreview = highlightText(previewText, query); // Highlight mentions
+              } else {
+                previewText = "No mentions found"; // No mentions case
+                highlightedPreview = previewText;
+              }
+              break;
+          }
+        } else {
+          // Regular search preview logic
+          const cleanedSections = cleanContentForSearch(changelog.sections); // Clean content for search
+          const queryPosition = cleanedSections.toLowerCase().indexOf(query); // Find query position
+          if (queryPosition !== -1) {
+            const startPos = Math.max(0, queryPosition - 50); // Determine start position for preview
+            const endPos = Math.min(
+              cleanedSections.length,
+              queryPosition + query.length + 50
+            ); // Determine end position
+            previewText = cleanedSections.substring(startPos, endPos); // Create preview text
+            if (startPos > 0) previewText = "..." + previewText; // Add ellipsis if needed
+            if (endPos < cleanedSections.length) previewText += "..."; // Add ellipsis if needed
+          } else {
+            previewText =
+              cleanedSections.substring(0, 100) +
+              (cleanedSections.length > 100 ? "..." : ""); // Default preview
+          }
+          highlightedPreview = highlightText(previewText, query); // Highlight the preview text
+        }
 
-            const highlightedTitle = highlightText(changelog.title, query); // Highlight the changelog title
+        const highlightedTitle = highlightText(changelog.title, query); // Highlight the changelog title
 
-            // Create media labels based on available sections
-            const hasAudio = changelog.sections.includes("(audio)");
-            const hasVideo = changelog.sections.includes("(video)");
-            const hasImage = changelog.sections.includes("(image)");
-            const hasMention = /@\w+/.test(changelog.sections); 
-            const mediaLabels = [
-                hasAudio ? '<span class="badge audio-badge me-1">Audio</span>' : "",
-                hasVideo ? '<span class="badge video-badge me-1">Video</span>' : "",
-                hasImage ? '<span class="badge image-badge me-1">Image</span>' : "",
-                hasMention ? '<span class="badge mention-badge me-1">Mention</span>' : "",
-              
-            ].join("");
+        // Create media labels based on available sections
+        const hasAudio = changelog.sections.includes("(audio)");
+        const hasVideo = changelog.sections.includes("(video)");
+        const hasImage = changelog.sections.includes("(image)");
+        const hasMention = /@\w+/.test(changelog.sections);
+        const mediaLabels = [
+          hasAudio ? '<span class="badge audio-badge me-1">Audio</span>' : "",
+          hasVideo ? '<span class="badge video-badge me-1">Video</span>' : "",
+          hasImage ? '<span class="badge image-badge me-1">Image</span>' : "",
+          hasMention
+            ? '<span class="badge mention-badge me-1">Mention</span>'
+            : "",
+        ].join("");
 
-            $listItem.html(`
-                <h5 class="mb-1">${highlightedTitle} ${mediaLabels}</h5>
-                <p class="mb-1 small">${highlightedPreview}</p>
+        $listItem.html(`
+                <h5 class="mb-1">${escapeHtml(
+                  highlightedTitle
+                )} ${mediaLabels}</h5>
+                <p class="mb-1 small">${escapeHtml(highlightedPreview)}</p>
             `);
 
-            // Click event to display the selected changelog
-            $listItem.on("click", () => {
-              // Update the URL without reloading the page
-              const newUrl = `/changelogs/${changelog.id}`;
-              history.pushState({}, '', newUrl);
-              
-              // Hide search results but keep the query
-              $searchResultsContainer.hide();
-              
-              // Keep clear button visible since we're keeping the query
-              $searchInput.show();
-          
-              displayChangelog(changelog); // Display the selected changelog
-              updateChangelogBreadcrumb(changelog.id); // Update the breadcrumb
-              dismissKeyboard(); // Dismiss the keyboard
-            });
+        // Click event to display the selected changelog
+        $listItem.on("click", () => {
+          // Update the URL without reloading the page
+          const newUrl = `/changelogs/${changelog.id}`;
+          history.pushState({}, "", newUrl);
 
+          // Hide search results but keep the query
+          $searchResultsContainer.hide();
 
-            $resultsList.append($listItem); // Append the list item to the results list
+          // Keep clear button visible since we're keeping the query
+          $searchInput.show();
+
+          displayChangelog(changelog); // Display the selected changelog
+          updateChangelogBreadcrumb(changelog.id); // Update the breadcrumb
+          dismissKeyboard(); // Dismiss the keyboard
         });
-        $searchResultsContainer.append($resultsList); // Append the results list to the container
+
+        $resultsList.append($listItem); // Append the list item to the results list
+      });
+      $searchResultsContainer.append($resultsList); // Append the results list to the container
     }
     $searchResultsContainer.show(); // Show the search results container
   }
-
 
   // Prevent body scrolling when interacting with the search results container
   $searchResultsContainer.on("wheel", function (event) {
@@ -1092,27 +1169,26 @@ function updateDropdownButton(text) {
 
   function displayRandomChangelog() {
     if (changelogsData && changelogsData.length > 0) {
-        const randomIndex = Math.floor(Math.random() * changelogsData.length);
-        const randomChangelog = changelogsData[randomIndex];
-        
-        // Update the URL without reloading the page
-        const newUrl = `/changelogs/${randomChangelog.id}`;
-        history.pushState({}, '', newUrl);
-        
-        displayChangelog(randomChangelog);
-        updateChangelogBreadcrumb(randomChangelog.id); // Update the breadcrumb
-        changelogToast("Showing a random changelog");
+      const randomIndex = Math.floor(Math.random() * changelogsData.length);
+      const randomChangelog = changelogsData[randomIndex];
+
+      // Update the URL without reloading the page
+      const newUrl = `/changelogs/${randomChangelog.id}`;
+      history.pushState({}, "", newUrl);
+
+      displayChangelog(randomChangelog);
+      updateChangelogBreadcrumb(randomChangelog.id); // Update the breadcrumb
+      changelogToast("Showing a random changelog");
     } else {
-        console.warn("No changelog data available to display a random entry.");
-        changelogToast("No changelog data available.")
+      console.warn("No changelog data available to display a random entry.");
+      changelogToast("No changelog data available.");
     }
-}
+  }
 
+  const slowModeDelay = 4700;
+  const buttons = ["#randomChangelogDesktopBtn", "#randomChangelogMobileBtn"]; // IDs of the buttons
 
-   const slowModeDelay = 4700;
-   const buttons = ["#randomChangelogDesktopBtn", "#randomChangelogMobileBtn"]; // IDs of the buttons
- 
-   buttons.forEach(function (buttonSelector) {
+  buttons.forEach(function (buttonSelector) {
     $(buttonSelector).on("click", function () {
       const $btn = $(this); // Cache the button element
 
@@ -1133,7 +1209,6 @@ function updateDropdownButton(text) {
     });
   });
 
-
   // Function to clean content for search
   function cleanContentForSearch(content) {
     return content
@@ -1151,18 +1226,18 @@ function updateDropdownButton(text) {
       .replace(/\s+/g, " ") // Collapse whitespace
       .trim(); // Trim leading and trailing whitespace
   }
-  
+
   // Function to display the selected changelog
   function displayChangelog(changelog) {
     localStorage.setItem("selectedChangelogId", changelog.id);
-  
+
     document.title = changelog.title;
     reloadcomments();
-  
+
     if (titleElement) {
       titleElement.textContent = changelog.title;
     }
-  
+
     // Update image element if available
     if (changelog.image_url) {
       imageElement.src = changelog.image_url;
@@ -1175,7 +1250,7 @@ function updateDropdownButton(text) {
     }
 
     let contentHtml = `<h1 class="display-4 mb-4">${changelog.title}</h1>`;
-  
+
     if (changelog.sections) {
       const processedMarkdown = preprocessMarkdown(changelog.sections);
       const processedSections = convertMarkdownToHtml(processedMarkdown);
@@ -1184,14 +1259,14 @@ function updateDropdownButton(text) {
       console.warn("No sections available for changelog.");
       contentHtml += '<p class="lead">No sections available.</p>';
     }
-  
+
     // Use the stored filter state instead of checking the dropdown text
     if (currentFilterState) {
       updateDropdownButton(currentFilterState);
     } else {
       updateDropdownButton("default");
     }
-  
+
     sectionsElement.innerHTML = contentHtml;
     const pathSegments = window.location.pathname.split("/");
     if (!isNaN(pathSegments[pathSegments.length - 1])) {
@@ -1199,9 +1274,9 @@ function updateDropdownButton(text) {
     }
     const newPath = `${pathSegments.join("/")}/${changelog.id}`;
     window.history.pushState({}, "", newPath);
-    
+
     const isLatestChangelog = changelog.id === changelogsData[0].id;
-  
+
     if (isLatestChangelog) {
       desktopLatestChangelogBtn.style.display = "none";
       mobileLatestChangelogBtn.style.display = "none";
@@ -1210,7 +1285,7 @@ function updateDropdownButton(text) {
       mobileLatestChangelogBtn.style.display = "";
     }
   }
-  
+
   // Click event for changelog dropdown items
   $(document).on("click", ".changelog-dropdown-item", function (e) {
     e.preventDefault(); // Prevent default action
@@ -1241,30 +1316,31 @@ function updateDropdownButton(text) {
   const userid = sessionStorage.getItem("userid");
 
   if (userid) {
-      commentinput.placeholder = "Comment as " + userdata.global_name;
-      commentbutton.disabled = false;
-      commentinput.disabled = false;
+    commentinput.placeholder = "Comment as " + userdata.global_name;
+    commentbutton.disabled = false;
+    commentinput.disabled = false;
   } else {
-      commentinput.disabled = true;
-      commentinput.placeholder = "Login to comment";
-      commentbutton.disabled = false;
-      commentbutton.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Login';
-      
-      // Remove any existing event listeners from the form
-      const newForm = CommentForm.cloneNode(true);
-      CommentForm.parentNode.replaceChild(newForm, CommentForm);
-      
-      // Add click event to the button for login redirect
-      newForm.querySelector("#submit-comment").addEventListener("click", function (event) {
-          event.preventDefault();
-          localStorage.setItem(
-              "redirectAfterLogin",
-              "/changelogs/" + localStorage.getItem("selectedChangelogId")
-          );
-          window.location.href = "/login";
+    commentinput.disabled = true;
+    commentinput.placeholder = "Login to comment";
+    commentbutton.disabled = false;
+    commentbutton.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Login';
+
+    // Remove any existing event listeners from the form
+    const newForm = CommentForm.cloneNode(true);
+    CommentForm.parentNode.replaceChild(newForm, CommentForm);
+
+    // Add click event to the button for login redirect
+    newForm
+      .querySelector("#submit-comment")
+      .addEventListener("click", function (event) {
+        event.preventDefault();
+        localStorage.setItem(
+          "redirectAfterLogin",
+          "/changelogs/" + localStorage.getItem("selectedChangelogId")
+        );
+        window.location.href = "/login";
       });
   }
-
 
   function getCookie(name) {
     let cookieArr = document.cookie.split(";");
@@ -1285,14 +1361,19 @@ function updateDropdownButton(text) {
     });
   }
   function addComment(comment) {
-
-    if (!userdata) { // Changed from userData to userdata
+    if (!userdata) {
+      // Changed from userData to userdata
       throw_error("Please login to comment");
       return;
     }
 
     const listItem = document.createElement("li");
-    listItem.classList.add("list-group-item", "d-flex", "align-items-start", "mb-3");
+    listItem.classList.add(
+      "list-group-item",
+      "d-flex",
+      "align-items-start",
+      "mb-3"
+    );
 
     const avatarElement = document.createElement("img");
     const defaultAvatarUrl = "/assets/profile-pic-placeholder.png";
@@ -1301,7 +1382,7 @@ function updateDropdownButton(text) {
       : avatarUrl;
     avatarElement.classList.add("rounded-circle", "m-1");
     avatarElement.width = 32;
-    avatarElement.id = `avatar-${userdata.id}`
+    avatarElement.id = `avatar-${userdata.id}`;
     avatarElement.height = 32;
     avatarElement.onerror = handleinvalidImage;
 
@@ -1324,20 +1405,19 @@ function updateDropdownButton(text) {
     usernameElement.style.transition = "color 0.2s ease";
     usernameElement.style.fontWeight = "bold";
 
-    usernameElement.addEventListener('mouseenter', () => {
+    usernameElement.addEventListener("mouseenter", () => {
       usernameElement.style.color = "#D3D9D4";
-      usernameElement.style.textDecoration = 'underline';
+      usernameElement.style.textDecoration = "underline";
     });
-    usernameElement.addEventListener('mouseleave', () => {
+    usernameElement.addEventListener("mouseleave", () => {
       usernameElement.style.color = "#748D92";
-      usernameElement.style.textDecoration = 'none';
+      usernameElement.style.textDecoration = "none";
     });
-
 
     const date = Math.floor(Date.now() / 1000);
     const formattedDate = formatDate(date); // Assuming comment.date contains the date string
     const dateElement = document.createElement("small");
-    dateElement.textContent = ` · ${formattedDate}`;; // Add the formatted date
+    dateElement.textContent = ` · ${formattedDate}`; // Add the formatted date
     dateElement.classList.add("text-muted"); // Optional: Add a class for styling
 
     // Append elements to the comment container
@@ -1439,209 +1519,233 @@ function updateDropdownButton(text) {
   const commentsPerPage = 7; // Number of comments per page
   let comments = []; // Declare the comments array globally
 
-// Function to load comments
-function loadComments(commentsData) {
-  
-  if (!commentsData || !Array.isArray(commentsData)) {
-    console.error('Invalid comments data received');
-    return;
-  }
-
-  comments = commentsData; // Assign the fetched comments to the global variable
-  commentsList.innerHTML = ""; // Clear existing comments
-  comments.sort((a, b) => b.date - a.date);
-
-  // Calculate the total number of pages
-  const totalPages = Math.ceil(comments.length / commentsPerPage);
-
-  // Get the comments for the current page
-  const startIndex = (currentPage - 1) * commentsPerPage;
-  const endIndex = startIndex + commentsPerPage;
-  const commentsToDisplay = comments.slice(startIndex, endIndex);
-
-  const userDataPromises = commentsToDisplay.map((comment) => {
-    if (!comment.user_id) {
-      console.error('Comment missing user_id:', comment);
-      return null;
+  // Function to load comments
+  function loadComments(commentsData) {
+    if (!commentsData || !Array.isArray(commentsData)) {
+      console.error("Invalid comments data received");
+      return;
     }
 
-    return fetch(
-      `https://api.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((userdata) => ({ comment, userdata }))
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
+    comments = commentsData; // Assign the fetched comments to the global variable
+    commentsList.innerHTML = ""; // Clear existing comments
+    comments.sort((a, b) => b.date - a.date);
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(comments.length / commentsPerPage);
+
+    // Get the comments for the current page
+    const startIndex = (currentPage - 1) * commentsPerPage;
+    const endIndex = startIndex + commentsPerPage;
+    const commentsToDisplay = comments.slice(startIndex, endIndex);
+
+    const userDataPromises = commentsToDisplay.map((comment) => {
+      if (!comment.user_id) {
+        console.error("Comment missing user_id:", comment);
         return null;
-      });
-  });
-
-  Promise.all(userDataPromises).then((results) => {
-    const validResults = results.filter((result) => result !== null);
-
-    validResults.forEach(({ comment, userdata }) => {
-      if (!userdata || !userdata.id) {
-        console.error('Invalid user data:', userdata);
-        return;
       }
 
-      const avatarUrl = userdata.avatar 
-        ? `https://cdn.discordapp.com/avatars/${userdata.id}/${userdata.avatar}.png`
-        : "assets/profile-pic-placeholder.png";
+      return fetch(
+        `https://api.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((userdata) => ({ comment, userdata }))
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          return null;
+        });
+    });
 
-      const listItem = document.createElement("li");
-      listItem.classList.add("list-group-item", "d-flex", "align-items-start", "mb-3");
+    Promise.all(userDataPromises)
+      .then((results) => {
+        const validResults = results.filter((result) => result !== null);
 
-      const avatarElement = document.createElement("img");
-      avatarElement.src = avatarUrl;
-      avatarElement.classList.add("rounded-circle", "m-1");
-      avatarElement.width = 32;
-      avatarElement.height = 32;
-      avatarElement.id = `avatar-${userdata.id}`; // Fixed: userData instead of userdata
-      avatarElement.onerror = handleinvalidImage;
+        validResults.forEach(({ comment, userdata }) => {
+          if (!userdata || !userdata.id) {
+            console.error("Invalid user data:", userdata);
+            return;
+          }
 
-      const commentContainer = document.createElement("div");
-      commentContainer.classList.add("ms-2", "comment-item", "w-100");
-      commentContainer.style.cssText = `
+          const avatarUrl = userdata.avatar
+            ? `https://cdn.discordapp.com/avatars/${userdata.id}/${userdata.avatar}.png`
+            : "assets/profile-pic-placeholder.png";
+
+          const listItem = document.createElement("li");
+          listItem.classList.add(
+            "list-group-item",
+            "d-flex",
+            "align-items-start",
+            "mb-3"
+          );
+
+          const avatarElement = document.createElement("img");
+          avatarElement.src = avatarUrl;
+          avatarElement.classList.add("rounded-circle", "m-1");
+          avatarElement.width = 32;
+          avatarElement.height = 32;
+          avatarElement.id = `avatar-${userdata.id}`; // Fixed: userData instead of userdata
+          avatarElement.onerror = handleinvalidImage;
+
+          const commentContainer = document.createElement("div");
+          commentContainer.classList.add("ms-2", "comment-item", "w-100");
+          commentContainer.style.cssText = `
         background-color: #2E3944;
         padding: 12px;
         border-radius: 8px;
         margin-bottom: 8px;
       `;
 
-      // Create a container for the username and date
-      const headerContainer = document.createElement("div");
-      headerContainer.classList.add("d-flex", "align-items-center", "flex-wrap");
+          // Create a container for the username and date
+          const headerContainer = document.createElement("div");
+          headerContainer.classList.add(
+            "d-flex",
+            "align-items-center",
+            "flex-wrap"
+          );
 
-      const usernameElement = document.createElement("a");
-      usernameElement.href = `/users/${userdata.id}`;
-      usernameElement.textContent = userdata.global_name || 'Unknown User';
-      usernameElement.style.cssText = `
+          const usernameElement = document.createElement("a");
+          usernameElement.href = `/users/${userdata.id}`;
+          usernameElement.textContent = userdata.global_name || "Unknown User";
+          usernameElement.style.cssText = `
         font-weight: bold;
         color: #748D92;
         text-decoration: none;
         transition: color 0.2s ease;
       `;
 
-      usernameElement.addEventListener('mouseenter', () => {
-        usernameElement.style.color = "#D3D9D4";
-        usernameElement.style.textDecoration = 'underline';
-      });
-      
-      usernameElement.addEventListener('mouseleave', () => {
-        usernameElement.style.color = "#748D92";
-        usernameElement.style.textDecoration = 'none';
-      });
+          usernameElement.addEventListener("mouseenter", () => {
+            usernameElement.style.color = "#D3D9D4";
+            usernameElement.style.textDecoration = "underline";
+          });
 
-      const dateElement = document.createElement("small");
-      const formattedDate = formatDate(comment.date);
-      dateElement.textContent = ` · ${formattedDate}`;
-      dateElement.classList.add("text-muted");
+          usernameElement.addEventListener("mouseleave", () => {
+            usernameElement.style.color = "#748D92";
+            usernameElement.style.textDecoration = "none";
+          });
 
-      headerContainer.appendChild(usernameElement);
-      headerContainer.appendChild(dateElement);
+          const dateElement = document.createElement("small");
+          const formattedDate = formatDate(comment.date);
+          dateElement.textContent = ` · ${formattedDate}`;
+          dateElement.classList.add("text-muted");
 
-      const commentTextElement = document.createElement("p");
-      commentTextElement.textContent = comment.content;
-      commentTextElement.classList.add("mb-0", "comment-text");
-      commentTextElement.style.cssText = `
+          headerContainer.appendChild(usernameElement);
+          headerContainer.appendChild(dateElement);
+
+          const commentTextElement = document.createElement("p");
+          commentTextElement.textContent = comment.content;
+          commentTextElement.classList.add("mb-0", "comment-text");
+          commentTextElement.style.cssText = `
         color: #D3D9D4;
         margin-top: 4px;
       `;
 
-      // Append elements
-      commentContainer.appendChild(headerContainer);
-      commentContainer.appendChild(commentTextElement);
-      listItem.appendChild(avatarElement);
-      listItem.appendChild(commentContainer);
-      commentsList.appendChild(listItem);
+          // Append elements
+          commentContainer.appendChild(headerContainer);
+          commentContainer.appendChild(commentTextElement);
+          listItem.appendChild(avatarElement);
+          listItem.appendChild(commentContainer);
+          commentsList.appendChild(listItem);
+        });
+
+        // Render pagination controls
+        renderPaginationControls(totalPages);
+      })
+      .catch((error) => {
+        console.error("Error processing comments:", error);
+      });
+  }
+
+  // Function to render modern pagination controls
+  function renderPaginationControls(totalPages) {
+    const paginationContainer = document.getElementById("paginationControls");
+    paginationContainer.innerHTML = ""; // Clear existing controls
+
+    // Add container styling to keep everything in a single row
+    paginationContainer.classList.add(
+      "d-flex",
+      "align-items-center",
+      "justify-content-center",
+      "gap-2",
+      "flex-nowrap"
+    );
+
+    // Create left arrow button
+    const leftArrow = document.createElement("button");
+    leftArrow.innerHTML = `<i class="bi bi-chevron-left"></i>`; // Use an icon (Bootstrap Icons)
+    leftArrow.classList.add(
+      "btn",
+      "btn-primary",
+      "rounded-circle",
+      "pagination-btn"
+    );
+    leftArrow.disabled = currentPage === 1; // Disable if on the first page
+    leftArrow.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadComments(comments); // Reload comments for the current page
+        renderPaginationControls(totalPages); // Update pagination controls
+      }
     });
+    paginationContainer.appendChild(leftArrow);
 
-    // Render pagination controls
-    renderPaginationControls(totalPages);
-  }).catch(error => {
-    console.error('Error processing comments:', error);
-  });
-}
+    // Page number input with label
+    const pageInputGroup = document.createElement("div");
+    pageInputGroup.classList.add("input-group", "mx-1", "align-items-center");
 
+    const pageLabel = document.createElement("span");
+    pageLabel.textContent = `Page `;
+    pageLabel.classList.add("text-muted", "fw-semibold");
+    pageInputGroup.appendChild(pageLabel);
 
- // Function to render modern pagination controls
-function renderPaginationControls(totalPages) {
-  const paginationContainer = document.getElementById("paginationControls");
-  paginationContainer.innerHTML = ""; // Clear existing controls
+    const pageInput = document.createElement("input");
+    pageInput.type = "number";
+    pageInput.value = currentPage;
+    pageInput.min = 1;
+    pageInput.max = totalPages;
+    pageInput.classList.add("form-control", "text-center", "pagination-input");
+    pageInput.style.maxWidth = "70px"; // Compact size for mobile
+    pageInput.addEventListener("change", () => {
+      const newPage = parseInt(pageInput.value, 10);
+      if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        loadComments(comments); // Reload comments for the new page
+        renderPaginationControls(totalPages); // Update pagination controls
+      } else {
+        pageInput.value = currentPage; // Reset input if invalid
+      }
+    });
+    pageInputGroup.appendChild(pageInput);
 
-  // Add container styling to keep everything in a single row
-  paginationContainer.classList.add("d-flex", "align-items-center", "justify-content-center", "gap-2", "flex-nowrap");
+    const totalPageSpan = document.createElement("span");
+    totalPageSpan.textContent = ` / ${totalPages}`;
+    totalPageSpan.classList.add("text-muted");
+    pageInputGroup.appendChild(totalPageSpan);
 
-  // Create left arrow button
-  const leftArrow = document.createElement("button");
-  leftArrow.innerHTML = `<i class="bi bi-chevron-left"></i>`; // Use an icon (Bootstrap Icons)
-  leftArrow.classList.add("btn", "btn-primary", "rounded-circle", "pagination-btn");
-  leftArrow.disabled = currentPage === 1; // Disable if on the first page
-  leftArrow.addEventListener("click", () => {
-    if (currentPage > 1) {
-      currentPage--;
-      loadComments(comments); // Reload comments for the current page
-      renderPaginationControls(totalPages); // Update pagination controls
-    }
-  });
-  paginationContainer.appendChild(leftArrow);
+    paginationContainer.appendChild(pageInputGroup);
 
-  // Page number input with label
-  const pageInputGroup = document.createElement("div");
-  pageInputGroup.classList.add("input-group", "mx-1", "align-items-center");
-
-  const pageLabel = document.createElement("span");
-  pageLabel.textContent = `Page `;
-  pageLabel.classList.add("text-muted", "fw-semibold");
-  pageInputGroup.appendChild(pageLabel);
-
-  const pageInput = document.createElement("input");
-  pageInput.type = "number";
-  pageInput.value = currentPage;
-  pageInput.min = 1;
-  pageInput.max = totalPages;
-  pageInput.classList.add("form-control", "text-center", "pagination-input");
-  pageInput.style.maxWidth = "70px"; // Compact size for mobile
-  pageInput.addEventListener("change", () => {
-    const newPage = parseInt(pageInput.value, 10);
-    if (newPage >= 1 && newPage <= totalPages) {
-      currentPage = newPage;
-      loadComments(comments); // Reload comments for the new page
-      renderPaginationControls(totalPages); // Update pagination controls
-    } else {
-      pageInput.value = currentPage; // Reset input if invalid
-    }
-  });
-  pageInputGroup.appendChild(pageInput);
-
-  const totalPageSpan = document.createElement("span");
-  totalPageSpan.textContent = ` / ${totalPages}`;
-  totalPageSpan.classList.add("text-muted");
-  pageInputGroup.appendChild(totalPageSpan);
-
-  paginationContainer.appendChild(pageInputGroup);
-
-  // Create right arrow button
-  const rightArrow = document.createElement("button");
-  rightArrow.innerHTML = `<i class="bi bi-chevron-right"></i>`; // Use an icon
-  rightArrow.classList.add("btn", "btn-primary", "rounded-circle", "pagination-btn");
-  rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
-  rightArrow.addEventListener("click", () => {
-    if (currentPage < totalPages) {
-      currentPage++;
-      loadComments(comments); // Reload comments for the current page
-      renderPaginationControls(totalPages); // Update pagination controls
-    }
-  });
-  paginationContainer.appendChild(rightArrow);
-}
-
+    // Create right arrow button
+    const rightArrow = document.createElement("button");
+    rightArrow.innerHTML = `<i class="bi bi-chevron-right"></i>`; // Use an icon
+    rightArrow.classList.add(
+      "btn",
+      "btn-primary",
+      "rounded-circle",
+      "pagination-btn"
+    );
+    rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
+    rightArrow.addEventListener("click", () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        loadComments(comments); // Reload comments for the current page
+        renderPaginationControls(totalPages); // Update pagination controls
+      }
+    });
+    paginationContainer.appendChild(rightArrow);
+  }
 
   function reloadcomments() {
     CommentHeader.textContent =
@@ -1663,7 +1767,8 @@ function renderPaginationControls(totalPages) {
         // Check if data contains a message like "No comments found"
         if (data.message && data.message === "No comments found") {
           console.log(data.message);
-          commentsList.innerHTML = "<p class='text-muted text-center'>Be the first to comment on this entry!</p>";
+          commentsList.innerHTML =
+            "<p class='text-muted text-center'>Be the first to comment on this entry!</p>";
           // Hide the pagination if no comments are available
           document.getElementById("paginationControls").innerHTML = "";
           return;
@@ -1698,5 +1803,5 @@ function renderPaginationControls(totalPages) {
 function handleinvalidImage() {
   setTimeout(() => {
     this.src = "/assets/profile-pic-placeholder.png"; // Set the placeholder after the delay
-  }, 0);  // Adjust the delay time as needed (500ms in this case)
+  }, 0); // Adjust the delay time as needed (500ms in this case)
 }
