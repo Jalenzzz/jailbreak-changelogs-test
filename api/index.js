@@ -112,8 +112,8 @@ app.get("/changelogs/:changelog", async (req, res) => {
 });
 
 app.get("/seasons", (req, res) => {
-  // Redirect to a default changelog if no ID is provided in the URL
-  const defaultSeasonId = 24; // Set your default changelog ID here
+  // Redirect to a default season if no ID is provided in the URL
+  const defaultSeasonId = 24; // Set your default season ID here
   res.redirect(`/seasons/${defaultSeasonId}`);
 });
 
