@@ -7,9 +7,9 @@ $(document).ready(function () {
   // let userdata = null;
 
   function updateBreadcrumb(season) {
-    const seasonBreadcrumb = document.querySelector('.season-breadcrumb');
+    const seasonBreadcrumb = document.querySelector(".season-breadcrumb");
     if (seasonBreadcrumb) {
-        seasonBreadcrumb.textContent = `Season ${season}`;
+      seasonBreadcrumb.textContent = `Season ${season}`;
     }
   }
 
@@ -24,14 +24,14 @@ $(document).ready(function () {
   function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
+      const later = () => {
         clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
     };
-}
+  }
 
   const debouncedReloadComments = debounce(reloadcomments, 300);
 
@@ -94,7 +94,7 @@ $(document).ready(function () {
       const listItem = $(`
         <li class="w-100">
           <a class="dropdown-item changelog-dropdown-item w-100" href="?season=${season.season}">
-            <span class="badge bg-primary me-2">Season ${season.season}</span> 
+            <span class="badge me-2" style="background-color: #124E66; color: #D3D9D4">Season ${season.season}</span>
             ${season.title}
           </a>
         </li>
@@ -142,15 +142,17 @@ $(document).ready(function () {
       if (rewards.length > 0) {
         // Generate HTML for season rewards
         const rewardsHTML = rewards
-        .map((reward, index) => {
-          const isBonus = reward.bonus === "True";
-          const bonusBadge = isBonus
-            ? `<span class="badge bg-warning text-dark rounded-pill fs-6 fs-md-5">Bonus</span>`
-            : "";
-          const requirementBadge = `<span class="badge bg-primary rounded-pill fs-6 fs-md-5">${reward.requirement}</span>`;
-  
-          return `
-          <div class="reward-item ${isBonus ? 'bonus-reward' : ''}" style="--animation-order: ${index}">
+          .map((reward, index) => {
+            const isBonus = reward.bonus === "True";
+            const bonusBadge = isBonus
+              ? `<span class="badge rounded-pill fs-6 fs-md-5" style="background-color: #748D92; color: #212A31">Bonus</span>`
+              : "";
+            const requirementBadge = `<span class="badge rounded-pill fs-6 fs-md-5" style="background-color: #124E66; color: #D3D9D4">${reward.requirement}</span>`;
+
+            return `
+          <div class="reward-item ${
+            isBonus ? "bonus-reward" : ""
+          }" style="--animation-order: ${index}">
             <div class="reward-content">
               <h6 class="reward-title">${reward.item}</h6>
               <div class="reward-badges">
@@ -159,8 +161,8 @@ $(document).ready(function () {
               </div>
             </div>
           </div>`;
-  })
-  .join("");
+          })
+          .join("");
 
         // Append the rewards list to the season details container
         $seasonDetailsContainer.append(
@@ -172,7 +174,6 @@ $(document).ready(function () {
         );
 
         debouncedReloadComments();
-      
       } else {
         // If no rewards for this season, display a message and disable comments
         $seasonDetailsContainer.append(
@@ -203,12 +204,12 @@ $(document).ready(function () {
   function formatDescription(description) {
     return `<p class="season-description-paragraph">${description}</p>`;
   }
-  
+
   // Function to update the carousel with reward images
   function updateCarousel(rewards) {
     // Clear any existing carousel items
     $carouselInner.empty();
-  
+
     if (!rewards || rewards.length === 0) {
       // No rewards data available, show a placeholder or message
       const placeholderItem = $(`
@@ -218,18 +219,18 @@ $(document).ready(function () {
           </div>
         </div>
       `);
-  
+
       $carouselInner.append(placeholderItem);
       return;
     }
-  
+
     // Filter rewards based on the criteria
     const filteredRewards = rewards.filter((reward) => {
       const isLevelRequirement = reward.requirement.startsWith("Level");
       const isBonus = reward.bonus === "True";
       return !(isLevelRequirement && isBonus);
     });
-  
+
     if (filteredRewards.length === 0) {
       // No rewards left after filtering, show a message
       const noRewardsItem = $(`
@@ -242,7 +243,7 @@ $(document).ready(function () {
       $carouselInner.append(noRewardsItem);
       return;
     }
-  
+
     // Iterate through each filtered reward
     filteredRewards.forEach((reward, index) => {
       const isActive = index === 0 ? "active" : "";
@@ -267,7 +268,7 @@ $(document).ready(function () {
     displaySeasonDetails(season, seasonData, seasonRewards);
     updateCarousel(seasonRewards);
     updateBreadcrumb(season);
-    
+
     // Add this line to update the document title
     document.title = `Season ${season} - ${seasonData.title}`;
 
@@ -285,7 +286,9 @@ $(document).ready(function () {
     if (!isNaN(pathSegments[pathSegments.length - 1])) {
       pathSegments.pop();
     }
-    const newUrl = `${window.location.origin}${pathSegments.join("/")}/${selectedSeason}`;
+    const newUrl = `${window.location.origin}${pathSegments.join(
+      "/"
+    )}/${selectedSeason}`;
     window.history.pushState({}, "", newUrl);
 
     // Only show loading overlay if we're fetching fresh data
@@ -334,11 +337,13 @@ $(document).ready(function () {
       if (
         !seasonNumber ||
         isNaN(seasonNumber) ||
-        !seasonDescriptions.some((desc) => desc.season === parseInt(seasonNumber))
+        !seasonDescriptions.some(
+          (desc) => desc.season === parseInt(seasonNumber)
+        )
       ) {
         // If invalid, set seasonNumber to the latest season
         seasonNumber = latestSeason.toString();
-    
+
         // Update the URL to include the latest season in the path
         const newUrl = `${window.location.origin}/seasons/${seasonNumber}`;
         window.history.replaceState({}, "", newUrl);
@@ -389,40 +394,42 @@ $(document).ready(function () {
       $("#comment-form").hide();
     });
 
-    const CommentForm = document.getElementById("comment-form");
-    const CommentHeader = document.getElementById("comment-header")
-    const commentinput = document.getElementById("commenter-text");
-    const commentbutton = document.getElementById("submit-comment");
-    const avatarUrl = sessionStorage.getItem("avatar");
-    const userdata = JSON.parse(sessionStorage.getItem("user"));
-    const commentsList = document.getElementById("comments-list");
-    const userid = sessionStorage.getItem("userid");
-  
-    if (userid) {
-        commentinput.placeholder = "Comment as " + userdata.global_name;
-        commentbutton.disabled = false;
-        commentinput.disabled = false;
-    } else {
-        commentinput.disabled = true;
-        commentinput.placeholder = "Login to comment";
-        commentbutton.disabled = false;
-        commentbutton.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Login';
-        
-        // Remove any existing event listeners from the form
-        const newForm = CommentForm.cloneNode(true);
-        CommentForm.parentNode.replaceChild(newForm, CommentForm);
-        
-        // Add click event to the button for login redirect
-        newForm.querySelector("#submit-comment").addEventListener("click", function (event) {
-            event.preventDefault();
-            localStorage.setItem(
-                "redirectAfterLogin",
-                "/changelogs/" + localStorage.getItem("selectedChangelogId")
-            );
-            window.location.href = "/login";
-        });
-    }
-  
+  const CommentForm = document.getElementById("comment-form");
+  const CommentHeader = document.getElementById("comment-header");
+  const commentinput = document.getElementById("commenter-text");
+  const commentbutton = document.getElementById("submit-comment");
+  const avatarUrl = sessionStorage.getItem("avatar");
+  const userdata = JSON.parse(sessionStorage.getItem("user"));
+  const commentsList = document.getElementById("comments-list");
+  const userid = sessionStorage.getItem("userid");
+
+  if (userid) {
+    commentinput.placeholder = "Comment as " + userdata.global_name;
+    commentbutton.disabled = false;
+    commentinput.disabled = false;
+  } else {
+    commentinput.disabled = true;
+    commentinput.placeholder = "Login to comment";
+    commentbutton.disabled = false;
+    commentbutton.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Login';
+
+    // Remove any existing event listeners from the form
+    const newForm = CommentForm.cloneNode(true);
+    CommentForm.parentNode.replaceChild(newForm, CommentForm);
+
+    // Add click event to the button for login redirect
+    newForm
+      .querySelector("#submit-comment")
+      .addEventListener("click", function (event) {
+        event.preventDefault();
+        localStorage.setItem(
+          "redirectAfterLogin",
+          "/changelogs/" + localStorage.getItem("selectedChangelogId")
+        );
+        window.location.href = "/login";
+      });
+  }
+
   function getCookie(name) {
     let cookieArr = document.cookie.split(";");
     for (let i = 0; i < cookieArr.length; i++) {
@@ -444,13 +451,19 @@ $(document).ready(function () {
   }
 
   function addComment(comment) {
-    if (!userdata) { // Changed from userData to userdata
+    if (!userdata) {
+      // Changed from userData to userdata
       throw_error("Please login to comment");
       return;
     }
 
     const listItem = document.createElement("li");
-    listItem.classList.add("list-group-item", "d-flex", "align-items-start", "mb-3");
+    listItem.classList.add(
+      "list-group-item",
+      "d-flex",
+      "align-items-start",
+      "mb-3"
+    );
 
     const avatarElement = document.createElement("img");
     const defaultAvatarUrl = "/assets/profile-pic-placeholder.png";
@@ -459,7 +472,7 @@ $(document).ready(function () {
       : avatarUrl;
     avatarElement.classList.add("rounded-circle", "m-1");
     avatarElement.width = 32;
-    avatarElement.id = `avatar-${userdata.id}`
+    avatarElement.id = `avatar-${userdata.id}`;
     avatarElement.height = 32;
     avatarElement.onerror = handleinvalidImage;
 
@@ -482,20 +495,19 @@ $(document).ready(function () {
     usernameElement.style.transition = "color 0.2s ease";
     usernameElement.style.fontWeight = "bold";
 
-    usernameElement.addEventListener('mouseenter', () => {
+    usernameElement.addEventListener("mouseenter", () => {
       usernameElement.style.color = "#D3D9D4";
-      usernameElement.style.textDecoration = 'underline';
+      usernameElement.style.textDecoration = "underline";
     });
-    usernameElement.addEventListener('mouseleave', () => {
+    usernameElement.addEventListener("mouseleave", () => {
       usernameElement.style.color = "#748D92";
-      usernameElement.style.textDecoration = 'none';
+      usernameElement.style.textDecoration = "none";
     });
-
 
     const date = Math.floor(Date.now() / 1000);
     const formattedDate = formatDate(date); // Assuming comment.date contains the date string
     const dateElement = document.createElement("small");
-    dateElement.textContent = ` · ${formattedDate}`;; // Add the formatted date
+    dateElement.textContent = ` · ${formattedDate}`; // Add the formatted date
     dateElement.classList.add("text-muted"); // Optional: Add a class for styling
 
     // Append elements to the comment container
@@ -554,7 +566,6 @@ $(document).ready(function () {
         throw_error("An unexpected error occurred.");
       });
   }
-
 
   function formatDate(unixTimestamp) {
     // Convert UNIX timestamp to milliseconds by multiplying by 1000
@@ -620,92 +631,103 @@ $(document).ready(function () {
         });
     });
 
-    Promise.all(userDataPromises).then((results) => {
-      const validResults = results.filter((result) => result !== null);
+    Promise.all(userDataPromises)
+      .then((results) => {
+        const validResults = results.filter((result) => result !== null);
 
-      validResults.forEach(({ comment, userdata }) => {
-        if (!userdata || !userdata.id) {
-          console.error('Invalid user data:', userdata);
-          return;
-        }
+        validResults.forEach(({ comment, userdata }) => {
+          if (!userdata || !userdata.id) {
+            console.error("Invalid user data:", userdata);
+            return;
+          }
 
-        const avatarUrl = userdata.avatar 
-          ? `https://cdn.discordapp.com/avatars/${userdata.id}/${userdata.avatar}.png`
-          : "assets/profile-pic-placeholder.png";
+          const avatarUrl = userdata.avatar
+            ? `https://cdn.discordapp.com/avatars/${userdata.id}/${userdata.avatar}.png`
+            : "assets/profile-pic-placeholder.png";
 
-        const listItem = document.createElement("li");
-        listItem.classList.add("list-group-item", "d-flex", "align-items-start", "mb-3");
+          const listItem = document.createElement("li");
+          listItem.classList.add(
+            "list-group-item",
+            "d-flex",
+            "align-items-start",
+            "mb-3"
+          );
 
-        const avatarElement = document.createElement("img");
-        avatarElement.src = avatarUrl;
-        avatarElement.classList.add("rounded-circle", "m-1");
-        avatarElement.width = 32;
-        avatarElement.height = 32;
-        avatarElement.id = `avatar-${userdata.id}`; // Fixed: userData instead of userdata
-        avatarElement.onerror = handleinvalidImage;
+          const avatarElement = document.createElement("img");
+          avatarElement.src = avatarUrl;
+          avatarElement.classList.add("rounded-circle", "m-1");
+          avatarElement.width = 32;
+          avatarElement.height = 32;
+          avatarElement.id = `avatar-${userdata.id}`; // Fixed: userData instead of userdata
+          avatarElement.onerror = handleinvalidImage;
 
-        const commentContainer = document.createElement("div");
-        commentContainer.classList.add("ms-2", "comment-item", "w-100");
-        commentContainer.style.cssText = `
+          const commentContainer = document.createElement("div");
+          commentContainer.classList.add("ms-2", "comment-item", "w-100");
+          commentContainer.style.cssText = `
           background-color: #2E3944;
           padding: 12px;
           border-radius: 8px;
           margin-bottom: 8px;
         `;
 
-        // Create a container for the username and date
-        const headerContainer = document.createElement("div");
-        headerContainer.classList.add("d-flex", "align-items-center", "flex-wrap");
+          // Create a container for the username and date
+          const headerContainer = document.createElement("div");
+          headerContainer.classList.add(
+            "d-flex",
+            "align-items-center",
+            "flex-wrap"
+          );
 
-        const usernameElement = document.createElement("a");
-        usernameElement.href = `/users/${userdata.id}`;
-        usernameElement.textContent = userdata.global_name || 'Unknown User';
-        usernameElement.style.cssText = `
+          const usernameElement = document.createElement("a");
+          usernameElement.href = `/users/${userdata.id}`;
+          usernameElement.textContent = userdata.global_name || "Unknown User";
+          usernameElement.style.cssText = `
           font-weight: bold;
           color: #748D92;
           text-decoration: none;
           transition: color 0.2s ease;
         `;
 
-        usernameElement.addEventListener('mouseenter', () => {
-          usernameElement.style.color = "#D3D9D4";
-          usernameElement.style.textDecoration = 'underline';
-        });
-        
-        usernameElement.addEventListener('mouseleave', () => {
-          usernameElement.style.color = "#748D92";
-          usernameElement.style.textDecoration = 'none';
-        });
+          usernameElement.addEventListener("mouseenter", () => {
+            usernameElement.style.color = "#D3D9D4";
+            usernameElement.style.textDecoration = "underline";
+          });
 
-        const dateElement = document.createElement("small");
-        const formattedDate = formatDate(comment.date);
-        dateElement.textContent = ` · ${formattedDate}`;
-        dateElement.classList.add("text-muted");
+          usernameElement.addEventListener("mouseleave", () => {
+            usernameElement.style.color = "#748D92";
+            usernameElement.style.textDecoration = "none";
+          });
 
-        headerContainer.appendChild(usernameElement);
-        headerContainer.appendChild(dateElement);
+          const dateElement = document.createElement("small");
+          const formattedDate = formatDate(comment.date);
+          dateElement.textContent = ` · ${formattedDate}`;
+          dateElement.classList.add("text-muted");
 
-        const commentTextElement = document.createElement("p");
-        commentTextElement.textContent = comment.content;
-        commentTextElement.classList.add("mb-0", "comment-text");
-        commentTextElement.style.cssText = `
+          headerContainer.appendChild(usernameElement);
+          headerContainer.appendChild(dateElement);
+
+          const commentTextElement = document.createElement("p");
+          commentTextElement.textContent = comment.content;
+          commentTextElement.classList.add("mb-0", "comment-text");
+          commentTextElement.style.cssText = `
           color: #D3D9D4;
           margin-top: 4px;
         `;
 
-        // Append elements
-        commentContainer.appendChild(headerContainer);
-        commentContainer.appendChild(commentTextElement);
-        listItem.appendChild(avatarElement);
-        listItem.appendChild(commentContainer);
-        commentsList.appendChild(listItem);
-      });
+          // Append elements
+          commentContainer.appendChild(headerContainer);
+          commentContainer.appendChild(commentTextElement);
+          listItem.appendChild(avatarElement);
+          listItem.appendChild(commentContainer);
+          commentsList.appendChild(listItem);
+        });
 
-      // Render pagination controls
-      renderPaginationControls(totalPages);
-    }).catch(error => {
-      console.error('Error processing comments:', error);
-    });
+        // Render pagination controls
+        renderPaginationControls(totalPages);
+      })
+      .catch((error) => {
+        console.error("Error processing comments:", error);
+      });
   }
 
   // Function to render modern pagination controls
@@ -714,12 +736,23 @@ $(document).ready(function () {
     paginationContainer.innerHTML = ""; // Clear existing controls
 
     // Add container styling to keep everything in a single row
-    paginationContainer.classList.add("d-flex", "align-items-center", "justify-content-center", "gap-2", "flex-nowrap");
+    paginationContainer.classList.add(
+      "d-flex",
+      "align-items-center",
+      "justify-content-center",
+      "gap-2",
+      "flex-nowrap"
+    );
 
     // Create left arrow button
     const leftArrow = document.createElement("button");
     leftArrow.innerHTML = `<i class="bi bi-chevron-left"></i>`; // Use an icon (Bootstrap Icons)
-    leftArrow.classList.add("btn", "btn-primary", "rounded-circle", "pagination-btn");
+    leftArrow.classList.add(
+      "btn",
+      "btn-primary",
+      "rounded-circle",
+      "pagination-btn"
+    );
     leftArrow.disabled = currentPage === 1; // Disable if on the first page
     leftArrow.addEventListener("click", () => {
       if (currentPage > 1) {
@@ -768,7 +801,12 @@ $(document).ready(function () {
     // Create right arrow button
     const rightArrow = document.createElement("button");
     rightArrow.innerHTML = `<i class="bi bi-chevron-right"></i>`; // Use an icon
-    rightArrow.classList.add("btn", "btn-primary", "rounded-circle", "pagination-btn");
+    rightArrow.classList.add(
+      "btn",
+      "btn-primary",
+      "rounded-circle",
+      "pagination-btn"
+    );
     rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
     rightArrow.addEventListener("click", () => {
       if (currentPage < totalPages) {
@@ -800,7 +838,8 @@ $(document).ready(function () {
         // Check if data contains a message like "No comments found"
         if (data.message && data.message === "No comments found") {
           console.log(data.message);
-          commentsList.innerHTML = "<p class='text-muted text-center'>Be the first to comment on this entry!</p>";
+          commentsList.innerHTML =
+            "<p class='text-muted text-center'>Be the first to comment on this entry!</p>";
           // Hide the pagination if no comments are available
           document.getElementById("paginationControls").innerHTML = "";
           return;
@@ -832,5 +871,5 @@ $(document).ready(function () {
 function handleinvalidImage() {
   setTimeout(() => {
     this.src = "/assets/profile-pic-placeholder.png"; // Set the placeholder after the delay
-  }, 0);  // Adjust the delay time as needed (500ms in this case)
+  }, 0); // Adjust the delay time as needed (500ms in this case)
 }

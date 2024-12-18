@@ -170,23 +170,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const image_type = item.type.toLowerCase();
     const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}`;
 
-    let element = "";
+    let mediaElement = "";
     if (item.type === "Drift") {
-      element = `
-     <div class="media-container" style="position: relative;">
-        <div class="skeleton-loader" style="width: 100%; height: 250px; border-radius: 8px 8px 0 0; position: absolute; top: 0; left: 0; z-index: 2;">
-        </div>
+      mediaElement = `
+      <div class="media-container">
+        <div class="skeleton-loader"></div>
         <img 
           src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${item.name}.webp"
           class="card-img-top thumbnail"
           alt="${item.name}"
-          style="width: 100%; height: 250px; object-fit: cover;"
           onerror="handleimage(this)"
         >
         <video 
           src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm"
           class="card-img-top video-player"
-          style="width: 100%; height: 250px; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease;"
           playsinline 
           muted 
           loop
@@ -194,17 +191,15 @@ document.addEventListener("DOMContentLoaded", () => {
         ></video>
       </div>`;
     } else {
-      element = `
-      <div style="position: relative;">
-       <div class="skeleton-loader" style="width: 100%; height: 250px; border-radius: 8px;">
-        </div>
+      mediaElement = `
+        <div class="media-container">
+        <div class="skeleton-loader"></div>
         <img 
           onerror="handleimage(this)" 
           id="${item.name}" 
           src="${image_url}.webp" 
           class="card-img-top" 
           alt="${item.name}" 
-          style="width: 100%; height: 250px; object-fit: cover; opacity: 0; transition: opacity 0.3s ease;"
           onload="this.style.opacity='1'; this.previousElementSibling.style.display='none'"
         >
       </div>`;
@@ -216,35 +211,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Create card
     cardDiv.innerHTML = `
- <div class="card items-card shadow-sm" onclick="handleCardClick('${
-   item.name
- }', '${item.type.toLowerCase()}')" style="cursor: pointer; height: 450px; position: relative;">
-
-    ${element}
-    <span style="
-      background-color: ${color}; 
-      position: absolute;
-      top: 234px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2;
-      font-size: 0.95rem;
-      padding: 0.4rem 0.8rem;
-    " class="badge">${item.type}</span>
-    <div class="item-card-body text-center" style="padding-top: 32px;">
-      <h5 class="card-title">${item.name}</h5>
-      <div class="value-container">
-        <div class="d-flex justify-content-between align-items-center mb-2" style="padding: 4px 8px; background: rgba(0, 255, 0, 0.1); border-radius: 4px;">
-          <span>Cash Value:</span>
-          <span style="color: #00aa00; font-weight: bold;">${value}</span>
-        </div>
-        <div class="d-flex justify-content-between align-items-center" style="padding: 4px 8px; background: rgba(255, 0, 0, 0.1); border-radius: 4px;">
-          <span>Duped Value:</span>
-          <span style="color: #aa0000; font-weight: bold;">${duped_value}</span>
+    <div class="card items-card shadow-sm" onclick="handleCardClick('${
+      item.name
+    }', '${item.type.toLowerCase()}')" style="cursor: pointer;">
+      ${mediaElement}
+      <span class="badge item-type-badge" style="background-color: ${color};">${
+      item.type
+    }</span>
+      <div class="item-card-body text-center">
+        <h5 class="card-title">${item.name}</h5>
+        <div class="value-container">
+          <div class="d-flex justify-content-between align-items-center mb-2 value-row">
+            <span>Cash Value:</span>
+            <span class="cash-value">${value}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center value-row">
+            <span>Duped Value:</span>
+            <span class="duped-value">${duped_value}</span>
+          </div>
         </div>
       </div>
-    </div>
-  </div>`;
+    </div>`;
 
     // Add hover event listeners for drift videos
     if (item.type === "Drift") {
@@ -576,8 +563,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Default Image
 function handleimage(element) {
-  element.src =
-    "https://cdn.jailbreakchangelogs.xyz/backgrounds/background1.webp";
+  element.src = "https://cdn.jailbreakchangelogs.xyz/logos/Jailbreak_Logo.webp";
 }
 
 function clearSearch() {

@@ -1,26 +1,63 @@
 .clear-button:hover {
-  background-color: #748D92 !important;
-  color: #D3D9D4 !important;
-  border-color: #748D92 !important;
+  background-color: #748d92 !important;
+  color: #d3d9d4 !important;
+  border-color: #748d92 !important;
   transition: all 0.3s ease;
 }
+.media-container {
+  position: relative;
+  width: 100%;
+  padding-top: 66.67%;
+  overflow: hidden;
+}
 
+.item-card-body {
+  padding: 0.5rem 1rem 1rem; /* Reduce top padding */
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px; /* Add space for badge */
+}
+
+.value-row {
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.value-row:first-child {
+  background: rgba(0, 255, 0, 0.1);
+}
+
+.value-row:last-child {
+  background: rgba(255, 0, 0, 0.1);
+}
 .card {
   width: 100%;
-  height: 400px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
   border-radius: 12px;
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-} 
-
+}
+.items-card {
+  display: flex;
+  flex-direction: column;
+  height: auto; /* Change from 100% to auto */
+  position: relative;
+  margin-bottom: 1rem;
+}
 .items-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.card-img-top {
+.card-img-top,
+.video-player {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 250px;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -29,15 +66,27 @@
   font-weight: bold;
   margin: 10px 0;
 }
+
 .card-body {
+  position: relative; /* Change from static */
   padding: 1rem;
-  height: 150px;
-  overflow: hidden;
+  height: auto; /* Change from fixed height */
+  overflow: visible; /* Change from hidden */
 }
+
 .card-text {
   font-size: 1rem;
   color: #555;
   margin-bottom: 8px;
+}
+.item-type-badge {
+  position: absolute;
+  bottom: 128px; /* Position badge to overlap image and card body */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-size: 0.95rem;
+  padding: 0.4rem 0.8rem;
 }
 
 .input-group {
@@ -51,60 +100,60 @@
 .form-select,
 .page-link {
   transition: all 0.2s ease;
-  }
+}
 
 .input-group-text:hover,
 .form-control:hover,
 .form-select:hover {
-  border-color: #124E66;
+  border-color: #124e66;
 }
 
 .input-group-text {
-    border-right: none;
+  border-right: none;
 }
 .form-control::placeholder {
-  color: #748D92;
+  color: #748d92;
 }
 
 .form-control:focus,
 .form-select:focus {
-    border-color: #dee2e6;
-    box-shadow: none;
+  border-color: #dee2e6;
+  box-shadow: none;
 }
 
 .form-control {
-    border-left: none;
+  border-left: none;
 }
 
 .form-select option {
-  background-color: #212A31;
-  color: #D3D9D4;
+  background-color: #212a31;
+  color: #d3d9d4;
 }
 
 .page-link {
-    color: #212529;
-    padding: 0.375rem 0.75rem;
+  color: #212529;
+  padding: 0.375rem 0.75rem;
 }
 
 .page-link:hover {
-  background-color: #124E66;
-  color: #D3D9D4;
-  border-color: #748D92;
+  background-color: #124e66;
+  color: #d3d9d4;
+  border-color: #748d92;
 }
 
 .pagination {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .page-input:focus {
-    outline: none;
-    border-color: #0d6efd;
+  outline: none;
+  border-color: #0d6efd;
 }
 
 .badge {
   display: inline-block;
-  background-color: #124E66; /* Deep teal (from your palette) */
-  color: #D3D9D4; /* Very light grayish-green (for good contrast) */
+  background-color: #124e66; /* Deep teal (from your palette) */
+  color: #d3d9d4; /* Very light grayish-green (for good contrast) */
   font-size: 0.9rem;
   font-weight: 600;
   padding: 5px 10px;
@@ -142,22 +191,22 @@
 }
 
 .is-invalid {
-    border-color: #dc3545;
+  border-color: #dc3545;
 }
 .credits-link:hover {
-  color: #D3D9D4 !important;
+  color: #d3d9d4 !important;
   text-decoration: underline !important;
 }
 
 @keyframes pulse {
-  0% { 
-    background-color: #2E3944;
+  0% {
+    background-color: #2e3944;
   }
-  50% { 
-    background-color: #748D92;
+  50% {
+    background-color: #748d92;
   }
-  100% { 
-    background-color: #2E3944;
+  100% {
+    background-color: #2e3944;
   }
 }
 
@@ -174,10 +223,12 @@
 }
 
 .skeleton-loader {
-  background-color: #2E3944;
-  position: relative;
-  overflow: hidden;
-  animation: pulse 2s infinite ease-in-out;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 8px 8px 0 0;
 }
 
 .skeleton-loader::after {
@@ -204,7 +255,7 @@
   .pagination {
     margin: 0;
   }
-  
+
   .page-link {
     min-width: 38px;
     height: 38px;
@@ -213,4 +264,3 @@
     justify-content: center;
   }
 }
-  

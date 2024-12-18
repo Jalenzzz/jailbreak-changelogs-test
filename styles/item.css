@@ -1,3 +1,8 @@
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 .custom-spinner {
   width: 50px;
   height: 50px;
@@ -19,146 +24,277 @@
   }
 }
 .card {
-    width: 100%; /* Ensures the card uses the full width of its container */
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%; /* Ensures the card uses the full width of its container */
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+  height: 220px; /* Larger height for the image */
+  object-fit: cover; /* Ensures the image is cropped nicely */
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.card-text {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+.input-group {
+  position: relative;
+}
+[data-bs-theme="dark"] body {
+  background-color: #2e3944;
+}
+.input-group-text,
+.form-control,
+.form-select,
+.page-link {
+  transition: all 0.2s ease;
+}
+
+.input-group-text:hover,
+.form-control:hover,
+.form-select:hover {
+  border-color: #124e66;
+}
+
+.input-group-text {
+  border-right: none;
+}
+.form-control::placeholder {
+  color: #748d92;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #dee2e6;
+  box-shadow: none;
+}
+
+.form-control {
+  border-left: none;
+}
+
+.form-select option {
+  background-color: #212a31;
+  color: #d3d9d4;
+}
+
+.page-link {
+  color: #212529;
+  padding: 0.375rem 0.75rem;
+}
+
+.page-link:hover {
+  background-color: #124e66;
+  color: #d3d9d4;
+  border-color: #748d92;
+}
+
+.pagination {
+  margin-bottom: 0;
+}
+
+.page-input:focus {
+  outline: none;
+  border-color: #0d6efd;
+}
+
+.badge {
+  display: inline-block;
+  background-color: #124e66; /* Deep teal (from your palette) */
+  color: #d3d9d4; /* Very light grayish-green (for good contrast) */
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px; /* Adds space between badge and title */
+}
+.pagination li {
+  margin-right: 10px; /* Adjust the margin as needed */
+}
+.no-results {
+  color: #dc3545;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.no-results h4 {
+  color: #dc3545;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.no-results p {
+  color: #6c757d;
+  font-size: 1rem;
+}
+#search-messages {
+  margin-top: -5px !important; /* Move message up */
+  color: #dc3545; /* Bootstrap's danger color */
+  font-size: 0.875rem;
+  position: absolute;
+}
+
+.search-feedback {
+  color: #dc3545;
+  padding: 2px 0;
+}
+
+.is-invalid {
+  border-color: #dc3545;
+}
+.credits-link:hover {
+  color: #d3d9d4 !important;
+  text-decoration: underline !important;
+}
+/* Add these rules to your item.css file */
+.media-container {
+  position: relative;
+  width: 90%;
+  margin: 0 auto;
+  height: 400px; /* or your desired height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 8px; /* optional: matches rounded class */
+}
+
+.media-container img,
+.media-container video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  width: auto; /* Add this */
+  height: auto; /* Add this */
+}
+
+.video-player {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#item-container {
+  width: 100%;
+  max-width: 100%; /* Ensure container takes full width */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.image-container {
+  width: 100%;
+  height: 500px; /* Increased height for better visibility */
+  margin-bottom: 20px;
+  display: flex; /* Added flex display */
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Changed to cover to fill the space better */
+  border-radius: 8px;
+}
+.play-message {
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .card:hover {
-    
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  to {
+    opacity: 1;
   }
-  
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .pagination-container {
+    margin-top: 20px;
+  }
+
+  .media-container {
+    width: auto; /* Full width on mobile */
+    height: 250px; /* Slightly smaller height */
+    margin: 0;
+  }
+
+  .image-container {
+    height: 300px; /* Reduced height for mobile */
+  }
+
+  #item-container {
+    padding: 10px; /* Reduced padding */
+  }
+
+  .card {
+    margin-bottom: 15px;
+  }
+
   .card-img-top {
-    height: 220px; /* Larger height for the image */
-    object-fit: cover; /* Ensures the image is cropped nicely */
+    height: 180px; /* Smaller image height for mobile */
   }
-  
+
   .card-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin: 10px 0;
+    font-size: 1.1rem; /* Slightly smaller title */
   }
-  
+
   .card-text {
-    font-size: 1rem;
-    color: #555;
-    margin-bottom: 8px;
-  }
-  .input-group {
-    position: relative;
-  }
-  [data-bs-theme="dark"] body {
-    background-color: #2e3944;
-  }
-  .input-group-text,
-  .form-control,
-  .form-select,
-  .page-link {
-    transition: all 0.2s ease;
-   }
-
-  .input-group-text:hover,
-  .form-control:hover,
-  .form-select:hover {
-    border-color: #124E66;
-  }
-
-  .input-group-text {
-      border-right: none;
-  }
-  .form-control::placeholder {
-    color: #748D92;
-}
-
-  .form-control:focus,
-  .form-select:focus {
-      border-color: #dee2e6;
-      box-shadow: none;
-  }
-
-  .form-control {
-      border-left: none;
-  }
-
-  .form-select option {
-    background-color: #212A31;
-    color: #D3D9D4;
-}
-
-  .page-link {
-      color: #212529;
-      padding: 0.375rem 0.75rem;
-  }
-
-  .page-link:hover {
-    background-color: #124E66;
-    color: #D3D9D4;
-    border-color: #748D92;
-}
-
-  .pagination {
-      margin-bottom: 0;
-  }
-
-  .page-input:focus {
-      outline: none;
-      border-color: #0d6efd;
+    font-size: 0.9rem; /* Smaller text */
   }
 
   .badge {
-    display: inline-block;
-    background-color: #124E66; /* Deep teal (from your palette) */
-    color: #D3D9D4; /* Very light grayish-green (for good contrast) */
-    font-size: 0.9rem;
-    font-weight: 600;
-    padding: 5px 10px;
-    border-radius: 20px;
-    margin-bottom: 10px; /* Adds space between badge and title */
+    font-size: 0.8rem; /* Smaller badge */
+    padding: 4px 8px;
   }
-  .pagination li {
-    margin-right: 10px; /* Adjust the margin as needed */
-  }
-  .no-results {
-    color: #dc3545;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .no-results h4 {
-    color: #dc3545;
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-  }
-  .no-results p {
-    color: #6c757d;
-    font-size: 1rem;
-}
-  #search-messages {
-    margin-top: -5px !important; /* Move message up */
-    color: #dc3545; /* Bootstrap's danger color */
-    font-size: 0.875rem;
-    position: absolute;
 }
 
-  .search-feedback {
-    color: #dc3545;
-    padding: 2px 0;
+/* For extra small devices */
+@media (max-width: 576px) {
+  .media-container {
+    height: 200px;
   }
 
-  .is-invalid {
-      border-color: #dc3545;
+  .image-container {
+    height: 250px;
   }
-  .credits-link:hover {
-    color: #D3D9D4 !important;
-    text-decoration: underline !important;
+
+  .card-img-top {
+    height: 160px;
+  }
+
+  #item-container {
+    padding: 5px;
+  }
 }
 
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
-    .pagination-container {
-      margin-top: 20px;
-    }
+/* Improve touch targets on mobile */
+@media (hover: none) {
+  .card:hover {
+    transform: none; /* Disable hover effects on touch devices */
   }
-    
+
+  .form-control,
+  .form-select,
+  .page-link {
+    min-height: 44px; /* Better touch targets */
+  }
+
+  .input-group-text {
+    padding: 8px 12px;
+  }
+}
