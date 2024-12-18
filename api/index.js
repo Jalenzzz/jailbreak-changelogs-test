@@ -245,15 +245,18 @@ app.get("/item/:type/:item", async (req, res) => {
     });
 
     if (response.status === 404) {
-      res.render("item", {
+      return res.render("item", {
         title: "Item not found",
         logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp",
         logoAlt: "Item Page Logo",
         itemName,
         itemType,
         error: true,
+        image_url: "https://cdn.jailbreakchangelogs.xyz/images/not-found.webp",
+        item: {
+          image: "https://cdn.jailbreakchangelogs.xyz/images/not-found.webp",
+        },
       });
-      return;
     }
 
     if (!response.ok) {
@@ -262,34 +265,33 @@ app.get("/item/:type/:item", async (req, res) => {
 
     const item = await response.json();
 
-    // Verify that the item type matches the URL parameter
-    if (item.type.toLowerCase() !== itemType) {
-      res.render("item", {
-        title: "Item type mismatch",
-        logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp",
-        logoAlt: "Item Page Logo",
-        itemName,
-        itemType,
-        error: true,
-        errorMessage: `This item is of type "${item.type}" not "${itemType}"`,
-      });
-      return;
-    }
-
     const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${itemType}s/${item.name}.webp`;
+    item.image = image_url;
 
     res.render("item", {
       title: `${item.name} / Changelogs`,
       logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp",
       logoAlt: "Item Page Logo",
-      itemName: item.name, // Use the proper case here
+      itemName: item.name,
       itemType,
       item,
       image_url,
     });
   } catch (error) {
     console.error("Error fetching item data:", error);
-    res.status(500).send("Internal Server Error");
+    res.render("item", {
+      title: "Error",
+      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp",
+      logoAlt: "Item Page Logo",
+      itemName,
+      itemType,
+      error: true,
+      errorMessage: "Internal Server Error",
+      image_url: "https://cdn.jailbreakchangelogs.xyz/images/not-found.webp",
+      item: {
+        image: "https://cdn.jailbreakchangelogs.xyz/images/not-found.webp",
+      },
+    });
   }
 });
 
