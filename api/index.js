@@ -575,7 +575,7 @@ app.get("/sitemap.xml", (req, res) => {
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://testing.jailbreakchangelogs.xyz/seasons/23</loc>
+    <loc>https://testing.jailbreakchangelogs.xyz/seasons/24</loc>
     <lastmod>2024-12-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
