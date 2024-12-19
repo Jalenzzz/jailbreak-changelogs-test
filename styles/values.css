@@ -70,6 +70,12 @@
   display: none;
   text-align: center;
   padding: 20px 0;
+  margin: 20px 0;
+  width: 100%;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
 }
 
 .spinner-border {
@@ -84,7 +90,7 @@
 }
 
 .loading-spinner.active {
-  display: block;
+  display: block !important;
 }
 
 .card-img-top,

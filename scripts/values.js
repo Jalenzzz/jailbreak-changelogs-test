@@ -90,13 +90,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     isLoading = true;
 
-    // Show spinner only if there are more items to load
+    // Show spinner when loading starts
     const spinner = document.querySelector(".loading-spinner");
-    if (spinner && endIndex < filteredItems.length) {
-      spinner.style.display = "block";
+    if (spinner) {
+      spinner.classList.add("active");
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 800)); // 800ms delay
+    // Add artificial delay to show loading state
+    await new Promise((resolve) => setTimeout(resolve, 800));
 
     currentPage++;
     const itemsRow = document.querySelector("#items-container .row");
@@ -107,9 +108,9 @@ document.addEventListener("DOMContentLoaded", () => {
       itemsRow.appendChild(cardDiv);
     });
 
-    // Hide spinner
+    // Hide spinner after loading completes
     if (spinner) {
-      spinner.style.display = "none";
+      spinner.classList.remove("active");
     }
     isLoading = false;
   }
@@ -229,12 +230,25 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!itemsContainer) return;
 
     let itemsRow = itemsContainer.querySelector(".row");
+    const spinner = itemsContainer.querySelector(".loading-spinner");
+
     if (!itemsRow || currentPage === 1) {
-      // Only create new row if it doesn't exist or if we're on first page
-      itemsRow = document.createElement("div");
-      itemsRow.classList.add("row");
-      itemsContainer.innerHTML = ""; // Clear container
-      itemsContainer.appendChild(itemsRow);
+      // Save spinner if it exists
+      if (spinner) {
+        spinner.remove();
+      }
+
+      // Clear container but preserve structure
+      itemsContainer.innerHTML = `
+        <div class="row g-3" id="items-list"></div>
+        <div class="loading-spinner">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      `;
+
+      itemsRow = itemsContainer.querySelector(".row");
     }
 
     const startIndex = (currentPage - 1) * itemsPerPage;
