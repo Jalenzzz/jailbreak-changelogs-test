@@ -693,8 +693,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Add debounce function
+  function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
+
   // Add clearFilters function
-  window.clearFilters = function () {
+  window.clearFilters = debounce(function () {
     // Clear localStorage
     localStorage.removeItem("sortDropdown");
     localStorage.removeItem("valueSortDropdown");
@@ -724,7 +733,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Show success toast
     toastr.success("All filters have been cleared", "Filters Reset");
-  };
+  }, 500); // 1 second debounce
 
   // Modify the value-sort-dropdown options in the HTML
   const valueSortDropdown = document.getElementById("value-sort-dropdown");
