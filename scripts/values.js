@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadMoreItems() {
     if (isLoading) return;
 
-    const startIndex = (currentPage - 1) * itemsPerPage;
+    const startIndex = currentPage * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
 
     // Check if there are more items to load
@@ -73,15 +73,13 @@ document.addEventListener("DOMContentLoaded", () => {
     await new Promise((resolve) => setTimeout(resolve, 800)); // 800ms delay
 
     currentPage++;
+    const itemsRow = document.querySelector("#items-container .row");
     const newItems = filteredItems.slice(startIndex, endIndex);
 
-    if (newItems.length > 0) {
-      const itemsRow = document.querySelector("#items-container .row");
-      newItems.forEach((item) => {
-        const cardDiv = createItemCard(item);
-        itemsRow.appendChild(cardDiv);
-      });
-    }
+    newItems.forEach((item) => {
+      const cardDiv = createItemCard(item);
+      itemsRow.appendChild(cardDiv);
+    });
 
     // Hide spinner
     if (spinner) {
@@ -204,22 +202,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const itemsContainer = document.querySelector("#items-container");
     if (!itemsContainer) return;
 
-    // Clear container only on first load or new search
-    if (currentPage === 1) {
-      let itemsRow = itemsContainer.querySelector(".row");
-      if (!itemsRow) {
-        itemsRow = document.createElement("div");
-        itemsRow.classList.add("row");
-        itemsContainer.appendChild(itemsRow);
-      }
-      itemsRow.innerHTML = "";
+    let itemsRow = itemsContainer.querySelector(".row");
+    if (!itemsRow || currentPage === 1) {
+      // Only create new row if it doesn't exist or if we're on first page
+      itemsRow = document.createElement("div");
+      itemsRow.classList.add("row");
+      itemsContainer.innerHTML = ""; // Clear container
+      itemsContainer.appendChild(itemsRow);
     }
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const itemsToDisplay = filteredItems.slice(startIndex, endIndex);
 
-    const itemsRow = itemsContainer.querySelector(".row");
     itemsToDisplay.forEach((item) => {
       const cardDiv = createItemCard(item);
       itemsRow.appendChild(cardDiv);

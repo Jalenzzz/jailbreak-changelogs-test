@@ -220,7 +220,7 @@ app.get("/bot", (req, res) => {
 app.get("/values", (req, res) => {
   res.render("values", {
     title: "Values / Changelogs",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp",
+    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
     logoAlt: "Values Page Logo",
   });
 });
@@ -247,14 +247,14 @@ app.get("/item/:type/:item", async (req, res) => {
     if (response.status === 404) {
       return res.render("item", {
         title: "Item not found",
-        logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp",
+        logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
         logoAlt: "Item Page Logo",
         itemName,
         itemType,
         error: true,
-        image_url: "https://cdn.jailbreakchangelogs.xyz/images/not-found.webp",
+        image_url: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
         item: {
-          image: "https://cdn.jailbreakchangelogs.xyz/images/not-found.webp",
+          image: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
         },
       });
     }
@@ -270,7 +270,7 @@ app.get("/item/:type/:item", async (req, res) => {
 
     res.render("item", {
       title: `${item.name} / Changelogs`,
-      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp",
+      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
       logoAlt: "Item Page Logo",
       itemName: item.name,
       itemType,
@@ -281,7 +281,7 @@ app.get("/item/:type/:item", async (req, res) => {
     console.error("Error fetching item data:", error);
     res.render("item", {
       title: "Error",
-      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp",
+      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
       logoAlt: "Item Page Logo",
       itemName,
       itemType,
