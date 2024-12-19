@@ -180,17 +180,49 @@ h1 .bi {
 /* Social Nav Styles */
 .social-nav {
   background-color: var(--color-dark) !important;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Change to flex-end */
+  gap: 2rem;
+  min-height: 3.5rem;
 }
 
 .social-nav a {
+  position: relative;
   color: var(--color-light);
   text-decoration: none;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 2rem;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  margin-bottom: -0.75rem; /* Pull links down */
+}
+
+/* Underline effect */
+.social-nav a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: transparent;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover and active states - add spacing */
+.social-nav a:hover::after,
+.social-nav a.active::after {
+  background-color: var(--color-light);
 }
 
 .social-nav a.active {
   color: var(--color-light);
+  font-weight: 500;
+}
+
+.social-nav a:hover {
+  opacity: 0.9;
 }
 
 /* Small devices (phones) */
