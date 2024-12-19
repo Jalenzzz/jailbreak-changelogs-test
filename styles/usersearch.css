@@ -1,9 +1,9 @@
 :root {
-  --color-dark: #212A31;
-  --color-dark-blue: #2E3944;
-  --color-teal: #124E66;
-  --color-gray: #748D92;
-  --color-light: #D3D9D4;
+  --color-dark: #212a31;
+  --color-dark-blue: #2e3944;
+  --color-teal: #124e66;
+  --color-gray: #748d92;
+  --color-light: #d3d9d4;
 }
 
 /* General Styles */
@@ -12,12 +12,12 @@ body {
   color: var(--color-light);
 }
 .results-container {
-  background-color: #212A31;
+  background-color: #212a31;
 }
 
 /* Search Box Styles */
 .search-box {
-  background: var(--color-dark);
+  background: var(--color-dark-blue);
   border-radius: 1rem;
   transition: all 0.3s ease;
 }
@@ -64,29 +64,45 @@ body {
   transform: translateX(2px);
 }
 
-/* User Card Styles */
-.user-card {
-  background: var(--color-dark-blue);
-  border-radius: 1rem;
-  transition: all 0.3s ease;
+/* Grid Container Styles */
+#usersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  padding: 0;
 }
 
-.user-card:hover {
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2) !important;
+/* User Card Styles */
+.user-card {
+  background: var(--color-dark);
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  height: 100%; /* Ensure consistent height */
+}
+
+.user-card .card-body {
+  padding: 0.875rem !important;
 }
 
 .user-avatar {
+  width: 70px !important;
+  height: 70px !important;
   object-fit: cover;
-  border: 2px solid var(--color-dark-blue);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--color-teal);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .user-name {
   color: var(--color-light);
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 0.2rem !important;
+  transition: color 0.2s ease;
 }
 
 .user-username {
   color: var(--color-gray) !important;
+  font-size: 0.9rem;
 }
 
 .loading-spinner {
@@ -118,14 +134,14 @@ body {
 }
 
 /* Message Styles */
-.search-message, 
+.search-message,
 .no-results-message {
   padding: 3rem;
   text-align: center;
   border-radius: 1rem;
 }
 
-.search-message i, 
+.search-message i,
 .no-results-message i {
   font-size: 1.5rem;
   margin-bottom: 1rem;
@@ -160,7 +176,22 @@ h1 .bi {
     transform: translateY(0);
   }
 }
-/* Add these media queries at the end of your usersearch.css */
+
+/* Social Nav Styles */
+.social-nav {
+  background-color: var(--color-dark) !important;
+  padding: 1rem;
+}
+
+.social-nav a {
+  color: var(--color-light);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+}
+
+.social-nav a.active {
+  color: var(--color-light);
+}
 
 /* Small devices (phones) */
 @media (max-width: 576px) {
@@ -183,18 +214,18 @@ h1 .bi {
   }
 
   .user-avatar {
-    width: 36px !important;
-    height: 36px !important;
+    width: 48px !important;
+    height: 48px !important;
   }
   .card-body {
-    padding: 0.75rem !important;
+    padding: 0.5rem !important;
   }
 
   .user-name {
-    font-size: 0.9rem !important;
+    font-size: 0.85rem;
   }
   .user-username {
-    font-size: 0.75rem !important;
+    font-size: 0.75rem;
   }
 
   /* Adjust user cards */
@@ -207,9 +238,19 @@ h1 .bi {
   }
 
   /* Adjust messages */
-  .search-message, 
+  .search-message,
   .no-results-message {
     padding: 2rem 1rem;
+  }
+
+  #usersGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .user-card .card-body {
+    padding: 0.75rem !important;
   }
 }
 

@@ -47,30 +47,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         .then((user) => {
           console.log(user);
           const userCard = document.createElement("div");
-          userCard.className = "user-card";
+          userCard.className = "user-card mb-3"; // Add margin-bottom for spacing
 
           userCard.innerHTML = `
-  <div class="card user-card border-0 shadow-sm mb-3">
-    <div class="card-body position-relative p-3">
-      <div class="row g-0 align-items-center">
-        <div class="col-auto me-3">
-          <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" 
-               class="user-avatar rounded-circle" 
-               id="avatar-${user.id}"
-               onerror="handleinvalidImage(this)"
-               alt="${user.username}">
-        </div>
-        <div class="col">
-          <h5 class="user-name card-title mb-1">${user.global_name}</h5>
-          <p class="user-username card-text text-muted mb-0">@${user.username}</p>
-        </div>
-        <div class="col-auto ms-auto">
-          <a href="/users/${user.id}" class="btn btn-primary btn-sm">View Profile</a>
-        </div>
-      </div>
-    </div>
-  </div>
-`;
+                <div class="card user-card border-0 shadow-sm">
+                  <div class="card-body position-relative p-3">
+                    <div class="d-flex align-items-center">
+                      <div class="me-4">
+                        <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" 
+                             class="user-avatar rounded-circle" 
+                             alt="${user.username}"
+                             id="avatar-${user.id}"
+                             onerror="handleinvalidImage(this)"
+                        >
+                      </div>
+                      <div class="flex-grow-1">
+                        <a href="/users/${user.id}" class="text-decoration-none">
+                          <h5 class="user-name card-title mb-2">${user.global_name}</h5>
+                        </a>
+                        <p class="user-username card-text text-muted mb-0">@${user.username}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
 
           usersGrid.appendChild(userCard);
         });

@@ -9,9 +9,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const showfollowers = JSON.parse(showingfollowers);
   console.log(showfollowers);
   const segments = path.split("/");
-  const userId = segments[2]; // Assuming the structure is "/users/{userId}/followers"
+  const userId = segments[2];
 
-  // Async function to fetch followers
   async function fetchFollowers(userId) {
     try {
       const response = await fetch(
@@ -23,11 +22,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       return await response.json();
     } catch (error) {
       console.error("Error fetching followers:", error);
-      return []; // Return an empty array in case of an error
+      return [];
     }
   }
 
-  // Fetch followers and log the results
   if (!showfollowers) {
     usersGrid.textContent = "This user has their followers hidden.";
     return;
@@ -35,7 +33,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const followers = await fetchFollowers(userId);
   console.log(followers);
 
-  // Optionally, you can populate the usersGrid with the fetched followers here
   if (followers.length > 0) {
     followers.forEach((follower) => {
       const response = fetch(
@@ -46,25 +43,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         .then((user) => {
           console.log(user);
           const userCard = document.createElement("div");
-          userCard.className = "user-card";
+          userCard.className = "user-card mb-3"; // Added mb-3 to match following.js
 
           userCard.innerHTML = `
-                <div class="card user-card border-0 shadow-sm mb-3">
+                <div class="card user-card border-0 shadow-sm">
                   <div class="card-body position-relative p-3">
-                    <div class="row g-0 align-items-center">
-                      <div class="col-auto me-3">
+                    <div class="d-flex align-items-center">
+                      <div class="me-4">
                         <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" 
                              class="user-avatar rounded-circle" 
                              alt="${user.username}"
                              id="avatar-${user.id}"
                              onerror="handleinvalidImage(this)"
+                        >
                       </div>
-                      <div class="col">
-                        <h5 class="user-name card-title mb-1">${user.global_name}</h5>
+                      <div class="flex-grow-1">
+                        <a href="/users/${user.id}" class="text-decoration-none">
+                          <h5 class="user-name card-title mb-2">${user.global_name}</h5>
+                        </a>
                         <p class="user-username card-text text-muted mb-0">@${user.username}</p>
-                      </div>
-                      <div class="col-auto ms-auto">
-                        <a href="/users/${user.id}" class="btn btn-primary btn-sm">View Profile</a>
                       </div>
                     </div>
                   </div>
@@ -75,15 +72,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
   } else {
-    usersGrid.textContent = "No followers found."; // Message when there are no followers
+    usersGrid.textContent = "No followers found.";
   }
 });
 
 function handleinvalidImage(imgElement) {
   console.log("Invalid image");
-  console.log(imgElement.id); // This will now correctly print the id
+  console.log(imgElement.id);
   setTimeout(() => {
     imgElement.src =
-      "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"; // Set the placeholder after the delay
+      "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
   }, 0);
 }

@@ -404,6 +404,7 @@ app.get("/users/:user/followers", async (req, res) => {
       avatar: `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`,
       showfollowers,
       isPrivate: true, // Ensure isPrivate is set for private profiles
+      path: req.path, // Add this line
       title: "Followers / Changelogs",
       logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
       logoAlt: "Users Page Logo",
@@ -431,6 +432,7 @@ app.get("/users/:user/followers", async (req, res) => {
     avatar,
     showfollowers,
     isPrivate: false, // Add this line to define isPrivate for public profiles
+    path: req.path, // Add this line
     title: "Followers / Changelogs",
     logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
     logoAlt: "Users Page Logo",
@@ -474,6 +476,7 @@ app.get("/users/:user/following", async (req, res) => {
       avatar: `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`,
       showfollowing,
       isPrivate: true, // Ensure isPrivate is set for private profiles
+      path: req.path, // Add this line
       title: "Following / Changelogs",
       logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
       logoAlt: "Users Page Logo",
@@ -501,6 +504,7 @@ app.get("/users/:user/following", async (req, res) => {
     avatar,
     showfollowing,
     isPrivate: false, // Add this line to define isPrivate for public profiles
+    path: req.path, // Add this line
     title: "Users - Following",
     logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
     logoAlt: "Users Page Logo",
