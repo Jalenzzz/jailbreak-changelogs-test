@@ -270,6 +270,29 @@
   );
   animation: shimmer 2s infinite;
 }
+.back-to-top-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #124e66;
+  color: #d3d9d4;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.back-to-top-btn:hover {
+  background-color: #2e3944;
+  transform: translateY(-2px);
+}
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
@@ -295,5 +318,11 @@
 
   .loading-spinner {
     padding: 15px 0;
+  }
+  .back-to-top-btn {
+    bottom: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
   }
 }
