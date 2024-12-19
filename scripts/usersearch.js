@@ -45,7 +45,7 @@ const createUserCard = (user) => {
             alt="${user.username}"
             width="60"
             height="60"
-            onerror="this.src='/assets/profile-pic-placeholder.png'"
+            onerror="this.src='https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg'"
           >
           <div class="user-info overflow-hidden flex-grow-1">
             <h5 class="user-name text-truncate mb-1 fs-6">${user.global_name}</h5>
@@ -58,7 +58,6 @@ const createUserCard = (user) => {
       </div>
     </div>
   </div>
-
   `;
 };
 

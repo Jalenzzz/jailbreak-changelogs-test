@@ -1,45 +1,55 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    const usersGrid = document.getElementById("usersGrid");
-    const path = window.location.pathname;
-    const segments = path.split('/');
-    const showFollowing = JSON.parse(showingfollowing);
-    const userId = segments[2]; // Assuming the structure is "/users/{userId}/followers"
+  const usersGrid = document.getElementById("usersGrid");
+  if (!usersGrid) {
+    console.error("Could not find usersGrid element");
+    return;
+  }
 
-    // Async function to fetch followers
-    async function fetchFollowers(userId) {
-        try {
-            const response = await fetch(`https://api.jailbreakchangelogs.xyz/users/following/get?user=${userId}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return await response.json();
-        } catch (error) {
-            console.error("Error fetching followers:", error);
-            return []; // Return an empty array in case of an error
-        }
+  const path = window.location.pathname;
+  const segments = path.split("/");
+  const showFollowing = JSON.parse(showingfollowing);
+  const userId = segments[2]; // Assuming the structure is "/users/{userId}/followers"
+
+  // Async function to fetch followers
+  async function fetchFollowers(userId) {
+    try {
+      const response = await fetch(
+        `https://api.jailbreakchangelogs.xyz/users/following/get?user=${userId}`
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching followers:", error);
+      return []; // Return an empty array in case of an error
     }
+  }
 
-    // Fetch followers and log the results
-    console.log(showFollowing)
-    if (!showFollowing) {
-      usersGrid.textContent = "This user has their following hidden."; // Message when there are no followers
-      return;
-    } 
+  // Fetch followers and log the results
+  console.log(showFollowing);
+  if (!showFollowing) {
+    usersGrid.textContent = "This user has their following hidden."; // Message when there are no followers
+    return;
+  }
 
-    const followers = await fetchFollowers(userId);
-    console.log(followers);
-    
-    // Optionally, you can populate the usersGrid with the fetched followers here
-    if (followers.length > 0) {
-        followers.forEach(follower => {
-            const response = fetch(`https://api.jailbreakchangelogs.xyz/users/get?id=${follower.followed_id}`);
-            response.then(response => response.json())
-             .then(user => {
-                console.log(user);
-                const userCard = document.createElement('div');
-                userCard.className = 'user-card';
-                
-                userCard.innerHTML = `
+  const followers = await fetchFollowers(userId);
+  console.log(followers);
+
+  // Optionally, you can populate the usersGrid with the fetched followers here
+  if (followers.length > 0) {
+    followers.forEach((follower) => {
+      const response = fetch(
+        `https://api.jailbreakchangelogs.xyz/users/get?id=${follower.followed_id}`
+      );
+      response
+        .then((response) => response.json())
+        .then((user) => {
+          console.log(user);
+          const userCard = document.createElement("div");
+          userCard.className = "user-card";
+
+          userCard.innerHTML = `
   <div class="card user-card border-0 shadow-sm mb-3">
     <div class="card-body position-relative p-3">
       <div class="row g-0 align-items-center">
@@ -61,18 +71,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     </div>
   </div>
 `;
-          
-                usersGrid.appendChild(userCard);
-             })
+
+          usersGrid.appendChild(userCard);
         });
-          } else {
-        usersGrid.textContent = "This user isnt following anyone"; // Message when there are no followers
-    }
+    });
+  } else {
+    usersGrid.textContent = "This user isnt following anyone"; // Message when there are no followers
+  }
 });
 function handleinvalidImage(imgElement) {
   console.log("Invalid image");
   console.log(imgElement.id); // This will now correctly print the id
   setTimeout(() => {
-    imgElement.src = "/assets/profile-pic-placeholder.png"; // Set the placeholder after the delay
-  }, 0);  // Adjust the delay time as needed (500ms in this case)
+    imgElement.src =
+      "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"; // Set the placeholder after the delay
+  }, 0); // Adjust the delay time as needed (500ms in this case)
 }

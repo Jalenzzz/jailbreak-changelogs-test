@@ -131,6 +131,12 @@
       </nav>
       <h2 class="text-center mb-3">Followers</h2>
 
+      <% if (isPrivate) { %>
+      <div class="alert alert-info text-center">
+        <i class="bi bi-lock-fill me-2"></i>
+        This user has set their followers list to private
+      </div>
+      <% } else { %>
       <div class="card search-box mx-auto" style="max-width: 80%">
         <div class="card-body p-4">
           <div
@@ -142,6 +148,7 @@
           </div>
         </div>
       </div>
+      <% } %>
     </div>
 
     <%- include('partials/footer') %>

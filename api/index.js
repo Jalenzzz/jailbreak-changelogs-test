@@ -368,7 +368,7 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/users/:user/followers", async (req, res) => {
-  const user = req.params.user; // Get the user from the URL params
+  const user = req.params.user;
   const response = await fetch(
     `https://api.jailbreakchangelogs.xyz/users/settings?user=${user}`,
     {
@@ -382,55 +382,63 @@ app.get("/users/:user/followers", async (req, res) => {
   if (!response.ok) {
     return res.status(response.status).send("Error fetching user settings");
   }
-  let showfollowers = true;
 
   const data = await response.json();
-  if (data.hide_followers === 0) {
-    showfollowers = false;
-  } else {
-    showfollowers = true;
-  }
-  if (!user) {
-    return res.render("usersearch", {
-      title: "User Search / Changelogs",
+  const showfollowers = data.hide_followers !== 0;
+  const isPrivate = !showfollowers; // Add this line to define isPrivate
+
+  if (!showfollowers) {
+    // User has hidden their followers
+    const userData = await fetch(
+      `https://api.jailbreakchangelogs.xyz/users/get?id=${user}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    ).then((res) => res.json());
+
+    return res.render("followers", {
+      userData,
+      avatar: `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`,
+      showfollowers,
+      isPrivate: true, // Ensure isPrivate is set for private profiles
+      title: "Followers / Changelogs",
       logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
       logoAlt: "Users Page Logo",
     });
   }
 
-  fetch(`https://api.jailbreakchangelogs.xyz/users/get?id=${user}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Origin: "https://jailbreakchangelogs.xyz", // Add your origin
-    },
-  })
-    .then((response) => response.json())
-    .then((userData) => {
-      if (userData.error) {
-        const defaultUserID = "659865209741246514"; // Set your default changelog ID here
-        return res.redirect(`/users/${defaultUserID}/followers`);
-      }
-      // Render the page only after the data is fetched
-      const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-      res.render("followers", {
-        userData,
-        avatar,
-        showfollowers,
-        title: "Followers / Changelogs",
-        logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
-        logoAlt: "Users Page Logo",
-      });
-    })
-    .catch((error) => {
-      console.error("Error fetching user data:", error);
+  const userData = await fetch(
+    `https://api.jailbreakchangelogs.xyz/users/get?id=${user}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://jailbreakchangelogs.xyz",
+      },
+    }
+  ).then((res) => res.json());
 
-      // Optionally render an error page or send a response with an error message
-      res.status(500).send("Error fetching user data");
-    });
+  if (userData.error) {
+    const defaultUserID = "659865209741246514"; // Set your default changelog ID here
+    return res.redirect(`/users/${defaultUserID}/followers`);
+  }
+  // Render the page only after the data is fetched
+  const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+  res.render("followers", {
+    userData,
+    avatar,
+    showfollowers,
+    isPrivate: false, // Add this line to define isPrivate for public profiles
+    title: "Followers / Changelogs",
+    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
+    logoAlt: "Users Page Logo",
+  });
 });
 
 app.get("/users/:user/following", async (req, res) => {
-  const user = req.params.user; // Get the user from the URL params
+  const user = req.params.user;
   const response = await fetch(
     `https://api.jailbreakchangelogs.xyz/users/settings?user=${user}`,
     {
@@ -444,51 +452,59 @@ app.get("/users/:user/following", async (req, res) => {
   if (!response.ok) {
     return res.status(response.status).send("Error fetching user settings");
   }
-  let showfollowing = true;
 
   const data = await response.json();
-  if (data.hide_following === 0) {
-    showfollowing = false;
-  } else {
-    showfollowing = true;
-  }
-  if (!user) {
-    return res.render("usersearch", {
-      title: "User Search / Changelogs",
+  const showfollowing = data.hide_following !== 0;
+  const isPrivate = !showfollowing; // Add this line to define isPrivate
+
+  if (!showfollowing) {
+    // User has hidden who they follow
+    const userData = await fetch(
+      `https://api.jailbreakchangelogs.xyz/users/get?id=${user}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    ).then((res) => res.json());
+
+    return res.render("following", {
+      userData,
+      avatar: `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`,
+      showfollowing,
+      isPrivate: true, // Ensure isPrivate is set for private profiles
+      title: "Following / Changelogs",
       logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
       logoAlt: "Users Page Logo",
     });
   }
 
-  fetch(`https://api.jailbreakchangelogs.xyz/users/get?id=${user}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Origin: "https://jailbreakchangelogs.xyz", // Add your origin
-    },
-  })
-    .then((response) => response.json())
-    .then((userData) => {
-      if (userData.error) {
-        const defaultUserID = "659865209741246514"; // Set your default changelog ID here
-        return res.redirect(`/users/${defaultUserID}/following`);
-      }
-      // Render the page only after the data is fetched
-      const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-      res.render("following", {
-        userData,
-        avatar,
-        showfollowing,
-        title: "Users - Following",
-        logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
-        logoAlt: "Users Page Logo",
-      });
-    })
-    .catch((error) => {
-      console.error("Error fetching user data:", error);
+  const userData = await fetch(
+    `https://api.jailbreakchangelogs.xyz/users/get?id=${user}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://jailbreakchangelogs.xyz",
+      },
+    }
+  ).then((res) => res.json());
 
-      // Optionally render an error page or send a response with an error message
-      res.status(500).send("Error fetching user data");
-    });
+  if (userData.error) {
+    const defaultUserID = "659865209741246514"; // Set your default changelog ID here
+    return res.redirect(`/users/${defaultUserID}/following`);
+  }
+  // Render the page only after the data is fetched
+  const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+  res.render("following", {
+    userData,
+    avatar,
+    showfollowing,
+    isPrivate: false, // Add this line to define isPrivate for public profiles
+    title: "Users - Following",
+    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
+    logoAlt: "Users Page Logo",
+  });
 });
 // Sitemap route
 app.get("/sitemap.xml", (req, res) => {
@@ -601,15 +617,15 @@ const getAvatar = async (url) => {
   try {
     const response = await fetch(url, { method: "HEAD" }); // Use HEAD to just check the existence of the resource
     if (response.status === 404) {
-      // If 404, return placeholder
-      return "/assets/profile-pic-placeholder.png";
+      // If 404, return placeholder from ui-avatars
+      return "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
     }
     // If avatar exists, return the original avatar URL
     return url;
   } catch (error) {
     // In case of error, return the placeholder
     console.error("Error fetching avatar:", error);
-    return "/assets/profile-pic-placeholder.png";
+    return "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
   }
 };
 

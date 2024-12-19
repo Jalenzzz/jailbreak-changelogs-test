@@ -66,8 +66,8 @@
     />
 
     <link rel="stylesheet" href="styles/usersearch.css" />
-    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="stylesheet" href="styles/main.css" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
 
     <script>
       const showingfollowing = `<%= showfollowing %>`;
@@ -130,6 +130,12 @@
       </nav>
       <h2 class="text-center mb-3">Following</h2>
 
+      <% if (isPrivate) { %>
+      <div class="alert alert-info text-center">
+        <i class="bi bi-lock-fill me-2"></i>
+        This user has set their following list to private
+      </div>
+      <% } else { %>
       <div class="card search-box mx-auto" style="max-width: 80%">
         <div class="card-body p-4">
           <div
@@ -141,6 +147,7 @@
           </div>
         </div>
       </div>
+      <% } %>
     </div>
 
     <%- include('partials/footer') %>

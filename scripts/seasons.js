@@ -466,7 +466,7 @@ $(document).ready(function () {
     );
 
     const avatarElement = document.createElement("img");
-    const defaultAvatarUrl = "/assets/profile-pic-placeholder.png";
+    const defaultAvatarUrl = "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
     avatarElement.src = avatarUrl.endsWith("null.png")
       ? defaultAvatarUrl
       : avatarUrl;
@@ -870,6 +870,6 @@ $(document).ready(function () {
 
 function handleinvalidImage() {
   setTimeout(() => {
-    this.src = "/assets/profile-pic-placeholder.png"; // Set the placeholder after the delay
+    this.src = "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"; // Set the placeholder after the delay
   }, 0); // Adjust the delay time as needed (500ms in this case)
 }
