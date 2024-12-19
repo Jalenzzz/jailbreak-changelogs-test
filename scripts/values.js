@@ -50,6 +50,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Restore filters from localStorage
+  function restoreFilters() {
+    const savedSortDropdown = localStorage.getItem("sortDropdown");
+    const savedValueSort = localStorage.getItem("valueSortDropdown");
+    const savedSearch = localStorage.getItem("searchTerm");
+
+    if (savedSortDropdown) {
+      document.getElementById("sort-dropdown").value = savedSortDropdown;
+    }
+    if (savedValueSort) {
+      document.getElementById("value-sort-dropdown").value = savedValueSort;
+    }
+    if (savedSearch) {
+      const searchBar = document.getElementById("search-bar");
+      searchBar.value = savedSearch;
+      const clearButton = document.getElementById("clear-search");
+      if (clearButton) {
+        clearButton.style.display =
+          searchBar.value.length > 0 ? "block" : "none";
+      }
+    }
+  }
+
+  // Call restoreFilters after elements are loaded
+  restoreFilters();
+
   // Function to load more items
   async function loadMoreItems() {
     if (isLoading) return;
@@ -243,12 +269,49 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function formatValue(value) {
-    if (isNaN(value) || value === 0 || value === null || value === undefined) {
-      return value; // Return the value as-is if it's not a number
+    // If value is not valid, return default object
+    if (!value && value !== 0) {
+      return {
+        display: "-",
+        numeric: 0,
+      };
     }
 
-    // Convert the value to a number, then format it with commas
-    return value.toLocaleString();
+    // Convert string values like "7.5m" to actual numbers
+    let numericValue = value;
+    if (typeof value === "string") {
+      value = value.toLowerCase();
+      if (value.endsWith("m")) {
+        numericValue = parseFloat(value) * 1000000;
+      } else if (value.endsWith("k")) {
+        numericValue = parseFloat(value) * 1000;
+      } else {
+        numericValue = parseFloat(value);
+      }
+    }
+
+    // If parsing failed, return default
+    if (isNaN(numericValue)) {
+      return {
+        display: "-",
+        numeric: 0,
+      };
+    }
+
+    // Format for display
+    let displayValue;
+    if (numericValue >= 1000000) {
+      displayValue = (numericValue / 1000000).toFixed(1) + "M";
+    } else if (numericValue >= 1000) {
+      displayValue = (numericValue / 1000).toFixed(1) + "K";
+    } else {
+      displayValue = numericValue.toString();
+    }
+
+    return {
+      display: displayValue,
+      numeric: numericValue,
+    };
   }
 
   function createItemCard(item) {
@@ -305,8 +368,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Format values
-    const value = formatValue(item.cash_value);
-    const duped_value = formatValue(item.duped_value);
+    const cashValue = formatValue(item.cash_value);
+    const dupedValue = formatValue(item.duped_value);
 
     // Create card
     cardDiv.innerHTML = `
@@ -322,11 +385,15 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="value-container">
           <div class="d-flex justify-content-between align-items-center mb-2 value-row">
             <span>Cash Value:</span>
-            <span class="cash-value">${value}</span>
+            <span class="cash-value" data-value="${cashValue.numeric}">${
+      cashValue.display
+    }</span>
           </div>
           <div class="d-flex justify-content-between align-items-center value-row">
             <span>Duped Value:</span>
-            <span class="duped-value">${duped_value}</span>
+            <span class="duped-value" data-value="${dupedValue.numeric}">${
+      dupedValue.display
+    }</span>
           </div>
         </div>
       </div>
@@ -361,6 +428,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const itemsContainer = document.querySelector("#items-container");
     const searchMessages = document.getElementById("search-messages");
+
+    // Save search term
+    if (searchTerm) {
+      localStorage.setItem("searchTerm", searchTerm);
+    } else {
+      localStorage.removeItem("searchTerm");
+    }
 
     // Remove any existing feedback messages
     if (searchMessages) {
@@ -461,7 +535,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   window.sortItems = function () {
-    const sortValue = document.getElementById("sort-dropdown").value;
+    const sortDropdown = document.getElementById("sort-dropdown");
+    const valueSortDropdown = document.getElementById("value-sort-dropdown");
+    const sortValue = sortDropdown.value;
+    const valueSortType = valueSortDropdown.value;
+
+    // Save current filter states
+    localStorage.setItem("sortDropdown", sortValue);
+    localStorage.setItem("valueSortDropdown", valueSortType);
+
     updateSearchPlaceholder();
     const parts = sortValue.split("-");
     const sortType = parts[0];
@@ -472,21 +554,42 @@ document.addEventListener("DOMContentLoaded", () => {
       searchBar.value = "";
     }
 
-    // Clear localStorage if "All Items" is selected, otherwise store the current value
+    // First filter by category
     if (itemType === "all-items") {
+      filteredItems = [...allItems];
       localStorage.removeItem("lastSort");
-    } else {
-      localStorage.setItem("lastSort", sortValue);
-    }
-
-    if (itemType === "all-items") {
-      // Shuffle the array when showing all items
-      filteredItems = shuffleArray([...allItems]);
     } else {
       filteredItems = allItems.filter((item) => {
         const normalizedItemType = item.type.toLowerCase().replace(" ", "-");
         const normalizedFilterType = itemType.slice(0, -1);
         return normalizedItemType === normalizedFilterType;
+      });
+      localStorage.setItem("lastSort", sortValue);
+    }
+
+    // Then sort by value if a value sort is selected
+    if (valueSortType !== "none") {
+      const [valueType, direction] = valueSortType.split("-");
+      filteredItems.sort((a, b) => {
+        const valueA =
+          valueType === "cash"
+            ? formatValue(a.cash_value).numeric
+            : formatValue(a.duped_value).numeric;
+        const valueB =
+          valueType === "cash"
+            ? formatValue(b.cash_value).numeric
+            : formatValue(b.duped_value).numeric;
+
+        return direction === "asc" ? valueA - valueB : valueB - valueA;
+      });
+    }
+
+    // Add alphabetical sorting logic
+    if (valueSortType === "alpha-asc" || valueSortType === "alpha-desc") {
+      filteredItems.sort((a, b) => {
+        return valueSortType === "alpha-asc"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
       });
     }
 
@@ -575,6 +678,75 @@ document.addEventListener("DOMContentLoaded", () => {
       const failed = results.filter((r) => r.status === "rejected").length;
     });
   }
+
+  // Add clearFilters function
+  window.clearFilters = function () {
+    // Clear localStorage
+    localStorage.removeItem("sortDropdown");
+    localStorage.removeItem("valueSortDropdown");
+    localStorage.removeItem("searchTerm");
+
+    // Reset dropdowns
+    document.getElementById("sort-dropdown").value = "name-all-items";
+    document.getElementById("value-sort-dropdown").value = "alpha-asc"; // Reset to A-Z
+
+    // Clear search
+    const searchBar = document.getElementById("search-bar");
+    searchBar.value = "";
+    const clearButton = document.getElementById("clear-search");
+    if (clearButton) {
+      clearButton.style.display = "none";
+    }
+
+    // Reset items display
+    currentPage = 1;
+    filteredItems = [...allItems];
+    // Sort items A-Z by default
+    filteredItems.sort((a, b) => a.name.localeCompare(b.name));
+    displayItems();
+    updateTotalItemsCount();
+    updateTotalItemsLabel("all-items");
+    updateSearchPlaceholder();
+
+    // Show success toast
+    toastr.success("All filters have been cleared", "Filters Reset");
+  };
+
+  // Modify the value-sort-dropdown options in the HTML
+  const valueSortDropdown = document.getElementById("value-sort-dropdown");
+  if (valueSortDropdown) {
+    valueSortDropdown.innerHTML = `
+     <option value="separator" disabled>───── Alphabetically ─────</option>
+      <option value="alpha-asc">Name (A to Z)</option>
+      <option value="alpha-desc">Name (Z to A)</option>
+      <option value="separator" disabled>───── Values ─────</option>
+      <option value="cash-asc">Cash Value (Low to High)</option>
+      <option value="cash-desc">Cash Value (High to Low)</option>
+      <option value="duped-asc">Duped Value (Low to High)</option>
+      <option value="duped-desc">Duped Value (High to Low)</option>
+    `;
+    // Set default sort to A-Z
+    valueSortDropdown.value = "alpha-asc";
+    sortItems(); // Apply initial sort
+  }
+
+  // Add toastr configuration
+  toastr.options = {
+    closeButton: true,
+    debug: false,
+    newestOnTop: true,
+    progressBar: true,
+    positionClass: "toast-bottom-right",
+    preventDuplicates: false,
+    showDuration: "300",
+    hideDuration: "1000",
+    timeOut: "3000",
+    extendedTimeOut: "1000",
+    showEasing: "swing",
+    hideEasing: "linear",
+    showMethod: "fadeIn",
+    hideMethod: "fadeOut",
+  };
 
   loadItems(); // Initial load
   // Preload images for better performance

@@ -1,6 +1,18 @@
 [data-bs-theme="dark"] body {
   background-color: #2e3944;
 }
+/* Dropdown separator styling */
+#value-sort-dropdown option[value="separator"] {
+  background-color: #2e3944;
+  color: #748d92;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* For Firefox */
+#value-sort-dropdown option[value="separator"]:disabled {
+  color: #748d92 !important;
+}
 .clear-button:hover {
   background-color: #748d92 !important;
   color: #d3d9d4 !important;
