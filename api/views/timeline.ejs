@@ -150,10 +150,9 @@
         <div class="col-12 mb-3">
           <div
             class="info-button"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            data-bs-custom-class="custom-tooltip"
-            title="Looking for entries with images/videos/audio? Check out the Changelogs page in the navigation bar!"
+            data-bs-toggle="modal"
+            data-bs-target="#infoModal"
+            role="button"
           >
             <i class="bi bi-info-circle"></i>
             <span class="info-label">Info</span>
@@ -325,6 +324,82 @@
         signalGooglefcPresent();
       })();
     </script>
+    <div
+      class="modal fade"
+      id="infoModal"
+      tabindex="-1"
+      aria-labelledby="infoModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div
+          class="modal-content"
+          style="background-color: #2e3944; border: none"
+        >
+          <div
+            class="modal-header"
+            style="background-color: #124e66; border: none"
+          >
+            <h5 class="modal-title" id="infoModalLabel" style="color: #d3d9d4">
+              <i class="bi bi-info-circle-fill me-2"></i>Welcome to Timeline
+              View
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body p-4" style="color: #d3d9d4">
+            <div class="d-flex align-items-center mb-4">
+              <i class="bi bi-image fs-2 me-3" style="color: #748d92"></i>
+              <div>
+                <h6 class="mb-2" style="color: #d3d9d4">
+                  Looking for Rich Media Content?
+                </h6>
+                <p class="mb-0" style="color: #748d92">
+                  Visit our Changelogs page to explore entries with images,
+                  videos, and audio!
+                </p>
+              </div>
+            </div>
+            <div class="d-flex align-items-center">
+              <i
+                class="bi bi-clock-history fs-2 me-3"
+                style="color: #748d92"
+              ></i>
+              <div>
+                <h6 class="mb-2" style="color: #d3d9d4">Timeline Navigation</h6>
+                <p class="mb-0" style="color: #748d92">
+                  Scroll through the timeline to explore Jailbreak's complete
+                  update history chronologically.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div
+            class="modal-footer"
+            style="background-color: #212a31; border: none"
+          >
+            <a
+              href="/changelogs"
+              class="btn text-white"
+              style="background-color: #124e66; border: none"
+            >
+              <i class="bi bi-journal-text me-2"></i>Go to Changelogs
+            </a>
+            <button
+              type="button"
+              class="btn"
+              data-bs-dismiss="modal"
+              style="background-color: #2e3944; color: #d3d9d4; border: none"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
->
