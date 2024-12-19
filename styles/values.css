@@ -313,6 +313,25 @@
   transform: translateY(-2px);
 }
 
+.contributor-item {
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.contributor-item:hover {
+  transform: translateX(5px);
+  background-color: #2e3944;
+}
+
+.contributor-link {
+  transition: color 0.2s ease;
+}
+
+.contributor-link:hover {
+  color: #d3d9d4 !important;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .pagination-container {
