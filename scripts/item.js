@@ -375,7 +375,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                                     <textarea class="form-control" id="commentText" rows="3" 
                                                 placeholder="Add your comment..."></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Post Comment</button>
+                                <button type="submit" class="btn" 
+                                style="background-color: #124E66; color: #D3D9D4"
+                                onmouseover="this.style.backgroundColor='#1a6b8a'"
+                                onmouseout="this.style.backgroundColor='#124E66'">Post Comment</button>
+
                             </form>
 
                             <!-- Comments List -->

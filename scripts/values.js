@@ -1,9 +1,76 @@
 document.addEventListener("DOMContentLoaded", () => {
-  showSkeletonCards();
+  const itemsContainer = document.querySelector("#items-container");
+  if (!itemsContainer) return;
+
   let allItems = []; // Store all items
   let currentPage = 1;
   const itemsPerPage = 12;
   let filteredItems = [];
+  let isLoading = false;
+
+  showSkeletonCards();
+
+  // Create and append spinner
+  const spinner = document.createElement("div");
+  spinner.className = "loading-spinner";
+  spinner.innerHTML = `
+     <div class="spinner-border" role="status">
+       <span class="visually-hidden">Loading...</span>
+     </div>
+   `;
+  itemsContainer.appendChild(spinner);
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const lastEntry = entries[0];
+      if (lastEntry.isIntersecting && !isLoading) {
+        loadMoreItems();
+      }
+    },
+    {
+      rootMargin: "100px", // Start loading 100px before reaching bottom
+    }
+  );
+
+  // Function to load more items
+  async function loadMoreItems() {
+    if (isLoading) return;
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    // Check if there are more items to load
+    if (startIndex >= filteredItems.length) {
+      return; // No more items to load
+    }
+
+    isLoading = true;
+
+    // Show spinner only if there are more items to load
+    const spinner = document.querySelector(".loading-spinner");
+    if (spinner && endIndex < filteredItems.length) {
+      spinner.style.display = "block";
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 800)); // 800ms delay
+
+    currentPage++;
+    const newItems = filteredItems.slice(startIndex, endIndex);
+
+    if (newItems.length > 0) {
+      const itemsRow = document.querySelector("#items-container .row");
+      newItems.forEach((item) => {
+        const cardDiv = createItemCard(item);
+        itemsRow.appendChild(cardDiv);
+      });
+    }
+
+    // Hide spinner
+    if (spinner) {
+      spinner.style.display = "none";
+    }
+    isLoading = false;
+  }
 
   // Reset sort dropdown to "All Items"
   const sortDropdown = document.getElementById("sort-dropdown");
@@ -34,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
       allItems = await response.json();
       filteredItems = shuffleArray([...allItems]); // Shuffle on initial load
       displayItems();
-      setupPagination();
       updateTotalItemsCount();
       updateTotalItemsLabel("all-items");
 
@@ -107,32 +173,52 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function addSentinel() {
+    const sentinel = document.createElement("div");
+    sentinel.className = "sentinel";
+    sentinel.style.height = "1px";
+    const itemsContainer = document.querySelector("#items-container");
+    itemsContainer.appendChild(sentinel);
+    return sentinel;
+  }
+
   function displayItems() {
     const itemsContainer = document.querySelector("#items-container");
     if (!itemsContainer) return;
 
-    // Ensure the row exists or create it
-    let itemsRow = itemsContainer.querySelector(".row");
-    if (!itemsRow) {
-      itemsRow = document.createElement("div");
-      itemsRow.classList.add("row");
-      itemsContainer.appendChild(itemsRow);
+    // Clear container only on first load or new search
+    if (currentPage === 1) {
+      let itemsRow = itemsContainer.querySelector(".row");
+      if (!itemsRow) {
+        itemsRow = document.createElement("div");
+        itemsRow.classList.add("row");
+        itemsContainer.appendChild(itemsRow);
+      }
+      itemsRow.innerHTML = "";
     }
-
-    itemsRow.innerHTML = ""; // Clear existing items
-    itemstoadd = [];
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const itemsToDisplay = filteredItems.slice(startIndex, endIndex);
 
+    const itemsRow = itemsContainer.querySelector(".row");
     itemsToDisplay.forEach((item) => {
       const cardDiv = createItemCard(item);
-      itemstoadd.push(cardDiv);
+      itemsRow.appendChild(cardDiv);
     });
-    itemsRow.append(...itemstoadd); // Add new items to the row
 
-    updatePaginationUI();
+    // Remove old sentinel if exists
+    const oldSentinel = itemsContainer.querySelector(".sentinel");
+    if (oldSentinel) {
+      oldSentinel.remove();
+    }
+
+    // Add new sentinel if there are more items to load
+    if (endIndex < filteredItems.length) {
+      const sentinel = addSentinel();
+      observer.observe(sentinel);
+    }
+
     updateTotalItemsCount();
   }
 
@@ -253,83 +339,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return cardDiv;
   }
 
-  function updatePaginationUI() {
-    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-    const currentPageInput = document.getElementById("currentPageInput");
-
-    // Ensure current page is within valid range
-    if (currentPage > totalPages) {
-      currentPage = totalPages || 1;
-    }
-
-    // Update current page display
-    currentPageInput.value = currentPage;
-
-    // Enable/disable pagination buttons
-    document.getElementById("firstPageBtn").disabled = currentPage === 1;
-    document.getElementById("prevPageBtn").disabled = currentPage === 1;
-    document.getElementById("nextPageBtn").disabled = currentPage >= totalPages;
-    document.getElementById("lastPageBtn").disabled = currentPage >= totalPages;
-  }
-
-  function setupPagination() {
-    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-
-    // Remove existing event listeners
-    const paginationContainer = document.getElementById("pagination-container");
-    const newPaginationContainer = paginationContainer.cloneNode(true);
-    paginationContainer.parentNode.replaceChild(
-      newPaginationContainer,
-      paginationContainer
-    );
-
-    const currentPageInput = document.getElementById("currentPageInput");
-
-    document.getElementById("firstPageBtn").addEventListener("click", (e) => {
-      e.preventDefault();
-      if (currentPage !== 1) {
-        currentPage = 1;
-        displayItems();
-      }
-    });
-
-    document.getElementById("prevPageBtn").addEventListener("click", (e) => {
-      e.preventDefault();
-      if (currentPage > 1) {
-        currentPage--;
-        displayItems();
-      }
-    });
-
-    document.getElementById("nextPageBtn").addEventListener("click", (e) => {
-      e.preventDefault();
-      if (currentPage < totalPages) {
-        currentPage++;
-        displayItems();
-      }
-    });
-
-    document.getElementById("lastPageBtn").addEventListener("click", (e) => {
-      e.preventDefault();
-      if (currentPage !== totalPages) {
-        currentPage = totalPages;
-        displayItems();
-      }
-    });
-
-    currentPageInput.addEventListener("change", () => {
-      let newPage = parseInt(currentPageInput.value);
-      if (newPage >= 1 && newPage <= totalPages) {
-        currentPage = newPage;
-        displayItems();
-      } else {
-        currentPageInput.value = currentPage;
-      }
-    });
-
-    updatePaginationUI();
-  }
-
   window.filterItems = function () {
     const searchTerm = document
       .getElementById("search-bar")
@@ -371,7 +380,6 @@ document.addEventListener("DOMContentLoaded", () => {
       updateTotalItemsLabel(itemType);
       currentPage = 1;
       displayItems();
-      setupPagination();
       updateTotalItemsCount();
       return;
     }
@@ -428,7 +436,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     currentPage = 1;
     displayItems();
-    setupPagination();
     updateTotalItemsCount();
   };
 
@@ -521,7 +528,6 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTotalItemsLabel(itemType);
     currentPage = 1;
     displayItems();
-    setupPagination();
   };
 
   function preloadItemImages() {
