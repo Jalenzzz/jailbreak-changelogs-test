@@ -28,28 +28,31 @@
   --gray-800: #aaaaaa;
   --gray-900: #bbbbbb;
 }
-/* Back to Top Button */
-#backToTop {
-  display: none; /* Initially hidden */
+
+.back-to-top-btn {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: var(--button-primary-bg);
-  color: #ffffff;
-  padding: 10px 15px;
-  border-radius: 5px;
+  background-color: #124e66;
+  color: #d3d9d4;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
   cursor: pointer;
-  transition: background-color 0.3s, display 0.3s;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
   z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-#backToTop.show {
-  display: block; /* Show when the 'show' class is added */
+.back-to-top-btn:hover {
+  background-color: #2e3944;
+  transform: translateY(-2px);
 }
 
-#backToTop:hover {
-  background-color: var(--button-primary-hover-bg);
-}
 .offcanvas-header {
   display: flex; /* Keep the header visible */
   justify-content: space-between; /* Align items properly */
@@ -457,6 +460,13 @@ button {
 }
 
 @media (max-width: 768px) {
+  .back-to-top-btn {
+    bottom: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+  }
+
   .timeline {
     width: 100%;
     padding: 10px 0;

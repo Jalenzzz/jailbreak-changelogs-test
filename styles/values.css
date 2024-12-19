@@ -270,6 +270,7 @@
   );
   animation: shimmer 2s infinite;
 }
+
 .back-to-top-btn {
   position: fixed;
   bottom: 20px;

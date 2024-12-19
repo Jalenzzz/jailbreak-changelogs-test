@@ -13,6 +13,24 @@ $(document).ready(function () {
   const CACHE_KEY = "changelog_data";
   const CACHE_EXPIRY = 60 * 60 * 1000; // Cache expiry set to 1 hour in milliseconds
 
+  const backToTopButton = document.getElementById("back-to-top");
+  // Show button when scrolling down 300px
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      backToTopButton.style.display = "flex";
+    } else {
+      backToTopButton.style.display = "none";
+    }
+  });
+
+  // Scroll to top when button is clicked
+  backToTopButton.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  });
+
   // State variables
   let isLoading = false; // Tracks whether data is currently being loaded
   let lastScrollTop = 0; // Stores the last known scroll position
@@ -152,24 +170,6 @@ $(document).ready(function () {
     return formattedTitle;
   }
 
-  // Back to Top button functionality
-  const backToTopButton = $("#backToTop");
-
-  // Show/hide the Back to Top button based on scroll position
-  $(window).scroll(function () {
-    if ($(this).scrollTop() > 100) {
-      backToTopButton.addClass("show");
-    } else {
-      backToTopButton.removeClass("show");
-    }
-  });
-
-  // Smooth scroll to top when Back to Top button is clicked
-  backToTopButton.on("click", function (e) {
-    e.preventDefault();
-    $("html, body").animate({ scrollTop: 0 }, 100);
-  });
-
   // Handle click events on changelog dropdown items
   $(document).on("click", ".changelog-dropdown-item", function (e) {
     e.preventDefault();
@@ -189,10 +189,10 @@ $(document).ready(function () {
     if (changelog.sections && typeof changelog.sections === "string") {
       // Process the markdown content
       const processedMarkdown = changelog.sections
-      .replace(/^ - /gm, '\n- ')   // Format top-level list items
-      .replace(/^ - - /gm, '\n  - ') // Format nested list items (indent with two spaces)
-      .replace(/^## /gm, '\n## ')  // Format second-level headers
-      .replace(/^### /gm, '\n### ') // Format third-level headers
+        .replace(/^ - /gm, "\n- ") // Format top-level list items
+        .replace(/^ - - /gm, "\n  - ") // Format nested list items (indent with two spaces)
+        .replace(/^## /gm, "\n## ") // Format second-level headers
+        .replace(/^### /gm, "\n### "); // Format third-level headers
 
       // Convert processed markdown to HTML
       sectionsHtml = convertMarkdownToHtml(processedMarkdown);
