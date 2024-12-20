@@ -65,16 +65,16 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 /* Overall Comment Section Styling */
 .comment-container {
-  background-color: #212A31; /* Dark grayish-blue background */
+  background-color: #212a31; /* Dark grayish-blue background */
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 2px solid #748D92; /* Medium grayish-blue border to distinguish it */
+  border: 2px solid #748d92; /* Medium grayish-blue border to distinguish it */
 }
 
 /* Comment Header */
 .comment-header {
-  color: #D3D9D4; /* Very light grayish-green */
+  color: #d3d9d4; /* Very light grayish-green */
   font-size: 1.8rem;
   margin-bottom: 20px;
   font-family: "Luckiest Guy", Arial, sans-serif; /* Applying the desired font */
@@ -83,9 +83,9 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Comment Input Field */
 #commenter-text {
-  background-color: #212A31; /* Very dark blue-gray background */
-  color: #D3D9D4; /* Very light grayish-green */
-  border: 1px solid #748D92; /* Medium grayish-blue border */
+  background-color: #212a31; /* Very dark blue-gray background */
+  color: #d3d9d4; /* Very light grayish-green */
+  border: 1px solid #748d92; /* Medium grayish-blue border */
   border-radius: 4px;
   padding: 10px;
   font-size: 1rem;
@@ -96,15 +96,15 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Disabled State for Commenter Text */
 #commenter-text:disabled {
-  background-color: #2E3944; /* Medium grayish-blue for the background */ 
-  color: #D3D9D4; /* Very light grayish-green for text */
+  background-color: #2e3944; /* Medium grayish-blue for the background */
+  color: #d3d9d4; /* Very light grayish-green for text */
   cursor: not-allowed; /* Change cursor to indicate it's disabled */
 }
 
 /* Change icon to stop icon on hover (for the disabled state) */
 #commenter-text:disabled:hover {
   background-color: #2e394483; /* Dark grayish-blue background on hover */
-  color: #D3D9D4; /* Keep the text color consistent */
+  color: #d3d9d4; /* Keep the text color consistent */
 }
 
 /* To ensure the icon changes to a "stop" icon on hover, assuming it's an img element */
@@ -114,14 +114,14 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Comment Submit Button */
 #submit-comment {
-  background-color: #124E66; /* Deep teal */
-  color: #D3D9D4;
+  background-color: #124e66; /* Deep teal */
+  color: #d3d9d4;
   border: none;
   border-radius: 4px;
   padding: 10px 20px;
   font-size: 1rem;
   cursor: pointer;
-  flex-shrink: 0; 
+  flex-shrink: 0;
 }
 
 /* Comment Submit Button */
@@ -140,13 +140,13 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 /* Individual Comment Styling */
 .comment-item {
   background-color: transparent; /* Very dark blue-gray */
-  color: #D3D9D4; /* Very light grayish-green */
+  color: #d3d9d4; /* Very light grayish-green */
   margin-bottom: 0;
 
   font-family: Arial, sans-serif; /* Default sans-serif font */
   width: 100%;
   word-wrap: break-word; /* Break words that are too long */
-  white-space: pre-wrap;  /* Preserve spaces and line breaks */
+  white-space: pre-wrap; /* Preserve spaces and line breaks */
 }
 
 .comment-item a {
@@ -156,29 +156,140 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Comment Author Styling */
 .comment-author {
-  color: #124E66; /* Deep teal */
+  color: #124e66; /* Deep teal */
   font-weight: bold;
   font-size: 1.1rem;
 }
 
 /* Comment Text Styling */
 .comment-text {
-  color: #D3D9D4;
+  color: #d3d9d4;
   font-size: 1rem;
   margin-top: 8px;
-  word-wrap: break-word;  /* Ensures long words break and don't overflow */
-  overflow-wrap: break-word;  /* Handle long words within text */
-  word-break: break-word;  /* Breaks words when necessary to prevent overflow */
-  margin-bottom: 0;  /* Ensure no extra margin for text */
+  word-wrap: break-word; /* Ensures long words break and don't overflow */
+  overflow-wrap: break-word; /* Handle long words within text */
+  word-break: break-word; /* Breaks words when necessary to prevent overflow */
+  margin-bottom: 0; /* Ensure no extra margin for text */
+}
+
+/* Comment Action Buttons */
+.comment-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  position: absolute;
+  top: 12px;
+  right: 16px; /* Increased from 12px to give more space from the edge */
+  z-index: 2;
+}
+
+/* Comment Action Menu Styles */
+.comment-actions {
+  position: absolute;
+  top: 12px;
+  right: 16px; /* Increased from 12px to give more space from the edge */
+}
+
+.comment-actions-toggle {
+  background: none;
+  border: none;
+  color: #748d92;
+  padding: 4px;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  opacity: 1;
+  transform: translateX(-8px); /* Move button 8px to the left */
+}
+
+.comment-item:hover .comment-actions-toggle {
+  opacity: 1;
+}
+
+.comment-actions-toggle:hover {
+  background-color: #124e66;
+  color: #d3d9d4;
+}
+
+.comment-actions-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #212a31; /* Changed from #2e3944 to #212a31 */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
+  z-index: 1000;
+}
+
+.comment-action-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  color: #d3d9d4;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.comment-action-item:hover {
+  background-color: #124e66;
+}
+
+.comment-action-item.delete {
+  color: #ff4444;
+}
+
+.comment-action-item.delete:hover {
+  background-color: #661212;
+  color: #ffffff;
+}
+
+.comment-action-btn {
+  background: none;
+  border: none;
+  color: #748d92;
+  padding: 4px 8px;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.comment-action-btn:hover {
+  background-color: #124e66;
+  color: #d3d9d4;
+}
+
+.comment-action-btn.edit-btn:hover {
+  background-color: #2e3944;
+}
+
+.comment-action-btn.delete-btn:hover {
+  background-color: #661212;
+}
+
+.comment-action-btn i {
+  font-size: 1rem;
 }
 
 /* General Pagination Styles */
 #paginationControls {
   padding: 8px 15px;
-  background-color: #2E3944; /* Dark grayish-blue for the background */
+  background-color: #2e3944; /* Dark grayish-blue for the background */
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-  color: #D3D9D4; /* Very light grayish-green text */
+  color: #d3d9d4; /* Very light grayish-green text */
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
@@ -195,8 +306,8 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   height: 35px;
   font-size: 16px;
   border: none;
-  background-color: #124E66; /* Deep teal for button background */
-  color: #D3D9D4; /* Very light grayish-green for button text */
+  background-color: #124e66; /* Deep teal for button background */
+  color: #d3d9d4; /* Very light grayish-green for button text */
   border-radius: 50%; /* Circular button */
   transition: background-color 0.3s ease;
 }
@@ -207,8 +318,8 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 
 #paginationControls .btn:hover:not(:disabled) {
-  background-color: #748D92; /* Medium grayish-blue on hover */
-  color: #212A31; /* Very dark blue-gray text on hover */
+  background-color: #748d92; /* Medium grayish-blue on hover */
+  color: #212a31; /* Very dark blue-gray text on hover */
 }
 
 /* Input Group Styles */
@@ -222,25 +333,24 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 #paginationControls .form-control {
   text-align: center;
   font-size: 14px;
-  border: 1px solid #748D92; /* Medium grayish-blue border */
-  background-color: #212A31; /* Very dark blue-gray for the input */
-  color: #D3D9D4; /* Light grayish-green text for input */
+  border: 1px solid #748d92; /* Medium grayish-blue border */
+  background-color: #212a31; /* Very dark blue-gray for the input */
+  color: #d3d9d4; /* Light grayish-green text for input */
   border-radius: 4px;
   width: 50px; /* Compact input width */
 }
 
 #paginationControls .form-control:focus {
   outline: none;
-  border-color: #124E66; /* Deep teal on focus */
+  border-color: #124e66; /* Deep teal on focus */
   box-shadow: 0 0 4px rgba(18, 78, 102, 0.5); /* Focus glow */
 }
 
 /* Text and Spacing Adjustments */
 #paginationControls span {
   font-size: 14px;
-  color: #748D92; /* Medium grayish-blue for text */
+  color: #748d92; /* Medium grayish-blue for text */
 }
-
 
 /* Dropdown Menu Styles */
 .dropdown-menu {
@@ -467,7 +577,7 @@ span {
   background-color: rgba(0, 0, 0, 0.8);
 }
 .rewards-container {
-  background: linear-gradient(to bottom, #124E66, #2E3944, #212A31);
+  background: linear-gradient(to bottom, #124e66, #2e3944, #212a31);
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -484,7 +594,7 @@ span {
   padding: 0;
 }
 .reward-item {
-  background-color: #212A31;
+  background-color: #212a31;
   border-radius: 8px;
   margin-bottom: 10px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -515,13 +625,18 @@ span {
   font-size: 0.8rem;
 }
 .bonus-reward {
-  background-color: #212A31;
+  background-color: #212a31;
 }
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
 
 /* Title Styles */
 .season-title {
@@ -612,42 +727,41 @@ span {
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .comment-container {
-      padding: 20px; /* Slightly reduce padding for mobile */
-      width: 100%; /* Full width to prevent compression */
-      max-width: 700px; /* Limit maximum width to prevent over-expansion */
-      margin: 0 auto; /* Center the container */
+    padding: 20px; /* Slightly reduce padding for mobile */
+    width: 100%; /* Full width to prevent compression */
+    max-width: 700px; /* Limit maximum width to prevent over-expansion */
+    margin: 0 auto; /* Center the container */
   }
 
   .comment-header {
-      font-size: 1.5rem; /* Smaller header font size */
+    font-size: 1.5rem; /* Smaller header font size */
   }
 
   /* Comment input and button */
-  #commenter-text, #submit-comment {
-      font-size: 0.9rem; /* Adjust font size for smaller devices */
+  #commenter-text,
+  #submit-comment {
+    font-size: 0.9rem; /* Adjust font size for smaller devices */
   }
 
   /* Make the input field and submit button full-width */
   .input-group {
-      flex-direction: column; /* Stack the input and button vertically */
-      gap: 10px;
+    flex-direction: column; /* Stack the input and button vertically */
+    gap: 10px;
   }
 
   #submit-comment {
-      width: 100%; /* Make submit button full-width */
-      margin-top: 10px; /* Add space between the input and the button */
+    width: 100%; /* Make submit button full-width */
+    margin-top: 10px; /* Add space between the input and the button */
   }
 
   /* Comment list margin */
   #comments-list {
-      margin-top: 20px;
+    margin-top: 20px;
   }
 }
 
-
 /* Responsive Styles */
 @media (max-width: 576px) {
-
   .season-rewards .badge {
     margin: 0 0.25rem;
   }

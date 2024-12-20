@@ -1376,7 +1376,8 @@ $(document).ready(function () {
     );
 
     const avatarElement = document.createElement("img");
-    const defaultAvatarUrl = "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
+    const defaultAvatarUrl =
+      "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
     avatarElement.src = avatarUrl.endsWith("null.png")
       ? defaultAvatarUrl
       : avatarUrl;
@@ -1643,9 +1644,58 @@ $(document).ready(function () {
         margin-top: 4px;
       `;
 
-          // Append elements
+          // Add action buttons container
+          const actionsContainer = document.createElement("div");
+          actionsContainer.classList.add("comment-actions");
+
+          // Inside the loadComments function, replace the actions container code with this:
+          if (userdata.id === sessionStorage.getItem("userid")) {
+            // Create dropdown toggle button
+            const actionsToggle = document.createElement("button");
+            actionsToggle.classList.add("comment-actions-toggle");
+            actionsToggle.innerHTML =
+              '<i class="bi bi-three-dots-vertical"></i>';
+
+            // Create dropdown menu
+            const actionsMenu = document.createElement("div");
+            actionsMenu.classList.add("comment-actions-menu");
+            actionsMenu.style.display = "none";
+
+            // Create menu items
+            const editButton = document.createElement("button");
+            editButton.classList.add("comment-action-item");
+            editButton.innerHTML = '<i class="bi bi-pencil"></i> Edit';
+            editButton.setAttribute("data-comment-id", comment.id);
+
+            const deleteButton = document.createElement("button");
+            deleteButton.classList.add("comment-action-item", "delete");
+            deleteButton.innerHTML = '<i class="bi bi-trash"></i> Delete';
+            deleteButton.setAttribute("data-comment-id", comment.id);
+
+            // Add items to menu
+            actionsMenu.appendChild(editButton);
+            actionsMenu.appendChild(deleteButton);
+
+            // Add toggle and menu to container
+            actionsContainer.appendChild(actionsToggle);
+            actionsContainer.appendChild(actionsMenu);
+
+            // Toggle menu on click
+            actionsToggle.addEventListener("click", (e) => {
+              e.stopPropagation();
+              actionsMenu.style.display =
+                actionsMenu.style.display === "none" ? "block" : "none";
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener("click", () => {
+              actionsMenu.style.display = "none";
+            });
+          }
+
           commentContainer.appendChild(headerContainer);
           commentContainer.appendChild(commentTextElement);
+          commentContainer.appendChild(actionsContainer);
           listItem.appendChild(avatarElement);
           listItem.appendChild(commentContainer);
           commentsList.appendChild(listItem);
@@ -1802,6 +1852,7 @@ $(document).ready(function () {
 
 function handleinvalidImage() {
   setTimeout(() => {
-    this.src = "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"; // Set the placeholder after the delay
+    this.src =
+      "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"; // Set the placeholder after the delay
   }, 0); // Adjust the delay time as needed (500ms in this case)
 }
