@@ -1,14 +1,32 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const usersGrid = document.getElementById("usersGrid");
+  const followingCountElement = document.getElementById("followingCount");
+
   if (!usersGrid) {
     console.error("Could not find usersGrid element");
     return;
   }
 
+  // Get logged in user from session storage
+  const loggedInUserId = sessionStorage.getItem("userid");
   const path = window.location.pathname;
   const segments = path.split("/");
   const showFollowing = JSON.parse(showingfollowing);
   const userId = segments[2]; // Assuming the structure is "/users/{userId}/followers"
+
+  // Always update page headings based on URL path rather than logged in status
+  const titleElement = document.querySelector("h2");
+  const subtitleElement = document.querySelector("h4");
+
+  if (titleElement && loggedInUserId === userId) {
+    titleElement.textContent = "My following";
+  }
+
+  // Keep the friends heading consistent
+  if (subtitleElement) {
+    subtitleElement.textContent =
+      loggedInUserId === userId ? "My Friends" : "Friends";
+  }
 
   // Async function to fetch followers
   async function fetchFollowers(userId) {
@@ -27,16 +45,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Fetch followers and log the results
-  console.log(showFollowing);
   if (!showFollowing) {
-    usersGrid.textContent = "This user has their following hidden."; // Message when there are no followers
+    usersGrid.textContent = "This user has their following hidden.";
+    if (followingCountElement) {
+      followingCountElement.textContent = "(0)";
+    }
     return;
   }
 
   const followers = await fetchFollowers(userId);
-  console.log(followers);
 
-  // Optionally, you can populate the usersGrid with the fetched followers here
+  // Update the count immediately when we get the data
+  if (followingCountElement) {
+    const count = Array.isArray(followers) ? followers.length : 0;
+    followingCountElement.textContent = `(${count})`;
+
+    // Update subtitle with count
+    if (subtitleElement) {
+      subtitleElement.textContent =
+        loggedInUserId === userId
+          ? `My Friends (${count})`
+          : `Friends (${count})`;
+    }
+  } else {
+    console.error("Could not find followingCount element");
+  }
+
   if (followers.length > 0) {
     followers.forEach((follower) => {
       const response = fetch(
@@ -45,7 +79,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       response
         .then((response) => response.json())
         .then((user) => {
-          console.log(user);
           const userCard = document.createElement("div");
           userCard.className = "user-card mb-3"; // Add margin-bottom for spacing
 
@@ -76,12 +109,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
   } else {
-    usersGrid.textContent = "This user isnt following anyone"; // Message when there are no followers
+    usersGrid.textContent = "This user isn't following anyone";
   }
 });
 function handleinvalidImage(imgElement) {
-  console.log("Invalid image");
-  console.log(imgElement.id); // This will now correctly print the id
   setTimeout(() => {
     imgElement.src =
       "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"; // Set the placeholder after the delay

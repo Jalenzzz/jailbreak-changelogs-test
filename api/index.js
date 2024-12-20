@@ -408,6 +408,7 @@ app.get("/users/:user/followers", async (req, res) => {
       title: "Followers / Changelogs",
       logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
       logoAlt: "Users Page Logo",
+      user: req.user || null, // Add this line - passes the logged in user or null if not logged in
     });
   }
 
@@ -436,6 +437,7 @@ app.get("/users/:user/followers", async (req, res) => {
     title: "Followers / Changelogs",
     logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
     logoAlt: "Users Page Logo",
+    user: req.user || null, // Add this line - passes the logged in user or null if not logged in
   });
 });
 
@@ -480,6 +482,7 @@ app.get("/users/:user/following", async (req, res) => {
       title: "Following / Changelogs",
       logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
       logoAlt: "Users Page Logo",
+      user: req.user || null, // Add this line - passes the logged in user or null if not logged in
     });
   }
 
@@ -508,6 +511,7 @@ app.get("/users/:user/following", async (req, res) => {
     title: "Users - Following",
     logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
     logoAlt: "Users Page Logo",
+    user: req.user || null, // Add this line - passes the logged in user or null if not logged in
   });
 });
 // Sitemap route

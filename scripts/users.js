@@ -562,26 +562,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const follow_button = document.getElementById("follow-button");
   async function updateUserCounts(userId) {
     try {
-      // Create loading spinners first
-      const followersLoading = document.createElement("span");
-      followersLoading.className = "loading-icon";
-      followersLoading.id = "followers-loading";
-      followersLoading.innerHTML =
-        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-
-      const followingLoading = document.createElement("span");
-      followingLoading.className = "loading-icon";
-      followingLoading.id = "following-loading";
-      followingLoading.innerHTML =
-        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-
-      // Clear existing content and add loading spinners
+      // Show 0 initially instead of loading spinners
       const following = document.getElementById("following");
       const followers = document.getElementById("followers");
-      following.innerHTML = "";
-      followers.innerHTML = "";
-      following.appendChild(followingLoading);
-      followers.appendChild(followersLoading);
+      following.textContent = "0 Following";
+      followers.textContent = "0 Followers";
 
       // Special case for owner display
       if (userId === "659865209741246514" || userId === "1019539798383398946") {

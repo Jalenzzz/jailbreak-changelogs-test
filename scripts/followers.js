@@ -1,15 +1,33 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const usersGrid = document.getElementById("usersGrid");
+  const followerCountElement = document.getElementById("followerCount");
+
   if (!usersGrid) {
     console.error("Could not find usersGrid element");
     return;
   }
 
+  // Get logged in user from session storage
+  const loggedInUserId = sessionStorage.getItem("userid");
   const path = window.location.pathname;
-  const showfollowers = JSON.parse(showingfollowers);
-  console.log(showfollowers);
   const segments = path.split("/");
   const userId = segments[2];
+
+  // Always update page headings based on URL path rather than logged in status
+  const titleElement = document.querySelector("h2");
+  const subtitleElement = document.querySelector("h4");
+
+  if (titleElement && loggedInUserId === userId) {
+    titleElement.textContent = "My followers";
+  }
+
+  // Keep the friends heading consistent
+  if (subtitleElement) {
+    subtitleElement.textContent =
+      loggedInUserId === userId ? "My Friends" : "Friends";
+  }
+
+  const showfollowers = JSON.parse(showingfollowers);
 
   async function fetchFollowers(userId) {
     try {
@@ -28,10 +46,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (!showfollowers) {
     usersGrid.textContent = "This user has their followers hidden.";
+    if (followerCountElement) {
+      followerCountElement.textContent = "(0)";
+    }
     return;
   }
   const followers = await fetchFollowers(userId);
-  console.log(followers);
+
+  // Update the count immediately when we get the data
+  if (followerCountElement) {
+    const count = Array.isArray(followers) ? followers.length : 0;
+    followerCountElement.textContent = `(${count})`;
+
+    // Update subtitle with count
+    if (subtitleElement) {
+      subtitleElement.textContent =
+        loggedInUserId === userId
+          ? `My Friends (${count})`
+          : `Friends (${count})`;
+    }
+  } else {
+    console.error("Could not find followerCount element");
+  }
 
   if (followers.length > 0) {
     followers.forEach((follower) => {
@@ -41,7 +77,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       response
         .then((response) => response.json())
         .then((user) => {
-          console.log(user);
           const userCard = document.createElement("div");
           userCard.className = "user-card mb-3"; // Added mb-3 to match following.js
 
@@ -77,8 +112,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function handleinvalidImage(imgElement) {
-  console.log("Invalid image");
-  console.log(imgElement.id);
   setTimeout(() => {
     imgElement.src =
       "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
