@@ -189,7 +189,7 @@ $(document).ready(function () {
         '<p class="text-warning">No rewards data available.</p>'
       );
       disableComments(
-        "Comments are unavailable because no rewards data is available."
+        "Comments are unavailable because no rewards data is available for this season."
       );
     }
   }
@@ -483,6 +483,10 @@ $(document).ready(function () {
     commentContainer.style.padding = "12px";
     commentContainer.style.borderRadius = "8px";
     commentContainer.style.marginBottom = "8px";
+    commentContainer.style.paddingRight =
+      "40px"; /* Add extra padding on the right for the action buttons */
+    commentContainer.style.position =
+      "relative"; /* Ensure proper positioning context */
 
     const headerContainer = document.createElement("div");
     headerContainer.classList.add("d-flex", "align-items-center", "flex-wrap");
@@ -667,8 +671,10 @@ $(document).ready(function () {
           commentContainer.style.cssText = `
           background-color: #2E3944;
           padding: 12px;
+          padding-right: 40px; /* Add extra padding on the right for the action buttons */
           border-radius: 8px;
           margin-bottom: 8px;
+          position: relative; /* Ensure proper positioning context */
         `;
 
           // Create a container for the username and date
@@ -699,13 +705,29 @@ $(document).ready(function () {
             usernameElement.style.textDecoration = "none";
           });
 
+          // Add username first to header container
+          headerContainer.appendChild(usernameElement);
+
+          const dateContainer = document.createElement("div");
+          dateContainer.classList.add("date-container");
+
           const dateElement = document.createElement("small");
           const formattedDate = formatDate(comment.date);
-          dateElement.textContent = ` · ${formattedDate}`;
-          dateElement.classList.add("text-muted");
 
-          headerContainer.appendChild(usernameElement);
-          headerContainer.appendChild(dateElement);
+          if (comment.edited_at) {
+            const formattedEditDate = formatDate(comment.edited_at);
+            dateElement.textContent = ` · ${formattedEditDate} (Edited)`;
+            dateElement.classList.add("text-muted");
+          } else {
+            dateElement.textContent = ` · ${formattedDate}`;
+            dateElement.classList.add("text-muted");
+          }
+
+          // Add date element to date container
+          dateContainer.appendChild(dateElement);
+
+          // Add date container to header container
+          headerContainer.appendChild(dateContainer);
 
           const commentTextElement = document.createElement("p");
           commentTextElement.textContent = comment.content;
@@ -718,6 +740,13 @@ $(document).ready(function () {
           // Add action buttons container
           const actionsContainer = document.createElement("div");
           actionsContainer.classList.add("comment-actions");
+          actionsContainer.style.cssText = `
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          margin-left: 16px;
+          z-index: 2;
+        `;
 
           // Only show actions for the comment owner
           if (userdata.id === sessionStorage.getItem("userid")) {
@@ -761,6 +790,70 @@ $(document).ready(function () {
             // Close menu when clicking outside
             document.addEventListener("click", () => {
               actionsMenu.style.display = "none";
+            });
+
+            // Add edit button click handler
+            editButton.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const id = e.target.getAttribute("data-comment-id");
+              const commentText = e.target
+                .closest(".comment-item")
+                .querySelector(".comment-text").textContent;
+
+              // Set the current comment text in the modal
+              document.getElementById("editCommentText").value = commentText;
+
+              // Store the comment ID for later use
+              document
+                .getElementById("editCommentText")
+                .setAttribute("data-comment-id", id);
+
+              // Show the modal
+              editCommentModal.show();
+
+              // Hide the actions menu
+              e.target.closest(".comment-actions-menu").style.display = "none";
+            });
+
+            deleteButton.addEventListener("click", (e) => {
+              const id = e.target.getAttribute("data-comment-id");
+
+              fetch("https://api.jailbreakchangelogs.xyz/comments/delete", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  comment_id: id,
+                  author: getCookie("token"),
+                }),
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Failed to delete comment");
+                  }
+                  return response.json();
+                })
+                .then((data) => {
+                  reloadcomments();
+                  // Add toast notification for successful deletion
+                  toastr.success("Comment deleted successfully!", "Success", {
+                    positionClass: "toast-bottom-right",
+                    timeOut: 3000,
+                    closeButton: true,
+                    progressBar: true,
+                  });
+                })
+                .catch((error) => {
+                  console.error("Error deleting comment:", error);
+                  // Add toast notification for deletion error
+                  toastr.error("Failed to delete comment", "Error", {
+                    positionClass: "toast-bottom-right",
+                    timeOut: 3000,
+                    closeButton: true,
+                    progressBar: true,
+                  });
+                });
             });
           }
 
@@ -917,6 +1010,88 @@ $(document).ready(function () {
     addComment(comment);
     comment.value = ""; // Clear the comment input field
   });
+
+  // Add the edit comment modal to the document body
+  $("body").append(`
+    <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control" id="editCommentText" rows="3"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveCommentEdit">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  `);
+
+  // Initialize the modal
+  const editCommentModal = new bootstrap.Modal(
+    document.getElementById("editCommentModal")
+  );
+
+  // Add event listener for saving edited comment
+  document
+    .getElementById("saveCommentEdit")
+    .addEventListener("click", function () {
+      const commentId = document
+        .getElementById("editCommentText")
+        .getAttribute("data-comment-id");
+      const newContent = document
+        .getElementById("editCommentText")
+        .value.trim();
+      const token = getCookie("token");
+
+      if (newContent) {
+        fetch("https://api.jailbreakchangelogs.xyz/comments/edit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            comment_id: commentId,
+            content: newContent,
+            author: token,
+          }),
+        })
+          .then((response) => {
+            return response.json().then((data) => {
+              if (!response.ok) throw new Error("Failed to edit comment");
+              return data;
+            });
+          })
+          .then((data) => {
+            editCommentModal.hide();
+
+            toastr.success("Comment updated successfully!", "Success", {
+              positionClass: "toast-bottom-right",
+              timeOut: 3000,
+              closeButton: true,
+              progressBar: true,
+            });
+
+            setTimeout(() => {
+              reloadcomments();
+            }, 100);
+          })
+          .catch((error) => {
+            console.error("Error editing comment:", error);
+            toastr.error("Failed to update comment", "Error", {
+              positionClass: "toast-bottom-right",
+              timeOut: 3000,
+              closeButton: true,
+              progressBar: true,
+            });
+          });
+      }
+    });
 });
 
 function handleinvalidImage() {

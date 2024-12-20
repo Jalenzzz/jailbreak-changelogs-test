@@ -147,6 +147,8 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   width: 100%;
   word-wrap: break-word; /* Break words that are too long */
   white-space: pre-wrap; /* Preserve spaces and line breaks */
+  position: relative;
+  padding-right: 40px !important; /* Add padding to prevent text from going under the dots */
 }
 
 .comment-item a {
@@ -178,23 +180,26 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   gap: 8px;
   margin-top: 8px;
   position: absolute;
-  top: 12px;
-  right: 16px; /* Increased from 12px to give more space from the edge */
+  top: 8px; /* Adjusted position */
+  right: 8px; /* Adjusted position */
+  margin-left: 16px; /* Add space between text and actions */
   z-index: 2;
 }
 
 /* Comment Action Menu Styles */
 .comment-actions {
   position: absolute;
-  top: 12px;
-  right: 16px; /* Increased from 12px to give more space from the edge */
+  top: 8px; /* Adjusted position */
+  right: 8px; /* Adjusted position */
+  margin-left: 16px; /* Add space between text and actions */
+  z-index: 2;
 }
 
 .comment-actions-toggle {
   background: none;
   border: none;
   color: #748d92;
-  padding: 4px;
+  padding: 4px 8px;
   font-size: 1.2rem;
   border-radius: 50%;
   width: 28px;

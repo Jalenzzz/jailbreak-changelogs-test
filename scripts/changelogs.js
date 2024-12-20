@@ -1628,13 +1628,26 @@ $(document).ready(function () {
             usernameElement.style.textDecoration = "none";
           });
 
+          const dateContainer = document.createElement("div");
+          dateContainer.classList.add("date-container");
+
           const dateElement = document.createElement("small");
           const formattedDate = formatDate(comment.date);
-          dateElement.textContent = ` · ${formattedDate}`;
-          dateElement.classList.add("text-muted");
+          console.log(comment);
+
+          if (comment.edited_at) {
+            const formattedEditDate = formatDate(comment.edited_at);
+            dateElement.textContent = ` · ${formattedEditDate} (Edited)`;
+            dateElement.classList.add("text-muted");
+            console.log("Edited Comment");
+          } else {
+            dateElement.textContent = ` · ${formattedDate}`;
+            dateElement.classList.add("text-muted");
+          }
+          dateContainer.appendChild(dateElement);
 
           headerContainer.appendChild(usernameElement);
-          headerContainer.appendChild(dateElement);
+          headerContainer.appendChild(dateContainer);
 
           const commentTextElement = document.createElement("p");
           commentTextElement.textContent = comment.content;
@@ -1667,10 +1680,73 @@ $(document).ready(function () {
             editButton.innerHTML = '<i class="bi bi-pencil"></i> Edit';
             editButton.setAttribute("data-comment-id", comment.id);
 
+            editButton.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const id = e.target.getAttribute("data-comment-id");
+              const commentText = e.target
+                .closest(".comment-item")
+                .querySelector(".comment-text").textContent;
+
+              // Set the current comment text in the modal
+              document.getElementById("editCommentText").value = commentText;
+
+              // Store the comment ID for later use
+              document
+                .getElementById("editCommentText")
+                .setAttribute("data-comment-id", id);
+
+              // Show the modal
+              editCommentModal.show();
+
+              // Hide the actions menu
+              e.target.closest(".comment-actions-menu").style.display = "none";
+            });
+
             const deleteButton = document.createElement("button");
             deleteButton.classList.add("comment-action-item", "delete");
             deleteButton.innerHTML = '<i class="bi bi-trash"></i> Delete';
             deleteButton.setAttribute("data-comment-id", comment.id);
+            deleteButton.addEventListener("click", (e) => {
+              const id = e.target.getAttribute("data-comment-id");
+
+              // make an http request to delete the comment
+              fetch("https://api.jailbreakchangelogs.xyz/comments/delete", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  comment_id: id,
+                  author: getCookie("token"),
+                }),
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Failed to delete comment");
+                  }
+                  return response.json();
+                })
+                .then((data) => {
+                  reloadcomments();
+                  // Add toast notification for successful deletion
+                  toastr.success("Comment deleted successfully!", "Success", {
+                    positionClass: "toast-bottom-right",
+                    timeOut: 3000,
+                    closeButton: true,
+                    progressBar: true,
+                  });
+                })
+                .catch((error) => {
+                  console.error("Error deleting comment:", error);
+                  // Add toast notification for deletion error
+                  toastr.error("Failed to delete comment", "Error", {
+                    positionClass: "toast-bottom-right",
+                    timeOut: 3000,
+                    closeButton: true,
+                    progressBar: true,
+                  });
+                });
+            });
 
             // Add items to menu
             actionsMenu.appendChild(editButton);
@@ -1816,7 +1892,6 @@ $(document).ready(function () {
 
         // Check if data contains a message like "No comments found"
         if (data.message && data.message === "No comments found") {
-          console.log(data.message);
           commentsList.innerHTML =
             "<p class='text-muted text-center'>Be the first to comment on this entry!</p>";
           // Hide the pagination if no comments are available
@@ -1848,6 +1923,89 @@ $(document).ready(function () {
   // Initialize Bootstrap dropdowns
   bootstrap.Dropdown.getOrCreateInstance($("#mobileChangelogDropdown")[0]);
   bootstrap.Dropdown.getOrCreateInstance($("#desktopChangelogDropdown")[0]);
+
+  // Add this modal HTML structure to your document body using jQuery
+  $("body").append(`
+    <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control" id="editCommentText" rows="3"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveCommentEdit">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+`);
+
+  // Initialize the modal
+  const editCommentModal = new bootstrap.Modal(
+    document.getElementById("editCommentModal")
+  );
+
+  // Add event listener for saving edited comment
+  document
+    .getElementById("saveCommentEdit")
+    .addEventListener("click", function () {
+      const commentId = document
+        .getElementById("editCommentText")
+        .getAttribute("data-comment-id");
+      const newContent = document
+        .getElementById("editCommentText")
+        .value.trim();
+      const token = getCookie("token");
+
+      if (newContent) {
+        fetch("https://api.jailbreakchangelogs.xyz/comments/edit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            comment_id: commentId,
+            content: newContent,
+            author: token,
+          }),
+        })
+          .then((response) => {
+            return response.json().then((data) => {
+              if (!response.ok) throw new Error("Failed to edit comment");
+              return data;
+            });
+          })
+          .then((data) => {
+            editCommentModal.hide();
+
+            toastr.success("Comment updated successfully!", "Success", {
+              positionClass: "toast-bottom-right",
+              timeOut: 3000,
+              closeButton: true,
+              progressBar: true,
+            });
+
+            // Reload comments with a slight delay to ensure server has processed the edit
+            setTimeout(() => {
+              reloadcomments();
+            }, 100);
+          })
+          .catch((error) => {
+            console.error("Error editing comment:", error);
+            toastr.error("Failed to update comment", "Error", {
+              positionClass: "toast-bottom-right",
+              timeOut: 3000,
+              closeButton: true,
+              progressBar: true,
+            });
+          });
+      }
+    });
 });
 
 function handleinvalidImage() {

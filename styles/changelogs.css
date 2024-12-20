@@ -670,11 +670,7 @@ body.menu-open {
   word-wrap: break-word; /* Break words that are too long */
   white-space: pre-wrap; /* Preserve spaces and line breaks */
   position: relative; /* Add relative positioning to the comment container */
-}
-
-.comment-item a {
-  text-decoration: none; /* Remove the default underline */
-  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  padding-right: 40px !important; /* Add padding to prevent text from going under the dots */
 }
 
 /* Comment Author Styling */
@@ -701,16 +697,19 @@ body.menu-open {
   gap: 8px;
   margin-top: 8px;
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 8px; /* Adjusted from 12px */
+  right: 8px; /* Adjusted from 12px */
   z-index: 2;
+  margin-left: 16px; /* Add space between text and actions */
 }
 
 /* Comment Action Menu Styles */
 .comment-actions {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 8px; /* Adjusted from 12px */
+  right: 8px; /* Adjusted from 12px */
+  margin-left: 16px; /* Add space between text and actions */
+  z-index: 2;
 }
 
 .comment-actions-toggle {
