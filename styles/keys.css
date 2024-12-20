@@ -91,6 +91,12 @@ body {
   color: var(--button-primary-text) !important; /* Primary button text color */
 }
 
+/* Custom checkbox styling when checked */
+.form-check-input:checked {
+  background-color: #124e66 !important;
+  border-color: #124e66 !important;
+}
+
 /* Adjust the body when menu is opened */
 
 /* Content Wrapper */
@@ -241,7 +247,6 @@ h1 {
 
 .container {
   border-radius: 15px; /* Rounded corners for the container */
- 
 }
 .small-button-cell {
   width: 200px; /* Set a specific width for the cell */
