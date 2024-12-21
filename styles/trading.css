@@ -79,6 +79,7 @@
 
 [data-bs-theme="dark"] #main-container {
   background-color: var(--common-bg-color);
+  padding-bottom: 80px;
 }
 
 .btn-primary {
@@ -420,13 +421,20 @@ available-item-card img {
   margin-bottom: 1rem;
 }
 
+/* Updated Search Input styling */
 .search-input {
   width: 100%;
   padding: 0.75rem 2.5rem;
   border: 1px solid var(--gray-300);
   border-radius: 6px;
-  background: var(--gray-100);
+  background: var(--common-bg-color);
   color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(18, 78, 102, 0.2);
 }
 
 /* Pagination styling */
@@ -628,6 +636,21 @@ available-item-card img {
 
 .trade-card .remove-btn:hover {
   background: rgba(255, 0, 0, 0.4);
+}
+
+/* New Confirm Trade Button Container */
+.confirm-trade-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--common-bg-color);
+  padding: 1rem;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Responsive Adjustments */

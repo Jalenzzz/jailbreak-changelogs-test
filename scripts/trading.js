@@ -75,56 +75,78 @@ function quickAddItem(itemName, itemType) {
     const items =
       selectedTradeType === "Offer" ? offeringItems : requestingItems;
 
-    // Check limits and duplicates
-    // ...existing validation code...
-
-    // Calculate the correct insertion index based on the clicked placeholder
-    // selectedPlaceholderIndex is absolute position (0-7)
-    // Adjust index based on how many slots are already filled
-    const insertionIndex = selectedPlaceholderIndex;
-
-    console.log("Inserting item:", {
-      item,
-      selectedIndex: selectedPlaceholderIndex,
-      insertAt: insertionIndex,
-      currentItems: [...items],
-      totalSlots: 8,
-      filledSlots: items.length,
-    });
+    // Only check if the specific slot is empty
+    if (items[selectedPlaceholderIndex]) {
+      // If slot is filled, try to find next empty slot
+      const nextEmptyIndex = findNextEmptySlot(items);
+      if (nextEmptyIndex !== -1) {
+        items[nextEmptyIndex] = item;
+        renderTradeItems(selectedTradeType);
+        updateTradeSummary();
+      } else {
+        toastr.error("No empty slots available");
+      }
+      return;
+    }
 
     // Insert at the exact selected position
-    items[insertionIndex] = item;
+    items[selectedPlaceholderIndex] = item;
 
     // Store type before clearing selection
     const currentType = selectedTradeType;
 
     // Clear selection state
-    document.querySelectorAll(".trade-card.empty-slot").forEach((slot) => {
-      slot.classList.remove("selected");
-    });
-    selectedPlaceholderIndex = -1;
-    selectedTradeType = null;
+    clearPlaceholderSelection();
 
     // Update UI
     renderTradeItems(currentType);
     updateTradeSummary();
-    displayAvailableItems(currentTradeType);
   } else {
-    // Original fallback behavior
-    addItemToTrade(item, currentTradeType === "offering" ? "Offer" : "Request");
+    // No placeholder selected, find first empty slot
+    const items =
+      currentTradeType === "offering" ? offeringItems : requestingItems;
+    const emptyIndex = findNextEmptySlot(items);
+
+    if (emptyIndex !== -1) {
+      items[emptyIndex] = item;
+      renderTradeItems(currentTradeType === "offering" ? "Offer" : "Request");
+      updateTradeSummary();
+    } else {
+      toastr.error(
+        `No empty slots available in ${
+          currentTradeType === "offering" ? "Offer" : "Request"
+        }`
+      );
+    }
   }
 }
 
-// Remove item from trade
+// Add new helper function to clear selection
+function clearPlaceholderSelection() {
+  document.querySelectorAll(".trade-card.empty-slot").forEach((slot) => {
+    slot.classList.remove("selected");
+  });
+  selectedPlaceholderIndex = -1;
+  selectedTradeType = null;
+}
+
+// Add helper function to find next empty slot
+function findNextEmptySlot(items) {
+  for (let i = 0; i < 8; i++) {
+    if (!items[i]) return i;
+  }
+  return -1;
+}
+
+// Update remove item function to maintain slot positions
 function removeItem(index, tradeType) {
   const items = tradeType === "Offer" ? offeringItems : requestingItems;
-  items.splice(index, 1);
+  // Instead of splicing, set the item at index to null to maintain positions
+  delete items[index];
+
+  // Update UI
   renderTradeItems(tradeType);
   updateTradeSummary();
-
-  // Refresh available items display
-  displayAvailableItems("offering");
-  displayAvailableItems("requesting");
 }
 
 // Function to toggle available items display
@@ -164,17 +186,12 @@ function toggleAvailableItems(type) {
 // Function to display available items
 function displayAvailableItems(type) {
   const container = document.getElementById("available-items-list");
-  const usedItems = type === "offering" ? offeringItems : requestingItems;
   const searchInput = document.getElementById("item-search");
   const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
 
-  // Filter items
+  // Filter items only by search term, not by used status
   filteredItems = allItems.filter((item) => {
-    const nameMatch = item.name.toLowerCase().includes(searchTerm);
-    const notInUse = !usedItems.some(
-      (usedItem) => usedItem.name === item.name && usedItem.type === item.type
-    );
-    return nameMatch && notInUse;
+    return item.name.toLowerCase().includes(searchTerm);
   });
 
   // Calculate pagination
@@ -269,7 +286,8 @@ function handleSearch(type) {
 // Format value for display
 function formatValue(value) {
   if (!value) return "0";
-  return value.toLocaleString();
+  const parsedValue = parseValue(value);
+  return formatLargeNumber(parsedValue);
 }
 
 let selectedPlaceholderIndex = -1;
@@ -389,35 +407,85 @@ function renderTradeItems(tradeType) {
   }
 }
 
+// Add these helper functions for value parsing
+function parseValue(value) {
+  if (typeof value === "number") return value;
+  if (!value) return 0;
+
+  value = value.toString().toLowerCase();
+  if (value.includes("k")) {
+    return parseFloat(value) * 1000;
+  } else if (value.includes("m")) {
+    return parseFloat(value) * 1000000;
+  } else if (value.includes("b")) {
+    return parseFloat(value) * 1000000000;
+  }
+  return parseFloat(value) || 0;
+}
+
+// Update the formatLargeNumber function to show full numbers
+function formatLargeNumber(num) {
+  return num.toLocaleString("fullwide", { useGrouping: true });
+}
+
 // Update trade summary
 function updateTradeSummary() {
-  const offerValue = offeringItems.reduce(
-    (sum, item) => sum + (item.cash_value || 0),
+  const offerCashValue = Object.values(offeringItems).reduce(
+    (sum, item) => sum + (item ? parseValue(item.cash_value || 0) : 0),
     0
   );
-  const requestValue = requestingItems.reduce(
-    (sum, item) => sum + (item.cash_value || 0),
+  const offerDupedValue = Object.values(offeringItems).reduce(
+    (sum, item) => sum + (item ? parseValue(item.duped_value || 0) : 0),
     0
   );
+  const requestCashValue = Object.values(requestingItems).reduce(
+    (sum, item) => sum + (item ? parseValue(item.cash_value || 0) : 0),
+    0
+  );
+  const requestDupedValue = Object.values(requestingItems).reduce(
+    (sum, item) => sum + (item ? parseValue(item.duped_value || 0) : 0),
+    0
+  );
+
+  const cashDifference = offerCashValue - requestCashValue;
+  const dupedDifference = offerDupedValue - requestDupedValue;
 
   document.getElementById("trade-summary").innerHTML = `
     <div class="card">
       <div class="card-body">
         <h5>Trade Summary</h5>
         <div class="d-flex justify-content-between mb-2">
-          <span>Offering Value:</span>
-          <span>${formatValue(offerValue)}</span>
+          <span>Offering Cash Value:</span>
+          <span>${formatLargeNumber(offerCashValue)}</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
-          <span>Requesting Value:</span>
-          <span>${formatValue(requestValue)}</span>
+          <span>Offering Duped Value:</span>
+          <span>${formatLargeNumber(offerDupedValue)}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span>Requesting Cash Value:</span>
+          <span>${formatLargeNumber(requestCashValue)}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span>Requesting Duped Value:</span>
+          <span>${formatLargeNumber(requestDupedValue)}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span>Cash Value Difference:</span>
+          <span class="${cashDifference >= 0 ? "text-success" : "text-danger"}">
+            ${cashDifference >= 0 ? "+" : ""}${formatLargeNumber(
+    cashDifference
+  )}
+          </span>
         </div>
         <div class="d-flex justify-content-between">
-          <span>Difference:</span>
+          <span>Duped Value Difference:</span>
           <span class="${
-            offerValue >= requestValue ? "text-success" : "text-danger"
+            dupedDifference >= 0 ? "text-success" : "text-danger"
           }">
-            ${formatValue(Math.abs(offerValue - requestValue))}
+            ${dupedDifference >= 0 ? "+" : ""}${formatLargeNumber(
+    dupedDifference
+  )}
           </span>
         </div>
       </div>
@@ -430,27 +498,17 @@ loadItems();
 
 // Enable/Disable Confirm Trade Button
 function toggleConfirmButton() {
-  const confirmTradeButton = document.getElementById("confirm-trade");
-  if (offeringItems.length > 0 && requestingItems.length > 0) {
+  const hasOfferingItems = Object.values(offeringItems).some((item) => item);
+  const hasRequestingItems = Object.values(requestingItems).some(
+    (item) => item
+  );
+
+  if (hasOfferingItems && hasRequestingItems) {
     confirmTradeButton.removeAttribute("disabled");
   } else {
     confirmTradeButton.setAttribute("disabled", "true");
   }
 }
-
-// Confirm Trade
-document.getElementById("confirm-trade").addEventListener("click", () => {
-  if (offeringItems.length > 0 && requestingItems.length > 0) {
-    toastr.success("Trade has been confirmed!");
-
-    // Clear items after confirmation
-    offeringItems.length = 0;
-    requestingItems.length = 0;
-    renderTradeItems("Offer");
-    renderTradeItems("Request");
-    toggleConfirmButton();
-  }
-});
 
 // Add event listeners when document is loaded
 document.addEventListener("DOMContentLoaded", () => {
