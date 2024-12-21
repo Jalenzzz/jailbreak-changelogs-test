@@ -668,15 +668,12 @@ $(document).ready(function () {
     // Get the current page URL
     const currentPageUrl = window.location.href;
 
-    // Get the sidebar image URL
-    const sidebarImageUrl = $("#sidebarImage").attr("src");
-
     // Process the content into an array
     let processedContent = [];
 
     // Add the title (h1) with '#' before it
     const title = changelogContent.find("h1.display-4").first().text().trim();
-    processedContent.push("# " + title, ""); // '#' added before the title, Empty string for a blank line after title
+    processedContent.push("# " + title, "");
 
     // Process other elements in the changelog
     changelogContent.children().each(function () {
@@ -685,9 +682,27 @@ $(document).ready(function () {
         // Add two newlines before each h2 to separate sections
         processedContent.push("", "## " + $elem.text().trim(), "");
       } else if ($elem.is("p.lead")) {
-        processedContent.push($elem.text().trim()); // Add lead paragraph text
+        // Handle italicized text in paragraphs
+        let text = $elem.html();
+        // Replace italic spans with underscore-wrapped text
+        text = text.replace(
+          /<span style="font-style: italic;[^"]*">([^<]+)<\/span>/g,
+          "_$1_"
+        );
+        // Remove any other HTML tags and trim
+        text = $("<div>").html(text).text().trim();
+        processedContent.push(text);
       } else if ($elem.hasClass("d-flex")) {
-        const text = $elem.find(".lead").text().trim();
+        const $leadElem = $elem.find(".lead");
+        // Handle italicized text in list items
+        let text = $leadElem.html();
+        // Replace italic spans with underscore-wrapped text
+        text = text.replace(
+          /<span style="font-style: italic;[^"]*">([^<]+)<\/span>/g,
+          "_$1_"
+        );
+        // Remove any other HTML tags and trim
+        text = $("<div>").html(text).text().trim();
         if ($elem.find(".bi-arrow-return-right").length > 0) {
           // Inline item indicator
           processedContent.push("  - " + text);
@@ -826,6 +841,11 @@ $(document).ready(function () {
 
   // Function to convert Markdown text to HTML
   const convertMarkdownToHtml = (markdown) => {
+    // Handle inline italic formatting with color matching lead paragraphs
+    markdown = markdown.replace(
+      /\b_([^_]+)_\b/g,
+      '<span style="font-style: italic; color: var(--content-paragraph);">$1</span>'
+    );
     return markdown
       .split("\n") // Split the markdown into lines
       .map((line) => {
