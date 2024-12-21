@@ -1,225 +1,644 @@
 /* Dark Theme Colors */
 [data-bs-theme="dark"] body {
-    --common-bg-color: #2e3944; /* Dark background */
-    --content-h1: #d3d9d4; /* Lighter Blue for Dark Mode */
-    --content-h2: #748d92; /* Softer Red for Dark Mode */
-    --content-h3: #748d92; /* Light Gray for H3 and Paragraph Text */
-    --content-paragraph: #d3d9d4; /* Light Gray for Paragraphs */
-    --content-bullet: #748d92; /* Lighter Blue for Bullets */
-    --content-sub-bullet: #748d92; /* Softer Red for Bullets */
-    --text-color: #ffffff; /* White Text */
-  
-    --header-text: #ffffff; /* White for Header Text */
-    --button-primary-bg: #124e66; /* Dark Blue for Primary Button Background */
-    --button-primary-text: #eeeeee; /* White for Primary Button Text */
-    --button-primary-hover-bg: #212a31; /* Darker Blue for Hover */
-    /* Mention Colors */
-    --mention-color: #748d92; /* Teal color for Mentions */
-    --mention-bg: #212a31; /* Dark blue-gray for Mention Background */
-    --at-color: #d3d9d4; /* Bright teal for '@' Symbol */
-    --username-color: #76abae; /* Soft cyan for Username */
-    --mention-hover-bg: #124e66; /* Hover Background Color for Mentions */
-  
-    --highlight-bg: rgba(
-      255,
-      165,
-      0,
-      0.4
-    ); /* Semi-transparent Orange for Highlights */
-    --highlight-text: #ffffff; /* White for Highlighted Text */
-    --selection-bg: #4682b4; /* Steel Blue for Selection Background */
-    --selection-text: #ffffff; /* White for Selection Text */
-    --glow-color: #4b4b4b; /* Dark Gray for Glow Effects */
-  
-    /* Gray Scale */
-    --gray-100: #333333; /* Very Dark Gray */
-    --gray-200: #444444; /* Darker Gray */
-    --gray-300: #555555; /* Dark Gray */
-    --gray-400: #666666; /* Gray */
-    --gray-500: #777777; /* Medium Gray */
-    --gray-600: #888888; /* Slate Gray */
-    --gray-700: #999999; /* Light Slate Gray */
-    --gray-800: #aaaaaa; /* Light Gray */
-    --gray-900: #bbbbbb; /* Very Light Gray */
+  --common-bg-color: #212a31;
+  --secondary-bg: #2e3944;
+  --accent-color: #124e66;
+  --muted-text: #748d92;
+  --main-text: #d3d9d4;
+
+  /* Update existing color variables */
+  --text-color: var(--main-text);
+  --header-text: var(--main-text);
+  --button-primary-bg: var(--accent-color);
+  --button-primary-hover-bg: var(--secondary-bg);
+  --gray-100: var(--secondary-bg);
+  --gray-300: var(--accent-color);
+  --gray-600: var(--muted-text);
+
+  --content-h1: #d3d9d4; /* Lighter Blue for Dark Mode */
+  --content-h2: #748d92; /* Softer Red for Dark Mode */
+  --content-h3: #748d92; /* Light Gray for H3 and Paragraph Text */
+  --content-paragraph: #d3d9d4; /* Light Gray for Paragraphs */
+  --content-bullet: #748d92; /* Lighter Blue for Bullets */
+  --content-sub-bullet: #748d92; /* Softer Red for Bullets */
+
+  --button-primary-text: #eeeeee; /* White for Primary Button Text */
+  /* Mention Colors */
+  --mention-color: #748d92; /* Teal color for Mentions */
+  --mention-bg: #212a31; /* Dark blue-gray for Mention Background */
+  --at-color: #d3d9d4; /* Bright teal for '@' Symbol */
+  --username-color: #76abae; /* Soft cyan for Username */
+  --mention-hover-bg: #124e66; /* Hover Background Color for Mentions */
+
+  --highlight-bg: rgba(
+    255,
+    165,
+    0,
+    0.4
+  ); /* Semi-transparent Orange for Highlights */
+  --highlight-text: #ffffff; /* White for Highlighted Text */
+  --selection-bg: #4682b4; /* Steel Blue for Selection Background */
+  --selection-text: #ffffff; /* White for Selection Text */
+  --glow-color: #4b4b4b; /* Dark Gray for Glow Effects */
+
+  /* Gray Scale */
+  --gray-200: #444444; /* Darker Gray */
+  --gray-400: #666666; /* Gray */
+  --gray-500: #777777; /* Medium Gray */
+  --gray-700: #999999; /* Light Slate Gray */
+  --gray-800: #aaaaaa; /* Light Gray */
+  --gray-900: #bbbbbb; /* Very Light Gray */
+}
+
+[data-bs-theme="dark"] #loading-overlay {
+  background-color: #2e3944; /* Dark Background for Loading Overlay */
+}
+[data-bs-theme="dark"] body {
+  background-color: var(--common-bg-color);
+}
+
+/* Search Icon Styling */
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  color: #748d92;
+  font-size: 1.2rem;
+  pointer-events: none;
+}
+
+/* Clear Button Styling */
+#clear-search-button {
+  color: #d3d9d4;
+}
+
+#clear-search-button:hover {
+  color: #ffffff;
+}
+
+[data-bs-theme="dark"] #main-container {
+  background-color: var(--common-bg-color);
+}
+
+.btn-primary {
+  background-color: var(
+    --button-primary-bg
+  ) !important; /* Primary button background */
+  border-color: var(--button-primary-bg) !important; /* Primary button border */
+  color: var(--button-primary-text) !important; /* Primary button text color */
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active {
+  background-color: var(
+    --button-primary-hover-bg
+  ) !important; /* Hover state for primary button */
+  border-color: var(
+    --button-primary-hover-bg
+  ) !important; /* Border color on hover */
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 0.2rem rgba(var(--glow-color), 0.5); /* Glow effect on focus */
+}
+
+/* Text Selection Styles */
+::selection {
+  background-color: var(
+    --selection-bg
+  ) !important; /* Background color for selected text */
+  color: var(--selection-text) !important; /* Text color for selected text */
+}
+
+/* SVG Icon Styles */
+.svg-icon {
+  fill: var(--text-color) !important; /* Fill color for SVG icons */
+  stroke: var(--button-primary-bg) !important; /* Stroke color for SVG icons */
+}
+
+/* Semi-Transparent Background */
+.semi-transparent-bg {
+  background-color: rgba(
+    var(--glow-color),
+    0.5
+  ) !important; /* Semi-transparent background */
+}
+
+/* Custom Spinner Styles */
+.custom-spinner {
+  width: 50px;
+  height: 50px;
+  border-top-color: #31b1ff; /* Blue color for top border */
+  border-right-color: #31b1ff; /* Blue color for right border */
+  border-bottom-color: #ff341c; /* Orange color for bottom border */
+  border-left-color: #ff341c; /* Orange color for left border */
+}
+
+/* Loading Overlay Styles */
+#loading-overlay {
+  position: fixed; /* Fixed positioning */
+  top: 0; /* Align to top */
+  left: 0; /* Align to left */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  display: none; /* Hidden by default */
+  justify-content: center; /* Center items horizontally */
+  align-items: center; /* Center items vertically */
+  z-index: 9999; /* High stacking context */
+  background-color: #ffffff; /* White background */
+}
+
+#loading-overlay.show {
+  display: flex; /* Enable flexbox when shown */
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Center items vertically */
+  align-items: center; /* Center items horizontally */
+  height: 100vh; /* Full height for overlay */
+}
+
+/* Loading Logo Styles */
+#loading-overlay .loading-logo {
+  width: 300px; /* Adjust width for logo */
+  height: auto; /* Maintain aspect ratio */
+}
+
+h1 {
+  color: var(--content-h1); /* Color for h1 headings */
+  font-family: "Luckiest Guy", Arial, Helvetica, sans-serif; /* Font family for h1 */
+  border-bottom: 2px solid var(--content-h1); /* Bottom border for h1 */
+  font-size: 0.25rem;
+}
+
+/* Row Styles */
+.row {
+  margin-left: 0; /* Reset left margin */
+  margin-right: 0; /* Reset right margin */
+}
+
+/* Body Text Styles */
+body,
+p,
+span {
+  color: var(--text-color); /* Default text color */
+}
+
+/* Remove Outline for All Elements */
+* {
+  outline: none; /* Remove default outline */
+}
+
+/* Focus Styles for Interactive Elements */
+button:focus,
+a:focus,
+input:focus,
+select:focus {
+  box-shadow: none; /* Remove box shadow on focus */
+}
+
+/* Button Styles */
+button {
+  padding: 8px 16px; /* Padding for buttons */
+  border: none; /* No border */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .custom-search-item {
+    padding: 8px; /* Adjust padding for mobile */
   }
-  
-  [data-bs-theme="dark"] #loading-overlay {
-    background-color: #2e3944; /* Dark Background for Loading Overlay */
+  .quick-links .btn-link {
+    font-size: 0.9rem; /* Font size for quick links */
   }
-  [data-bs-theme="dark"] body {
-    background-color: var(--common-bg-color);
+  video {
+    width: 100%;
+    height: auto;
   }
-  
-  /* Search Icon Styling */
-  .search-icon {
-    position: absolute;
-    top: 50%;
-    left: 0.75rem;
-    transform: translateY(-50%);
-    color: #748D92;
-    font-size: 1.2rem;
-    pointer-events: none;
-  }
-  
-  /* Clear Button Styling */
-  #clear-search-button {
-    color: #D3D9D4;
-  }
-  
-  #clear-search-button:hover {
-    color: #ffffff;
-  }
-  
-  
-  [data-bs-theme="dark"] #main-container {
-    background-color: var(--common-bg-color);
-  }
-  
-  .btn-primary {
-    background-color: var(
-      --button-primary-bg
-    ) !important; /* Primary button background */
-    border-color: var(--button-primary-bg) !important; /* Primary button border */
-    color: var(--button-primary-text) !important; /* Primary button text color */
-  }
-  
-  .btn-primary:hover,
-  .btn-primary:focus,
-  .btn-primary:active,
-  .btn-primary.active {
-    background-color: var(
-      --button-primary-hover-bg
-    ) !important; /* Hover state for primary button */
-    border-color: var(
-      --button-primary-hover-bg
-    ) !important; /* Border color on hover */
-  }
-  
-  .btn-primary:focus {
-    box-shadow: 0 0 0 0.2rem rgba(var(--glow-color), 0.5); /* Glow effect on focus */
-  }
-  
-  /* Text Selection Styles */
-  ::selection {
-    background-color: var(
-      --selection-bg
-    ) !important; /* Background color for selected text */
-    color: var(--selection-text) !important; /* Text color for selected text */
-  }
-  
-  
-  /* SVG Icon Styles */
-  .svg-icon {
-    fill: var(--text-color) !important; /* Fill color for SVG icons */
-    stroke: var(--button-primary-bg) !important; /* Stroke color for SVG icons */
-  }
-  
-  /* Semi-Transparent Background */
-  .semi-transparent-bg {
-    background-color: rgba(
-      var(--glow-color),
-      0.5
-    ) !important; /* Semi-transparent background */
-  }
-  
-  /* Custom Spinner Styles */
-  .custom-spinner {
-    width: 50px;
-    height: 50px;
-    border-top-color: #31b1ff; /* Blue color for top border */
-    border-right-color: #31b1ff; /* Blue color for right border */
-    border-bottom-color: #ff341c; /* Orange color for bottom border */
-    border-left-color: #ff341c; /* Orange color for left border */
-  }
-  
-  /* Loading Overlay Styles */
-  #loading-overlay {
-    position: fixed; /* Fixed positioning */
-    top: 0; /* Align to top */
-    left: 0; /* Align to left */
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    display: none; /* Hidden by default */
-    justify-content: center; /* Center items horizontally */
-    align-items: center; /* Center items vertically */
-    z-index: 9999; /* High stacking context */
-    background-color: #ffffff; /* White background */
-  }
-  
-  #loading-overlay.show {
-    display: flex; /* Enable flexbox when shown */
-    flex-direction: column; /* Stack items vertically */
-    justify-content: center; /* Center items vertically */
-    align-items: center; /* Center items horizontally */
-    height: 100vh; /* Full height for overlay */
-  }
-  
-  /* Loading Logo Styles */
+
   #loading-overlay .loading-logo {
-    width: 300px; /* Adjust width for logo */
-    height: auto; /* Maintain aspect ratio */
+    width: 200px;
+  }
+  .custom-spinner {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Trade Items Display */
+.trade-container {
+  background: var(--common-bg-color);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.trade-container h3 {
+  color: var(--content-h3);
+  margin-bottom: 20px;
+}
+
+.trade-item {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+}
+
+.trade-item img {
+  height: 100px;
+  object-fit: contain;
+  background: var(--common-bg-color);
+  padding: 10px;
+}
+
+/* Trade Summary */
+#trade-summary .card {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-300);
+}
+
+#trade-summary .card-body {
+  color: var(--text-color);
+}
+
+/* Add Item Buttons */
+.btn-add-item {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.btn-add-item:hover {
+  background-color: var(--button-primary-hover-bg);
+}
+
+/* Search Input */
+#itemSearch {
+  background-color: var(--gray-100);
+  border: 1px solid var(--gray-300);
+  color: var(--text-color);
+  padding: 10px;
+  border-radius: 6px;
+}
+
+#itemSearch:focus {
+  outline: none;
+  border-color: var(--button-primary-bg);
+  box-shadow: 0 0 0 2px rgba(var(--button-primary-bg), 0.2);
+}
+
+/* Available Items Section */
+.available-items {
+  background: var(--gray-100);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.available-items h4 {
+  color: var(--content-h3);
+  font-size: 1.2rem;
+}
+
+.available-item-card {
+  height: auto;
+  margin-bottom: 0.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: var(--gray-100);
+}
+
+.available-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.available-item-card .card-header {
+  background: var(--button-primary-bg);
+  padding: 0.5rem;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: none;
+}
+
+available-item-card img {
+  height: 100px;
+  width: 100%;
+  object-fit: contain;
+  padding: 0.5rem;
+  background: var(--common-bg-color);
+}
+
+.available-item-card .card-body {
+  padding: 0.5rem;
+}
+
+.available-item-card .info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.available-item-card .info-label {
+  color: var(--gray-600);
+  font-weight: 500;
+}
+
+.available-item-card .info-value {
+  color: var(--text-color);
+}
+
+/* Available Items Toggle Button Styles */
+.available-items-toggle {
+  color: var(--text-color);
+  text-decoration: none;
+  padding: 10px;
+  transition: all 0.2s ease;
+}
+
+.available-items-toggle:hover {
+  background: var(--gray-100);
+  border-radius: 6px;
+}
+
+.available-items-toggle h4 {
+  margin: 0;
+  color: var(--content-h3);
+  font-size: 1.2rem;
+}
+
+/* Available Items Toggle Button Styles */
+.available-items-toggle {
+  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s ease;
+  min-width: 200px;
+}
+
+.available-items-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Empty Slot Card Styles */
+.card.empty-slot {
+  border: 2px dashed var(--gray-300);
+  background: var(--gray-100);
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.card.empty-slot:hover {
+  opacity: 1;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .trade-container {
+    padding: 10px;
   }
 
-  h1 {
-    color: var(--content-h1); /* Color for h1 headings */
-    font-family: "Luckiest Guy", Arial, Helvetica, sans-serif; /* Font family for h1 */
-    border-bottom: 2px solid var(--content-h1); /* Bottom border for h1 */
-    font-size: 0.25rem;
+  .col-md-3 {
+    width: 50%;
   }
-  
-  /* Row Styles */
-  .row {
-    margin-left: 0; /* Reset left margin */
-    margin-right: 0; /* Reset right margin */
-  }
+}
 
-  /* Body Text Styles */
-  body,
-  p,
-  span {
-    color: var(--text-color); /* Default text color */
+/* Search bar styling */
+.search-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 2.5rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 6px;
+  background: var(--gray-100);
+  color: var(--text-color);
+}
+
+/* Pagination styling */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+  gap: 0.5rem;
+}
+
+.pagination-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--gray-300);
+  background: var(--gray-100);
+  color: var(--text-color);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  margin: 0 1rem;
+  color: var(--text-color);
+}
+
+/* Adjust available items grid */
+.available-item-card {
+  height: auto;
+  margin-bottom: 0.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: var(--gray-100);
+}
+
+.available-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.available-item-card .card-header {
+  background: var(--button-primary-bg);
+  padding: 0.5rem;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: none;
+}
+
+.available-item-card img {
+  height: 100px;
+  width: 100%;
+  object-fit: contain;
+  padding: 0.5rem;
+  background: var(--common-bg-color);
+}
+
+.available-item-card .card-body {
+  padding: 0.5rem;
+}
+
+.available-item-card .info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.available-item-card .info-label {
+  color: var(--gray-600);
+  font-weight: 500;
+}
+
+.available-item-card .info-value {
+  color: var(--text-color);
+}
+
+/* Trade Cards Container */
+.trade-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* Trade Card Base Styles */
+.trade-card {
+  position: relative;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.trade-card .card-img-container {
+  position: relative;
+  padding-top: 100%; /* 1:1 Aspect ratio */
+  overflow: hidden;
+}
+
+.trade-card .card-img-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 1rem;
+  background: var(--common-bg-color);
+}
+
+.trade-card .card-body {
+  padding: 1rem;
+  flex: 1;
+}
+
+/* Empty Slot Styles */
+.trade-card.empty-slot {
+  border: 2px dashed var(--muted-text);
+  background: var(--secondary-bg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 280px; /* Ensure consistent height */
+}
+
+.trade-card.empty-slot.selected,
+.trade-card.empty-slot:hover {
+  border-color: var(--accent-color);
+  background-image: url("/assets/add_item.png");
+  background-size: 60%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.trade-card.empty-slot.selected .empty-slot-content,
+.trade-card.empty-slot:hover .empty-slot-content {
+  opacity: 0;
+}
+
+.empty-slot-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.empty-slot-content i {
+  font-size: 2rem;
+  color: var(--muted-text);
+  margin-bottom: 0.5rem;
+}
+
+.empty-slot-content span {
+  color: var(--muted-text);
+  font-size: 0.9rem;
+}
+
+/* Remove Button Styles */
+.trade-card .remove-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(255, 0, 0, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.trade-card:hover .remove-btn {
+  opacity: 1;
+}
+
+.trade-card .remove-btn:hover {
+  background: rgba(255, 0, 0, 0.4);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .trade-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
-  
-  /* Remove Outline for All Elements */
-  * {
-    outline: none; /* Remove default outline */
+}
+
+@media (max-width: 576px) {
+  .trade-grid {
+    grid-template-columns: repeat(1, 1fr);
   }
-  
-  /* Focus Styles for Interactive Elements */
-  button:focus,
-  a:focus,
-  input:focus,
-  select:focus {
-    box-shadow: none; /* Remove box shadow on focus */
-  }
-  
-  /* Button Styles */
-  button {
-    padding: 8px 16px; /* Padding for buttons */
-    border: none; /* No border */
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor */
-    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
-  }
-  
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
-    .custom-search-item {
-      padding: 8px; /* Adjust padding for mobile */
-    }
-    .quick-links .btn-link {
-      font-size: 0.9rem; /* Font size for quick links */
-    }
-    video {
-      width: 100%;
-      height: auto;
-  }
-  
-    #loading-overlay .loading-logo {
-      width: 200px;
-    }
-    .custom-spinner {
-      width: 30px;
-      height: 30px;
-    }
-  }
+}
