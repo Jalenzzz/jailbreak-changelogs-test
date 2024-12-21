@@ -98,13 +98,25 @@ app.get("/changelogs/:changelog", async (req, res) => {
     const data = await response.json();
     const { title, image_url } = data;
 
-    res.render("changelogs", {
+    // Add embed_color to the response data
+    const responseData = {
       title,
       image_url,
       logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Changelogs_Logo.webp",
       logoAlt: "Changelogs Page Logo",
       changelogId,
-    });
+      embed_color: 0x134d64, // Hex color code for the Discord embed
+    };
+
+    // If it's a Discord bot request (check for a specific header or query param)
+    if (
+      req.headers["user-agent"]?.includes("DiscordBot") ||
+      req.query.format === "discord"
+    ) {
+      res.json(responseData);
+    } else {
+      res.render("changelogs", responseData);
+    }
   } catch (error) {
     console.error("Error fetching changelog data:", error);
     res.status(500).send("Internal Server Error");
