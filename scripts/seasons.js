@@ -68,6 +68,17 @@ $(document).ready(function () {
     const cachedSeasons = getCachedData("allSeasons");
     const cachedRewards = getCachedData("allRewards");
 
+    // Add latest season fetch
+    const latestSeasonPromise = fetch(
+      "https://api.jailbreakchangelogs.xyz/seasons/latest",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    ).then((response) => response.json());
+
     const seasonsPromise = cachedSeasons
       ? Promise.resolve(cachedSeasons)
       : fetchAndCacheAllSeasons();
@@ -75,7 +86,7 @@ $(document).ready(function () {
       ? Promise.resolve(cachedRewards)
       : fetchAndCacheAllRewards();
 
-    return Promise.all([seasonsPromise, rewardsPromise]);
+    return Promise.all([seasonsPromise, rewardsPromise, latestSeasonPromise]);
   }
 
   // Function to populate the season dropdown menu
@@ -325,15 +336,12 @@ $(document).ready(function () {
 
   // Modify the initial data loading
   loadAllData()
-    .then(([seasonDescriptions, allRewards]) => {
+    .then(([seasonDescriptions, allRewards, latestSeason]) => {
       populateSeasonDropdown(seasonDescriptions);
       const pathSegments = window.location.pathname.split("/");
       let seasonNumber = pathSegments[pathSegments.length - 1];
 
-      const latestSeason = Math.max(
-        ...seasonDescriptions.map((desc) => desc.season)
-      );
-
+      // Use latest season from API instead of calculating
       if (
         !seasonNumber ||
         isNaN(seasonNumber) ||
@@ -341,8 +349,8 @@ $(document).ready(function () {
           (desc) => desc.season === parseInt(seasonNumber)
         )
       ) {
-        // If invalid, set seasonNumber to the latest season
-        seasonNumber = latestSeason.toString();
+        // If invalid, set seasonNumber to the latest season from API
+        seasonNumber = latestSeason.season.toString();
 
         // Update the URL to include the latest season in the path
         const newUrl = `${window.location.origin}/seasons/${seasonNumber}`;

@@ -913,37 +913,53 @@ $(document).ready(function () {
       populateChangelogDropdown(data);
 
       const pathSegments = window.location.pathname.split("/");
-      const changelogId = pathSegments[pathSegments.length - 1];
+      let changelogId = pathSegments[pathSegments.length - 1];
 
-      let selectedChangelog = changelogId
-        ? changelogsData.find((cl) => cl.id == changelogId)
-        : data[0];
+      // Fetch latest changelog for fallback
+      fetch("https://api.jailbreakchangelogs.xyz/changelogs/latest", {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      })
+        .then((response) => response.json())
+        .then((latestData) => {
+          // If invalid ID or not found, use latest
+          if (!changelogId || !data.some((cl) => cl.id == changelogId)) {
+            changelogId = latestData.id;
+            // Update URL to match the latest changelog
+            history.replaceState({}, "", `/changelogs/${changelogId}`);
+          }
 
-      // If changelog wasn't found, use latest
-      if (!selectedChangelog) {
-        selectedChangelog = data[0];
-        // Update URL to match the latest changelog
-        history.replaceState({}, "", `/changelogs/${selectedChangelog.id}`);
-      }
+          const selectedChangelog = data.find((cl) => cl.id == changelogId);
+          if (selectedChangelog) {
+            // Update breadcrumb and display changelog
+            document.querySelector('nav[aria-label="breadcrumb"]').innerHTML = `
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/changelogs">Changelogs</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Changelog ${selectedChangelog.id}</li>
+              </ol>
+            `;
 
-      // Update breadcrumb
-      const breadcrumbHtml = `
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/changelogs">Changelogs</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Changelog ${selectedChangelog.id}</li>
-        </ol>
-      `;
-      document.querySelector('nav[aria-label="breadcrumb"]').innerHTML =
-        breadcrumbHtml;
+            displayChangelog(selectedChangelog);
 
-      displayChangelog(selectedChangelog);
-
-      // Toggle button visibility
-      desktopLatestChangelogBtn.style.display =
-        selectedChangelog.id === data[0].id ? "none" : "block";
-      mobileLatestChangelogBtn.style.display =
-        selectedChangelog.id === data[0].id ? "none" : "block";
+            // Toggle button visibility based on if showing latest
+            const isLatest = selectedChangelog.id === latestData.id;
+            desktopLatestChangelogBtn.style.display = isLatest
+              ? "none"
+              : "block";
+            mobileLatestChangelogBtn.style.display = isLatest
+              ? "none"
+              : "block";
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching latest changelog:", error);
+          // Fallback to first changelog in list if latest fetch fails
+          const selectedChangelog = data[0];
+          displayChangelog(selectedChangelog);
+        });
     }
 
     hideLoadingOverlay();

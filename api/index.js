@@ -155,18 +155,54 @@ app.get("/changelogs/:changelog", async (req, res) => {
   }
 });
 
-app.get("/seasons", (req, res) => {
-  // Redirect to a default season if no ID is provided in the URL
-  const defaultSeasonId = 24; // Set your default season ID here
-  res.redirect(`/seasons/${defaultSeasonId}`);
+app.get("/seasons", async (req, res) => {
+  try {
+    const latestResponse = await fetch(
+      "https://api.jailbreakchangelogs.xyz/seasons/latest",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    );
+
+    if (!latestResponse.ok) {
+      throw new Error("Failed to fetch latest season");
+    }
+
+    const latestData = await latestResponse.json();
+    res.redirect(`/seasons/${latestData.season}`);
+  } catch (error) {
+    console.error("Error fetching latest season:", error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 app.get("/seasons/:season", async (req, res) => {
-  let seasonId = req.params.season || 1; // Default to season 1 if no ID is provided
+  let seasonId = req.params.season;
   const apiUrl = `https://api.jailbreakchangelogs.xyz/seasons/get?season=${seasonId}`;
   const rewardsUrl = `https://api.jailbreakchangelogs.xyz/rewards/get?season=${seasonId}`;
 
   try {
+    // First fetch the latest season for fallback
+    const latestResponse = await fetch(
+      "https://api.jailbreakchangelogs.xyz/seasons/latest",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    );
+
+    if (!latestResponse.ok) {
+      throw new Error("Failed to fetch latest season");
+    }
+
+    const latestData = await latestResponse.json();
+
+    // Then fetch the requested season
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
@@ -174,17 +210,12 @@ app.get("/seasons/:season", async (req, res) => {
         Origin: "https://jailbreakchangelogs.xyz",
       },
     });
-    if (!response.ok) {
-      return res.render("seasons", {
-        season: "???",
-        title: "Season not found",
-        image_url:
-          "https://cdn.jailbreakchangelogs.xyz/images/changelogs/346.webp",
-        logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Seasons_Logo.webp",
-        logoAlt: "Jailbreak Seasons Logo",
-        seasonId,
-      });
+
+    if (response.status === 404 || !response.ok) {
+      // Redirect to latest season if requested one doesn't exist
+      return res.redirect(`/seasons/${latestData.season}`);
     }
+
     const rewardsResponse = await fetch(rewardsUrl, {
       method: "GET",
       headers: {
