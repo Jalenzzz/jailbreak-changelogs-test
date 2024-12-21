@@ -1,8 +1,76 @@
+/* Dark Theme Colors */
+[data-bs-theme="dark"] body {
+  --common-bg-color: #2e3944; /* Dark background */
+  --content-h1: #d3d9d4; /* Lighter Blue for Dark Mode */
+  --content-h2: #748d92; /* Softer Red for Dark Mode */
+  --content-h3: #748d92; /* Light Gray for H3 and Paragraph Text */
+  --content-paragraph: #d3d9d4; /* Light Gray for Paragraphs */
+  --content-bullet: #748d92; /* Lighter Blue for Bullets */
+  --content-sub-bullet: #748d92; /* Softer Red for Bullets */
+  --text-color: #ffffff; /* White Text */
+
+  --header-text: #ffffff; /* White for Header Text */
+  --button-primary-bg: #124e66; /* Dark Blue for Primary Button Background */
+  --button-primary-text: #eeeeee; /* White for Primary Button Text */
+  --button-primary-hover-bg: #212a31; /* Darker Blue for Hover */
+  /* Mention Colors */
+  --mention-color: #748d92; /* Teal color for Mentions */
+  --mention-bg: #212a31; /* Dark blue-gray for Mention Background */
+  --at-color: #d3d9d4; /* Bright teal for '@' Symbol */
+  --username-color: #76abae; /* Soft cyan for Username */
+  --mention-hover-bg: #124e66; /* Hover Background Color for Mentions */
+
+  --highlight-bg: rgba(
+    255,
+    165,
+    0,
+    0.4
+  ); /* Semi-transparent Orange for Highlights */
+  --highlight-text: #ffffff; /* White for Highlighted Text */
+  --selection-bg: #4682b4; /* Steel Blue for Selection Background */
+  --selection-text: #ffffff; /* White for Selection Text */
+  --glow-color: #4b4b4b; /* Dark Gray for Glow Effects */
+
+  /* Gray Scale */
+  --gray-100: #333333; /* Very Dark Gray */
+  --gray-200: #444444; /* Darker Gray */
+  --gray-300: #555555; /* Dark Gray */
+  --gray-400: #666666; /* Gray */
+  --gray-500: #777777; /* Medium Gray */
+  --gray-600: #888888; /* Slate Gray */
+  --gray-700: #999999; /* Light Slate Gray */
+  --gray-800: #aaaaaa; /* Light Gray */
+  --gray-900: #bbbbbb; /* Very Light Gray */
+}
 html,
 body {
   max-width: 100%;
   overflow-x: hidden;
 }
+.btn-primary {
+  background-color: var(
+    --button-primary-bg
+  ) !important; /* Primary button background */
+  border-color: var(--button-primary-bg) !important; /* Primary button border */
+  color: var(--button-primary-text) !important; /* Primary button text color */
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active {
+  background-color: var(
+    --button-primary-hover-bg
+  ) !important; /* Hover state for primary button */
+  border-color: var(
+    --button-primary-hover-bg
+  ) !important; /* Border color on hover */
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 0.2rem rgba(var(--glow-color), 0.5); /* Glow effect on focus */
+}
+
 .custom-spinner {
   width: 50px;
   height: 50px;

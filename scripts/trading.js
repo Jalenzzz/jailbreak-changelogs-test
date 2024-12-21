@@ -4,7 +4,7 @@ const offeringItems = [];
 const requestingItems = [];
 let currentTradeType = "offering"; // Set default to "offering"
 
-const ITEMS_PER_PAGE = 96;
+const ITEMS_PER_PAGE = 98;
 let currentPage = 1;
 let filteredItems = [];
 
@@ -207,7 +207,7 @@ function displayAvailableItems(type) {
   container.innerHTML = itemsToDisplay
     .map(
       (item) => `
-  <div class="col-6 col-md-3 col-lg-2 mb-2">
+  <div class="col-6">
     <div class="card available-item-card" 
          onclick="quickAddItem('${item.name}', '${item.type}')">
       <div class="card-header">

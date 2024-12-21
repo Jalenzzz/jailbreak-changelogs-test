@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         }</li>
                     </ol>
                 </nav>
-            </div>
+             </div>
     
            <div class="container-fluid mt-5">
               <div class="media-container-wrapper">
@@ -356,41 +356,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         </div>
                     </div>
                 </div>
-            </div>
-
-
-            <!-- Comments Section -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Comments for ${
-                              item.name
-                            }</h3>
-                        </div>
-                        <div class="card-body">
-                            <!-- Add Comment Form -->
-                            <form id="commentForm" class="mb-4">
-                                <div class="mb-3">
-                                    <textarea class="form-control" id="commentText" rows="3" 
-                                                placeholder="Add your comment..."></textarea>
-                                </div>
-                                <button type="submit" class="btn" 
-                                style="background-color: #124E66; color: #D3D9D4"
-                                onmouseover="this.style.backgroundColor='#1a6b8a'"
-                                onmouseout="this.style.backgroundColor='#124E66'">Post Comment</button>
-
-                            </form>
-
-                            <!-- Comments List -->
-                            <div id="commentsList">
-                                <!-- Comments will be dynamically loaded here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>`;
+            </div>`;
   }
 
   function showErrorMessage(message) {

@@ -438,6 +438,10 @@ app.get("/keys", (req, res) => {
   });
 });
 
+app.get("/roblox", (req, res) => {
+  res.render("roblox");
+});
+
 app.get("/login", (req, res) => {
   res.render("login");
 });

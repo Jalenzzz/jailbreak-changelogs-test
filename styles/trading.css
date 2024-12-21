@@ -331,12 +331,13 @@ button {
   border-bottom: none;
 }
 
-available-item-card img {
+.available-item-card img {
   height: 100px;
   width: 100%;
   object-fit: contain;
   padding: 0.5rem;
   background: var(--common-bg-color);
+  aspect-ratio: 1/1; /* Force square aspect ratio */
 }
 
 .available-item-card .card-body {
@@ -502,6 +503,7 @@ available-item-card img {
   object-fit: contain;
   padding: 0.5rem;
   background: var(--common-bg-color);
+  aspect-ratio: 1/1; /* Force square aspect ratio */
 }
 
 .available-item-card .card-body {
@@ -523,6 +525,43 @@ available-item-card img {
 
 .available-item-card .info-value {
   color: var(--text-color);
+}
+
+/* Available Items Section */
+.available-items .col-6 {
+  width: 14.285%; /* Make cards narrower - show 7 per row (100/7) */
+  padding: 0 0.4rem; /* Slightly reduce padding between cards */
+}
+
+/* Responsive adjustments for available items */
+@media (max-width: 1400px) {
+  .available-items .col-6 {
+    width: 16.666%; /* 6 per row on large screens */
+  }
+}
+
+@media (max-width: 1200px) {
+  .available-items .col-6 {
+    width: 20%; /* 5 per row on medium-large screens */
+  }
+}
+
+@media (max-width: 992px) {
+  .available-items .col-6 {
+    width: 25%; /* 4 per row on medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .available-items .col-6 {
+    width: 33.333%; /* 3 per row on small screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .available-items .col-6 {
+    width: 100%; /* 1 per row on very small screens */
+  }
 }
 
 /* Trade Cards Container */
@@ -547,6 +586,7 @@ available-item-card img {
 .trade-card .card-img-container {
   position: relative;
   padding-top: 100%; /* 1:1 Aspect ratio */
+  background: transparent
   overflow: hidden;
 }
 
@@ -557,13 +597,8 @@ available-item-card img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 1rem;
-  background: var(--common-bg-color);
-}
-
-.trade-card .card-body {
-  padding: 1rem;
-  flex: 1;
+  padding: 0.5rem;
+  background: #2a343e;
 }
 
 /* Empty Slot Styles */
