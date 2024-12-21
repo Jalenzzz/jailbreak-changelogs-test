@@ -50,10 +50,31 @@ app.get("/trade-data", async (req, res) => {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views")); // Set the directory for your EJS files
 
-app.get("/changelogs", (req, res) => {
-  // Redirect to a default changelog if no ID is provided in the URL
-  const defaultChangelogId = 348; // Set your default changelog ID here
-  res.redirect(`/changelogs/${defaultChangelogId}`);
+app.get("/changelogs", async (req, res) => {
+  try {
+    const latestResponse = await fetch(
+      "https://api.jailbreakchangelogs.xyz/changelogs/latest",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    );
+
+    if (!latestResponse.ok) {
+      throw new Error("Failed to fetch latest changelog ID");
+    }
+
+    const latestData = await latestResponse.json();
+    const latestId = latestData.id;
+
+    res.redirect(`/changelogs/${latestId}`);
+  } catch (error) {
+    console.error("Error fetching latest changelog:", error);
+    // Fallback to a default ID if the API request fails
+    res.redirect("/changelogs/348");
+  }
 });
 
 app.get("/owner/check/:user", (req, res) => {
@@ -72,6 +93,25 @@ app.get("/changelogs/:changelog", async (req, res) => {
   const apiUrl = `https://api.jailbreakchangelogs.xyz/changelogs/get?id=${changelogId}`;
 
   try {
+    // First fetch the latest changelog ID for fallback
+    const latestResponse = await fetch(
+      "https://api.jailbreakchangelogs.xyz/changelogs/latest",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    );
+
+    if (!latestResponse.ok) {
+      throw new Error("Failed to fetch latest changelog");
+    }
+
+    const latestData = await latestResponse.json();
+    const latestId = latestData.id;
+
+    // Now fetch the requested changelog
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
@@ -79,16 +119,10 @@ app.get("/changelogs/:changelog", async (req, res) => {
         Origin: "https://jailbreakchangelogs.xyz",
       },
     });
+
     if (response.status === 404) {
-      res.render("changelogs", {
-        title: "Changelog not found",
-        image_url:
-          "https://cdn.jailbreakchangelogs.xyz/images/changelogs/346.webp",
-        logoUrl:
-          "https://cdn.jailbreakchangelogs.xyz/logos/Changelogs_Logo.webp",
-        logoAlt: "Changelogs Page Logo",
-        changelogId,
-      });
+      // Redirect to latest changelog if requested one doesn't exist
+      return res.redirect(`/changelogs/${latestId}`);
     }
 
     if (!response.ok) {
@@ -98,17 +132,15 @@ app.get("/changelogs/:changelog", async (req, res) => {
     const data = await response.json();
     const { title, image_url } = data;
 
-    // Add embed_color to the response data
     const responseData = {
       title,
       image_url,
       logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Changelogs_Logo.webp",
       logoAlt: "Changelogs Page Logo",
       changelogId,
-      embed_color: 0x134d64, // Hex color code for the Discord embed
+      embed_color: 0x134d64,
     };
 
-    // If it's a Discord bot request (check for a specific header or query param)
     if (
       req.headers["user-agent"]?.includes("DiscordBot") ||
       req.query.format === "discord"

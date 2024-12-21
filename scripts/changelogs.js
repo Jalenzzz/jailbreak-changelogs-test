@@ -42,10 +42,7 @@ $(document).ready(function () {
 
   function escapeHtml(text) {
     // First preserve any existing highlight spans by using temporary markers
-    text = text.replace(
-      /<span class="highlight">(.*?)<\/span>/g,
-      "§§H§§$1§§/H§§"
-    );
+    text = text.replace(/<span class="highlight">(.*?)<\/span>/g, "§§H§§$1§§");
     text = text.replace(
       /<span class="highlight mention">(.*?)<\/span>/g,
       "§§M§§$1§§/M§§"
@@ -915,33 +912,34 @@ $(document).ready(function () {
     if (Array.isArray(data) && data.length > 0) {
       populateChangelogDropdown(data);
 
-      // Get changelogId from the URL path, e.g., /changelogs/{changelog id}
       const pathSegments = window.location.pathname.split("/");
       const changelogId = pathSegments[pathSegments.length - 1];
 
-      // If changelogId exists in the path, find it in the data
       let selectedChangelog = changelogId
         ? changelogsData.find((cl) => cl.id == changelogId)
-        : data[0]; // Default to the first changelog if no id is found
+        : data[0];
 
+      // If changelog wasn't found, use latest
       if (!selectedChangelog) {
-        selectedChangelog = data[0]; // Fallback to first changelog if no match
+        selectedChangelog = data[0];
+        // Update URL to match the latest changelog
+        history.replaceState({}, "", `/changelogs/${selectedChangelog.id}`);
       }
 
-      // Update breadcrumb here, using selectedChangelog.id
+      // Update breadcrumb
       const breadcrumbHtml = `
-          <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="/">Home</a></li>
-              <li class="breadcrumb-item"><a href="/changelogs">Changelogs</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Changelog ${selectedChangelog.id}</li>
-          </ol>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/changelogs">Changelogs</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Changelog ${selectedChangelog.id}</li>
+        </ol>
       `;
       document.querySelector('nav[aria-label="breadcrumb"]').innerHTML =
         breadcrumbHtml;
 
       displayChangelog(selectedChangelog);
 
-      // Toggle button visibility based on whether the selected changelog is the latest one
+      // Toggle button visibility
       desktopLatestChangelogBtn.style.display =
         selectedChangelog.id === data[0].id ? "none" : "block";
       mobileLatestChangelogBtn.style.display =
