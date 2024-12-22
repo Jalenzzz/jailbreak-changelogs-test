@@ -12,7 +12,10 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     const redirect = 'https://authorize.roblox.com/?client_id=8033575152059272055&redirect_uri=https://jailbreakchangelogs.xyz/roblox&scope=openid%20profile&response_type=code'
     const test_redirect = 'https://authorize.roblox.com/?client_id=8033575152059272055&redirect_uri=https://testing.jailbreakchangelogs.xyz/roblox&scope=openid%20profile&response_type=code'
-    console.log('Hello from Roblox');
+    const token = getCookie('token');
+    if (!token) {
+        window.location.href = '/login';
+    }
     document.getElementById('button').addEventListener('click', () => {
         console.log('Redirecting to Roblox OAuth...');
         window.location.href = test_redirect;
