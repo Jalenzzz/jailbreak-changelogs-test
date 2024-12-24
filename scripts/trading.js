@@ -609,9 +609,9 @@ async function submitTrade() {
     submitButton.innerHTML =
       '<span class="spinner-border spinner-border-sm me-2"></span>Posting Trade...';
 
-    // First check Discord authentication
-    const userToken = localStorage.getItem("token"); // Changed from userToken to token
-    const userId = localStorage.getItem("userId");
+    // First check Discord authentication - use cookie instead of localStorage
+    const userToken = getCookie("token"); // Changed from localStorage to cookie
+    const userId = getCookie("userId"); // Also get userId from cookie
 
     if (!userToken || !userId) {
       // Store current trade data
@@ -622,7 +622,7 @@ async function submitTrade() {
           side2: Object.values(requestingItems).filter((item) => item),
         })
       );
-      // Redirect to Discord login
+      toastr.error("Please login with Discord first");
       window.location.href = "/login";
       return;
     }
@@ -640,7 +640,7 @@ async function submitTrade() {
           side2: Object.values(requestingItems).filter((item) => item),
         })
       );
-      // Redirect to Roblox auth
+      toastr.error("Please authenticate with Roblox first");
       window.location.href = "/roblox";
       return;
     }

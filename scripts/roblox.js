@@ -37,12 +37,28 @@ document.addEventListener("DOMContentLoaded", function () {
     )
       .then((response) => response.json())
       .then((data) => {
-        // Store Roblox user ID in a cookie
-        if (data.robloxId) {
-          document.cookie = `robloxId=${data.robloxId}; path=/`;
-          document.cookie = `robloxUsername=${data.robloxUsername}; path=/`;
+        // Store Roblox user info in cookies with a long expiration
+        if (data.robloxId && data.robloxUsername) {
+          const expires = new Date();
+          expires.setFullYear(expires.getFullYear() + 1); // Set cookie to expire in 1 year
+          document.cookie = `robloxId=${
+            data.robloxId
+          }; path=/; expires=${expires.toUTCString()}`;
+          document.cookie = `robloxUsername=${
+            data.robloxUsername
+          }; path=/; expires=${expires.toUTCString()}`;
+
+          // Check if pending trade exists and redirect accordingly
+          const pendingTrade = localStorage.getItem("pendingTrade");
+          if (pendingTrade) {
+            window.location.href = "/trading";
+          } else {
+            window.location.href = "/";
+          }
+        } else {
+          console.error("Roblox auth failed:", data);
+          toastr.error("Failed to authenticate with Roblox");
         }
-        window.location.href = "/";
       });
   }
 });
