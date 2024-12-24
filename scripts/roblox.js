@@ -37,10 +37,18 @@ document.addEventListener("DOMContentLoaded", function () {
     )
       .then((response) => response.json())
       .then((data) => {
-        // Store Roblox user info in cookies with a long expiration
+        console.log("Roblox auth response:", data);
+        if (data.error) {
+          console.error("Roblox auth error:", data.error);
+          alert("Failed to authenticate with Roblox. Please try again.");
+          window.location.href = "/trading";
+          return;
+        }
+
         if (data.robloxId && data.robloxUsername) {
+          // Set cookies with proper path and expiration
           const expires = new Date();
-          expires.setFullYear(expires.getFullYear() + 1); // Set cookie to expire in 1 year
+          expires.setFullYear(expires.getFullYear() + 1);
           document.cookie = `robloxId=${
             data.robloxId
           }; path=/; expires=${expires.toUTCString()}`;
@@ -48,17 +56,28 @@ document.addEventListener("DOMContentLoaded", function () {
             data.robloxUsername
           }; path=/; expires=${expires.toUTCString()}`;
 
-          // Check if pending trade exists and redirect accordingly
+          console.log("Roblox auth successful, cookies set");
+          console.log("Checking for pending trade...");
+
+          // Check for pending trade
           const pendingTrade = localStorage.getItem("pendingTrade");
           if (pendingTrade) {
+            console.log("Found pending trade, redirecting to trading page");
             window.location.href = "/trading";
           } else {
+            console.log("No pending trade found, redirecting to home");
             window.location.href = "/";
           }
         } else {
-          console.error("Roblox auth failed:", data);
-          toastr.error("Failed to authenticate with Roblox");
+          console.error("Invalid Roblox auth response:", data);
+          alert("Invalid response from Roblox. Please try again.");
+          window.location.href = "/trading";
         }
+      })
+      .catch((error) => {
+        console.error("Roblox auth request failed:", error);
+        alert("Failed to connect to authentication server. Please try again.");
+        window.location.href = "/trading";
       });
   }
 });
