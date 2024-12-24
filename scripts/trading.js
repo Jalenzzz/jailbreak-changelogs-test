@@ -610,6 +610,11 @@ function editTrade() {
 async function submitTrade() {
   try {
     console.log("Starting trade submission...");
+    console.log("Checking cookies:", {
+      robloxId: getCookie("robloxId"),
+      robloxUsername: getCookie("robloxUsername"),
+      token: getCookie("token"),
+    });
 
     const submitButton = document.querySelector(
       "#trade-preview-container .btn-success"
@@ -618,15 +623,22 @@ async function submitTrade() {
     submitButton.innerHTML =
       '<span class="spinner-border spinner-border-sm me-2"></span>Posting Trade...';
 
-    // Get Discord auth from both sessionStorage and cookies to match login.js
+    // Get all auth data
     const userToken = getCookie("token");
-    const userId = sessionStorage.getItem("userid"); // Changed to match login.js storage
-    const userData = JSON.parse(sessionStorage.getItem("user")); // Get full user data
+    const userId = sessionStorage.getItem("userid");
+    const userData = JSON.parse(sessionStorage.getItem("user"));
+    const robloxId = getCookie("robloxId");
+    const robloxUsername = getCookie("robloxUsername");
 
-    console.log("Auth data:", { userToken, userId, userData });
+    console.log("Full auth state:", {
+      discord: { userToken, userId, userData },
+      roblox: { robloxId, robloxUsername },
+    });
 
+    // Check Discord auth
     if (!userToken || !userId || !userData) {
       console.log("Missing Discord auth, redirecting to login");
+      toastr.warning("Please log in with Discord first");
       localStorage.setItem(
         "pendingTrade",
         JSON.stringify({
@@ -638,13 +650,10 @@ async function submitTrade() {
       return;
     }
 
-    // Then check Roblox authentication
-    const robloxId = getCookie("robloxId");
-    const robloxUsername = getCookie("robloxUsername");
-    console.log("Roblox auth:", { robloxId, robloxUsername });
-
+    // Check Roblox auth
     if (!robloxId || !robloxUsername) {
       console.log("Missing Roblox auth, redirecting to Roblox auth");
+      toastr.warning("Please authenticate with Roblox first");
       localStorage.setItem(
         "pendingTrade",
         JSON.stringify({
