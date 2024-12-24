@@ -520,6 +520,29 @@ function toggleConfirmButton() {
 
 // Add event listeners when document is loaded
 document.addEventListener("DOMContentLoaded", () => {
+  // Check if we're returning from Roblox auth
+  const isReturnFromAuth = document.referrer.includes("/roblox");
+
+  // Check for pending trade
+  const pendingTrade = localStorage.getItem("pendingTrade");
+  if (isReturnFromAuth && pendingTrade) {
+    try {
+      console.log("Restoring pending trade after auth");
+      const { side1, side2 } = JSON.parse(pendingTrade);
+      // Restore trade items
+      side1.forEach((item) => addItemToTrade(item, "Offer"));
+      side2.forEach((item) => addItemToTrade(item, "Request"));
+      // Clear pending trade immediately
+      localStorage.removeItem("pendingTrade");
+      // Show trade preview
+      console.log("Showing trade preview");
+      previewTrade();
+    } catch (err) {
+      console.error("Error restoring pending trade:", err);
+      toastr.error("Failed to restore your pending trade");
+    }
+  }
+
   // Remove toggle button event listeners since we don't need them anymore
 
   // Initialize both sections with 8 empty slots
