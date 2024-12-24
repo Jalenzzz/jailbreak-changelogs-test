@@ -601,7 +601,8 @@ function editTrade() {
 
 async function submitTrade() {
   try {
-    // Show loading state on button
+    console.log("Starting trade submission...");
+
     const submitButton = document.querySelector(
       "#trade-preview-container .btn-success"
     );
@@ -609,12 +610,15 @@ async function submitTrade() {
     submitButton.innerHTML =
       '<span class="spinner-border spinner-border-sm me-2"></span>Posting Trade...';
 
-    // First check Discord authentication - use cookie instead of localStorage
-    const userToken = getCookie("token"); // Changed from localStorage to cookie
-    const userId = getCookie("userId"); // Also get userId from cookie
+    // Get Discord auth from both sessionStorage and cookies to match login.js
+    const userToken = getCookie("token");
+    const userId = sessionStorage.getItem("userid"); // Changed to match login.js storage
+    const userData = JSON.parse(sessionStorage.getItem("user")); // Get full user data
 
-    if (!userToken || !userId) {
-      // Store current trade data
+    console.log("Auth data:", { userToken, userId, userData });
+
+    if (!userToken || !userId || !userData) {
+      console.log("Missing Discord auth, redirecting to login");
       localStorage.setItem(
         "pendingTrade",
         JSON.stringify({
@@ -622,7 +626,6 @@ async function submitTrade() {
           side2: Object.values(requestingItems).filter((item) => item),
         })
       );
-      toastr.error("Please login with Discord first");
       window.location.href = "/login";
       return;
     }
@@ -630,9 +633,10 @@ async function submitTrade() {
     // Then check Roblox authentication
     const robloxId = getCookie("robloxId");
     const robloxUsername = getCookie("robloxUsername");
+    console.log("Roblox auth:", { robloxId, robloxUsername });
 
     if (!robloxId || !robloxUsername) {
-      // Store current trade data
+      console.log("Missing Roblox auth, redirecting to Roblox auth");
       localStorage.setItem(
         "pendingTrade",
         JSON.stringify({
@@ -640,7 +644,6 @@ async function submitTrade() {
           side2: Object.values(requestingItems).filter((item) => item),
         })
       );
-      toastr.error("Please authenticate with Roblox first");
       window.location.href = "/roblox";
       return;
     }
@@ -652,7 +655,12 @@ async function submitTrade() {
       author: userToken,
       robloxId,
       robloxUsername,
+      // Include additional user data from sessionStorage
+      username: userData.username,
+      discriminator: userData.discriminator,
     };
+
+    console.log("Submitting trade ad:", tradeAd);
 
     const response = await fetch("/trades/ads/add", {
       method: "POST",
@@ -662,11 +670,16 @@ async function submitTrade() {
       body: JSON.stringify(tradeAd),
     });
 
+    console.log("Response status:", response.status);
+    const responseData = await response.json();
+    console.log("Response data:", responseData);
+
     if (!response.ok) {
-      throw new Error("Failed to create trade ad");
+      throw new Error(
+        `Failed to create trade ad: ${responseData.error || "Unknown error"}`
+      );
     }
 
-    const result = await response.json();
     toastr.success("Trade posted successfully!");
 
     // Reset everything
@@ -674,11 +687,11 @@ async function submitTrade() {
 
     // Redirect to the trade page after 1 second
     setTimeout(() => {
-      window.location.href = `/trades/${result.id}`;
+      window.location.href = `/trades/${responseData.id}`;
     }, 1000);
   } catch (error) {
     console.error("Error posting trade:", error);
-    toastr.error("Failed to post trade. Please try again.");
+    toastr.error(error.message || "Failed to post trade. Please try again.");
   } finally {
     // Reset button state
     const submitButton = document.querySelector(

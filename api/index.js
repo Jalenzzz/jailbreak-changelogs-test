@@ -849,26 +849,25 @@ app.get("*", (req, res) => {
 // Create new trade ad
 app.post("/trades/ads/add", async (req, res) => {
   try {
-    const { side1, side2, owner, author } = req.body;
+    console.log("Received trade ad request:", req.body);
+    console.log("Cookies:", req.cookies);
 
-    // Get Roblox ID from cookie
-    const robloxId = req.cookies.robloxId;
-    const robloxUsername = req.cookies.robloxUsername;
+    const { side1, side2, owner, author, robloxId, robloxUsername } = req.body;
 
-    // Check if user is authenticated with Roblox
-    if (!robloxId || !robloxUsername) {
-      return res.status(401).json({
-        error: "Roblox authentication required",
-        redirect: "/roblox",
-      });
-    }
-
-    // Continue with existing validation
+    // Validate required data
+    console.log("Validating trade data...");
     if (!side1 || !side2 || !owner || !author) {
+      console.log("Missing required trade data:", {
+        side1,
+        side2,
+        owner,
+        author,
+      });
       return res.status(400).json({ error: "Missing required trade data" });
     }
 
-    // Validate user authentication
+    // Validate Discord authentication
+    console.log("Validating Discord auth...");
     const authResponse = await fetch(
       `https://api.jailbreakchangelogs.xyz/users/auth?token=${author}`,
       {
@@ -879,20 +878,35 @@ app.post("/trades/ads/add", async (req, res) => {
       }
     );
 
+    console.log("Auth response status:", authResponse.status);
+    const authData = await authResponse.json();
+    console.log("Auth response data:", authData);
+
     if (!authResponse.ok) {
-      return res.status(401).json({ error: "Invalid authentication" });
+      return res.status(401).json({ error: "Invalid Discord authentication" });
     }
 
-    const authData = await authResponse.json();
     if (authData.id !== owner) {
+      console.log("Owner mismatch:", { authId: authData.id, owner });
       return res
         .status(403)
         .json({ error: "Owner ID does not match authenticated user" });
     }
 
-    // Add timestamp and unique ID
+    // Check Roblox authentication
+    console.log("Checking Roblox auth...");
+    if (!robloxId || !robloxUsername) {
+      console.log("Missing Roblox auth:", { robloxId, robloxUsername });
+      return res.status(401).json({
+        error: "Roblox authentication required",
+        redirect: "/roblox",
+      });
+    }
+
+    // Create trade ad
+    console.log("Creating trade ad...");
     const tradeAd = {
-      id: ib(), // Using existing random ID generator
+      id: ib(),
       side1,
       side2,
       owner,
@@ -903,6 +917,7 @@ app.post("/trades/ads/add", async (req, res) => {
     };
 
     // Store in database
+    console.log("Storing trade ad:", tradeAd);
     const response = await fetch(
       "https://api.jailbreakchangelogs.xyz/trades/ads/add",
       {
@@ -910,21 +925,26 @@ app.post("/trades/ads/add", async (req, res) => {
         headers: {
           "Content-Type": "application/json",
           Origin: "https://jailbreakchangelogs.xyz",
-          Authorization: `Bearer ${author}`, // Pass the auth token
+          Authorization: `Bearer ${author}`,
         },
         body: JSON.stringify(tradeAd),
       }
     );
 
+    console.log("API response status:", response.status);
+    const result = await response.json();
+    console.log("API response data:", result);
+
     if (!response.ok) {
-      throw new Error("Failed to create trade ad");
+      throw new Error("Failed to store trade ad");
     }
 
-    const result = await response.json();
     res.status(201).json(result);
   } catch (error) {
     console.error("Error creating trade ad:", error);
-    res.status(500).json({ error: "Failed to create trade ad" });
+    res
+      .status(500)
+      .json({ error: error.message || "Failed to create trade ad" });
   }
 });
 
