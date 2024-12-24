@@ -862,7 +862,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Default Image
 function handleimage(element) {
-  element.src = "https://cdn.jailbreakchangelogs.xyz/logos/Jailbreak_Logo.webp";
+  element.src =
+    "https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp";
 }
 
 function clearSearch() {

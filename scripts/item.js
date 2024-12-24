@@ -544,7 +544,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   window.handleimage = function (element) {
     element.src =
-      "https://cdn.jailbreakchangelogs.xyz/backgrounds/background1.webp";
+      "https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp";
   };
 
   loadItemDetails();
