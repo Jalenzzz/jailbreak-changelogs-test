@@ -293,10 +293,22 @@ app.get("/bot", (req, res) => {
 });
 
 app.get("/values", (req, res) => {
+  const validSorts = [
+    "vehicles",
+    "spoilers",
+    "rims",
+    "body-colors",
+    "textures",
+    "tire-stickers",
+    "drifts",
+  ];
+  const sortParam = req.query.sort?.toLowerCase();
+
   res.render("values", {
     title: "Values / Changelogs",
     logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
     logoAlt: "Values Page Logo",
+    initialSort: validSorts.includes(sortParam) ? sortParam : null,
   });
 });
 

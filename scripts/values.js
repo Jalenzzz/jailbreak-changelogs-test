@@ -142,11 +142,36 @@ document.addEventListener("DOMContentLoaded", () => {
         "https://api.jailbreakchangelogs.xyz/items/list"
       );
       allItems = await response.json();
-      filteredItems = shuffleArray([...allItems]); // Shuffle on initial load
+
+      // Apply initial sort from URL if present
+      if (window.initialSort) {
+        const validSorts = {
+          vehicles: "name-vehicles",
+          spoilers: "name-spoilers",
+          rims: "name-rims",
+          "body-colors": "name-body-colors",
+          textures: "name-textures",
+          "tire-stickers": "name-tire-stickers",
+          drifts: "name-drifts",
+        };
+
+        if (validSorts[window.initialSort]) {
+          const sortDropdown = document.getElementById("sort-dropdown");
+          if (sortDropdown) {
+            sortDropdown.value = validSorts[window.initialSort];
+            // Don't shuffle items when we have an initial sort
+            filteredItems = [...allItems];
+            sortItems(); // This will apply the filter
+            return; // Exit early
+          }
+        }
+      }
+
+      // If no initial sort, proceed with default behavior
+      filteredItems = shuffleArray([...allItems]);
       displayItems();
       updateTotalItemsCount();
       updateTotalItemsLabel("all-items");
-
       preloadItemImages();
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -607,6 +632,20 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // Update URL with current sort before the empty category check
+    const currentSort = sortDropdown.value;
+    if (currentSort && currentSort !== "name-all-items") {
+      const sortType = currentSort.split("-").slice(1).join("-");
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set("sort", sortType);
+      window.history.pushState({}, "", newUrl);
+    } else {
+      // Remove sort parameter if showing all items
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.delete("sort");
+      window.history.pushState({}, "", newUrl);
+    }
+
     // Handle empty category case
     if (filteredItems.length === 0) {
       const itemsContainer = document.querySelector("#items-container");
@@ -731,6 +770,11 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTotalItemsLabel("all-items");
     updateSearchPlaceholder();
 
+    // Clear URL parameters
+    const newUrl = new URL(window.location);
+    newUrl.search = "";
+    window.history.pushState({}, "", newUrl);
+
     // Show success toast
     toastr.success("All filters have been cleared", "Filters Reset");
   }, 500); // 1 second debounce
@@ -771,8 +815,32 @@ document.addEventListener("DOMContentLoaded", () => {
     hideMethod: "fadeOut",
   };
 
+  // Get sort parameter from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const sortParam = urlParams.get("sort");
+
+  // Apply initial sort if specified in URL
+  if (sortParam) {
+    const validSorts = {
+      vehicles: "name-vehicles",
+      spoilers: "name-spoilers",
+      rims: "name-rims",
+      "body-colors": "name-body-colors",
+      textures: "name-textures",
+      "tire-stickers": "name-tire-stickers",
+      drifts: "name-drifts",
+    };
+
+    if (validSorts[sortParam]) {
+      const sortDropdown = document.getElementById("sort-dropdown");
+      if (sortDropdown) {
+        sortDropdown.value = validSorts[sortParam];
+        sortItems(); // Apply the sort
+      }
+    }
+  }
+
   loadItems(); // Initial load
-  // Preload images for better performance
 });
 
 // Default Image
