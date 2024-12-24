@@ -329,11 +329,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                               <div class="row g-4">
                                   <div class="col-6">
                                       <h4 class="text-muted mb-3">Cash Value</h4>
-                                      <p class="h2 mb-0" style="color: #00ff00; font-weight: 600;">${value}</p>
+                                      <p class="h2 mb-0" style="color:rgb(24, 101, 131); font-weight: 600;">${value}</p>
                                   </div>
                                   <div class="col-6">
                                       <h4 class="text-muted mb-3">Duped Value</h4>
-                                      <p class="h2 mb-0" style="color: #FF0000; font-weight: 600;">${duped_value}</p>
+                                      <p class="h2 mb-0" style="color: #748D92; font-weight: 600;">${duped_value}</p>
                                   </div>
                               </div>
                           </div>
@@ -345,18 +345,169 @@ document.addEventListener("DOMContentLoaded", async () => {
             <!-- Combined Graph Section -->
             <div class="row mb-4" style="padding-top: 40px;">
                 <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Value History & Trade Activity</h3>
+                    <div class="card chart-container">
+                        <div class="card-header text-center">
+                            <h3 class="card-title" style="font-family: 'Luckiest Guy', cursive;">Value History for ${
+                              item.name
+                            }</h3>
                         </div>
-                        <div class="card-body">
-                            <div id="combinedChart" style="height: 400px;">
+                        <div class="card-body" style="padding: 20px;">
+                            <canvas id="combinedChart" style="height: 450px;">
                                 <!-- Combined graph will be inserted here -->
-                            </div>
+                            </canvas>
                         </div>
                     </div>
                 </div>
             </div>`;
+
+    // Add Chart.js initialization after the item details are displayed
+    setTimeout(() => {
+      const ctx = document.getElementById("combinedChart")?.getContext("2d");
+      if (!ctx) return;
+
+      // Generate dummy data
+      const dates = [];
+      const values = [];
+      const trades = [];
+      const baseValue = Math.floor(Math.random() * 1000000) + 500000;
+
+      for (let i = 30; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        dates.push(
+          date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+        );
+
+        // Generate random value fluctuations
+        const randomChange = Math.floor(Math.random() * 50000) - 25000;
+        values.push(baseValue + randomChange);
+
+        // Generate random trade volume
+        trades.push(Math.floor(Math.random() * 50));
+      }
+
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: dates,
+          datasets: [
+            {
+              label: "Cash Value",
+              data: values,
+              borderColor: "rgb(24, 101, 131)",
+              backgroundColor: "rgba(24, 101, 131, 0.1)",
+              tension: 0.4,
+              fill: true,
+              borderWidth: 2,
+            },
+            {
+              label: "Duped Value",
+              data: values.map((v) => v * 0.6),
+              borderColor: "#748D92",
+              backgroundColor: "rgba(116, 141, 146, 0.1)",
+              tension: 0.4,
+              fill: true,
+              borderWidth: 2,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: "index",
+            intersect: false,
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: "#D3D9D4",
+                usePointStyle: true,
+                padding: 20,
+                font: {
+                  size: 12,
+                  weight: "bold",
+                },
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              type: "linear",
+              display: true,
+              title: {
+                display: true,
+                text: "Value",
+                color: "#D3D9D4",
+                font: {
+                  size: 14,
+                  weight: "bold",
+                },
+              },
+              grid: {
+                color: "rgba(46, 57, 68, 0.1)",
+                borderColor: "#2E3944",
+                tickColor: "#2E3944",
+                lineWidth: 1,
+                borderDash: [5, 5],
+                drawBorder: true,
+                drawTicks: true,
+              },
+              ticks: {
+                color: "#D3D9D4",
+                padding: 10,
+                callback: function (value) {
+                  return value.toLocaleString();
+                },
+              },
+            },
+            x: {
+              title: {
+                display: true,
+                text: "Date",
+                color: "#D3D9D4", // Light grayish-green for axis title
+                font: {
+                  size: 14,
+                  weight: "bold",
+                },
+              },
+              grid: {
+                color: "rgba(46, 57, 68, 0.1)", // Dark grayish-blue with opacity for grid
+                borderColor: "#2E3944",
+                tickColor: "#2E3944",
+                display: true,
+                lineWidth: 1,
+                borderDash: [5, 5],
+                drawBorder: true,
+                drawTicks: true,
+              },
+              ticks: {
+                color: "#D3D9D4", // Light grayish-green for tick labels
+                padding: 10,
+                font: {
+                  size: 11,
+                },
+              },
+            },
+          },
+          layout: {
+            padding: {
+              left: 10,
+              right: 10,
+              top: 10,
+              bottom: 10,
+            },
+          },
+        },
+      });
+    }, 100);
+
+    // After loading the main item content, update the comments section
+    const commentsWrapper = document.querySelector(".comments-wrapper");
+    if (commentsWrapper) {
+      commentsWrapper.innerHTML = commentTemplate(item);
+    }
   }
 
   function showErrorMessage(message) {
@@ -379,3 +530,167 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   loadItemDetails();
 });
+
+const commentTemplate = (item) => `
+  <h2
+    class="comment-header text-center"
+    id="comment-header"
+    style="font-family: 'Luckiest Guy', cursive"
+  >
+    Comments for ${item.name}
+  </h2>
+
+  <!-- Comment submission form -->
+  <form id="comment-form" class="mb-4">
+    <div
+      class="input-group px-3 py-2"
+      style="background-color: #2e3944; border-radius: 8px"
+    >
+      <input
+        type="text"
+        class="form-control"
+        id="commenter-text"
+        disabled
+        placeholder="Login to comment"
+        required
+        style="background-color: transparent; border: none"
+      />
+      <button
+        type="submit"
+        class="btn btn-primary"
+        id="submit-comment"
+        disabled
+      >
+        <i class="bi bi-send-fill me-1"></i> Submit
+      </button>
+    </div>
+  </form>
+
+  <ul id="comments-list" class="list-group">
+    <!-- Dummy comments for ${item.name} -->
+    <li class="d-flex align-items-start mb-3">
+      <img
+        src="https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"
+        class="rounded-circle m-1"
+        width="32"
+        height="32"
+        alt="User Avatar"
+      />
+      <div
+        class="ms-2 comment-item w-100"
+        style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
+      >
+        <a href="#" style="font-weight: bold; color: #748d92; text-decoration: none;">Dummy User 1</a>
+        <small class="text-muted"> · December 21st at 07:38 AM</small>
+        <p class="mb-0 comment-text" style="color: #d3d9d4; margin-top: 4px">
+          What will the value be?
+        </p>
+      </div>
+    </li>
+    <li class="d-flex align-items-start mb-3">
+      <img
+        src="https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"
+        class="rounded-circle m-1"
+        width="32"
+        height="32"
+        alt="User Avatar"
+      />
+      <div
+        class="ms-2 comment-item w-100"
+        style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
+      >
+        <a href="#" style="font-weight: bold; color: #748d92; text-decoration: none;">Dummy User 1</a>
+        <small class="text-muted"> · December 21st at 07:38 AM</small>
+        <p class="mb-0 comment-text" style="color: #d3d9d4; margin-top: 4px">
+          What will the value be?
+        </p>
+      </div>
+    </li>
+    <li class="d-flex align-items-start mb-3">
+      <img
+        src="https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"
+        class="rounded-circle m-1"
+        width="32"
+        height="32"
+        alt="User Avatar"
+      />
+      <div
+        class="ms-2 comment-item w-100"
+        style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
+      >
+        <a href="#" style="font-weight: bold; color: #748d92; text-decoration: none;">Dummy User 1</a>
+        <small class="text-muted"> · December 21st at 07:38 AM</small>
+        <p class="mb-0 comment-text" style="color: #d3d9d4; margin-top: 4px">
+          What will the value be?
+        </p>
+      </div>
+    </li>
+
+  </ul>
+
+  <!-- Pagination Controls -->
+  <div
+    id="paginationControls"
+    class="pagination d-flex align-items-center justify-content-center gap-2 flex-nowrap mt-4"
+  >
+    <button
+      class="btn btn-primary rounded-circle pagination-btn"
+      disabled
+      style="
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        background-color: #124e66;
+      "
+    >
+      <i class="bi bi-chevron-left"></i>
+    </button>
+    <div
+      class="input-group mx-1 align-items-center px-3 py-2"
+      style="
+        background-color: #2e3944;
+        border-radius: 8px;
+        width: auto;
+        display: inline-flex;
+        justify-content: center;
+      "
+    >
+      <span class="text-muted fw-semibold" style="font-size: 14px">Page </span>
+      <input
+        type="number"
+        value="1"
+        min="1"
+        max="1"
+        class="form-control text-center pagination-input mx-2"
+        style="
+          max-width: 70px;
+          min-width: 60px;
+          background-color: #212a31;
+          border: 1px solid #748d92;
+          color: #d3d9d4;
+          border-radius: 4px;
+          font-size: 14px;
+        "
+      />
+      <span class="text-muted" style="font-size: 14px"> / 1</span>
+    </div>
+    <button
+      class="btn btn-primary rounded-circle pagination-btn"
+      disabled
+      style="
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        background-color: #124e66;
+      "
+    >
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+`;

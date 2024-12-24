@@ -226,17 +226,27 @@ body {
   color: #d3d9d4 !important;
   text-decoration: underline !important;
 }
-/* Add these rules to your item.css file */
+
 .media-container {
   position: relative;
-  width: 90%;
+  width: 90%; /* restored to original width for item images */
   margin: 0 auto;
-  height: 400px; /* or your desired height */
+  height: 400px; /* restored to original height for item images */
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  border-radius: 8px; /* optional: matches rounded class */
+  border-radius: 8px;
+}
+
+/* Add new class for chart container */
+.chart-container {
+  width: 100%; /* increased from 60% */
+  margin: 0 auto;
+  height: auto; /* increased from 250px */
+  background-color: rgba(46, 57, 68, 0.3); /* subtle background */
+  border-radius: 12px;
+  padding: 15px;
 }
 
 .media-container img,
@@ -244,8 +254,8 @@ body {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  width: auto; /* Add this */
-  height: auto; /* Add this */
+  width: auto;
+  height: auto;
 }
 
 .video-player {
@@ -264,7 +274,7 @@ body {
   width: 100%;
   height: 500px; /* Increased height for better visibility */
   margin-bottom: 20px;
-  display: flex; /* Added flex display */
+  display: flex;
   justify-content: center;
   align-items: center;
 }
@@ -272,7 +282,7 @@ body {
 .image-container img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Changed to cover to fill the space better */
+  object-fit: cover;
   border-radius: 8px;
 }
 .play-message {
@@ -288,6 +298,9 @@ body {
     opacity: 1;
   }
 }
+#comment-header {
+  color: #d3d9d4;
+}
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
@@ -296,9 +309,14 @@ body {
   }
 
   .media-container {
-    width: auto; /* Full width on mobile */
-    height: 250px; /* Slightly smaller height */
+    width: 90%;
+    height: 250px;
     margin: 0;
+  }
+
+  .chart-container {
+    width: 85%;
+    height: 250px;
   }
 
   .image-container {
@@ -334,6 +352,12 @@ body {
 /* For extra small devices */
 @media (max-width: 576px) {
   .media-container {
+    width: 95%;
+    height: 200px;
+  }
+
+  .chart-container {
+    width: 95%;
     height: 200px;
   }
 
@@ -365,4 +389,19 @@ body {
   .input-group-text {
     padding: 8px 12px;
   }
+}
+
+.comment-item a,
+.comment-item a:link,
+.comment-item a:visited {
+  font-weight: bold !important;
+  color: #748d92 !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease, text-decoration 0.2s ease !important;
+}
+
+.comment-item a:hover,
+.comment-item a:active {
+  color: #d3d9d4 !important;
+  text-decoration: underline !important;
 }

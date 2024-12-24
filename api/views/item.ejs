@@ -67,6 +67,7 @@
     <link rel="stylesheet" href="styles/item.css" />
     <link rel="stylesheet" href="styles/main.css" />
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
 
@@ -74,7 +75,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bangers&family=Luckiest+Guy&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap"
       rel="stylesheet"
     />
     <link
@@ -150,220 +151,7 @@
               border: 2px solid #748d92;
             "
           >
-            <h2
-              class="comment-header text-center"
-              id="comment-header"
-              style="font-family: 'Luckiest Guy', cursive"
-            >
-              Comments for Slashers
-            </h2>
-
-            <!-- Comment submission form -->
-            <form id="comment-form" class="mb-4">
-              <div
-                class="input-group px-3 py-2"
-                style="background-color: #2e3944; border-radius: 8px"
-              >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="commenter-text"
-                  disabled
-                  placeholder="Login to comment"
-                  required
-                  style="background-color: transparent; border: none"
-                />
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  id="submit-comment"
-                  disabled
-                >
-                  <i class="bi bi-send-fill me-1"></i> Submit
-                </button>
-              </div>
-            </form>
-
-            <ul id="comments-list" class="list-group">
-              <!-- Dummy Comment 1 -->
-              <li class="d-flex align-items-start mb-3">
-                <img
-                  src="https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"
-                  class="rounded-circle m-1"
-                  width="32"
-                  height="32"
-                  alt="User Avatar"
-                />
-                <div
-                  class="ms-2 comment-item w-100"
-                  style="
-                    background-color: #2e3944;
-                    padding: 12px;
-                    border-radius: 8px;
-                    margin-bottom: 8px;
-                  "
-                >
-                  <a
-                    href="#"
-                    style="
-                      font-weight: bold;
-                      color: #748d92;
-                      text-decoration: none;
-                    "
-                    >Dummy User 1</a
-                  >
-                  <small class="text-muted"> · December 21st at 07:38 AM</small>
-                  <p
-                    class="mb-0 comment-text"
-                    style="color: #d3d9d4; margin-top: 4px"
-                  >
-                    What will the value be?
-                  </p>
-                </div>
-              </li>
-
-              <!-- Dummy Comment 2 -->
-              <li class="d-flex align-items-start mb-3">
-                <img
-                  src="https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"
-                  class="rounded-circle m-1"
-                  width="32"
-                  height="32"
-                  alt="User Avatar"
-                />
-                <div
-                  class="ms-2 comment-item w-100"
-                  style="
-                    background-color: #2e3944;
-                    padding: 12px;
-                    border-radius: 8px;
-                    margin-bottom: 8px;
-                  "
-                >
-                  <a
-                    href="#"
-                    style="
-                      font-weight: bold;
-                      color: #748d92;
-                      text-decoration: none;
-                    "
-                    >Dummy User 2</a
-                  >
-                  <small class="text-muted"> · December 21st at 07:38 AM</small>
-                  <p
-                    class="mb-0 comment-text"
-                    style="color: #d3d9d4; margin-top: 4px"
-                  >
-                    Can someone trade me this?
-                  </p>
-                </div>
-              </li>
-
-              <!-- Dummy Comment 3 -->
-              <li class="d-flex align-items-start mb-3">
-                <img
-                  src="https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"
-                  class="rounded-circle m-1"
-                  width="32"
-                  height="32"
-                  alt="User Avatar"
-                />
-                <div
-                  class="ms-2 comment-item w-100"
-                  style="
-                    background-color: #2e3944;
-                    padding: 12px;
-                    border-radius: 8px;
-                    margin-bottom: 8px;
-                  "
-                >
-                  <a
-                    href="#"
-                    style="
-                      font-weight: bold;
-                      color: #748d92;
-                      text-decoration: none;
-                    "
-                    >Dummy User 3</a
-                  >
-                  <small class="text-muted"> · December 21st at 07:38 AM</small>
-                  <p
-                    class="mb-0 comment-text"
-                    style="color: #d3d9d4; margin-top: 4px"
-                  >
-                    I just got this item today in trade island!
-                  </p>
-                </div>
-              </li>
-            </ul>
-
-            <!-- Pagination Controls -->
-            <div
-              id="paginationControls"
-              class="pagination d-flex align-items-center justify-content-center gap-2 flex-nowrap mt-4"
-            >
-              <button
-                class="btn btn-primary rounded-circle pagination-btn"
-                disabled
-                style="
-                  width: 35px;
-                  height: 35px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: 16px;
-                  background-color: #124e66;
-                "
-              >
-                <i class="bi bi-chevron-left"></i>
-              </button>
-              <div
-                class="input-group mx-1 align-items-center px-3 py-2"
-                style="
-                  background-color: #2e3944;
-                  border-radius: 8px;
-                  width: auto;
-                  display: inline-flex;
-                  justify-content: center;
-                "
-              >
-                <span class="text-muted fw-semibold" style="font-size: 14px"
-                  >Page
-                </span>
-                <input
-                  type="number"
-                  value="1"
-                  min="1"
-                  max="1"
-                  class="form-control text-center pagination-input mx-2"
-                  style="
-                    max-width: 70px;
-                    min-width: 60px;
-                    background-color: #212a31;
-                    border: 1px solid #748d92;
-                    color: #d3d9d4;
-                    border-radius: 4px;
-                    font-size: 14px;
-                  "
-                />
-                <span class="text-muted" style="font-size: 14px"> / 1</span>
-              </div>
-              <button
-                class="btn btn-primary rounded-circle pagination-btn"
-                disabled
-                style="
-                  width: 35px;
-                  height: 35px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: 16px;
-                  background-color: #124e66;
-                "
-              >
-                <i class="bi bi-chevron-right"></i>
-              </button>
-            </div>
+            <!-- Comments will be loaded dynamically -->
           </div>
         </div>
       </div>
