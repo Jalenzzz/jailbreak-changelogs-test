@@ -1,3 +1,12 @@
+// Configure toastr
+toastr.options = {
+  positionClass: "toast-bottom-right",
+  closeButton: true,
+  progressBar: true,
+  preventDuplicates: true,
+  timeOut: 3000,
+};
+
 // Store all items and current trade items
 let allItems = [];
 const offeringItems = [];
@@ -608,129 +617,17 @@ function editTrade() {
 }
 
 async function submitTrade() {
-  try {
-    console.log("Starting trade submission...");
-    console.log("Checking cookies:", {
-      robloxId: getCookie("robloxId"),
-      robloxUsername: getCookie("robloxUsername"),
-      token: getCookie("token"),
-    });
+  // Show a simple message when trade is submitted
+  toastr.info("This is a demo version. Trade submission is disabled.");
 
-    const submitButton = document.querySelector(
-      "#trade-preview-container .btn-success"
-    );
-    submitButton.disabled = true;
-    submitButton.innerHTML =
-      '<span class="spinner-border spinner-border-sm me-2"></span>Posting Trade...';
-
-    // Get all auth data
-    const userToken = getCookie("token");
-    const userId = sessionStorage.getItem("userid");
-    const userData = JSON.parse(sessionStorage.getItem("user"));
-    const robloxId = getCookie("robloxId");
-    const robloxUsername = getCookie("robloxUsername");
-
-    console.log("Full auth state:", {
-      discord: { userToken, userId, userData },
-      roblox: { robloxId, robloxUsername },
-    });
-
-    // Check Discord auth
-    if (!userToken || !userId || !userData) {
-      console.log("Missing Discord auth, redirecting to login");
-      toastr.warning("Please log in with Discord first");
-      localStorage.setItem(
-        "pendingTrade",
-        JSON.stringify({
-          side1: Object.values(offeringItems).filter((item) => item),
-          side2: Object.values(requestingItems).filter((item) => item),
-        })
-      );
-      window.location.href = "/login";
-      return;
-    }
-
-    // Check Roblox auth
-    if (!robloxId || !robloxUsername) {
-      console.log("Missing Roblox auth, redirecting to Roblox auth");
-      toastr.warning("Please authenticate with Roblox first");
-      localStorage.setItem(
-        "pendingTrade",
-        JSON.stringify({
-          side1: Object.values(offeringItems).filter((item) => item),
-          side2: Object.values(requestingItems).filter((item) => item),
-        })
-      );
-      window.location.href = "/roblox";
-      return;
-    }
-
-    const tradeAd = {
-      side1: Object.values(offeringItems).filter((item) => item),
-      side2: Object.values(requestingItems).filter((item) => item),
-      owner: userId,
-      author: userToken,
-      robloxId,
-      robloxUsername,
-      // Include additional user data from sessionStorage
-      username: userData.username,
-      discriminator: userData.discriminator,
-    };
-
-    console.log("Submitting trade ad:", tradeAd);
-
-    const response = await fetch("/trades/ads/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(tradeAd),
-    });
-
-    console.log("Response status:", response.status);
-    const responseData = await response.json();
-    console.log("Response data:", responseData);
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to create trade ad: ${responseData.error || "Unknown error"}`
-      );
-    }
-
-    toastr.success("Trade posted successfully!");
-
-    // Reset everything
-    resetTrade();
-
-    // Redirect to the trade page after 1 second
-    setTimeout(() => {
-      window.location.href = `/trades/${responseData.id}`;
-    }, 1000);
-  } catch (error) {
-    console.error("Error posting trade:", error);
-    toastr.error(error.message || "Failed to post trade. Please try again.");
-  } finally {
-    // Reset button state
-    const submitButton = document.querySelector(
-      "#trade-preview-container .btn-success"
-    );
-    if (submitButton) {
-      submitButton.disabled = false;
-      submitButton.innerHTML = '<i class="bi bi-upload me-2"></i>Post Trade';
-    }
+  // Reset button state after showing message
+  const submitButton = document.querySelector(
+    "#trade-preview-container .btn-success"
+  );
+  if (submitButton) {
+    submitButton.disabled = false;
+    submitButton.innerHTML = '<i class="bi bi-upload me-2"></i>Post Trade';
   }
-}
-
-// Add helper function to get cookies
-function getCookie(name) {
-  let cookieArr = document.cookie.split(";");
-  for (let i = 0; i < cookieArr.length; i++) {
-    let cookiePair = cookieArr[i].split("=");
-    if (name === cookiePair[0].trim()) {
-      return decodeURIComponent(cookiePair[1]);
-    }
-  }
-  return null;
 }
 
 function calculateTotalValue(items, valueType) {
