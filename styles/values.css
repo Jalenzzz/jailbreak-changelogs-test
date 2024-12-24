@@ -363,4 +363,25 @@
     width: 35px;
     height: 35px;
   }
+
+  #search-bar,
+  #sort-dropdown,
+  #value-sort-dropdown,
+  .form-control,
+  .form-select {
+    font-size: 12px;
+  }
+
+  .input-group-text {
+    font-size: 14px;
+    padding: 0.375rem 0.5rem;
+  }
+
+  .form-select option {
+    font-size: 12px;
+  }
+
+  #value-sort-dropdown option[value="separator"] {
+    font-size: 12px;
+  }
 }

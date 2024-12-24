@@ -249,7 +249,6 @@
 }
 
 .breadcrumb-item:not(:last-child)::after {
-  content: "›";
   color: #6c757d;
   margin-left: 10px; /* Smaller margin by default */
 }
