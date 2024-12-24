@@ -609,21 +609,29 @@ async function submitTrade() {
     submitButton.innerHTML =
       '<span class="spinner-border spinner-border-sm me-2"></span>Posting Trade...';
 
-    // Get current user info from localStorage or wherever you store it
-    const userToken = localStorage.getItem("userToken");
+    // First check Discord authentication
+    const userToken = localStorage.getItem("token"); // Changed from userToken to token
     const userId = localStorage.getItem("userId");
 
     if (!userToken || !userId) {
-      toastr.error("Please login to post trades");
+      // Store current trade data
+      localStorage.setItem(
+        "pendingTrade",
+        JSON.stringify({
+          side1: Object.values(offeringItems).filter((item) => item),
+          side2: Object.values(requestingItems).filter((item) => item),
+        })
+      );
+      // Redirect to Discord login
+      window.location.href = "/login";
       return;
     }
 
-    // Check for Roblox authentication
+    // Then check Roblox authentication
     const robloxId = getCookie("robloxId");
     const robloxUsername = getCookie("robloxUsername");
 
     if (!robloxId || !robloxUsername) {
-      toastr.error("Please authenticate with Roblox first");
       // Store current trade data
       localStorage.setItem(
         "pendingTrade",
