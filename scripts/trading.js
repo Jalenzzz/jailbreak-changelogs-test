@@ -523,27 +523,27 @@ document.addEventListener("DOMContentLoaded", () => {
   // Check if we're returning from Roblox auth
   const isReturnFromAuth = document.referrer.includes("/roblox");
 
-  // Check for pending trade
+  // Check for pending trade and restore if needed
   const pendingTrade = localStorage.getItem("pendingTrade");
-  if (isReturnFromAuth && pendingTrade) {
+  if (pendingTrade) {
     try {
       console.log("Restoring pending trade after auth");
       const { side1, side2 } = JSON.parse(pendingTrade);
       // Restore trade items
       side1.forEach((item) => addItemToTrade(item, "Offer"));
       side2.forEach((item) => addItemToTrade(item, "Request"));
-      // Clear pending trade immediately
+      // Clear pending trade
       localStorage.removeItem("pendingTrade");
-      // Show trade preview
-      console.log("Showing trade preview");
-      previewTrade();
+      // Show preview if returning from auth
+      if (isReturnFromAuth) {
+        console.log("Showing trade preview");
+        previewTrade();
+      }
     } catch (err) {
       console.error("Error restoring pending trade:", err);
       toastr.error("Failed to restore your pending trade");
     }
   }
-
-  // Remove toggle button event listeners since we don't need them anymore
 
   // Initialize both sections with 8 empty slots
   renderEmptySlots("offering-list", 8);
@@ -552,23 +552,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial renders
   renderTradeItems("Offer");
   renderTradeItems("Request");
-
-  // Check for pending trade after Roblox auth
-  const pendingTrade = localStorage.getItem("pendingTrade");
-  if (pendingTrade) {
-    try {
-      const { side1, side2 } = JSON.parse(pendingTrade);
-      // Restore trade items
-      side1.forEach((item) => addItemToTrade(item, "Offer"));
-      side2.forEach((item) => addItemToTrade(item, "Request"));
-      // Clear pending trade
-      localStorage.removeItem("pendingTrade");
-      // Show preview
-      previewTrade();
-    } catch (err) {
-      console.error("Error restoring pending trade:", err);
-    }
-  }
 });
 
 // Initial Render
@@ -588,8 +571,9 @@ function previewTrade() {
     return;
   }
 
-  // Hide available items list and show preview
+  // Hide available items container and show preview
   document.getElementById("available-items-list").style.display = "none";
+  document.getElementById("confirm-trade-btn").style.display = "none";
   document.getElementById("trade-preview-container").style.display = "block";
 
   // Render preview items
@@ -617,9 +601,10 @@ function renderPreviewItems(containerId, items) {
 }
 
 function editTrade() {
-  // Hide preview and show available items list
-  document.getElementById("trade-preview-container").style.display = "none";
+  // Show available items container and hide preview
   document.getElementById("available-items-list").style.display = "block";
+  document.getElementById("confirm-trade-btn").style.display = "block";
+  document.getElementById("trade-preview-container").style.display = "none";
 }
 
 async function submitTrade() {
