@@ -135,9 +135,14 @@
     <!-- Breadcrumb Navigation -->
     <div class="container-fluid mt-3">
       <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
+        <ol class="breadcrumb" id="breadcrumb-nav">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Values</li>
+          <li class="breadcrumb-item"><a href="/values">Values</a></li>
+          <li
+            class="breadcrumb-item active category-name"
+            aria-current="page"
+            style="display: none"
+          ></li>
         </ol>
       </nav>
     </div>

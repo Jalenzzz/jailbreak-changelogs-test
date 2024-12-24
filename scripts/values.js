@@ -71,6 +71,18 @@ document.addEventListener("DOMContentLoaded", () => {
           searchBar.value.length > 0 ? "block" : "none";
       }
     }
+
+    // Restore breadcrumb
+    if (savedSortDropdown && savedSortDropdown !== "name-all-items") {
+      const categoryName = savedSortDropdown
+        .split("-")
+        .slice(1)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+      const categoryNameElement = document.querySelector(".category-name");
+      categoryNameElement.textContent = categoryName;
+      categoryNameElement.style.display = "list-item";
+    }
   }
 
   // Call restoreFilters after elements are loaded
@@ -578,6 +590,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const valueSortDropdown = document.getElementById("value-sort-dropdown");
     const sortValue = sortDropdown.value;
     const valueSortType = valueSortDropdown.value;
+
+    // Update breadcrumb
+    const categoryNameElement = document.querySelector(".category-name");
+    if (sortValue === "name-all-items") {
+      categoryNameElement.style.display = "none";
+    } else {
+      const categoryName = sortValue
+        .split("-")
+        .slice(1)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+      categoryNameElement.textContent = categoryName;
+      categoryNameElement.style.display = "list-item";
+    }
 
     // Save current filter states
     localStorage.setItem("sortDropdown", sortValue);
