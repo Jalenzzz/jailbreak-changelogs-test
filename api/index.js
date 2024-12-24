@@ -846,6 +846,257 @@ app.get("*", (req, res) => {
   res.redirect("/");
 });
 
+// Create new trade ad
+app.post("/trades/ads/add", async (req, res) => {
+  try {
+    const { side1, side2, owner, author } = req.body;
+
+    // Get Roblox ID from cookie
+    const robloxId = req.cookies.robloxId;
+    const robloxUsername = req.cookies.robloxUsername;
+
+    // Check if user is authenticated with Roblox
+    if (!robloxId || !robloxUsername) {
+      return res.status(401).json({
+        error: "Roblox authentication required",
+        redirect: "/roblox",
+      });
+    }
+
+    // Continue with existing validation
+    if (!side1 || !side2 || !owner || !author) {
+      return res.status(400).json({ error: "Missing required trade data" });
+    }
+
+    // Validate user authentication
+    const authResponse = await fetch(
+      `https://api.jailbreakchangelogs.xyz/users/auth?token=${author}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    );
+
+    if (!authResponse.ok) {
+      return res.status(401).json({ error: "Invalid authentication" });
+    }
+
+    const authData = await authResponse.json();
+    if (authData.id !== owner) {
+      return res
+        .status(403)
+        .json({ error: "Owner ID does not match authenticated user" });
+    }
+
+    // Add timestamp and unique ID
+    const tradeAd = {
+      id: ib(), // Using existing random ID generator
+      side1,
+      side2,
+      owner,
+      robloxId,
+      robloxUsername,
+      createdAt: new Date().toISOString(),
+      status: "active",
+    };
+
+    // Store in database
+    const response = await fetch(
+      "https://api.jailbreakchangelogs.xyz/trades/ads/add",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+          Authorization: `Bearer ${author}`, // Pass the auth token
+        },
+        body: JSON.stringify(tradeAd),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to create trade ad");
+    }
+
+    const result = await response.json();
+    res.status(201).json(result);
+  } catch (error) {
+    console.error("Error creating trade ad:", error);
+    res.status(500).json({ error: "Failed to create trade ad" });
+  }
+});
+
+// Get specific trade ad
+app.get("/trades/ads/get/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await fetch(
+      `https://api.jailbreakchangelogs.xyz/trades/ads/get?id=${id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    );
+
+    if (response.status === 404) {
+      return res.status(404).json({ error: "Trade ad not found" });
+    }
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch trade ad");
+    }
+
+    const tradeAd = await response.json();
+    res.json(tradeAd);
+  } catch (error) {
+    console.error("Error fetching trade ad:", error);
+    res.status(500).json({ error: "Failed to fetch trade ad" });
+  }
+});
+
+// List all trade ads with optional filters
+app.get("/trades/ads/list", async (req, res) => {
+  try {
+    const { page = 1, limit = 20, status = "active" } = req.query;
+
+    const queryParams = new URLSearchParams({
+      page,
+      limit,
+      status,
+    }).toString();
+
+    const response = await fetch(
+      `https://api.jailbreakchangelogs.xyz/trades/ads/list?${queryParams}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch trade ads");
+    }
+
+    const tradeAds = await response.json();
+    res.json(tradeAds);
+  } catch (error) {
+    console.error("Error listing trade ads:", error);
+    res.status(500).json({ error: "Failed to fetch trade ads" });
+  }
+});
+
+// Edit trade ad
+app.put("/trades/ads/edit/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    // Validate user permission (replace with your auth logic)
+    const canEdit = await checkUserCanEditTrade(id, req.user?.id);
+    if (!canEdit) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to edit this trade ad" });
+    }
+
+    const response = await fetch(
+      `https://api.jailbreakchangelogs.xyz/trades/ads/edit?id=${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+        body: JSON.stringify(updates),
+      }
+    );
+
+    if (response.status === 404) {
+      return res.status(404).json({ error: "Trade ad not found" });
+    }
+
+    if (!response.ok) {
+      throw new Error("Failed to update trade ad");
+    }
+
+    const updated = await response.json();
+    res.json(updated);
+  } catch (error) {
+    console.error("Error updating trade ad:", error);
+    res.status(500).json({ error: "Failed to update trade ad" });
+  }
+});
+
+// Delete trade ad
+app.delete("/trades/ads/delete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate user permission (replace with your auth logic)
+    const canDelete = await checkUserCanEditTrade(id, req.user?.id);
+    if (!canDelete) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to delete this trade ad" });
+    }
+
+    const response = await fetch(
+      `https://api.jailbreakchangelogs.xyz/trades/ads/delete?id=${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    );
+
+    if (response.status === 404) {
+      return res.status(404).json({ error: "Trade ad not found" });
+    }
+
+    if (!response.ok) {
+      throw new Error("Failed to delete trade ad");
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting trade ad:", error);
+    res.status(500).json({ error: "Failed to delete trade ad" });
+  }
+});
+
+// Helper function to check user permissions
+async function checkUserCanEditTrade(tradeId, userId) {
+  if (!userId) return false;
+
+  try {
+    const response = await fetch(
+      `https://api.jailbreakchangelogs.xyz/trades/ads/get?id=${tradeId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    );
+
+    if (!response.ok) return false;
+
+    const trade = await response.json();
+    return trade.userId === userId;
+  } catch (error) {
+    console.error("Error checking trade permissions:", error);
+    return false;
+  }
+}
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);

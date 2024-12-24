@@ -564,6 +564,37 @@ button {
   }
 }
 
+/* Custom 5-column grid */
+.col-custom-5 {
+  width: 20%; /* 5 items per row (100/5) */
+  padding: 0 0.4rem;
+}
+
+/* Responsive adjustments for modal grid */
+@media (max-width: 1400px) {
+  .col-custom-5 {
+    width: 25%; /* 4 per row */
+  }
+}
+
+@media (max-width: 992px) {
+  .col-custom-5 {
+    width: 33.333%; /* 3 per row */
+  }
+}
+
+@media (max-width: 768px) {
+  .col-custom-5 {
+    width: 50%; /* 2 per row */
+  }
+}
+
+@media (max-width: 480px) {
+  .col-custom-5 {
+    width: 100%; /* 1 per row */
+  }
+}
+
 /* Trade Cards Container */
 .trade-grid {
   display: grid;
@@ -686,6 +717,66 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* Trade Preview Styles */
+.trade-preview {
+  background: var(--gray-100);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.preview-items {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Change to 4 items per row */
+  gap: 12px; /* Slightly larger gap for better spacing */
+  padding: 15px;
+  background: var(--common-bg-color);
+  border-radius: 6px;
+  min-height: 120px;
+}
+
+/* Update responsive breakpoints for preview grid */
+@media (max-width: 1200px) {
+  .preview-items {
+    grid-template-columns: repeat(3, 1fr); /* 3 items per row */
+  }
+}
+
+@media (max-width: 768px) {
+  .preview-items {
+    grid-template-columns: repeat(2, 1fr); /* 2 items per row */
+  }
+}
+
+@media (max-width: 480px) {
+  .preview-items {
+    grid-template-columns: repeat(1, 1fr); /* 1 item per row */
+  }
+}
+
+.preview-item {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  padding: 5px;
+  text-align: center;
+}
+
+.preview-item img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  aspect-ratio: 1;
+}
+
+.preview-item .item-name {
+  font-size: 0.8rem;
+  margin-top: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Responsive Adjustments */

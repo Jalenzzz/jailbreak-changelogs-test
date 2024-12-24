@@ -4,7 +4,7 @@ const offeringItems = [];
 const requestingItems = [];
 let currentTradeType = "offering"; // Set default to "offering"
 
-const ITEMS_PER_PAGE = 98;
+const ITEMS_PER_PAGE = 100;
 let currentPage = 1;
 let filteredItems = [];
 
@@ -17,11 +17,6 @@ async function loadItems() {
     allItems = await response.json();
 
     currentTradeType = "offering";
-
-    const title = document.getElementById("available-items-title");
-    if (title) {
-      title.textContent = "Add Items to Offer";
-    }
 
     // Set active state on offering button
     document.querySelectorAll(".available-items-toggle").forEach((button) => {
@@ -152,7 +147,6 @@ function removeItem(index, tradeType) {
 // Function to toggle available items display
 function toggleAvailableItems(type) {
   const container = document.getElementById("available-items-container");
-  const title = document.getElementById("available-items-title");
 
   // Early return if clicking same type
   if (currentTradeType === type) {
@@ -174,75 +168,70 @@ function toggleAvailableItems(type) {
 
   currentPage = 1;
 
-  // Clear search when switching
-  if (document.getElementById("item-search")) {
-    document.getElementById("item-search").value = "";
-  }
-
   // Display available items
   displayAvailableItems(type);
 }
 
-// Function to display available items
+// Replace displayAvailableItems function
 function displayAvailableItems(type) {
-  const container = document.getElementById("available-items-list");
-  const searchInput = document.getElementById("item-search");
+  const container = document.getElementById("modal-available-items-list");
+  const searchInput = document.getElementById("modal-item-search");
   const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
 
-  // Filter items only by search term, not by used status
   filteredItems = allItems.filter((item) => {
     return item.name.toLowerCase().includes(searchTerm);
   });
 
-  // Calculate pagination
   const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const itemsToDisplay = filteredItems.slice(startIndex, endIndex);
 
-  // Render pagination controls
   renderPagination(totalPages, type);
 
-  // Render items with corrected parameters
   container.innerHTML = itemsToDisplay
     .map(
       (item) => `
-  <div class="col-6">
-    <div class="card available-item-card" 
-         onclick="quickAddItem('${item.name}', '${item.type}')">
-      <div class="card-header">
-        ${item.name}
-      </div>
-      <img src="https://cdn.jailbreakchangelogs.xyz/images/items/${item.type.toLowerCase()}s/${
+        <div class="col-custom-5">
+          <div class="card available-item-card" 
+               onclick="quickAddItem('${item.name}', '${item.type}')"
+               data-bs-dismiss="modal">
+            <div class="card-header">
+              ${item.name}
+            </div>
+            <img src="https://cdn.jailbreakchangelogs.xyz/images/items/${item.type.toLowerCase()}s/${
         item.name
       }.webp" 
-           class="card-img-top" 
-           alt="${item.name}"
-           onerror="this.src='https://cdn.jailbreakchangelogs.xyz/logos/Jailbreak_Logo.webp'">
-      <div class="card-body">
-        <div class="info-row">
-          <span class="info-label">Type:</span>
-          <span class="info-value">${item.type}</span>
+                 class="card-img-top" 
+                 alt="${item.name}"
+                 onerror="this.src='https://cdn.jailbreakchangelogs.xyz/logos/Jailbreak_Logo.webp'">
+            <div class="card-body">
+              <div class="info-row">
+                <span class="info-label">Type:</span>
+                <span class="info-value">${item.type}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Cash Value:</span>
+                <span class="info-value">${formatValue(item.cash_value)}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Duped Value:</span>
+                <span class="info-value">${formatValue(
+                  item.duped_value || 0
+                )}</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="info-row">
-          <span class="info-label">Cash Value:</span>
-          <span class="info-value">${formatValue(item.cash_value)}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Duped Value:</span>
-          <span class="info-value">${formatValue(item.duped_value || 0)}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-`
+      `
     )
     .join("");
 }
 
+// Update renderPagination function to use modal elements
 function renderPagination(totalPages, type) {
-  const topPagination = document.getElementById("top-pagination");
-  const bottomPagination = document.getElementById("bottom-pagination");
+  const topPagination = document.getElementById("modal-pagination-top");
+  const bottomPagination = document.getElementById("modal-pagination-bottom");
   const paginationHTML = `
     <div class="pagination-container">
       <button class="pagination-button" onclick="changePage(${
@@ -260,7 +249,7 @@ function renderPagination(totalPages, type) {
   `;
 
   if (topPagination) topPagination.innerHTML = paginationHTML;
-  if (bottomPagination) bottomPagination.innerHTML = paginationHTML;
+  if (bottomPagination) topPagination.innerHTML = paginationHTML;
 }
 
 function changePage(newPage, type) {
@@ -310,6 +299,7 @@ function createPlaceholderCard(index, tradeType) {
   `;
 }
 
+// Update handlePlaceholderClick function
 function handlePlaceholderClick(index, tradeType) {
   console.log("Placeholder clicked:", { index, tradeType });
 
@@ -330,9 +320,27 @@ function handlePlaceholderClick(index, tradeType) {
     selectedTradeType,
   });
 
-  // Show available items container and set correct type
-  const newTradeType = tradeType === "Offer" ? "offering" : "requesting";
-  toggleAvailableItems(newTradeType);
+  // Update modal title
+  const modalTitle = document.getElementById("availableItemsModalLabel");
+  modalTitle.textContent = `Select Item to ${tradeType}`;
+
+  // Set current trade type
+  currentTradeType = tradeType === "Offer" ? "offering" : "requesting";
+
+  // Reset search and page
+  if (document.getElementById("modal-item-search")) {
+    document.getElementById("modal-item-search").value = "";
+  }
+  currentPage = 1;
+
+  // Display items in modal
+  displayAvailableItems(currentTradeType);
+
+  // Show modal
+  const modal = new bootstrap.Modal(
+    document.getElementById("availableItemsModal")
+  );
+  modal.show();
 }
 
 // Function to render empty slots
@@ -512,21 +520,198 @@ function toggleConfirmButton() {
 
 // Add event listeners when document is loaded
 document.addEventListener("DOMContentLoaded", () => {
-  // Add click listeners to toggle buttons
-  document.querySelectorAll(".available-items-toggle").forEach((button) => {
-    button.addEventListener("click", () => {
-      toggleAvailableItems(button.dataset.type);
-    });
-  });
+  // Remove toggle button event listeners since we don't need them anymore
 
   // Initialize both sections with 8 empty slots
   renderEmptySlots("offering-list", 8);
   renderEmptySlots("requesting-list", 8);
 
-  // Show the available items container by default
-  document.getElementById("available-items-container").style.display = "block";
+  // Initial renders
+  renderTradeItems("Offer");
+  renderTradeItems("Request");
+
+  // Check for pending trade after Roblox auth
+  const pendingTrade = localStorage.getItem("pendingTrade");
+  if (pendingTrade) {
+    try {
+      const { side1, side2 } = JSON.parse(pendingTrade);
+      // Restore trade items
+      side1.forEach((item) => addItemToTrade(item, "Offer"));
+      side2.forEach((item) => addItemToTrade(item, "Request"));
+      // Clear pending trade
+      localStorage.removeItem("pendingTrade");
+      // Show preview
+      previewTrade();
+    } catch (err) {
+      console.error("Error restoring pending trade:", err);
+    }
+  }
 });
 
 // Initial Render
 renderTradeItems("Offer");
 renderTradeItems("Request");
+
+function previewTrade() {
+  const hasOfferingItems = Object.values(offeringItems).some((item) => item);
+  const hasRequestingItems = Object.values(requestingItems).some(
+    (item) => item
+  );
+
+  if (!hasOfferingItems || !hasRequestingItems) {
+    toastr.error(
+      "Please add at least one item to both offering and requesting sections"
+    );
+    return;
+  }
+
+  // Hide available items list and show preview
+  document.getElementById("available-items-list").style.display = "none";
+  document.getElementById("trade-preview-container").style.display = "block";
+
+  // Render preview items
+  renderPreviewItems("preview-offering-items", offeringItems);
+  renderPreviewItems("preview-requesting-items", requestingItems);
+}
+
+function renderPreviewItems(containerId, items) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = Object.values(items)
+    .filter((item) => item)
+    .map(
+      (item) => `
+      <div class="preview-item">
+        <img src="https://cdn.jailbreakchangelogs.xyz/images/items/${item.type.toLowerCase()}s/${
+        item.name
+      }.webp" 
+             alt="${item.name}"
+             onerror="this.src='https://cdn.jailbreakchangelogs.xyz/logos/Jailbreak_Logo.webp'">
+        <div class="item-name">${item.name}</div>
+      </div>
+    `
+    )
+    .join("");
+}
+
+function editTrade() {
+  // Hide preview and show available items list
+  document.getElementById("trade-preview-container").style.display = "none";
+  document.getElementById("available-items-list").style.display = "block";
+}
+
+async function submitTrade() {
+  try {
+    // Show loading state on button
+    const submitButton = document.querySelector(
+      "#trade-preview-container .btn-success"
+    );
+    submitButton.disabled = true;
+    submitButton.innerHTML =
+      '<span class="spinner-border spinner-border-sm me-2"></span>Posting Trade...';
+
+    // Get current user info from localStorage or wherever you store it
+    const userToken = localStorage.getItem("userToken");
+    const userId = localStorage.getItem("userId");
+
+    if (!userToken || !userId) {
+      toastr.error("Please login to post trades");
+      return;
+    }
+
+    // Check for Roblox authentication
+    const robloxId = getCookie("robloxId");
+    const robloxUsername = getCookie("robloxUsername");
+
+    if (!robloxId || !robloxUsername) {
+      toastr.error("Please authenticate with Roblox first");
+      // Store current trade data
+      localStorage.setItem(
+        "pendingTrade",
+        JSON.stringify({
+          side1: Object.values(offeringItems).filter((item) => item),
+          side2: Object.values(requestingItems).filter((item) => item),
+        })
+      );
+      // Redirect to Roblox auth
+      window.location.href = "/roblox";
+      return;
+    }
+
+    const tradeAd = {
+      side1: Object.values(offeringItems).filter((item) => item),
+      side2: Object.values(requestingItems).filter((item) => item),
+      owner: userId,
+      author: userToken,
+      robloxId,
+      robloxUsername,
+    };
+
+    const response = await fetch("/trades/ads/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(tradeAd),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to create trade ad");
+    }
+
+    const result = await response.json();
+    toastr.success("Trade posted successfully!");
+
+    // Reset everything
+    resetTrade();
+
+    // Redirect to the trade page after 1 second
+    setTimeout(() => {
+      window.location.href = `/trades/${result.id}`;
+    }, 1000);
+  } catch (error) {
+    console.error("Error posting trade:", error);
+    toastr.error("Failed to post trade. Please try again.");
+  } finally {
+    // Reset button state
+    const submitButton = document.querySelector(
+      "#trade-preview-container .btn-success"
+    );
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.innerHTML = '<i class="bi bi-upload me-2"></i>Post Trade';
+    }
+  }
+}
+
+// Add helper function to get cookies
+function getCookie(name) {
+  let cookieArr = document.cookie.split(";");
+  for (let i = 0; i < cookieArr.length; i++) {
+    let cookiePair = cookieArr[i].split("=");
+    if (name === cookiePair[0].trim()) {
+      return decodeURIComponent(cookiePair[1]);
+    }
+  }
+  return null;
+}
+
+function calculateTotalValue(items, valueType) {
+  return Object.values(items)
+    .filter((item) => item)
+    .reduce((sum, item) => parseValue(item[valueType] || 0), 0);
+}
+
+function resetTrade() {
+  // Clear items
+  offeringItems.length = 0;
+  requestingItems.length = 0;
+
+  // Reset UI
+  renderTradeItems("Offer");
+  renderTradeItems("Request");
+  updateTradeSummary();
+
+  // Hide preview
+  document.getElementById("trade-preview-container").style.display = "none";
+  document.getElementById("available-items-list").style.display = "block";
+}
