@@ -2044,7 +2044,10 @@ $(document).ready(function () {
 
 function handleinvalidImage() {
   setTimeout(() => {
-    this.src =
-      "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"; // Set the placeholder after the delay
-  }, 0); // Adjust the delay time as needed (500ms in this case)
+    const userId = this.id.replace("avatar-", "");
+    const username = this.closest("li").querySelector("a").textContent;
+    this.src = `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${encodeURIComponent(
+      username
+    )}&bold=true&format=svg`;
+  }, 0);
 }
