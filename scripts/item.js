@@ -30,12 +30,31 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function formatValue(value) {
-    if (isNaN(value) || value === 0 || value === null || value === undefined) {
-      return value; // Return the value as-is if it's not a number
+    // Return "-" if value is null, undefined, or empty string
+    if (value === null || value === undefined || value === "") {
+      return "-";
     }
 
-    // Convert the value to a number, then format it with commas
-    return value.toLocaleString();
+    // Convert string values like "7.5m" or "75k" to numbers
+    let numericValue = value;
+    if (typeof value === "string") {
+      value = value.toLowerCase();
+      if (value.endsWith("m")) {
+        numericValue = parseFloat(value) * 1000000;
+      } else if (value.endsWith("k")) {
+        numericValue = parseFloat(value) * 1000;
+      } else {
+        numericValue = parseFloat(value);
+      }
+    }
+
+    // Return "-" if conversion resulted in NaN
+    if (isNaN(numericValue)) {
+      return "-";
+    }
+
+    // Return the number with commas
+    return numericValue.toLocaleString("en-US");
   }
 
   function displayItemDetails(item) {

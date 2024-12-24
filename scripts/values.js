@@ -320,15 +320,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function formatValue(value) {
-    // If value is not valid, return default object
-    if (!value && value !== 0) {
+    // Return default object if value is null, undefined, or empty string
+    if (value === null || value === undefined || value === "") {
       return {
         display: "-",
         numeric: 0,
       };
     }
 
-    // Convert string values like "7.5m" to actual numbers
+    // Convert string values like "7.5m" or "75k" to numbers
     let numericValue = value;
     if (typeof value === "string") {
       value = value.toLowerCase();
@@ -341,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // If parsing failed, return default
+    // Return default object if conversion resulted in NaN
     if (isNaN(numericValue)) {
       return {
         display: "-",
@@ -349,18 +349,9 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     }
 
-    // Format for display
-    let displayValue;
-    if (numericValue >= 1000000) {
-      displayValue = (numericValue / 1000000).toFixed(1) + "M";
-    } else if (numericValue >= 1000) {
-      displayValue = (numericValue / 1000).toFixed(1) + "K";
-    } else {
-      displayValue = numericValue.toString();
-    }
-
+    // Return object with both display and numeric values
     return {
-      display: displayValue,
+      display: numericValue.toLocaleString("en-US"),
       numeric: numericValue,
     };
   }
