@@ -113,7 +113,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 function handleinvalidImage(imgElement) {
   setTimeout(() => {
-    imgElement.src =
-      "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
+    const userCard = imgElement.closest(".user-card");
+    const username = userCard
+      .querySelector(".user-username")
+      .textContent.substring(1); // Remove @ symbol
+    imgElement.src = `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${username}&bold=true&format=svg`;
   }, 0);
 }
