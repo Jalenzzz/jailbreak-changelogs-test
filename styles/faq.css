@@ -3,27 +3,33 @@ body.menu-open {
   overflow: hidden;
 }
 body {
-  background-image: url('https://cdn.jailbreakchangelogs.xyz/backgrounds/background5.webp');
+  background-image: url("https://cdn.jailbreakchangelogs.xyz/backgrounds/background5.webp");
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
   min-height: 100vh;
+  color: #d3d9d4;
 }
 .content-wrapper {
-  background-color: rgba(33, 37, 41, 0.8);
+  background-color: rgba(33, 42, 49, 0.9); /* #212A31 with opacity */
   padding: 20px;
   border-radius: 10px;
   margin-top: 20px;
   margin-bottom: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 .accordion-button {
-  background-color: rgba(33, 37, 41, 0.9) !important;
-  color: #ffffff !important;
+  background-color: #2e3944 !important;
+  color: #d3d9d4 !important;
+}
+.accordion-button:not(.collapsed) {
+  background-color: #124e66 !important;
+  color: #d3d9d4 !important;
 }
 .accordion-body {
-  background-color: rgba(52, 58, 64, 0.9);
-  color: #ffffff;
+  background-color: rgba(46, 57, 68, 0.9); /* #2E3944 with opacity */
+  color: #d3d9d4;
 }
 .main-container {
   display: flex;
@@ -39,10 +45,10 @@ h1 {
   color: #ffffff;
 }
 .content-wrapper {
-  background-color: rgba(33, 37, 41, 0.9);
+  background-color: rgba(33, 42, 49, 0.9); /* #212A31 with opacity */
   border-radius: 15px;
   padding: 30px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 
 .btn-primary {
@@ -50,16 +56,16 @@ h1 {
   border-color: #124e66 !important;
 }
 .btn-primary:hover {
-  background-color: #212a31 !important;
-  border-color: #212a31 !important;
+  background-color: #2e3944 !important;
+  border-color: #2e3944 !important;
 }
 .card {
-  background-color: rgba(33, 37, 41, 0.9);
-  border-color: #444;
+  background-color: rgba(33, 42, 49, 0.9); /* #212A31 with opacity */
+  border-color: #748d92;
 }
 .card-header {
-  background-color: rgba(48, 52, 57, 0.9);
-  border-color: #444;
+  background-color: #2e3944;
+  border-color: #748d92;
 }
 .faq-item {
   margin-bottom: 20px;
@@ -105,16 +111,28 @@ h1 {
 
 .question-text {
   font-size: 1.2em;
-  color: #ffffff;
+  color: #d3d9d4;
   font-weight: bold;
 }
 .answer-text {
   font-size: 1em;
-  color: #e0e0e0;
+  color: #d3d9d4;
 }
 a {
-  color: #6ea8fe;
+  color: #748d92;
 }
 a:hover {
-  color: #9ec5fe;
+  color: #d3d9d4;
+}
+
+.breadcrumb-item a {
+  color: #124e66;
+}
+
+.breadcrumb-item.active {
+  color: #748d92;
+}
+
+.accordion-button::after {
+  color: #d3d9d4;
 }
