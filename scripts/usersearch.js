@@ -6,6 +6,7 @@ const MIN_SEARCH_LENGTH = 1;
 const elements = {
   searchInput: document.getElementById("searchInput"),
   searchButton: document.getElementById("searchButton"),
+  clearButton: document.getElementById("clearButton"),
   usersGrid: document.getElementById("usersGrid"),
   loadingSpinner: document.getElementById("loading-spinner"),
   userResults: document.getElementById("user-results"),
@@ -134,6 +135,13 @@ document.addEventListener("DOMContentLoaded", () => {
   showMessage(messages.minLength);
   elements.searchButton.addEventListener("click", handleSearch);
 
+  // Add clear button functionality
+  elements.clearButton.addEventListener("click", () => {
+    elements.searchInput.value = "";
+    elements.clearButton.style.display = "none";
+    showMessage(messages.minLength);
+  });
+
   // Enter key to search
   elements.searchInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
@@ -141,13 +149,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Handle real-time search as user types
+  // Handle real-time search and clear button visibility
   let searchTimeout;
   elements.searchInput.addEventListener("input", () => {
     clearTimeout(searchTimeout);
     const searchTerm = elements.searchInput.value.trim();
 
-    // Immediately show minimum character message if < 3 characters
+    // Show/hide clear button based on input
+    elements.clearButton.style.display = searchTerm ? "block" : "none";
+
+    // Immediately show minimum character message if < MIN_SEARCH_LENGTH characters
     if (searchTerm.length < MIN_SEARCH_LENGTH) {
       showMessage(messages.minLength);
       return;
