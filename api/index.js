@@ -712,19 +712,16 @@ app.get("/users", (req, res) => {
   });
 });
 
-const getAvatar = async (url) => {
+const getAvatar = async (url, username) => {
   try {
-    const response = await fetch(url, { method: "HEAD" }); // Use HEAD to just check the existence of the resource
+    const response = await fetch(url, { method: "HEAD" });
     if (response.status === 404) {
-      // If 404, return placeholder from ui-avatars
-      return "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
+      return `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${username}&bold=true&format=svg`;
     }
-    // If avatar exists, return the original avatar URL
     return url;
   } catch (error) {
-    // In case of error, return the placeholder
     console.error("Error fetching avatar:", error);
-    return "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
+    return `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${username}&bold=true&format=svg`;
   }
 };
 
@@ -792,7 +789,7 @@ app.get("/users/:user", async (req, res) => {
     const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
 
     // Check if avatar exists and get the correct URL (or placeholder)
-    const avatar = await getAvatar(avatarUrl);
+    const avatar = await getAvatar(avatarUrl, userData.username);
 
     // Render the page only after both data sets are fetched
     res.render("users", {
