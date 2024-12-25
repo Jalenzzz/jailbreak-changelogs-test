@@ -573,13 +573,16 @@ body.menu-open {
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 30px; /* Adjusted height for extra small screens */
+    height: 25px; /* Adjusted height for extra small screens */
   }
   .jbcl-announcement-banner {
     padding: 0.625rem;
   }
 
   .jbcl-announcement-text {
+    font-size: 0.8125rem;
+  }
+  .jb-footer__links {
     font-size: 0.8125rem;
   }
 }
