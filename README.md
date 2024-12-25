@@ -16,7 +16,7 @@ Welcome to the Roblox Jailbreak Changelogs repository. Discover the latest updat
 
 ## Website Features
 
-Our platform offers comprehensive Jailbreak-related features:
+Our platform offers comprehensive Roblox Jailbreak related features:
 
 - **Changelog Archive:** Access the complete history of Jailbreak updates, with detailed patch notes dating back to 2017.
 
