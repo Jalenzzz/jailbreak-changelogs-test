@@ -777,6 +777,10 @@ document.addEventListener("DOMContentLoaded", () => {
       clearButton.style.display = "none";
     }
 
+    // Hide category in breadcrumb
+    const categoryNameElement = document.querySelector(".category-name");
+    categoryNameElement.style.display = "none";
+
     // Reset items display
     currentPage = 1;
     filteredItems = [...allItems];
