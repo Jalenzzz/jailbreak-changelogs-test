@@ -58,6 +58,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function displayItemDetails(item) {
+    const limitedBadgeHtml = item.is_limited
+      ? `<span class="badge limited-badge">
+           <i class="bi bi-star-fill me-1"></i>Limited
+         </span>`
+      : "";
+
     function showFirefoxAutoplayNotice() {
       // Remove existing notice if present
       const existingNotice = document.querySelector(".firefox-autoplay-notice");
@@ -184,16 +190,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     let element = "";
     if (item.type === "Drift") {
       element = `
-            <div class="media-container">
+            <div class="media-container ${
+              item.is_limited ? "limited-item" : ""
+            }">
                 <img 
-                    src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${item.name}.webp"
+                    src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${
+                      item.name
+                    }.webp"
                     class="img-fluid rounded thumbnail"
                     alt="${item.name}"
                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"
                     onerror="handleimage(this)"
                 >
                 <video 
-                  src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm"
+                  src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${
+                    item.name
+                  }.webm"
                   class="img-fluid rounded video-player"
                   style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"
                   playsinline 
@@ -201,7 +213,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                   loop
                   preload="metadata"
                   defaultMuted
-              ></video>
+                ></video>
+                ${limitedBadgeHtml}
             </div>
             `;
 
@@ -311,7 +324,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                           item.type === "Drift"
                             ? element
                             : `
-                          <div class="media-container">
+                          <div class="media-container ${
+                            item.is_limited ? "limited-item" : ""
+                          }">
                               <img 
                                   src="https://cdn.jailbreakchangelogs.xyz/images/items/${encodeURIComponent(
                                     image_type
@@ -321,6 +336,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                                   style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"
                                   onerror="handleimage(this)"
                               >
+                              ${limitedBadgeHtml}
                           </div>
                         `
                         }
