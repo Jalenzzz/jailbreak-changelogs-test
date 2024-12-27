@@ -413,15 +413,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const cashValue = formatValue(item.cash_value);
     const dupedValue = formatValue(item.duped_value);
 
-    // Create card
+    // Add limited badge HTML if item is limited
+    const limitedBadgeHtml = item.is_limited
+      ? `
+        <span class="badge limited-badge">
+            <i class="bi bi-star-fill me-1"></i>Limited
+        </span>
+    `
+      : "";
+
+    // Create card with conditional limited class and badge
     cardDiv.innerHTML = `
-    <div class="card items-card shadow-sm" onclick="handleCardClick('${
+    <div class="card items-card shadow-sm ${
+      item.is_limited ? "limited-item" : ""
+    }" onclick="handleCardClick('${
       item.name
     }', '${item.type.toLowerCase()}')" style="cursor: pointer;">
       ${mediaElement}
       <span class="badge item-type-badge" style="background-color: ${color};">${
       item.type
     }</span>
+      ${limitedBadgeHtml}
       <div class="item-card-body text-center">
         <h5 class="card-title">${item.name}</h5>
         <div class="value-container">
