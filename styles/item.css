@@ -72,22 +72,16 @@ body {
 }
 
 .custom-spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid transparent;
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(116, 141, 146, 0.3);
   border-radius: 50%;
-  border-top-color: #31b1ff;
-  border-right-color: #31b1ff;
-  border-bottom-color: #ff341c;
-  border-left-color: #ff341c;
+  border-top-color: #748d92;
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
+  to {
     transform: rotate(360deg);
   }
 }
@@ -445,4 +439,8 @@ body {
 .comment-item a:active {
   color: #d3d9d4 !important;
   text-decoration: underline !important;
+}
+
+.comments-wrapper {
+  transition: opacity 0.3s ease;
 }

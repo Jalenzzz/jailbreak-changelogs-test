@@ -1,4 +1,17 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  // Add this near the top of the file
+  const commentsWrapper = document.querySelector(".comments-wrapper");
+  if (commentsWrapper) {
+    commentsWrapper.style.display = "none"; // Hide initially
+    commentsWrapper.innerHTML = `
+      <div class="text-center py-5">
+        <div class="custom-spinner mx-auto"></div>
+        <p class="text-muted mt-3">Loading comments...</p>
+      </div>
+    `;
+    commentsWrapper.style.display = "block"; // Show loading spinner
+  }
+
   const rawItemName = window.location.pathname.split("/").pop();
   const itemName = decodeURIComponent(rawItemName).trim().replace(/\s+/g, " "); // Get the item name from the URL
 
@@ -539,10 +552,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     }, 100);
 
     // After loading the main item content, update the comments section
-    const commentsWrapper = document.querySelector(".comments-wrapper");
-    if (commentsWrapper) {
-      commentsWrapper.innerHTML = commentTemplate(item);
-    }
+    setTimeout(() => {
+      const commentsWrapper = document.querySelector(".comments-wrapper");
+      if (commentsWrapper) {
+        commentsWrapper.style.opacity = "0";
+        commentsWrapper.innerHTML = commentTemplate(item);
+        // Fade in the comments
+        setTimeout(() => {
+          commentsWrapper.style.transition = "opacity 0.3s ease";
+          commentsWrapper.style.opacity = "1";
+        }, 100);
+      }
+    }, 1000); // Add a slight delay to simulate loading
   }
 
   function showErrorMessage(message) {
