@@ -626,6 +626,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (itemType === "all-items") {
       filteredItems = [...allItems];
       localStorage.removeItem("lastSort");
+    } else if (itemType === "limited-items") {
+      // Filter limited items
+      filteredItems = allItems.filter((item) => item.is_limited);
     } else {
       filteredItems = allItems.filter((item) => {
         const normalizedItemType = item.type.toLowerCase().replace(" ", "-");
@@ -922,6 +925,7 @@ function updateSearchPlaceholder() {
   // Define placeholders for different categories
   const placeholders = {
     "all-items": "Search items...",
+    "limited-items": "Search limited items...",
     vehicles: "Search vehicles (e.g., Brulee, Torpedo)...",
     spoilers: "Search spoilers (e.g., Rocket, Wing)...",
     rims: "Search rims (e.g., Star, Spinner)...",
