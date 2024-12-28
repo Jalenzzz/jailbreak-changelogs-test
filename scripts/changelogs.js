@@ -849,27 +849,30 @@ $(document).ready(function () {
                             line.substring(2)
                           )}</p>
                       </div>`; // Convert to another styled list item
-        } else if (line.startsWith("(audio)")) {
-          const audioUrl = line.substring(7).trim(); // Extract audio URL
-          const audioType = audioUrl.endsWith(".wav")
-            ? "audio/wav"
-            : "audio/mpeg"; // Determine audio type
-          return `<audio class="w-100 mt-2 mb-2" controls><source src="${audioUrl}" type="audio/mpeg"></audio>`; // Create audio element
-        } else if (line.startsWith("(image)")) {
-          const imageUrl = line.substring(7).trim();
-          return `<img src="${imageUrl}" alt="Image" class="media-element">`;
-        } else if (line.startsWith("(video)")) {
-          const videoUrl = line.substring(7).trim();
-          return `
-            <video 
-                class="media-element"
-                controls
-                preload="metadata"
-                playsinline
-            >
-                <source src="${videoUrl}" type="video/webm">
-                Your browser does not support the video tag.
+        } else if (
+          line.startsWith("(audio)") ||
+          line.startsWith("(video)") ||
+          line.startsWith("(image)")
+        ) {
+          // Add class for media element and margin if it follows another media element
+          const isMedia = true;
+          const mediaElementClass = "media-element-spacing";
+
+          if (line.startsWith("(video)")) {
+            const videoUrl = line.substring(7).trim();
+            return `<video class="${mediaElementClass}" controls preload="metadata" playsinline>
+              <source src="${videoUrl}" type="video/webm">
+              Your browser does not support the video tag.
             </video>`;
+          } else if (line.startsWith("(image)")) {
+            const imageUrl = line.substring(7).trim();
+            return `<img src="${imageUrl}" alt="Image" class="${mediaElementClass}">`;
+          } else if (line.startsWith("(audio)")) {
+            const audioUrl = line.substring(7).trim();
+            return `<audio class="${mediaElementClass}" controls>
+              <source src="${audioUrl}" type="audio/mpeg">
+            </audio>`;
+          }
         } else {
           return `<p class="lead mb-2">${wrapMentions(line)}</p>`; // Default to paragraph
         }

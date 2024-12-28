@@ -158,7 +158,7 @@ app.get("/changelogs/:changelog", async (req, res) => {
 app.get("/seasons", async (req, res) => {
   try {
     const latestResponse = await fetch(
-      "https://api.jailbreakchangelogs.xyz/seasons/latest",
+      "https://api3.jailbreakchangelogs.xyz/seasons/latest",
       {
         headers: {
           "Content-Type": "application/json",
@@ -181,13 +181,13 @@ app.get("/seasons", async (req, res) => {
 
 app.get("/seasons/:season", async (req, res) => {
   let seasonId = req.params.season;
-  const apiUrl = `https://api.jailbreakchangelogs.xyz/seasons/get?season=${seasonId}`;
+  const apiUrl = `https://api3.jailbreakchangelogs.xyz/seasons/get?season=${seasonId}`;
   const rewardsUrl = `https://api.jailbreakchangelogs.xyz/rewards/get?season=${seasonId}`;
 
   try {
     // First fetch the latest season for fallback
     const latestResponse = await fetch(
-      "https://api.jailbreakchangelogs.xyz/seasons/latest",
+      "https://api3.jailbreakchangelogs.xyz/seasons/latest",
       {
         headers: {
           "Content-Type": "application/json",

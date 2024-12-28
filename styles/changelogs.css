@@ -293,6 +293,19 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   object-fit: contain;
 }
 
+/* Add spacing between consecutive media elements */
+.media-element-spacing {
+  margin-bottom: 1.5rem;
+  max-width: 90%;
+  max-height: 420px;
+  height: auto;
+  display: block;
+  margin-right: auto;
+  margin-left: 0;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
 /* Overwrite existing video-responsive class */
 .video-responsive {
   max-width: 90%;
@@ -1036,6 +1049,10 @@ button {
   .video-responsive {
     max-height: 300px;
     max-width: 100%;
+  }
+  .media-element-spacing {
+    margin-bottom: 1rem;
+    max-height: 300px;
   }
 }
 
