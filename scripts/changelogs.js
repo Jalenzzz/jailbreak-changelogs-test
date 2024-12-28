@@ -388,35 +388,32 @@ $(document).ready(function () {
       debounceTimer = setTimeout(() => {
         performSearch(); // Call performSearch after the delay
       }, 300); // 300 milliseconds delay
+    } else {
+      // Clear search results when input is empty
+      clearSearch();
     }
   });
 
-  // Event listener for the clear button
-  $clearButton.on("click", function () {
-    $searchInput.val(""); // Clear the search input
-    $clearButton.hide(); // Hide the clear button
-    $searchResultsContainer.empty(); // Clear the search results
-    $searchResultsContainer.hide();
+  // Unified clear search function
+  function clearSearch() {
+    $searchInput.val("").blur(); // Add blur() to remove focus
+    $clearButton.hide();
+    $searchResultsContainer.empty().hide();
     $exampleQueries.removeClass("d-none");
+  }
 
-    // Trigger input event to update search results
-    // $searchInput.trigger("input");
+  // Update clear button click handler
+  $clearButton.on("click", clearSearch);
 
-    // Focus back on the input
-    $searchInput.focus();
-  });
-
-  // Handle Enter key press or mobile 'Go' button
+  // Update keyboard event handler
   $searchInput.on("keydown", function (e) {
     if (e.key === "Enter") {
       e.preventDefault(); // Prevent default form submission behavior
       focusOnSearchResults(); // Focus on the search results
       dismissKeyboard(); // Dismiss the keyboard on mobile
-    } else if (e.key === "Escape" && $(this).val()) {
-      // Clear on Escape key if there's text
-      $searchInput.val(""); // Clear the input
-      $clearButton.hide(); // Hide the clear button
-      $searchInput.trigger("input"); // Trigger input event to update search
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      clearSearch();
     }
   });
 
@@ -425,6 +422,7 @@ $(document).ready(function () {
     e.preventDefault(); // Prevent default action
     const query = $(this).text(); // Get the example query text
     $searchInput.val(query); // Set the search input to the example query
+    $clearButton.show();
     performSearch(); // Perform the search
     $exampleQueries.addClass("d-none"); // Hide example queries
   });
@@ -1125,11 +1123,8 @@ $(document).ready(function () {
           const newUrl = `/changelogs/${changelog.id}`;
           history.pushState({}, "", newUrl);
 
-          // Hide search results but keep the query
-          $searchResultsContainer.hide();
-
-          // Keep clear button visible since we're keeping the query
-          $searchInput.show();
+          // Clear search when clicking a result
+          clearSearch();
 
           displayChangelog(changelog); // Display the selected changelog
           updateChangelogBreadcrumb(changelog.id); // Update the breadcrumb
