@@ -182,7 +182,7 @@ app.get("/seasons", async (req, res) => {
 app.get("/seasons/:season", async (req, res) => {
   let seasonId = req.params.season;
   const apiUrl = `https://api3.jailbreakchangelogs.xyz/seasons/get?season=${seasonId}`;
-  const rewardsUrl = `https://api.jailbreakchangelogs.xyz/rewards/get?season=${seasonId}`;
+  const rewardsUrl = `https://api3.jailbreakchangelogs.xyz/rewards/get?season=${seasonId}`;
 
   try {
     // First fetch the latest season for fallback

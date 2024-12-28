@@ -42,7 +42,7 @@ $(document).ready(function () {
   }
 
   function fetchAllRewards() {
-    return fetch("https://api.jailbreakchangelogs.xyz/rewards/list").then(
+    return fetch("https://api3.jailbreakchangelogs.xyz/rewards/list").then(
       (response) => response.json()
     );
   }
