@@ -195,6 +195,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (item.type === "Spoiler") color = "#C18800";
     if (item.type === "Rim") color = "#6335B1";
     if (item.type === "Tire Sticker") color = "#1CA1BD";
+    if (item.type === "Tire Style") color = "#4CAF50";
     if (item.type === "Drift") color = "#FF4500";
     if (item.type === "Color") color = "#8A2BE2";
     if (item.type === "Texture") color = "#708090";
