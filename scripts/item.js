@@ -396,7 +396,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div class="col-12">
                     <div class="card chart-container">
                         <div class="card-header text-center">
-                            <h3 class="card-title" style="font-family: 'Luckiest Guy', cursive;">Value History for ${
+                            <h3 class="card-title" style="font-weight: revert; font-family: 'Luckiest Guy', cursive;">Value History for ${
                               item.name
                             }</h3>
                         </div>
@@ -553,6 +553,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }, 100);
 
     // After loading the main item content, update the comments section
+<<<<<<< Updated upstream
     setTimeout(() => {
       const commentsWrapper = document.querySelector(".comments-wrapper");
       if (commentsWrapper) {
@@ -565,6 +566,70 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 100);
       }
     }, 1000); // Add a slight delay to simulate loading
+=======
+    const commentsWrapper = document.querySelector(".comments-wrapper");
+    if (commentsWrapper) {
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      const disabled = user ? "" : "disabled";
+      const placeholder = user ? `Comment as ${user.global_name}` : "Login to comment";
+      commentsWrapper.innerHTML = commentTemplate(item, disabled, placeholder);
+      const submitButton = document.getElementById("submit-comment");
+      const commentInput = document.getElementById("commenter-text");
+      submitButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        if (!user) {
+          alert("Please login to comment.");
+          return;
+        }
+        const comment = commentInput.value;
+        if (!comment) {
+          alert("Please enter a comment.");
+          return;
+        }
+        const avatarUrl = sessionStorage.getItem("avatar");
+
+        const defaultAvatarUrl =
+        "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
+      const src = avatarUrl.endsWith("null.png")
+        ? defaultAvatarUrl
+        : avatarUrl;
+
+        const listItem = document.createElement("li");
+        listItem.className = "d-flex align-items-start mb-3";
+        listItem.innerHTML = `
+          <img
+            src=${src}
+            class="rounded-circle m-1"
+            width="32"
+            height="32"
+            alt="User Avatar"
+            onerror=handleinvalidImage
+          />
+          <div
+            class="ms-2 comment-item w-100"
+            style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
+          >
+            <a href="#" style="font-weight: bold; color: #748d92; text-decoration: none;">${
+              user.global_name
+            }</a>
+            <small class="text-muted
+              "> · ${new Date().toLocaleString("en-US", {
+                month: "long",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+              })}</small>
+            <p class="mb-0 comment-text" style="color: #d3d9d4; margin-top: 4px">
+              ${comment}
+            </p>
+          </div>
+        `;
+        const commentsList = document.getElementById("comments-list");
+        commentsList.appendChild(listItem);
+        console.log(comment);
+      });
+    }
+>>>>>>> Stashed changes
   }
 
   function showErrorMessage(message) {
@@ -588,7 +653,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadItemDetails();
 });
 
-const commentTemplate = (item) => `
+
+const commentTemplate = (item, disabled, placeholder) => `
   <h2
     class="comment-header text-center"
     id="comment-header"
@@ -607,8 +673,8 @@ const commentTemplate = (item) => `
         type="text"
         class="form-control"
         id="commenter-text"
-        disabled
-        placeholder="Login to comment"
+        ${disabled}
+        placeholder='${placeholder}'
         required
         style="background-color: transparent; border: none"
       />
@@ -616,7 +682,7 @@ const commentTemplate = (item) => `
         type="submit"
         class="btn btn-primary"
         id="submit-comment"
-        disabled
+        ${disabled}
       >
         <i class="bi bi-send-fill me-1"></i> Submit
       </button>
@@ -751,3 +817,13 @@ const commentTemplate = (item) => `
     </button>
   </div>
 `;
+
+function handleinvalidImage() {
+  setTimeout(() => {
+    const userId = this.id.replace("avatar-", "");
+    const username = this.closest("li").querySelector("a").textContent;
+    this.src = `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${encodeURIComponent(
+      username
+    )}&bold=true&format=svg`;
+  }, 0);
+}
