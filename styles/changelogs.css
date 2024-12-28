@@ -281,12 +281,26 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   background-color: #2e3944;
 }
 
-.video-responsive {
+/* Media Element Styles */
+.media-element {
   max-width: 90%;
+  max-height: 420px;
   height: auto;
   display: block;
-  margin-right: auto; /* Remove this if it exists */
-  margin-left: 0; /* Ensures left alignment */
+  margin-right: auto;
+  margin-left: 0;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+/* Overwrite existing video-responsive class */
+.video-responsive {
+  max-width: 90%;
+  max-height: 420px;
+  height: auto;
+  display: block;
+  margin-right: auto;
+  margin-left: 0;
 }
 
 [data-bs-theme="dark"] #main-container {
@@ -1016,6 +1030,11 @@ button {
   }
   .video-responsive {
     max-height: 300px; /* Smaller height on mobile */
+    max-width: 100%;
+  }
+  .media-element,
+  .video-responsive {
+    max-height: 300px;
     max-width: 100%;
   }
 }

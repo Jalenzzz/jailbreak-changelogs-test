@@ -88,7 +88,14 @@ $(document).ready(function () {
       // Update the URL without reloading the page
       const newUrl = `/changelogs/${latestChangelog.id}`;
       history.pushState({}, "", newUrl);
-      difogToast("Showing latest changelog"); // Show a toast notification
+
+      // Display the changelog content
+      displayChangelog(latestChangelog);
+
+      // Update the breadcrumb
+      updateChangelogBreadcrumb(latestChangelog.id);
+
+      changelogToast("Showing latest changelog"); // Show a toast notification
     } else {
       console.warn("No changelog data available to display latest entry.");
       changelogToast("No changelog data available.");
@@ -849,13 +856,13 @@ $(document).ready(function () {
             : "audio/mpeg"; // Determine audio type
           return `<audio class="w-100 mt-2 mb-2" controls><source src="${audioUrl}" type="audio/mpeg"></audio>`; // Create audio element
         } else if (line.startsWith("(image)")) {
-          const imageUrl = line.substring(7).trim(); // Extract image URL
-          return `<img src="${imageUrl}" alt="Image" class="img-fluid mt-2 mb-2 rounded" style="max-height: 270px;">`; // Create image element
+          const imageUrl = line.substring(7).trim();
+          return `<img src="${imageUrl}" alt="Image" class="media-element">`;
         } else if (line.startsWith("(video)")) {
           const videoUrl = line.substring(7).trim();
           return `
             <video 
-                class="video-responsive" 
+                class="media-element"
                 controls
                 preload="metadata"
                 playsinline
@@ -1634,13 +1641,11 @@ $(document).ready(function () {
 
           const dateElement = document.createElement("small");
           const formattedDate = formatDate(comment.date);
-          console.log(comment);
 
           if (comment.edited_at) {
             const formattedEditDate = formatDate(comment.edited_at);
             dateElement.textContent = ` · ${formattedEditDate} (Edited)`;
             dateElement.classList.add("text-muted");
-            console.log("Edited Comment");
           } else {
             dateElement.textContent = ` · ${formattedDate}`;
             dateElement.classList.add("text-muted");
@@ -2007,6 +2012,131 @@ $(document).ready(function () {
           });
       }
     });
+
+  // State machine for error handling
+  const ErrorState = {
+    SUCCESS: "success",
+    NOT_FOUND: "not_found",
+    FORBIDDEN: "forbidden",
+    SERVER_ERROR: "server_error",
+    NETWORK_ERROR: "network_error",
+  };
+
+  function handleError(status) {
+    switch (status) {
+      case 404:
+        return {
+          state: ErrorState.NOT_FOUND,
+          message: "The requested information could not be found.",
+        };
+      case 403:
+        return {
+          state: ErrorState.FORBIDDEN,
+          message: "You don't have permission to access this information.",
+        };
+      case 500:
+        return {
+          state: ErrorState.SERVER_ERROR,
+          message: "We're experiencing server issues.",
+        };
+      case 0:
+        return {
+          state: ErrorState.NETWORK_ERROR,
+          message: "Unable to connect to the server.",
+        };
+      default:
+        return {
+          state: ErrorState.SERVER_ERROR,
+          message: "An unknown error occurred.",
+        };
+    }
+  }
+
+  // Switch statement for handling media types
+  function handleMediaType(type, changelog) {
+    switch (type) {
+      case "audio":
+        return changelog.sections.includes("(audio)");
+      case "video":
+        return changelog.sections.includes("(video)");
+      case "image":
+        return changelog.sections.includes("(image)");
+      case "mention":
+        return /@\w+/.test(changelog.sections);
+      default:
+        return false;
+    }
+  }
+
+  // Switch statement for comment actions
+  function handleCommentAction(action, commentId) {
+    switch (action) {
+      case "edit":
+        return editComment(commentId);
+      case "delete":
+        return deleteComment(commentId);
+      case "report":
+        return reportComment(commentId);
+      default:
+        console.warn("Unknown comment action:", action);
+        return false;
+    }
+  }
+
+  // Switch statement for markdown parsing
+  function parseMarkdownElement(line) {
+    switch (true) {
+      case line.startsWith("# "):
+        return createH1Element(line.substring(2));
+      case line.startsWith("## "):
+        return createH2Element(line.substring(3));
+      case line.startsWith("- - "):
+        return createNestedListItem(line.substring(4));
+      case line.startsWith("- "):
+        return createListItem(line.substring(2));
+      case line.startsWith("(audio)"):
+        return createAudioElement(line.substring(7));
+      case line.startsWith("(video)"):
+        return createVideoElement(line.substring(7));
+      case line.startsWith("(image)"):
+        return createImageElement(line.substring(7));
+      default:
+        return createParagraph(line);
+    }
+  }
+
+  // Add state tracking for pagination
+  const PaginationState = {
+    currentPage: 1,
+    itemsPerPage: 7,
+    totalPages: 0,
+  };
+
+  // Switch statement for pagination actions
+  function handlePaginationAction(action) {
+    switch (action) {
+      case "next":
+        if (PaginationState.currentPage < PaginationState.totalPages) {
+          PaginationState.currentPage++;
+          return true;
+        }
+        return false;
+      case "prev":
+        if (PaginationState.currentPage > 1) {
+          PaginationState.currentPage--;
+          return true;
+        }
+        return false;
+      case "first":
+        PaginationState.currentPage = 1;
+        return true;
+      case "last":
+        PaginationState.currentPage = PaginationState.totalPages;
+        return true;
+      default:
+        return false;
+    }
+  }
 });
 
 function handleinvalidImage() {
