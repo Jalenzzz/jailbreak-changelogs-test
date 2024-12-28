@@ -37,35 +37,10 @@ $(document).ready(function () {
   let debounceTimer;
 
   function escapeHtml(text) {
-    // First preserve any existing highlight spans by using temporary markers
-    text = text.replace(/<span class="highlight">(.*?)<\/span>/g, "§§H§§$1§§");
-    text = text.replace(
-      /<span class="highlight mention">(.*?)<\/span>/g,
-      "§§M§§$1§§/M§§"
-    );
-
-    // Escape HTML entities
+    // Create a temporary div to handle HTML encoding
     const div = document.createElement("div");
     div.textContent = text;
-    text = div.innerHTML;
-
-    // Decode any existing HTML entities to prevent double encoding
-    text = text
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">");
-
-    // Restore highlight spans
-    text = text.replace(
-      /§§H§§(.*?)§§\/H§§/g,
-      '<span class="highlight">$1</span>'
-    );
-    text = text.replace(
-      /§§M§§(.*?)§§\/M§§/g,
-      '<span class="highlight mention">$1</span>'
-    );
-
-    return text;
+    return div.innerHTML;
   }
 
   function updateChangelogBreadcrumb(changelogId) {
@@ -786,33 +761,36 @@ $(document).ready(function () {
 
   // Function to highlight specific text in a string based on a query
   function highlightText(text, query) {
-    // First escape any HTML in the original text
-    let highlightedText = escapeHtml(text);
+    // First escape HTML special characters
+    let safeText = escapeHtml(text);
 
-    const words = query
-      .split(/\s+/)
-      .map((word) => word.trim())
-      .filter((word) => word.length > 0);
+    // Check if this is a mention search
+    const isMentionSearch = query.trim() === "has:mention";
 
-    // Highlight other query words in the text first
-    words.forEach((word) => {
-      if (word !== "has:" && word !== "mention") {
-        // Modified regex to avoid matching within HTML tags
-        const regex = new RegExp(`(?![^<]*>)(${word})`, "gi");
-        highlightedText = highlightedText.replace(
-          regex,
-          '<span class="highlight">$1</span>'
-        );
-      }
-    });
+    if (isMentionSearch) {
+      // Only highlight mentions for has:mention searches
+      safeText = safeText.replace(
+        /@(\w+)/g,
+        '<span class="highlight mention">@$1</span>'
+      );
+    } else {
+      // For regular searches, highlight the search terms
+      const words = query
+        .split(/\s+/)
+        .filter((word) => word.length > 0)
+        .map((word) => escapeRegExp(word));
 
-    // Highlight @mentions in the text last
-    highlightedText = highlightedText.replace(
-      /@(\w+)/g,
-      '<span class="highlight mention">@$1</span>'
-    );
+      const pattern = words.join("|");
+      const regex = new RegExp(`(${pattern})`, "gi");
+      safeText = safeText.replace(regex, '<span class="highlight">$1</span>');
+    }
 
-    return highlightedText;
+    return safeText;
+  }
+
+  // Helper function to escape special characters in regex
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
   // Function to convert Markdown text to HTML
@@ -1134,10 +1112,11 @@ $(document).ready(function () {
         ].join("");
 
         $listItem.html(`
-                <h5 class="mb-1">${escapeHtml(
-                  highlightedTitle
+                <h5 class="mb-1">${highlightText(
+                  changelog.title,
+                  query
                 )} ${mediaLabels}</h5>
-                <p class="mb-1 small">${escapeHtml(highlightedPreview)}</p>
+                <p class="mb-1 small">${highlightText(previewText, query)}</p>
             `);
 
         // Click event to display the selected changelog
