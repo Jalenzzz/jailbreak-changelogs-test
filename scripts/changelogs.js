@@ -1,7 +1,7 @@
 $(document).ready(function () {
   // Get references to DOM elements
   const loadingOverlay = document.getElementById("loading-overlay");
-  const apiUrl = "https://api4.jailbreakchangelogs.xyz/";
+  const apiUrl = "https://api3.jailbreakchangelogs.xyz/changelogs/list";
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
   const titleElement = document.getElementById("changelogTitle");
