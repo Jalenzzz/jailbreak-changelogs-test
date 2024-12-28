@@ -1,7 +1,7 @@
 $(document).ready(function () {
   // Get references to DOM elements
   const loadingOverlay = document.getElementById("loading-overlay");
-  const apiUrl = "https://api.jailbreakchangelogs.xyz/changelogs/list";
+  const apiUrl = "https://api3.jailbreakchangelogs.xyz/changelogs/list";
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
   const titleElement = document.getElementById("changelogTitle");
@@ -19,10 +19,6 @@ $(document).ready(function () {
   const dateFilterModal = new bootstrap.Modal(
     document.getElementById("dateFilterModal")
   );
-
-  // Caching variables
-  const CACHE_KEY = "changelogsCache";
-  const CACHE_EXPIRY = 60 * 60 * 1000; // 1 hour in milliseconds
 
   const desktopLatestChangelogBtn = document.getElementById(
     "desktopLatestChangelogBtn"
@@ -84,26 +80,6 @@ $(document).ready(function () {
       breadcrumbHtml;
   }
 
-  // Function to get cache from localStorage
-  function getCache() {
-    const cache = localStorage.getItem(CACHE_KEY);
-    return cache ? JSON.parse(cache) : null;
-  }
-
-  // Function to set cache in localStorage
-  function setCache(data) {
-    const cacheData = {
-      data: data,
-      timestamp: Date.now(),
-    };
-    localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-  }
-
-  // Function to check if cache is expired
-  function isCacheExpired(cacheTimestamp) {
-    return Date.now() - cacheTimestamp > CACHE_EXPIRY;
-  }
-
   // Displays the most recent changelog entry.
   function displayLatestChangelog() {
     if (changelogsData && changelogsData.length > 0) {
@@ -112,11 +88,7 @@ $(document).ready(function () {
       // Update the URL without reloading the page
       const newUrl = `/changelogs/${latestChangelog.id}`;
       history.pushState({}, "", newUrl);
-
-      displayChangelog(latestChangelog); // Display the changelog content
-      updateChangelogBreadcrumb(latestChangelog.id); // Update the breadcrumb
-      updateDropdownButton("default"); // Reset the dropdown button to its default state
-      changelogToast("Showing latest changelog"); // Show a toast notification
+      difogToast("Showing latest changelog"); // Show a toast notification
     } else {
       console.warn("No changelog data available to display latest entry.");
       changelogToast("No changelog data available.");
@@ -916,7 +888,7 @@ $(document).ready(function () {
       let changelogId = pathSegments[pathSegments.length - 1];
 
       // Fetch latest changelog for fallback
-      fetch("https://api.jailbreakchangelogs.xyz/changelogs/latest", {
+      fetch("https://api3.jailbreakchangelogs.xyz/changelogs/latest", {
         headers: {
           "Content-Type": "application/json",
           Origin: "https://jailbreakchangelogs.xyz",
@@ -969,7 +941,6 @@ $(document).ready(function () {
   window.fetchDataFromAPI = function () {
     return $.getJSON(apiUrl)
       .done((data) => {
-        setCache(data);
         processChangelogData(data);
       })
       .fail((jqXHR, textStatus, errorThrown) => {
@@ -1013,6 +984,10 @@ $(document).ready(function () {
         hideLoadingOverlay();
       });
   };
+
+  // Initial data fetch
+  fetchDataFromAPI();
+
   function getErrorMessage(statusCode) {
     switch (statusCode) {
       case 404:
@@ -1026,14 +1001,6 @@ $(document).ready(function () {
       default:
         return "We're having trouble loading the changelog information. This might be due to a temporary connection issue or server maintenance.";
     }
-  }
-
-  // Check cache before fetching
-  const cachedData = getCache();
-  if (cachedData && !isCacheExpired(cachedData.timestamp)) {
-    processChangelogData(cachedData.data);
-  } else {
-    fetchDataFromAPI();
   }
 
   // Function to perform a search based on user input

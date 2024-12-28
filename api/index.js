@@ -53,7 +53,7 @@ app.set("views", path.join(__dirname, "views")); // Set the directory for your E
 app.get("/changelogs", async (req, res) => {
   try {
     const latestResponse = await fetch(
-      "https://api.jailbreakchangelogs.xyz/changelogs/latest",
+      "https://api3.jailbreakchangelogs.xyz/changelogs/latest",
       {
         headers: {
           "Content-Type": "application/json",
@@ -90,12 +90,12 @@ app.get("/owner/check/:user", (req, res) => {
 app.get("/changelogs/:changelog", async (req, res) => {
   let changelogId = req.params.changelog || 1;
   console.log(`Fetching changelog with ID: ${changelogId}`);
-  const apiUrl = `https://api.jailbreakchangelogs.xyz/changelogs/get?id=${changelogId}`;
+  const apiUrl = `https://api3.jailbreakchangelogs.xyz/changelogs/get?id=${changelogId}`;
 
   try {
     // First fetch the latest changelog ID for fallback
     const latestResponse = await fetch(
-      "https://api.jailbreakchangelogs.xyz/changelogs/latest",
+      "https://api3.jailbreakchangelogs.xyz/changelogs/latest",
       {
         headers: {
           "Content-Type": "application/json",

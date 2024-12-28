@@ -501,6 +501,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const parts = sortValue.split("-");
       const itemType = parts.slice(1).join("-");
       categoryFilteredItems = allItems.filter((item) => {
+        // Special handling for limited items
+        if (itemType === "limited-items") {
+          return item.is_limited;
+        }
+        // Regular category filtering
         const normalizedItemType = item.type.toLowerCase().replace(" ", "-");
         const normalizedFilterType = itemType.slice(0, -1);
         return normalizedItemType === normalizedFilterType;
@@ -527,7 +532,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Check if current category is Rims
     const isRimsCategory = sortValue === "name-rims";
-    const minCharacters = isRimsCategory ? 1 : 3;
+    const minCharacters = isRimsCategory ? 1 : 1;
 
     if (searchTerm.length < minCharacters) {
       if (searchMessages) {
