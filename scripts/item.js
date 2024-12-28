@@ -553,20 +553,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }, 100);
 
     // After loading the main item content, update the comments section
-<<<<<<< Updated upstream
-    setTimeout(() => {
-      const commentsWrapper = document.querySelector(".comments-wrapper");
-      if (commentsWrapper) {
-        commentsWrapper.style.opacity = "0";
-        commentsWrapper.innerHTML = commentTemplate(item);
-        // Fade in the comments
-        setTimeout(() => {
-          commentsWrapper.style.transition = "opacity 0.3s ease";
-          commentsWrapper.style.opacity = "1";
-        }, 100);
-      }
-    }, 1000); // Add a slight delay to simulate loading
-=======
     const commentsWrapper = document.querySelector(".comments-wrapper");
     if (commentsWrapper) {
       const user = JSON.parse(sessionStorage.getItem("user"));
@@ -629,7 +615,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log(comment);
       });
     }
->>>>>>> Stashed changes
   }
 
   function showErrorMessage(message) {
