@@ -363,9 +363,23 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     }
 
-    // Return object with both display and numeric values
+    // Format display value based on screen size
+    let displayValue;
+    if (window.innerWidth <= 768) {
+      // Mobile devices
+      if (numericValue >= 1000000) {
+        displayValue = (numericValue / 1000000).toFixed(1) + "M";
+      } else if (numericValue >= 1000) {
+        displayValue = (numericValue / 1000).toFixed(1) + "K";
+      } else {
+        displayValue = numericValue.toString();
+      }
+    } else {
+      displayValue = numericValue.toLocaleString("en-US");
+    }
+
     return {
-      display: numericValue.toLocaleString("en-US"),
+      display: displayValue,
       numeric: numericValue,
     };
   }
@@ -430,31 +444,41 @@ document.addEventListener("DOMContentLoaded", () => {
     const dupedValue = formatValue(item.duped_value);
 
     let badgeHtml = "";
+    let typeBadgeHtml = "";
+
     if (item.type === "HyperChrome") {
       badgeHtml = `
         <span class="hyperchrome-badge" style="color: black;">
           <i class="bi bi-stars"></i>HyperChrome
         </span>
       `;
-    } else if (item.is_limited) {
-      badgeHtml = `
-        <span class="badge limited-badge">
-          <i class="bi bi-star-fill me-1"></i>Limited
-        </span>
+    } else {
+      // Only show type badge for non-HyperChrome items
+      typeBadgeHtml = `
+        <span class="badge item-type-badge" style="background-color: ${color};">${item.type}</span>
       `;
+
+      // Show limited badge if item is limited
+      if (item.is_limited) {
+        badgeHtml = `
+          <span class="badge limited-badge">
+            <i class="bi bi-star-fill me-1"></i>Limited
+          </span>
+        `;
+      }
     }
 
-    // Create card with conditional limited class and badge
+    // Create card with conditional badges
     cardDiv.innerHTML = `
     <div class="card items-card shadow-sm ${
       item.is_limited ? "limited-item" : ""
-    }" onclick="handleCardClick('${
-      item.name
-    }', '${item.type.toLowerCase()}')" style="cursor: pointer;">
+    }" 
+         onclick="handleCardClick('${
+           item.name
+         }', '${item.type.toLowerCase()}')" 
+         style="cursor: pointer;">
       ${mediaElement}
-      <span class="badge item-type-badge" style="background-color: ${color};">${
-      item.type
-    }</span>
+      ${typeBadgeHtml}
       ${badgeHtml}
       <div class="item-card-body text-center">
         <h5 class="card-title">${item.name}</h5>
