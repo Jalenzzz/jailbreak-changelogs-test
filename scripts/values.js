@@ -624,10 +624,15 @@ document.addEventListener("DOMContentLoaded", () => {
       categoryNameElement.style.display = "none";
       newUrl.searchParams.delete("sort");
     } else {
-      const categoryName = currentSort
-        .split("-")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
+      let categoryName;
+      if (currentSort === "hyperchromes") {
+        categoryName = "HyperChromes";
+      } else {
+        categoryName = currentSort
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+      }
       categoryNameElement.textContent = categoryName;
       categoryNameElement.style.display = "list-item";
       newUrl.searchParams.set("sort", currentSort);
@@ -899,11 +904,16 @@ function updateTotalItemsLabel(itemType) {
     if (itemType === "all-items") {
       totalItemsLabel.textContent = "Total Items: ";
     } else {
-      const categoryName = itemType
-        .slice(0, -1)
-        .split("-")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
+      let categoryName;
+      if (itemType === "hyperchromes") {
+        categoryName = "HyperChrome";
+      } else {
+        categoryName = itemType
+          .slice(0, -1)
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+      }
       totalItemsLabel.textContent = `Total ${categoryName}s: `;
     }
   }
