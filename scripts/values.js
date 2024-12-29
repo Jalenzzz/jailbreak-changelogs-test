@@ -180,16 +180,16 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
           }
         }
-      }
-
-      // Check localStorage for saved sort
-      const savedSort = localStorage.getItem("sortDropdown");
-      if (savedSort) {
-        const sortDropdown = document.getElementById("sort-dropdown");
-        if (sortDropdown) {
-          sortDropdown.value = savedSort;
-          await sortItems();
-          return;
+      } else {
+        // Only use localStorage if there's no URL parameter
+        const savedSort = localStorage.getItem("sortDropdown");
+        if (savedSort) {
+          const sortDropdown = document.getElementById("sort-dropdown");
+          if (sortDropdown) {
+            sortDropdown.value = savedSort;
+            await sortItems();
+            return;
+          }
         }
       }
 
