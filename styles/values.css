@@ -29,7 +29,7 @@
 }
 
 .item-card-body {
-  padding: 0.5rem 1rem 1rem; /* Reduce top padding */
+  padding: 0.5rem 0.5rem 1rem; /* Reduce side padding */
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -40,6 +40,10 @@
 .value-row {
   padding: 4px 8px;
   border-radius: 4px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
 }
 
 .value-row:first-child {
@@ -374,9 +378,9 @@
   bottom: 124px; /* Moved up from 116px */
   left: 50%;
   transform: translateX(-50%);
-  padding: 0.4rem 0.8rem;
+  padding: 0.35rem 0.7rem; /* Reduced from 0.4rem 0.8rem */
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.75rem; /* Reduced from 0.8rem */
   font-weight: 600;
   z-index: 3;
   background: linear-gradient(
@@ -554,9 +558,25 @@
   }
 
   .hyperchrome-badge {
-    bottom: 112px; /* Moved up from 108px */
+    bottom: 106px; /* Match item-type-badge */
+    font-size: 0.7rem; /* Reduced from 0.8rem */
+    padding: 0.25rem 0.5rem; /* Reduced from 0.3rem 0.6rem */
+  }
+
+  .value-container {
+    padding: 0;
+    margin: 0;
+  }
+
+  .value-row {
+    width: 100%;
     font-size: 0.8rem;
-    padding: 0.3rem 0.6rem;
+    padding: 3px 6px;
+    margin: 0;
+  }
+
+  .item-card-body {
+    padding: 0.5rem 0.25rem 1rem;
   }
 }
 
@@ -575,14 +595,19 @@
 
   .limited-badge,
   .hyperchrome-badge {
-    font-size: 0.65rem;
-    padding: 0.2rem 0.4rem;
+    font-size: 0.65rem; /* Reduced from 0.75rem */
+    padding: 0.2rem 0.4rem; /* Reduced from 0.25rem 0.5rem */
   }
 
   .hyperchrome-badge {
-    bottom: 104px; /* Moved up from 100px */
+    bottom: 102px; /* Match item-type-badge */
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
+  }
+
+  .value-container {
+    padding: 0;
+    margin: 0;
   }
 
   .card-title {
@@ -591,6 +616,22 @@
 
   .value-row {
     font-size: 0.75rem;
+  }
+
+  .value-container {
+    width: 100%;
+    padding: 0;
+    margin: 0 auto;
+  }
+
+  .value-row {
+    width: 100%;
+    font-size: 0.75rem;
+    margin: 0;
+  }
+
+  .item-card-body {
+    padding: 0.5rem 0.15rem 1rem;
   }
 }
 
@@ -670,4 +711,10 @@
   #value-sort-dropdown option[value="separator"] {
     font-size: 12px;
   }
+}
+
+.value-container {
+  width: 100%;
+  padding: 0;
+  margin: 0 auto;
 }
