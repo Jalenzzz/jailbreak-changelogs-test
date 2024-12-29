@@ -127,13 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
     isLoading = false;
   }
 
-  // Reset sort dropdown to "All Items"
-  const sortDropdown = document.getElementById("sort-dropdown");
-  if (sortDropdown) {
-    sortDropdown.value = "name-all-items";
-    localStorage.removeItem("lastSort"); // Clear any stored sort preference
-  }
-
   updateSearchPlaceholder();
 
   // Clear search input
@@ -155,8 +148,14 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       allItems = await response.json();
 
-      // Apply initial sort from URL if present
-      if (window.initialSort) {
+      // Get sort parameter from URL and log it
+      const urlParams = new URLSearchParams(window.location.search);
+      const sortParam = urlParams.get("sort");
+
+      // Always set initial filtered items
+      filteredItems = [...allItems];
+
+      if (sortParam) {
         const validSorts = {
           vehicles: "name-vehicles",
           spoilers: "name-spoilers",
@@ -165,21 +164,36 @@ document.addEventListener("DOMContentLoaded", () => {
           textures: "name-textures",
           "tire-stickers": "name-tire-stickers",
           drifts: "name-drifts",
+          hyperchromes: "name-hyperchromes",
+          "limited-items": "name-limited-items",
         };
 
-        if (validSorts[window.initialSort]) {
+        if (validSorts[sortParam]) {
           const sortDropdown = document.getElementById("sort-dropdown");
           if (sortDropdown) {
-            sortDropdown.value = validSorts[window.initialSort];
-            // Don't shuffle items when we have an initial sort
-            filteredItems = [...allItems];
-            sortItems(); // This will apply the filter
-            return; // Exit early
+            sortDropdown.value = validSorts[sortParam];
+
+            // Save to localStorage to persist the selection
+            localStorage.setItem("sortDropdown", validSorts[sortParam]);
+
+            await sortItems(); // Wait for sort to complete
+            return;
           }
         }
       }
 
-      // If no initial sort, proceed with default behavior
+      // Check localStorage for saved sort
+      const savedSort = localStorage.getItem("sortDropdown");
+      if (savedSort) {
+        const sortDropdown = document.getElementById("sort-dropdown");
+        if (sortDropdown) {
+          sortDropdown.value = savedSort;
+          await sortItems();
+          return;
+        }
+      }
+
+      // If no saved sort, use default behavior
       filteredItems = shuffleArray([...allItems]);
       displayItems();
       updateTotalItemsCount();
@@ -600,20 +614,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const valueSortDropdown = document.getElementById("value-sort-dropdown");
     const sortValue = sortDropdown.value;
     const valueSortType = valueSortDropdown.value;
+    const currentSort = sortValue.split("-").slice(1).join("-");
 
-    // Update breadcrumb
+    // Update breadcrumb and URL
     const categoryNameElement = document.querySelector(".category-name");
+    const newUrl = new URL(window.location);
+
     if (sortValue === "name-all-items") {
       categoryNameElement.style.display = "none";
+      newUrl.searchParams.delete("sort");
     } else {
-      const categoryName = sortValue
+      const categoryName = currentSort
         .split("-")
-        .slice(1)
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
       categoryNameElement.textContent = categoryName;
       categoryNameElement.style.display = "list-item";
+      newUrl.searchParams.set("sort", currentSort);
     }
+
+    // Replace current URL state instead of pushing new one
+    window.history.replaceState({}, "", newUrl);
 
     // Save current filter states
     localStorage.setItem("sortDropdown", sortValue);
@@ -671,68 +692,6 @@ document.addEventListener("DOMContentLoaded", () => {
           ? a.name.localeCompare(b.name)
           : b.name.localeCompare(a.name);
       });
-    }
-
-    // Update URL with current sort before the empty category check
-    const currentSort = sortDropdown.value;
-    if (currentSort && currentSort !== "name-all-items") {
-      const sortType = currentSort.split("-").slice(1).join("-");
-      const newUrl = new URL(window.location);
-      newUrl.searchParams.set("sort", sortType);
-      window.history.pushState({}, "", newUrl);
-    } else {
-      // Remove sort parameter if showing all items
-      const newUrl = new URL(window.location);
-      newUrl.searchParams.delete("sort");
-      window.history.pushState({}, "", newUrl);
-    }
-
-    // Handle empty category case
-    if (filteredItems.length === 0) {
-      const itemsContainer = document.querySelector("#items-container");
-      let itemsRow = itemsContainer.querySelector(".row");
-      if (!itemsRow) {
-        itemsRow = document.createElement("div");
-        itemsRow.classList.add("row");
-        itemsContainer.appendChild(itemsRow);
-      }
-
-      // Get category name for display
-      const categoryName = itemType
-        .split("-")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-
-      itemsRow.innerHTML = `
-              <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
-                  <div class="no-results text-center">
-                      <h4>No items available under ${categoryName}</h4>
-                      <p class="text-muted">This category is currently empty. Please check back later.</p>
-                  </div>
-              </div>
-          `;
-
-      // Update total items count to 0
-      const totalItemsElement = document.getElementById("total-items");
-      if (totalItemsElement) {
-        totalItemsElement.textContent = "0";
-      }
-
-      // Clear pagination
-      const paginationContainer = document.getElementById(
-        "pagination-container"
-      );
-      if (paginationContainer) {
-        paginationContainer.style.display = "none";
-      }
-
-      return;
-    }
-
-    // Reset pagination container display if it was hidden
-    const paginationContainer = document.getElementById("pagination-container");
-    if (paginationContainer) {
-      paginationContainer.style.display = "";
     }
 
     updateTotalItemsLabel(itemType);
@@ -874,6 +833,7 @@ document.addEventListener("DOMContentLoaded", () => {
       textures: "name-textures",
       "tire-stickers": "name-tire-stickers",
       drifts: "name-drifts",
+      hyperchromes: "name-hyperchromes",
     };
 
     if (validSorts[sortParam]) {
@@ -884,6 +844,31 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   }
+
+  // Add popstate event listener to handle browser back/forward buttons
+  window.addEventListener("popstate", function (event) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sortParam = urlParams.get("sort");
+
+    const validSorts = {
+      vehicles: "name-vehicles",
+      spoilers: "name-spoilers",
+      rims: "name-rims",
+      "body-colors": "name-body-colors",
+      textures: "name-textures",
+      "tire-stickers": "name-tire-stickers",
+      drifts: "name-drifts",
+      hyperchromes: "name-hyperchromes",
+    };
+
+    if (validSorts[sortParam]) {
+      const sortDropdown = document.getElementById("sort-dropdown");
+      if (sortDropdown) {
+        sortDropdown.value = validSorts[sortParam];
+        sortItems();
+      }
+    }
+  });
 
   loadItems(); // Initial load
 });
@@ -942,7 +927,7 @@ function updateSearchPlaceholder() {
     drifts: "Search drifts... (e.g., Cartoon, Melons)...",
     "body-colors": "Search colors (e.g., Red, Blue)...",
     textures: "Search textures (e.g., Aurora, Checkers)...",
-    hyperchromes: "Search HyperChromes (e.g., Red, Blue)...",
+    hyperchromes: "Search HyperChromes (e.g., HyperBlue Level 2)...",
   };
 
   // Set the placeholder text
