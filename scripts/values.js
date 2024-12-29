@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadItems() {
     try {
       const response = await fetch(
-        "https://api3.jailbreakchangelogs.xyz/items/list"
+        "https://api.jailbreakchangelogs.xyz/items/list"
       );
       allItems = await response.json();
 
@@ -635,6 +635,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (itemType === "limited-items") {
       // Filter limited items
       filteredItems = allItems.filter((item) => item.is_limited);
+    } else if (sortType === "name" && itemType === "hyperchromes") {
+      filteredItems = allItems.filter((item) => item.type === "HyperChrome");
     } else {
       filteredItems = allItems.filter((item) => {
         const normalizedItemType = item.type.toLowerCase().replace(" ", "-");
@@ -939,6 +941,7 @@ function updateSearchPlaceholder() {
     drifts: "Search drifts... (e.g., Cartoon, Melons)...",
     "body-colors": "Search colors (e.g., Red, Blue)...",
     textures: "Search textures (e.g., Aurora, Checkers)...",
+    hyperchromes: "Search HyperChromes (e.g., Red, Blue)...",
   };
 
   // Set the placeholder text
