@@ -507,6 +507,85 @@
 
 @media (max-width: 768px) {
   .contributors-grid {
+    grid-template-columns: repeat(2, 1fr); /* Show 2 cards per row */
+    gap: 0.75rem;
+  }
+
+  .contributor-item {
+    padding: 0.75rem;
+  }
+
+  .contributor-avatar {
+    width: 35px;
+    height: 35px;
+  }
+
+  /* Adjust card spacing and size for mobile */
+  .col-md-4,
+  .col-lg-3 {
+    padding: 0.4rem; /* Reduce padding between cards */
+  }
+
+  .items-card {
+    margin-bottom: 0.5rem; /* Reduce margin between cards */
+  }
+
+  .card-title {
+    font-size: 1rem; /* Smaller font size for titles */
+  }
+
+  .item-card-body {
+    padding: 0.4rem 0.75rem 0.75rem; /* Reduce padding */
+  }
+
+  .value-row {
+    font-size: 0.9rem; /* Smaller font size for values */
+    padding: 3px 6px; /* Reduce padding */
+  }
+
+  .item-type-badge {
+    bottom: 108px; /* Move badge down slightly */
+    font-size: 0.8rem; /* Smaller font size */
+    padding: 0.3rem 0.6rem; /* Smaller padding */
+  }
+
+  .limited-badge {
+    top: 8px;
+    right: 8px;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .hyperchrome-badge {
+    top: 8px;
+    right: 8px;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+/* Add specific breakpoint for extra small devices */
+@media (max-width: 576px) {
+  .col-6 {
+    flex: 0 0 50%; /* Show 2 cards per row */
+    max-width: 50%;
+  }
+
+  .item-type-badge {
+    bottom: 100px; /* Move even further down for very small screens */
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .limited-badge,
+  .hyperchrome-badge {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .contributors-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }

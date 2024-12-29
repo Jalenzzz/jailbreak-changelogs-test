@@ -372,7 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function createItemCard(item) {
     const cardDiv = document.createElement("div");
-    cardDiv.classList.add("col-md-4", "col-lg-3", "mb-4");
+    cardDiv.classList.add("col-6", "col-md-4", "col-lg-3", "mb-4"); // Added col-6 for mobile
     let color = "#124E66";
 
     // Determine color based on item type
