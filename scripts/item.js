@@ -199,6 +199,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (item.type === "Drift") color = "#FF4500";
     if (item.type === "Color") color = "#8A2BE2";
     if (item.type === "Texture") color = "#708090";
+    if (item.type === "HyperChrome") color = "#E91E63";
 
     // Determine media element based on type - following values.js pattern
     let element = "";
@@ -557,7 +558,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (commentsWrapper) {
       const user = JSON.parse(sessionStorage.getItem("user"));
       const disabled = user ? "" : "disabled";
-      const placeholder = user ? `Comment as ${user.global_name}` : "Login to comment";
+      const placeholder = user
+        ? `Comment as ${user.global_name}`
+        : "Login to comment";
       commentsWrapper.innerHTML = commentTemplate(item, disabled, placeholder);
       const submitButton = document.getElementById("submit-comment");
       const commentInput = document.getElementById("commenter-text");
@@ -575,10 +578,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const avatarUrl = sessionStorage.getItem("avatar");
 
         const defaultAvatarUrl =
-        "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
-      const src = avatarUrl.endsWith("null.png")
-        ? defaultAvatarUrl
-        : avatarUrl;
+          "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
+        const src = avatarUrl.endsWith("null.png")
+          ? defaultAvatarUrl
+          : avatarUrl;
 
         const listItem = document.createElement("li");
         listItem.className = "d-flex align-items-start mb-3";
@@ -637,7 +640,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   loadItemDetails();
 });
-
 
 const commentTemplate = (item, disabled, placeholder) => `
   <h2

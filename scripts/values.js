@@ -370,6 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (item.type === "Drift") color = "#FF4500";
     if (item.type === "Color") color = "#8A2BE2";
     if (item.type === "Texture") color = "#708090";
+    if (item.type === "HyperChrome") color = "#E91E63";
 
     // Determine the image type and URL
     const image_type = item.type.toLowerCase();
