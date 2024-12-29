@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let specialBadgeHtml = "";
     if (item.type === "HyperChrome") {
       specialBadgeHtml = `
-        <span class="hyperchrome-badge">
+        <span class="hyperchrome-badge" style="color: black;">
           <i class="bi bi-stars"></i>HyperChrome
         </span>
       `;
