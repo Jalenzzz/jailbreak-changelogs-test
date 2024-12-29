@@ -269,13 +269,7 @@ $(document).ready(function () {
     const selectedSeason = $(this).attr("href").split("=")[1];
 
     // Update the URL with the selected season
-    const pathSegments = window.location.pathname.split("/");
-    if (!isNaN(pathSegments[pathSegments.length - 1])) {
-      pathSegments.pop();
-    }
-    const newUrl = `${window.location.origin}${pathSegments.join(
-      "/"
-    )}/${selectedSeason}`;
+    const newUrl = `/seasons/${selectedSeason}`;
     window.history.pushState({}, "", newUrl);
 
     // Only show loading overlay if we're fetching fresh data

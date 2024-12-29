@@ -76,6 +76,12 @@ $(document).ready(function () {
    * @returns {string} The resulting HTML string
    */
   const convertMarkdownToHtml = (markdown) => {
+    // Handle inline italic formatting
+    markdown = markdown.replace(
+      /\b_([^_]+)_\b/g,
+      '<span style="font-style: italic; color: var(--content-paragraph);">$1</span>'
+    );
+
     return markdown
       .split("\n")
       .map((line) => {
@@ -299,10 +305,48 @@ $(document).ready(function () {
       });
   }
 
+  // Add this helper function to parse dates correctly
+  function parseDateFromTitle(title) {
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const match = title
+      .split("/")[0]
+      .trim()
+      .match(/^([A-Za-z]+)\s+(\d{1,2})(?:st|nd|rd|th)?\s+(\d{4})/);
+    if (match) {
+      const month = monthNames.indexOf(match[1]);
+      const day = parseInt(match[2]);
+      const year = parseInt(match[3]);
+      return new Date(year, month, day);
+    }
+    return new Date(0); // fallback for invalid dates
+  }
+
   // Process the changelog data and render it
   function processData(data, isCached) {
     if (Array.isArray(data) && data.length > 0) {
-      const validData = data.filter((entry) => entry && entry.title);
+      // Sort the data array by date (latest first)
+      const validData = data
+        .filter((entry) => entry && entry.title)
+        .sort((a, b) => {
+          const dateA = parseDateFromTitle(a.title);
+          const dateB = parseDateFromTitle(b.title);
+          return dateB - dateA; // Sort in descending order (latest first)
+        });
+
       if (validData.length > 0) {
         const entriesHtml = validData.map(createTimelineEntry).join("");
         $timeline.html(entriesHtml);

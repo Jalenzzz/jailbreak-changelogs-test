@@ -311,7 +311,7 @@ $(document).ready(function () {
 
         $mobileDropdown.append(`
         <li class="w-100">
-            <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}" title="${fullTitle}">
+            <a class="dropdown-item changelog-dropdown-item w-100" href="?changelog=${changelog.id}" data-changelog-id="${changelog.id}" title="${fullTitle}">
                 <span class="changelog-title">${truncatedTitle}</span>
             </a>
         </li>
@@ -319,7 +319,7 @@ $(document).ready(function () {
 
         $desktopDropdown.append(`
         <li class="w-100">
-            <a class="dropdown-item changelog-dropdown-item w-100" href="#" data-changelog-id="${changelog.id}">
+            <a class="dropdown-item changelog-dropdown-item w-100" href="?changelog=${changelog.id}" data-changelog-id="${changelog.id}">
                 <span class="changelog-title">${fullTitle}</span>
             </a>
         </li>
