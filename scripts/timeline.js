@@ -168,15 +168,24 @@ $(document).ready(function () {
         if (entry.isIntersecting) {
           const img = entry.target;
           if (img.dataset.src) {
-            img.src = img.dataset.src;
-            img.removeAttribute("data-src");
+            // Pre-load the image
+            const tempImage = new Image();
+            tempImage.onload = () => {
+              img.src = img.dataset.src;
+              img.classList.remove("loading");
+              img.classList.add("loaded");
+            };
+            tempImage.onerror = () => {
+              img.onerror(); // Trigger the inline error handler
+            };
+            tempImage.src = img.dataset.src;
             observer.unobserve(img);
           }
         }
       });
     },
     {
-      rootMargin: "50px 0px", // Start loading images 50px before they enter viewport
+      rootMargin: "50px 0px",
       threshold: 0.1,
     }
   );
@@ -186,24 +195,28 @@ $(document).ready(function () {
     if (!changelog || !changelog.title) return "";
     const sideClass = index % 2 === 0 ? "left" : "right";
     const formattedTitle = formatTitle(changelog.title);
-    const defaultImage = "/path/to/default-image.jpg";
+    const defaultImage = "/images/placeholder.jpg";
+    const imageUrl = changelog.image_url || defaultImage;
 
     return `
-    <div class="timeline-entry-container ${sideClass}" style="display: none;">
-      <div class="timeline-entry">
-        <h3 class="entry-title mb-3 text-custom-header">${formattedTitle}</h3>
-        <a href="/changelogs/${changelog.id}" class="changelog-link">
-          <img 
-            src="${defaultImage}" 
-            data-src="${changelog.image_url || defaultImage}" 
-            class="img-fluid rounded changelog-image lazy-image" 
-            alt="Changelog preview"
-            onerror="this.src='${defaultImage}';">
-        </a>
+      <div class="timeline-entry-container ${sideClass}" style="display: none;">
+        <div class="timeline-entry">
+          <h3 class="entry-title mb-3 text-custom-header">${formattedTitle}</h3>
+          <a href="/changelogs/${changelog.id}" class="changelog-link">
+            <div class="image-container">
+              <img 
+                src="${defaultImage}"
+                data-src="${imageUrl}"
+                class="changelog-image loading"
+                alt="Changelog preview for ${changelog.title}"
+                width="1920"
+                height="1080"
+                onerror="this.src='${defaultImage}'; this.classList.remove('loading');">
+            </div>
+          </a>
+        </div>
       </div>
-      <div class="timeline-line"></div>
-    </div>
-  `;
+    `;
   }
 
   // Set up the text change for accordion buttons
@@ -323,7 +336,7 @@ $(document).ready(function () {
         fadeInEntries(0, validData.length);
 
         // Initialize lazy loading for images
-        $timeline.find(".lazy-image").each(function () {
+        $timeline.find(".changelog-image").each(function () {
           imageObserver.observe(this);
         });
 
