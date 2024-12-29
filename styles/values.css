@@ -348,7 +348,7 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  background: linear-gradient(45deg, #ffd700, #ffa500);
+  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
   color: #000;
   font-size: 0.8rem;
   padding: 0.3rem 0.6rem;
@@ -366,6 +366,52 @@
   transform: translateY(-5px);
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.5),
     /* Inner glow */ 0 0 35px rgba(255, 165, 0, 0.3); /* Outer glow */
+}
+
+/* HyperChrome badge styling */
+.hyperchrome-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  z-index: 3;
+  background: linear-gradient(
+    124deg,
+    #ff2400,
+    #e81d1d,
+    #e8b71d,
+    #e3e81d,
+    #1de840,
+    #1ddde8,
+    #2b1de8,
+    #dd00f3,
+    #dd00f3
+  );
+  background-size: 1800% 1800%;
+  color: white;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+  animation: rainbow 18s ease infinite;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+@keyframes rainbow {
+  0% {
+    background-position: 0% 82%;
+  }
+  50% {
+    background-position: 100% 19%;
+  }
+  100% {
+    background-position: 0% 82%;
+  }
 }
 
 /* Enhanced Contributors Section Styling */

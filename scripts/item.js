@@ -71,11 +71,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function displayItemDetails(item) {
-    const limitedBadgeHtml = item.is_limited
-      ? `<span class="badge limited-badge">
-           <i class="bi bi-star-fill me-1"></i>Limited
-         </span>`
-      : "";
+    // Modify the badge HTML generation
+    let specialBadgeHtml = "";
+    if (item.type === "HyperChrome") {
+      specialBadgeHtml = `
+        <span class="hyperchrome-badge">
+          <i class="bi bi-stars"></i>HyperChrome
+        </span>
+      `;
+    } else if (item.is_limited) {
+      specialBadgeHtml = `
+        <span class="badge limited-badge">
+          <i class="bi bi-star-fill me-1"></i>Limited
+        </span>
+      `;
+    }
 
     function showFirefoxAutoplayNotice() {
       // Remove existing notice if present
@@ -214,7 +224,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     }.webp"
                     class="img-fluid rounded thumbnail"
                     alt="${item.name}"
-                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"
                     onerror="handleimage(this)"
                 >
                 <video 
@@ -222,14 +231,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                     item.name
                   }.webm"
                   class="img-fluid rounded video-player"
-                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"
                   playsinline 
                   muted 
                   loop
                   preload="metadata"
                   defaultMuted
                 ></video>
-                ${limitedBadgeHtml}
+                ${specialBadgeHtml}
             </div>
             `;
 
@@ -298,14 +306,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }, 500);
     } else {
-      element = `<div class="image-container">
+      element = `
+        <div class="media-container ${item.is_limited ? "limited-item" : ""}">
           <img 
-              onerror="handleimage(this)" 
-              id="${item.name}" 
-              src="https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp" 
-              class="img-fluid rounded" 
-              alt="${item.name}">
-      </div>`;
+            src="https://cdn.jailbreakchangelogs.xyz/images/items/${encodeURIComponent(
+              image_type
+            )}s/${item.name}.webp"
+            class="img-fluid rounded thumbnail"
+            alt="${item.name}"
+            onerror="handleimage(this)"
+          >
+          ${specialBadgeHtml}
+        </div>
+      `;
     }
 
     const value = formatValue(item.cash_value);
@@ -351,7 +364,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                                   style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"
                                   onerror="handleimage(this)"
                               >
-                              ${limitedBadgeHtml}
+                              ${specialBadgeHtml}
                           </div>
                         `
                         }
@@ -550,6 +563,31 @@ document.addEventListener("DOMContentLoaded", async () => {
             },
           },
         },
+      });
+    }, 100);
+
+    // After the container HTML is set, add resize observer
+    setTimeout(() => {
+      const mediaContainer = document.querySelector(".media-container");
+      const mediaElement = mediaContainer.querySelector("img, video");
+
+      // Initial log of dimensions
+      logDimensions(mediaContainer, mediaElement);
+
+      // Create resize observer
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          logDimensions(mediaContainer, mediaElement);
+        }
+      });
+
+      // Observe both container and media element
+      resizeObserver.observe(mediaContainer);
+      resizeObserver.observe(mediaElement);
+
+      // Add zoom event listener
+      window.addEventListener("resize", () => {
+        logDimensions(mediaContainer, mediaElement);
       });
     }, 100);
 
@@ -813,4 +851,33 @@ function handleinvalidImage() {
       username
     )}&bold=true&format=svg`;
   }, 0);
+}
+
+function logDimensions(container, mediaElement) {
+  const containerRect = container.getBoundingClientRect();
+  const mediaRect = mediaElement.getBoundingClientRect();
+
+  console.log("%c📏 Dimension Check:", "font-weight: bold; color: #748d92;");
+  console.log(
+    "%cMedia Container:",
+    "color: #c82c2c;",
+    `\nWidth: ${containerRect.width.toFixed(1)}px`,
+    `\nHeight: ${containerRect.height.toFixed(1)}px`,
+    `\nAspect Ratio: ${(containerRect.width / containerRect.height).toFixed(3)}`
+  );
+  console.log(
+    "%cMedia Element:",
+    "color: #4CAF50;",
+    `\nWidth: ${mediaRect.width.toFixed(1)}px`,
+    `\nHeight: ${mediaRect.height.toFixed(1)}px`,
+    `\nAspect Ratio: ${(mediaRect.width / mediaRect.height).toFixed(3)}`,
+    `\nObject Fit: ${getComputedStyle(mediaElement).objectFit}`
+  );
+  console.log(
+    "%cDifference:",
+    "color: #124e66;",
+    `\nWidth: ${(containerRect.width - mediaRect.width).toFixed(1)}px`,
+    `\nHeight: ${(containerRect.height - mediaRect.height).toFixed(1)}px`
+  );
+  console.log("\n");
 }
