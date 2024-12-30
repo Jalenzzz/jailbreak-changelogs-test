@@ -1,18 +1,21 @@
+@import "colors.css";
+
 /* Dark Theme Styles */
 [data-bs-theme="dark"] body {
   /* Main Colors */
-  --common-bg-color: #2e3944; /* Background color: Dark Gray */
-  --text-color: #d3d9d4; /* Main text color: White */
-  --heading-color: #d3d9d4; /* Heading color: Bright Blue */
-  --subheading-color: #748d92; /* Subheading color: Bright Red */
+  --common-bg-color: var(--background-light);
+  --text-color: var(--text-body);
+  --heading-color: var(--text-body);
+  --subheading-color: var(--text-secondary);
 
   /* Button Colors */
-  --button-primary-bg: #124e66; /* Primary button background: Dark Blue */
-  --button-primary-text: #eeeeee; /* Primary button text: White */
-  --button-primary-hover-bg: #212a31; /* Primary button hover: Lighter Blue */
+  --button-primary-bg: var(--button-primary);
+  --button-primary-text: var(--text-body);
+  --button-primary-hover-bg: var(--background-dark);
 
-  --border-color: #ff6347; /* Border color: Tomato */
-  --season-rewards-hover-text: #748d92; /* Season rewards hover text: Light Blue */
+  /* Keep unique color variables */
+  --border-color: #ff6347;
+  --season-rewards-hover-text: var(--text-secondary);
 
   /* Social Media Colors */
   --reddit-color: #ff4500; /* Reddit color: Reddit Orange */
@@ -21,11 +24,11 @@
   --github-color: #ffffff; /* GitHub color: White */
 
   /* Interaction Effects */
-  --hover-bg-color: #5a5a5a; /* Hover background: Dim Gray */
-  --selection-bg: #4682b4; /* Selection background: Steel Blue */
-  --selection-text: #ffffff; /* Selection text: White */
+  --hover-bg-color: var(--hover-bg);
+  --selection-bg: var(--accent-color);
+  --selection-text: var(--text-body);
   --glow-color: 255, 165, 0; /* Glow effect color: Orange (RGB values) */
-  --username-color: #76abae; /* Soft cyan for Username */
+  --username-color: var(--text-secondary);
 
   /* Gray Scale */
   --gray-100: #333333;
@@ -65,16 +68,16 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 /* Overall Comment Section Styling */
 .comment-container {
-  background-color: #212a31; /* Dark grayish-blue background */
+  background-color: var(--background-dark);
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 2px solid #748d92; /* Medium grayish-blue border to distinguish it */
+  border: 2px solid var(--text-secondary);
 }
 
 /* Comment Header */
 .comment-header {
-  color: #d3d9d4; /* Very light grayish-green */
+  color: var(--text-body);
   font-size: 1.8rem;
   margin-bottom: 20px;
   font-family: "Luckiest Guy", Arial, sans-serif; /* Applying the desired font */
@@ -83,9 +86,9 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Comment Input Field */
 #commenter-text {
-  background-color: #212a31; /* Very dark blue-gray background */
-  color: #d3d9d4; /* Very light grayish-green */
-  border: 1px solid #748d92; /* Medium grayish-blue border */
+  background-color: var(--background-dark);
+  color: var(--text-body);
+  border: 1px solid var(--text-secondary);
   border-radius: 4px;
   padding: 10px;
   font-size: 1rem;
@@ -96,8 +99,8 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Disabled State for Commenter Text */
 #commenter-text:disabled {
-  background-color: #2e3944; /* Medium grayish-blue for the background */
-  color: #d3d9d4; /* Very light grayish-green for text */
+  background-color: var(--background-light);
+  color: var(--text-body);
   cursor: not-allowed; /* Change cursor to indicate it's disabled */
 }
 
@@ -114,8 +117,8 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Comment Submit Button */
 #submit-comment {
-  background-color: #124e66; /* Deep teal */
-  color: #d3d9d4;
+  background-color: var(--button-primary);
+  color: var(--text-body);
   border: none;
   border-radius: 4px;
   padding: 10px 20px;
@@ -126,7 +129,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Comment Submit Button */
 #submit-comment:hover {
-  background-color: #124e6676 !important; /* Deep teal */
+  background-color: var(--button-hover) !important;
 }
 
 /* Comment List */
@@ -140,7 +143,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 /* Individual Comment Styling */
 .comment-item {
   background-color: transparent; /* Very dark blue-gray */
-  color: #d3d9d4; /* Very light grayish-green */
+  color: var(--text-body);
   margin-bottom: 0;
 
   font-family: Arial, sans-serif; /* Default sans-serif font */
@@ -158,14 +161,14 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Comment Author Styling */
 .comment-author {
-  color: #124e66; /* Deep teal */
+  color: var(--button-primary);
   font-weight: bold;
   font-size: 1.1rem;
 }
 
 /* Comment Text Styling */
 .comment-text {
-  color: #d3d9d4;
+  color: var(--text-body);
   font-size: 1rem;
   margin-top: 8px;
   word-wrap: break-word; /* Ensures long words break and don't overflow */
@@ -291,10 +294,10 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 /* General Pagination Styles */
 #paginationControls {
   padding: 8px 15px;
-  background-color: #2e3944; /* Dark grayish-blue for the background */
+  background-color: var(--background-light);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-  color: #d3d9d4; /* Very light grayish-green text */
+  color: var(--text-body);
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
@@ -311,8 +314,8 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   height: 35px;
   font-size: 16px;
   border: none;
-  background-color: #124e66; /* Deep teal for button background */
-  color: #d3d9d4; /* Very light grayish-green for button text */
+  background-color: var(--button-primary);
+  color: var(--text-body);
   border-radius: 50%; /* Circular button */
   transition: background-color 0.3s ease;
 }
@@ -323,8 +326,8 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 
 #paginationControls .btn:hover:not(:disabled) {
-  background-color: #748d92; /* Medium grayish-blue on hover */
-  color: #212a31; /* Very dark blue-gray text on hover */
+  background-color: var(--text-secondary);
+  color: var(--background-dark);
 }
 
 /* Input Group Styles */
@@ -338,16 +341,16 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 #paginationControls .form-control {
   text-align: center;
   font-size: 14px;
-  border: 1px solid #748d92; /* Medium grayish-blue border */
-  background-color: #212a31; /* Very dark blue-gray for the input */
-  color: #d3d9d4; /* Light grayish-green text for input */
+  border: 1px solid var(--text-secondary);
+  background-color: var(--background-dark);
+  color: var(--text-body);
   border-radius: 4px;
   width: 50px; /* Compact input width */
 }
 
 #paginationControls .form-control:focus {
   outline: none;
-  border-color: #124e66; /* Deep teal on focus */
+  border-color: var(--button-primary);
   box-shadow: 0 0 4px rgba(18, 78, 102, 0.5); /* Focus glow */
 }
 
@@ -582,7 +585,12 @@ span {
   background-color: rgba(0, 0, 0, 0.8);
 }
 .rewards-container {
-  background: linear-gradient(to bottom, #124e66, #2e3944, #212a31);
+  background: linear-gradient(
+    to bottom,
+    var(--button-primary),
+    var(--background-light),
+    var(--background-dark)
+  );
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -599,7 +607,7 @@ span {
   padding: 0;
 }
 .reward-item {
-  background-color: #212a31;
+  background-color: var(--background-dark);
   border-radius: 8px;
   margin-bottom: 10px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -620,7 +628,7 @@ span {
 .reward-title {
   margin: 0;
   font-size: 1rem;
-  color: #d3d9d4;
+  color: var(--text-body);
 }
 .reward-badges {
   display: flex;

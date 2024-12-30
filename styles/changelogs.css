@@ -1,24 +1,27 @@
+@import "colors.css";
+
 /* Dark Theme Colors */
 [data-bs-theme="dark"] body {
-  --common-bg-color: #2e3944; /* Dark background */
-  --content-h1: #d3d9d4; /* Lighter Blue for Dark Mode */
-  --content-h2: #748d92; /* Softer Red for Dark Mode */
-  --content-h3: #748d92; /* Light Gray for H3 and Paragraph Text */
-  --content-paragraph: #d3d9d4; /* Light Gray for Paragraphs */
-  --content-bullet: #748d92; /* Lighter Blue for Bullets */
-  --content-sub-bullet: #748d92; /* Softer Red for Bullets */
-  --text-color: #ffffff; /* White Text */
+  --common-bg-color: var(--bg-secondary);
+  --content-h1: var(--text-primary);
+  --content-h2: var(--text-muted);
+  --content-h3: var(--text-muted);
+  --content-paragraph: var(--text-primary);
+  --content-bullet: var(--text-muted);
+  --content-sub-bullet: var(--text-muted);
+  --text-color: #ffffff;
 
-  --header-text: #ffffff; /* White for Header Text */
-  --button-primary-bg: #124e66; /* Dark Blue for Primary Button Background */
-  --button-primary-text: #eeeeee; /* White for Primary Button Text */
-  --button-primary-hover-bg: #212a31; /* Darker Blue for Hover */
+  --header-text: #ffffff;
+  --button-primary-bg: var(--accent-color);
+  --button-primary-text: var(--text-primary);
+  --button-primary-hover-bg: var(--bg-primary);
+
   /* Mention Colors */
-  --mention-color: #748d92; /* Teal color for Mentions */
-  --mention-bg: #212a31; /* Dark blue-gray for Mention Background */
-  --at-color: #d3d9d4; /* Bright teal for '@' Symbol */
-  --username-color: #76abae; /* Soft cyan for Username */
-  --mention-hover-bg: #124e66; /* Hover Background Color for Mentions */
+  --mention-color: var(--text-muted);
+  --mention-bg: var(--bg-primary);
+  --at-color: var(--text-primary);
+  --username-color: var(--text-muted);
+  --mention-hover-bg: var(--accent-color);
 
   --highlight-bg: rgba(
     255,
@@ -44,16 +47,16 @@
 }
 
 html[data-bs-theme="dark"] .changelog-dropdown-item:nth-child(odd) {
-  background-color: #212a31; /* Dark Gray for Odd Items */
+  background-color: var(--bg-primary);
 }
 
 html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
-  background-color: #2e3944; /* Darker Background on Hover */
-  color: #2e3944; /* Gold Text Color on Hover */
+  background-color: var(--bg-secondary);
+  color: var(--bg-secondary);
 }
 
 [data-bs-theme="dark"] #loading-overlay {
-  background-color: #2e3944; /* Dark Background for Loading Overlay */
+  background-color: var(--bg-secondary);
 }
 [data-bs-theme="dark"] body {
   background-color: var(--common-bg-color);
@@ -167,8 +170,8 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 /* Search Input Styling */
 .custom-search-input {
-  background-color: #212a31;
-  color: #d3d9d4;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   border: none;
   border-radius: 8px;
   padding-left: 2.5rem; /* Space for search icon */
@@ -178,7 +181,7 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 }
 
 .custom-search-input::placeholder {
-  color: #748d92;
+  color: var(--text-muted);
 }
 
 .custom-search-input:focus {
@@ -615,16 +618,16 @@ body.menu-open {
 }
 /* Overall Comment Section Styling */
 .comment-container {
-  background-color: #212a31; /* Dark grayish-blue background */
+  background-color: var(--bg-primary); /* Dark grayish-blue background */
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 2px solid #748d92; /* Medium grayish-blue border to distinguish it */
+  border: 2px solid var(--text-muted); /* Medium grayish-blue border to distinguish it */
 }
 
 /* Comment Header */
 .comment-header {
-  color: #d3d9d4; /* Very light grayish-green */
+  color: var(--text-primary); /* Very light grayish-green */
   font-size: 1.8rem;
   margin-bottom: 20px;
   font-family: "Luckiest Guy", Arial, sans-serif; /* Applying the desired font */
@@ -633,9 +636,9 @@ body.menu-open {
 
 /* Comment Input Field */
 #commenter-text {
-  background-color: #212a31; /* Very dark blue-gray background */
-  color: #d3d9d4; /* Very light grayish-green */
-  border: 1px solid #748d92; /* Medium grayish-blue border */
+  background-color: var(--bg-primary); /* Very dark blue-gray background */
+  color: var(--text-primary); /* Very light grayish-green */
+  border: 1px solid var(--text-muted); /* Medium grayish-blue border */
   border-radius: 4px;
   padding: 10px;
   font-size: 1rem;
@@ -646,8 +649,10 @@ body.menu-open {
 
 /* Disabled State for Commenter Text */
 #commenter-text:disabled {
-  background-color: #2e3944; /* Medium grayish-blue for the background */
-  color: #d3d9d4; /* Very light grayish-green for text */
+  background-color: var(
+    --bg-secondary
+  ); /* Medium grayish-blue for the background */
+  color: var(--text-primary); /* Very light grayish-green for text */
   cursor: not-allowed; /* Change cursor to indicate it's disabled */
 }
 
@@ -664,8 +669,8 @@ body.menu-open {
 
 /* Comment Submit Button */
 #submit-comment {
-  background-color: #124e66; /* Deep teal */
-  color: #d3d9d4;
+  background-color: var(--accent-color); /* Deep teal */
+  color: var(--text-primary);
   border: none;
   border-radius: 4px;
   padding: 10px 20px;
@@ -676,7 +681,7 @@ body.menu-open {
 
 /* Comment Submit Button */
 #submit-comment:hover {
-  background-color: #124e6676 !important; /* Deep teal */
+  background-color: rgba(18, 78, 102, 0.5) !important; /* Deep teal */
 }
 
 /* Comment List */
@@ -690,7 +695,7 @@ body.menu-open {
 /* Individual Comment Styling */
 .comment-item {
   background-color: transparent; /* Very dark blue-gray */
-  color: #d3d9d4; /* Very light grayish-green */
+  color: var(--text-primary); /* Very light grayish-green */
   margin-bottom: 0;
   font-family: Arial, sans-serif; /* Default sans-serif font */
   width: 100%;
@@ -702,14 +707,14 @@ body.menu-open {
 
 /* Comment Author Styling */
 .comment-author {
-  color: #124e66; /* Deep teal */
+  color: var(--accent-color); /* Deep teal */
   font-weight: bold;
   font-size: 1.1rem;
 }
 
 /* Comment Text Styling */
 .comment-text {
-  color: #d3d9d4;
+  color: var(--text-primary);
   font-size: 1rem;
   margin-top: 8px;
   word-wrap: break-word; /* Ensures long words break and don't overflow */
@@ -1121,8 +1126,8 @@ button {
 
 /* Changelog Dropdown Styling */
 .changelog-dropdown-item {
-  background-color: #212a31;
-  color: #d3d9d4;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   padding: 12px 16px;
   border-radius: 6px;
   margin: 4px 8px;
@@ -1132,15 +1137,15 @@ button {
 }
 
 .changelog-dropdown-item:hover {
-  background-color: #2e3944;
-  color: #d3d9d4;
-  border-left-color: #124e66;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-left-color: var(--accent-color);
   transform: translateX(4px);
 }
 
 .changelog-menu {
-  background-color: #212a31;
-  border: 1px solid #2e3944;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--bg-secondary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   padding: 8px 0;
   max-height: 400px;
@@ -1153,22 +1158,22 @@ button {
 }
 
 .changelog-menu::-webkit-scrollbar-track {
-  background: #212a31;
+  background: var(--bg-primary);
   border-radius: 8px;
 }
 
 .changelog-menu::-webkit-scrollbar-thumb {
-  background: #124e66;
+  background: var(--accent-color);
   border-radius: 8px;
   transition: background 0.2s ease;
 }
 
 .changelog-menu::-webkit-scrollbar-thumb:hover {
-  background: #748d92;
+  background: var(--text-muted);
 }
 
 .changelog-title {
-  color: #d3d9d4;
+  color: var(--text-primary);
   font-weight: 500;
   display: block;
   white-space: nowrap;
@@ -1177,15 +1182,15 @@ button {
 }
 
 .changelog-dropdown-item .changelog-date {
-  color: #748d92;
+  color: var(--text-muted);
   font-size: 0.85rem;
   margin-top: 4px;
   display: block;
 }
 
 .changelog-btn {
-  background: #124e66;
-  color: #d3d9d4;
+  background: var(--accent-color);
+  color: var(--text-primary);
   border: none;
   padding: 8px 16px;
   border-radius: 6px;
@@ -1197,7 +1202,7 @@ button {
 }
 
 .changelog-btn:hover {
-  background: #2e3944;
+  background: var(--bg-secondary);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(18, 78, 102, 0.2);
 }
