@@ -1,10 +1,12 @@
+@import "colors.css";
+
 /* Custom properties for the footer namespace */
 .jb-footer {
-  --jb-footer-bg-primary: #212a31;
-  --jb-footer-bg-secondary: #2e3944;
-  --jb-footer-accent: #124e66;
-  --jb-footer-text-muted: #748d92;
-  --jb-footer-text-primary: #d3d9d4;
+  --jb-footer-bg-primary: var(--bg-primary);
+  --jb-footer-bg-secondary: var(--bg-secondary);
+  --jb-footer-accent: var(--accent-color);
+  --jb-footer-text-muted: var(--text-muted);
+  --jb-footer-text-primary: var(--text-primary);
   --jb-footer-link-hover: rgba(211, 217, 212, 0.8);
   --jb-footer-spacing-sm: 0.5rem;
   --jb-footer-spacing-md: 1rem;
@@ -136,7 +138,7 @@
   color: var(--jb-footer-text-primary);
 }
 .jbcl-announcement-banner {
-  background: linear-gradient(90deg, #212a31, #124e66);
+  background: linear-gradient(90deg, var(--bg-primary), var(--accent-color));
   padding: 0.75rem 1rem;
   position: relative;
   overflow: hidden;
@@ -282,14 +284,14 @@
 
 /* Custom Navbar Color */
 .custom-navbar-color {
-  background-color: #212a31; /* Dark blue-gray */
-  color: #ffffff; /* White text color */
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 /* Navbar Items Styling */
 .custom-navbar-color .navbar-nav .nav-link {
-  color: #d3d9d4; /* Light gray for nav links */
+  color: var(--text-primary);
   transition: color 0.3s ease, background-color 0.3s ease;
 }
 
@@ -303,13 +305,13 @@
 
 /* Active Nav Item Styling */
 .custom-navbar-color .navbar-nav .nav-item.active .nav-link {
-  color: #748d92; /* Highlight color for active link */
+  color: var(--text-muted); /* Highlight color for active link */
   font-weight: bold; /* Bold active link */
 }
 
 /* "Join the Discord" Button */
 .nav-link {
-  color: #d3d9d4; /* Light button text */
+  color: var(--text-primary); /* Light button text */
   border: none;
   transition: background-color 0.3s ease;
 }
@@ -385,7 +387,9 @@ body.menu-open {
   width: 400px;
   max-width: 90vw;
   height: 100%;
-  background-color: #1c242a; /* Darker background for better contrast */
+  background-color: var(
+    --bg-primary
+  ); /* Darker background for better contrast */
   z-index: 1000;
   overflow-x: hidden;
   transition: right 0.4s ease-in-out; /* Smoother transition */
@@ -426,7 +430,7 @@ body.menu-open {
 /* Navigation link styles */
 .side-menu .nav-link {
   font-size: 1.2rem; /* Slightly smaller for better readability */
-  color: #d3d9d4; /* Light color for better visibility */
+  color: var(--text-primary); /* Light color for better visibility */
   padding: 0.75rem 1rem; /* More padding for larger touch target */
   border-radius: 5px; /* Rounded corners for modern look */
   background-color: transparent; /* Make background transparent */
@@ -455,8 +459,8 @@ body.menu-open {
 .offcanvas-header {
   display: flex; /* Keep the header visible */
   justify-content: space-between; /* Align items properly */
-  background-color: #1c242a; /* Match side menu background */
-  color: #ffffff;
+  background-color: var(--bg-primary); /* Match side menu background */
+  color: var(--text-primary);
   padding: 15px 20px; /* Add padding for better spacing */
   border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider */
 }
@@ -476,20 +480,20 @@ body.menu-open {
 /* Mobile Navbar Dropdown */
 #mobileNavbarDropdown {
   text-decoration: none; /* Remove underline */
-  color: #d3d9d4;
+  color: var(--text-primary);
 }
 
 /* Mobile Navbar Toggler Line Color */
 #navbarToggler .line {
-  stroke: #d3d9d4; /* Change line color of mobile nav toggler */
+  stroke: var(--text-primary); /* Change line color of mobile nav toggler */
 }
 
 /* Off-canvas Header */
 .offcanvas-header {
   display: flex; /* Keep header visible */
   justify-content: space-between; /* Align items */
-  background-color: #212a31; /* Dark blue-gray */
-  color: #ffffff; /* White text */
+  background-color: var(--bg-primary); /* Dark blue-gray */
+  color: var(--text-primary); /* White text */
 }
 
 /* Off-canvas Title */
