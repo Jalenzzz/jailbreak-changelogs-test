@@ -213,7 +213,7 @@ function displayAvailableItems(type) {
       }.webp" 
                  class="card-img-top" 
                  alt="${item.name}"
-                 onerror="this.src='https://cdn.jailbreakchangelogs.xyz/logos/Jailbreak_Logo.webp'">
+                 onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">
             <div class="card-body">
               <div class="info-row">
                 <span class="info-label">Type:</span>
@@ -395,11 +395,16 @@ function renderTradeItems(tradeType) {
         }.webp" 
                    class="card-img-top" 
                    alt="${item.name}"
-                   onerror="this.src='https://cdn.jailbreakchangelogs.xyz/logos/Jailbreak_Logo.webp'">
+                   onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">
             </div>
             <div class="card-body">
               <h6 class="card-title">${item.name}</h6>
-              <p class="card-text">Value: ${formatValue(item.cash_value)}</p>
+              <div class="value-container cash-value">
+                Cash Value: ${formatValue(item.cash_value)}
+              </div>
+              <div class="value-container duped-value">
+                Duped Value: ${formatValue(item.duped_value || 0)}
+              </div>
               <button class="btn btn-danger btn-sm remove-item" onclick="removeItem(${index}, '${tradeType}')">
                 <i class="bi bi-trash"></i> Remove
               </button>
@@ -601,7 +606,7 @@ function renderPreviewItems(containerId, items) {
         item.name
       }.webp" 
              alt="${item.name}"
-             onerror="this.src='https://cdn.jailbreakchangelogs.xyz/logos/Jailbreak_Logo.webp'">
+             onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">
         <div class="item-name">${item.name}</div>
       </div>
     `

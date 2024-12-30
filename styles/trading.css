@@ -1,62 +1,13 @@
 @import "colors.css";
 
-/* Dark Theme Colors */
-[data-bs-theme="dark"] body {
-  /* Remove redundant color definitions and use variables from colors.css */
-  --common-bg-color: var(--bg-primary);
-  --secondary-bg: var(--bg-secondary);
-  --accent-color: var(--accent-color);
-  --muted-text: var(--text-muted);
-  --main-text: var(--text-primary);
-
-  /* Update existing color variables */
-  --text-color: var(--text-primary);
-  --header-text: var(--text-primary);
-  --button-primary-bg: var(--accent-color);
-  --button-primary-hover-bg: var(--bg-secondary);
-  --gray-100: var(--bg-secondary);
-  --gray-300: var(--accent-color);
-  --gray-600: var(--text-muted);
-
-  --content-h1: var(--text-primary);
-  --content-h2: var(--text-muted);
-  --content-h3: var(--text-muted);
-  --content-paragraph: var(--text-primary);
-  --content-bullet: var(--text-muted);
-  --content-sub-bullet: var(--text-muted);
-
-  --button-primary-text: #eeeeee;
-  --mention-color: var(--text-muted);
-  --mention-bg: var(--bg-primary);
-  --at-color: var(--text-primary);
-  --username-color: #76abae;
-  --mention-hover-bg: var(--accent-color);
-
-  --highlight-bg: rgba(
-    255,
-    165,
-    0,
-    0.4
-  ); /* Semi-transparent Orange for Highlights */
-  --highlight-text: #ffffff; /* White for Highlighted Text */
-  --selection-bg: #4682b4; /* Steel Blue for Selection Background */
-  --selection-text: #ffffff; /* White for Selection Text */
-  --glow-color: #4b4b4b; /* Dark Gray for Glow Effects */
-
-  /* Gray Scale */
-  --gray-200: #444444; /* Darker Gray */
-  --gray-400: #666666; /* Gray */
-  --gray-500: #777777; /* Medium Gray */
-  --gray-700: #999999; /* Light Slate Gray */
-  --gray-800: #aaaaaa; /* Light Gray */
-  --gray-900: #bbbbbb; /* Very Light Gray */
-}
-
 [data-bs-theme="dark"] #loading-overlay {
-  background-color: #2e3944; /* Dark Background for Loading Overlay */
+  background-color: var(
+    --bg-secondary
+  ); /* Dark Background for Loading Overlay */
 }
-[data-bs-theme="dark"] body {
-  background-color: var(--common-bg-color);
+
+[data-bs-theme="dark"] .trading-content {
+  background-color: var(--bg-secondary);
 }
 
 /* Search Icon Styling */
@@ -72,7 +23,7 @@
 
 /* Clear Button Styling */
 #clear-search-button {
-  color: #d3d9d4;
+  color: var(--text-primary);
 }
 
 #clear-search-button:hover {
@@ -80,7 +31,7 @@
 }
 
 [data-bs-theme="dark"] #main-container {
-  background-color: var(--common-bg-color);
+  background-color: var(--bg-secondary);
   padding-bottom: 80px;
 }
 
@@ -230,6 +181,22 @@ button {
     width: 30px;
     height: 30px;
   }
+  .trade-container {
+    padding: 10px;
+  }
+
+  .col-md-3 {
+    width: 50%;
+  }
+  .available-items .col-6 {
+    width: 33.333%; /* 3 per row on small screens */
+  }
+  .col-custom-5 {
+    width: 50%; /* 2 per row */
+  }
+  .preview-items {
+    grid-template-columns: repeat(2, 1fr); /* 2 items per row */
+  }
 }
 
 /* Trade Items Display */
@@ -253,7 +220,7 @@ button {
 
 .trade-item img {
   height: 100px;
-  object-fit: contain;
+  object-fit: cover;
   background: var(--common-bg-color);
   padding: 10px;
 }
@@ -322,7 +289,7 @@ button {
 }
 
 .available-item-card .card-header {
-  background: var(--button-primary-bg);
+  background: var(--accent-color);
   padding: 0.5rem;
   text-align: center;
   font-weight: 500;
@@ -336,14 +303,14 @@ button {
 .available-item-card img {
   height: 100px;
   width: 100%;
-  object-fit: contain;
-  padding: 0.5rem;
+  object-fit: cover;
   background: var(--common-bg-color);
   aspect-ratio: 1/1; /* Force square aspect ratio */
 }
 
 .available-item-card .card-body {
   padding: 0.5rem;
+  background-color: var(--bg-primary);
 }
 
 .available-item-card .info-row {
@@ -367,32 +334,23 @@ button {
 .available-items-toggle {
   color: var(--text-color);
   text-decoration: none;
-  padding: 10px;
+  padding: 0.75rem 1.5rem;
   transition: all 0.2s ease;
+  min-width: 200px;
+  font-size: 1.1rem;
 }
 
 .available-items-toggle:hover {
   background: var(--gray-100);
   border-radius: 6px;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .available-items-toggle h4 {
   margin: 0;
   color: var(--content-h3);
   font-size: 1.2rem;
-}
-
-/* Available Items Toggle Button Styles */
-.available-items-toggle {
-  font-size: 1.1rem;
-  padding: 0.75rem 1.5rem;
-  transition: all 0.2s ease;
-  min-width: 200px;
-}
-
-.available-items-toggle:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Empty Slot Card Styles */
@@ -449,19 +407,21 @@ button {
   gap: 0.5rem;
 }
 
+/* Update pagination button styling */
 .pagination-button {
   padding: 0.5rem 1rem;
-  border: 1px solid var(--gray-300);
-  background: var(--gray-100);
-  color: var(--text-color);
+  border: 1px solid var(--accent-color);
+  background: var(--accent-color);
+  color: var(--text-primary);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .pagination-button:hover:not(:disabled) {
-  background: var(--button-primary-bg);
-  color: var(--button-primary-text);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--accent-color);
 }
 
 .pagination-button:disabled {
@@ -469,60 +429,10 @@ button {
   cursor: not-allowed;
 }
 
-.pagination-info {
-  margin: 0 1rem;
-  color: var(--text-color);
-}
-
 /* Adjust available items grid */
-.available-item-card {
-  height: auto;
-  margin-bottom: 0.5rem;
-  transition: transform 0.2s, box-shadow 0.2s;
-  background: var(--gray-100);
-}
-
-.available-item-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.available-item-card .card-header {
-  background: var(--button-primary-bg);
-  padding: 0.5rem;
-  text-align: center;
-  font-weight: 500;
-  font-size: 0.9rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  border-bottom: none;
-}
-
-.available-item-card img {
-  height: 100px;
-  width: 100%;
-  object-fit: contain;
-  padding: 0.5rem;
-  background: var(--common-bg-color);
-  aspect-ratio: 1/1; /* Force square aspect ratio */
-}
-
-.available-item-card .card-body {
-  padding: 0.5rem;
-}
-
-.available-item-card .info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.8rem;
-  margin-bottom: 0.25rem;
-}
-
-.available-item-card .info-label {
-  color: var(--gray-600);
-  font-weight: 500;
+.available-items .col-6 {
+  width: 14.285%; /* Make cards narrower - show 7 per row (100/7) */
+  padding: 0 0.4rem; /* Slightly reduce padding between cards */
 }
 
 .available-item-card .info-value {
@@ -588,12 +498,32 @@ button {
 @media (max-width: 768px) {
   .col-custom-5 {
     width: 50%; /* 2 per row */
+    padding: 0.25rem; /* Reduce padding on mobile */
+  }
+
+  /* Adjust card sizes for better mobile display */
+  .available-item-card {
+    margin-bottom: 0.25rem;
+  }
+
+  .available-item-card .card-header {
+    padding: 0.25rem;
+    font-size: 0.8rem;
+  }
+
+  .available-item-card .card-body {
+    padding: 0.25rem;
+  }
+
+  .available-item-card .info-row {
+    font-size: 0.75rem;
   }
 }
 
+/* Remove single column layout at smallest breakpoint */
 @media (max-width: 480px) {
   .col-custom-5 {
-    width: 100%; /* 1 per row */
+    width: 50%; /* Keep 2 per row even on very small screens */
   }
 }
 
@@ -608,44 +538,49 @@ button {
 /* Trade Card Base Styles */
 .trade-card {
   position: relative;
-  background: var(--gray-100);
+  background: var(--bg-primary);
   border: 1px solid var(--gray-300);
   border-radius: 8px;
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
+  height: 80%; /* Added height reduction */
 }
 
 .trade-card .card-img-container {
   position: relative;
-  padding-top: 100%; /* 1:1 Aspect ratio */
+  padding-top: 60%; /* Reduced from 80% to 60% to remove extra space */
   background: transparent;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .trade-card .card-img-top {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 100%;
-  height: 100%;
+  height: 100%; /* Changed from 80% to 100% to fill container completely */
   object-fit: contain;
-  padding: 0.5rem;
-  background: #2a343e;
+  background-color: var(--bg-primary) !important;
 }
 
 /* Empty Slot Styles */
 .trade-card.empty-slot {
-  border: 2px dashed var(--muted-text);
-  background: var(--secondary-bg);
+  border: 2px dashed var(--text-muted);
+  background: var(--bg-primary);
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 280px; /* Ensure consistent height */
 }
 
 .trade-card.empty-slot.selected,
-.trade-card.empty-slot:hover {
-  border-color: var(--accent-color);
+.trade-card.empty-slot:hover,
+.trade-card.empty-slot:focus {
+  border-color: var(--text-muted);
   background-image: url("/assets/add_item.png");
   background-size: 60%;
   background-position: center;
@@ -653,7 +588,8 @@ button {
 }
 
 .trade-card.empty-slot.selected .empty-slot-content,
-.trade-card.empty-slot:hover .empty-slot-content {
+.trade-card.empty-slot:hover .empty-slot-content,
+.trade-card.empty-slot:focus .empty-slot-content {
   opacity: 0;
 }
 
@@ -668,17 +604,7 @@ button {
   align-items: center;
   justify-content: center;
   transition: opacity 0.2s ease;
-}
-
-.empty-slot-content i {
-  font-size: 2rem;
-  color: var(--muted-text);
-  margin-bottom: 0.5rem;
-}
-
-.empty-slot-content span {
-  color: var(--muted-text);
-  font-size: 0.9rem;
+  background-color: var(--bg-primary);
 }
 
 /* Remove Button Styles */
@@ -712,7 +638,7 @@ button {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: var(--common-bg-color);
+  background: var(--bg-secondary);
   padding: 1rem;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
   z-index: 1000;
@@ -734,7 +660,7 @@ button {
   grid-template-columns: repeat(4, 1fr); /* Change to 4 items per row */
   gap: 12px; /* Slightly larger gap for better spacing */
   padding: 15px;
-  background: var(--common-bg-color);
+  background: var(--bg-secondary);
   border-radius: 6px;
   min-height: 120px;
 }
@@ -781,15 +707,53 @@ button {
   text-overflow: ellipsis;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 992px) {
-  .trade-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+/* Modal Styles */
+.modal-header,
+.modal-body {
+  background-color: var(--bg-secondary);
 }
 
-@media (max-width: 576px) {
-  .trade-grid {
-    grid-template-columns: repeat(1, 1fr);
-  }
+.modal-content {
+  background-color: var(--bg-secondary);
+}
+
+#modal-item-search.search-input {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.trade-card .card-body {
+  padding: 0.75rem;
+  background-color: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.trade-card .card-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+}
+
+.trade-card .value-container {
+  background-color: var(--gray-100);
+  padding: 0.4rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.trade-card .cash-value {
+  background-color: rgba(24, 101, 131, 0.1);
+}
+
+.trade-card .duped-value {
+  background-color: rgba(116, 141, 146, 0.1);
+}
+
+.trade-card .btn-sm {
+  padding: 0.2rem 0.5rem;
+  margin-top: 0.25rem;
+  align-self: center;
 }
