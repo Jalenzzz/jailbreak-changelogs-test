@@ -1,3 +1,5 @@
+@import url("colors.css");
+
 /* Adjust the body when menu is opened */
 body.menu-open {
   overflow: hidden;
@@ -9,27 +11,22 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   min-height: 100vh;
-  color: #d3d9d4;
-}
-.content-wrapper {
-  background-color: rgba(33, 42, 49, 0.9); /* #212A31 with opacity */
-  padding: 20px;
-  border-radius: 10px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  color: var(--text-body);
 }
 .accordion-button {
-  background-color: #2e3944 !important;
-  color: #d3d9d4 !important;
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-body) !important;
 }
 .accordion-button:not(.collapsed) {
-  background-color: #124e66 !important;
-  color: #d3d9d4 !important;
+  background-color: var(--accent-color) !important;
+  color: var(--text-body) !important;
 }
 .accordion-body {
-  background-color: rgba(46, 57, 68, 0.9); /* #2E3944 with opacity */
-  color: #d3d9d4;
+  background-color: rgba(
+    var(--bg-secondary),
+    0.9
+  ); /* --bg-secondary with opacity */
+  color: var(--text-body);
 }
 .main-container {
   display: flex;
@@ -45,27 +42,30 @@ h1 {
   color: #ffffff;
 }
 .content-wrapper {
-  background-color: rgba(33, 42, 49, 0.9); /* #212A31 with opacity */
+  background-color: var(--bg-primary);
   border-radius: 15px;
   padding: 30px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 
 .btn-primary {
-  background-color: #124e66 !important;
-  border-color: #124e66 !important;
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
 }
 .btn-primary:hover {
-  background-color: #2e3944 !important;
-  border-color: #2e3944 !important;
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--bg-secondary) !important;
 }
 .card {
-  background-color: rgba(33, 42, 49, 0.9); /* #212A31 with opacity */
-  border-color: #748d92;
+  background-color: rgba(
+    var(--bg-primary),
+    0.9
+  ); /* --bg-primary with opacity */
+  border-color: var(--text-muted);
 }
 .card-header {
-  background-color: #2e3944;
-  border-color: #748d92;
+  background-color: var(--bg-secondary);
+  border-color: var(--text-muted);
 }
 .faq-item {
   margin-bottom: 20px;
@@ -111,28 +111,28 @@ h1 {
 
 .question-text {
   font-size: 1.2em;
-  color: #d3d9d4;
+  color: var(--text-body);
   font-weight: bold;
 }
 .answer-text {
   font-size: 1em;
-  color: #d3d9d4;
+  color: var(--text-body);
 }
 a {
-  color: #748d92;
+  color: var(--text-muted);
 }
 a:hover {
-  color: #d3d9d4;
+  color: var(--text-body);
 }
 
 .breadcrumb-item a {
-  color: #124e66;
+  color: var(--accent-color);
 }
 
 .breadcrumb-item.active {
-  color: #748d92;
+  color: var(--text-muted);
 }
 
 .accordion-button::after {
-  color: #d3d9d4;
+  color: var(--text-body);
 }
