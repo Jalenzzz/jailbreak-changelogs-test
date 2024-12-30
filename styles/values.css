@@ -3,6 +3,7 @@
 [data-bs-theme="dark"] body {
   background-color: var(--bg-secondary);
 }
+
 /* Dropdown separator styling */
 #value-sort-dropdown option[value="separator"] {
   background-color: var(--bg-secondary);
