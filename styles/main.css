@@ -13,7 +13,21 @@
   --jb-footer-spacing-lg: 2rem;
   --jb-footer-transition: all 0.2s ease-in-out;
 }
+.jb-footer__social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
 
+.jb-footer__social-link {
+  color: #fff;
+  transition: color 0.2s ease;
+  padding: 0.5rem;
+}
+
+.jb-footer__social-link:hover {
+  color: #1da1f2;
+}
 /* Base footer styles */
 .jb-footer {
   background: linear-gradient(
