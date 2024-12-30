@@ -49,11 +49,21 @@
 }
 
 .value-row:first-child {
-  background: rgba(0, 255, 0, 0.1);
+  background: rgba(
+    24,
+    101,
+    131,
+    0.1
+  ); /* Changed from green to match cash value color */
 }
 
 .value-row:last-child {
-  background: rgba(255, 0, 0, 0.1);
+  background: rgba(
+    116,
+    141,
+    146,
+    0.1
+  ); /* Changed from red to match duped value color */
 }
 .card {
   width: 100%;

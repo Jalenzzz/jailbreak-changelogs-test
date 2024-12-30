@@ -71,20 +71,53 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function displayItemDetails(item) {
+    const image_type = item.type.toLowerCase();
+    let color = "#124E66";
+
+    // Define color before using it in badge templates
+    if (item.type === "Vehicle") color = "#c82c2c";
+    if (item.type === "Spoiler") color = "#C18800";
+    if (item.type === "Rim") color = "#6335B1";
+    if (item.type === "Tire Sticker") color = "#1CA1BD";
+    if (item.type === "Tire Style") color = "#4CAF50";
+    if (item.type === "Drift") color = "#FF4500";
+    if (item.type === "Color") color = "#8A2BE2";
+    if (item.type === "Texture") color = "#708090";
+    if (item.type === "HyperChrome") color = "#E91E63";
+
     // Modify the badge HTML generation
     let specialBadgeHtml = "";
+    let typeBadgeHtml = "";
+
+    // Change how badges are generated for different types
     if (item.type === "HyperChrome") {
-      specialBadgeHtml = `
-        <span class="hyperchrome-badge" style="color: black;">
+      typeBadgeHtml = `
+        <span class="hyperchrome-badge" style="position: static; color: black; margin-left: 12px;">
           <i class="bi bi-stars"></i>HyperChrome
         </span>
       `;
-    } else if (item.is_limited) {
-      specialBadgeHtml = `
-        <span class="badge limited-badge">
-          <i class="bi bi-star-fill me-1"></i>Limited
+    } else {
+      // Only show type badge for non-HyperChrome items
+      typeBadgeHtml = `
+        <span class="badge" 
+              style="background-color: ${color};
+                    font-weight: 600;
+                    padding: 8px 16px;
+                    font-size: 1rem;
+                    letter-spacing: 0.5px;
+                    border-radius: 6px;">
+            ${item.type}
         </span>
       `;
+
+      // Show limited badge if item is limited
+      if (item.is_limited) {
+        specialBadgeHtml = `
+          <span class="badge limited-badge">
+            <i class="bi bi-star-fill me-1"></i>Limited
+          </span>
+        `;
+      }
     }
 
     function showFirefoxAutoplayNotice() {
@@ -199,17 +232,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.body.appendChild(notice);
     }
     const container = document.getElementById("item-container");
-    const image_type = item.type.toLowerCase();
-    let color = "#124E66";
-    if (item.type === "Vehicle") color = "#c82c2c";
-    if (item.type === "Spoiler") color = "#C18800";
-    if (item.type === "Rim") color = "#6335B1";
-    if (item.type === "Tire Sticker") color = "#1CA1BD";
-    if (item.type === "Tire Style") color = "#4CAF50";
-    if (item.type === "Drift") color = "#FF4500";
-    if (item.type === "Color") color = "#8A2BE2";
-    if (item.type === "Texture") color = "#708090";
-    if (item.type === "HyperChrome") color = "#E91E63";
 
     // Determine media element based on type - following values.js pattern
     let element = "";
@@ -237,7 +259,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                   preload="metadata"
                   defaultMuted
                 ></video>
-                ${specialBadgeHtml}
+                ${item.is_limited ? specialBadgeHtml : ""}
             </div>
             `;
 
@@ -319,7 +341,6 @@ document.addEventListener("DOMContentLoaded", async () => {
               onerror="handleimage(this)"
               style="width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.3s ease;"
           ></video>
-          ${specialBadgeHtml}
       </div>
   `;
 
@@ -346,7 +367,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             alt="${item.name}"
             onerror="handleimage(this)"
           >
-          ${specialBadgeHtml}
+          ${item.is_limited ? specialBadgeHtml : ""}
         </div>
       `;
     }
@@ -354,8 +375,59 @@ document.addEventListener("DOMContentLoaded", async () => {
     const value = formatValue(item.cash_value);
     const duped_value = formatValue(item.duped_value);
     const urlPath = window.location.pathname.split("/");
-    const urlType = urlPath[2]; // Assuming URL structure is /item/type/name
+    const urlType = urlPath[2];
     const formattedUrlType = item.type;
+
+    const hasValues = value !== "-" && duped_value !== "-";
+
+    const valuesSection = `
+      <div class="border-top border-bottom py-4 my-4">
+        <div class="row g-4">
+          <div class="col-6">
+            <h4 class="text-muted mb-3">Cash Value</h4>
+            <p class="h2 mb-0" style="color:rgb(24, 101, 131); font-weight: 600;">
+              ${value === "-" ? "" : value}
+            </p>
+          </div>
+          <div class="col-6">
+            <h4 class="text-muted mb-3">Duped Value</h4>
+            <p class="h2 mb-0" style="color: #748D92; font-weight: 600;">
+              ${duped_value === "-" ? "" : duped_value}
+            </p>
+          </div>
+        </div>
+      </div>`;
+
+    // Determine if we should show the graph
+    const graphSection = hasValues
+      ? `
+      <!-- Combined Graph Section -->
+      <div class="row mb-4" style="padding-top: 40px;">
+        <div class="col-12">
+          <div class="card chart-container">
+            <div class="card-header text-center">
+              <h3 class="card-title" style="font-weight: revert; font-family: 'Luckiest Guy', cursive;">Value History for ${item.name}</h3>
+            </div>
+            <div class="card-body" style="padding: 20px;">
+              <canvas id="combinedChart" style="height: 450px;">
+                <!-- Combined graph will be inserted here -->
+              </canvas>
+            </div>
+          </div>
+        </div>
+      </div>`
+      : `
+      <!-- No Values Message -->
+      <div class="row mb-4" style="padding-top: 40px;">
+        <div class="col-12">
+          <div class="card chart-container">
+            <div class="card-body text-center py-5">
+              <h3 style="color: #748d92; font-family: 'Luckiest Guy', cursive;">No values available to generate graph</h3>
+              <p class="text-muted">This item currently has no recorded values</p>
+            </div>
+          </div>
+        </div>
+      </div>`;
 
     container.innerHTML = `
             <!-- Breadcrumb Navigation -->
@@ -397,7 +469,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                                   style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"
                                   onerror="handleimage(this)"
                               >
-                              ${specialBadgeHtml}
+                              ${item.is_limited ? specialBadgeHtml : ""}
                           </div>
                         `
                         }
@@ -410,194 +482,161 @@ document.addEventListener("DOMContentLoaded", async () => {
                               <h1 class="mb-0 me-3 h2" style="font-weight: 600;">${
                                 item.name
                               }</h1>
-                              <span class="badge" 
-                                    style="background-color: ${color};
-                                          font-weight: 600;
-                                          padding: 8px 16px;
-                                          font-size: 1rem;
-                                          letter-spacing: 0.5px;
-                                          border-radius: 6px;">
-                                  ${item.type}
-                              </span>
+                              ${typeBadgeHtml}
                           </div>
                           <!-- Values Section -->
-                          <div class="border-top border-bottom py-4 my-4">
-                              <div class="row g-4">
-                                  <div class="col-6">
-                                      <h4 class="text-muted mb-3">Cash Value</h4>
-                                      <p class="h2 mb-0" style="color:rgb(24, 101, 131); font-weight: 600;">${value}</p>
-                                  </div>
-                                  <div class="col-6">
-                                      <h4 class="text-muted mb-3">Duped Value</h4>
-                                      <p class="h2 mb-0" style="color: #748D92; font-weight: 600;">${duped_value}</p>
-                                  </div>
-                              </div>
-                          </div>
+                          ${valuesSection}
                       </div>
                   </div>
               </div>
             </div>
         
-            <!-- Combined Graph Section -->
-            <div class="row mb-4" style="padding-top: 40px;">
-                <div class="col-12">
-                    <div class="card chart-container">
-                        <div class="card-header text-center">
-                            <h3 class="card-title" style="font-weight: revert; font-family: 'Luckiest Guy', cursive;">Value History for ${
-                              item.name
-                            }</h3>
-                        </div>
-                        <div class="card-body" style="padding: 20px;">
-                            <canvas id="combinedChart" style="height: 450px;">
-                                <!-- Combined graph will be inserted here -->
-                            </canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
+            ${graphSection}`;
 
-    // Add Chart.js initialization after the item details are displayed
-    setTimeout(() => {
-      const ctx = document.getElementById("combinedChart")?.getContext("2d");
-      if (!ctx) return;
+    // Only initialize chart if values exist
+    if (hasValues) {
+      setTimeout(() => {
+        const ctx = document.getElementById("combinedChart")?.getContext("2d");
+        if (!ctx) return;
 
-      // Generate dummy data
-      const dates = [];
-      const values = [];
-      const trades = [];
-      const baseValue = Math.floor(Math.random() * 1000000) + 500000;
+        // Generate dummy data
+        const dates = [];
+        const values = [];
+        const trades = [];
+        const baseValue = Math.floor(Math.random() * 1000000) + 500000;
 
-      for (let i = 30; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        dates.push(
-          date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
-        );
+        for (let i = 30; i >= 0; i--) {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+          dates.push(
+            date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+          );
 
-        // Generate random value fluctuations
-        const randomChange = Math.floor(Math.random() * 50000) - 25000;
-        values.push(baseValue + randomChange);
+          // Generate random value fluctuations
+          const randomChange = Math.floor(Math.random() * 50000) - 25000;
+          values.push(baseValue + randomChange);
 
-        // Generate random trade volume
-        trades.push(Math.floor(Math.random() * 50));
-      }
+          // Generate random trade volume
+          trades.push(Math.floor(Math.random() * 50));
+        }
 
-      new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: dates,
-          datasets: [
-            {
-              label: "Cash Value",
-              data: values,
-              borderColor: "rgb(24, 101, 131)",
-              backgroundColor: "rgba(24, 101, 131, 0.1)",
-              tension: 0.4,
-              fill: true,
-              borderWidth: 2,
-            },
-            {
-              label: "Duped Value",
-              data: values.map((v) => v * 0.6),
-              borderColor: "#748D92",
-              backgroundColor: "rgba(116, 141, 146, 0.1)",
-              tension: 0.4,
-              fill: true,
-              borderWidth: 2,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: {
-            mode: "index",
-            intersect: false,
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: dates,
+            datasets: [
+              {
+                label: "Cash Value",
+                data: values,
+                borderColor: "rgb(24, 101, 131)",
+                backgroundColor: "rgba(24, 101, 131, 0.1)",
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2,
+              },
+              {
+                label: "Duped Value",
+                data: values.map((v) => v * 0.6),
+                borderColor: "#748D92",
+                backgroundColor: "rgba(116, 141, 146, 0.1)",
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2,
+              },
+            ],
           },
-          plugins: {
-            legend: {
-              labels: {
-                color: "#D3D9D4",
-                usePointStyle: true,
-                padding: 20,
-                font: {
-                  size: 12,
-                  weight: "bold",
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: "index",
+              intersect: false,
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: "#D3D9D4",
+                  usePointStyle: true,
+                  padding: 20,
+                  font: {
+                    size: 12,
+                    weight: "bold",
+                  },
                 },
               },
             },
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              type: "linear",
-              display: true,
-              title: {
+            scales: {
+              y: {
+                beginAtZero: true,
+                type: "linear",
                 display: true,
-                text: "Value",
-                color: "#D3D9D4",
-                font: {
-                  size: 14,
-                  weight: "bold",
+                title: {
+                  display: true,
+                  text: "Value",
+                  color: "#D3D9D4",
+                  font: {
+                    size: 14,
+                    weight: "bold",
+                  },
+                },
+                grid: {
+                  color: "rgba(46, 57, 68, 0.1)",
+                  borderColor: "#2E3944",
+                  tickColor: "#2E3944",
+                  lineWidth: 1,
+                  borderDash: [5, 5],
+                  drawBorder: true,
+                  drawTicks: true,
+                },
+                ticks: {
+                  color: "#D3D9D4",
+                  padding: 10,
+                  callback: function (value) {
+                    return value.toLocaleString();
+                  },
                 },
               },
-              grid: {
-                color: "rgba(46, 57, 68, 0.1)",
-                borderColor: "#2E3944",
-                tickColor: "#2E3944",
-                lineWidth: 1,
-                borderDash: [5, 5],
-                drawBorder: true,
-                drawTicks: true,
-              },
-              ticks: {
-                color: "#D3D9D4",
-                padding: 10,
-                callback: function (value) {
-                  return value.toLocaleString();
+              x: {
+                title: {
+                  display: true,
+                  text: "Date",
+                  color: "#D3D9D4", // Light grayish-green for axis title
+                  font: {
+                    size: 14,
+                    weight: "bold",
+                  },
+                },
+                grid: {
+                  color: "rgba(46, 57, 68, 0.1)", // Dark grayish-blue with opacity for grid
+                  borderColor: "#2E3944",
+                  tickColor: "#2E3944",
+                  display: true,
+                  lineWidth: 1,
+                  borderDash: [5, 5],
+                  drawBorder: true,
+                  drawTicks: true,
+                },
+                ticks: {
+                  color: "#D3D9D4", // Light grayish-green for tick labels
+                  padding: 10,
+                  font: {
+                    size: 11,
+                  },
                 },
               },
             },
-            x: {
-              title: {
-                display: true,
-                text: "Date",
-                color: "#D3D9D4", // Light grayish-green for axis title
-                font: {
-                  size: 14,
-                  weight: "bold",
-                },
-              },
-              grid: {
-                color: "rgba(46, 57, 68, 0.1)", // Dark grayish-blue with opacity for grid
-                borderColor: "#2E3944",
-                tickColor: "#2E3944",
-                display: true,
-                lineWidth: 1,
-                borderDash: [5, 5],
-                drawBorder: true,
-                drawTicks: true,
-              },
-              ticks: {
-                color: "#D3D9D4", // Light grayish-green for tick labels
-                padding: 10,
-                font: {
-                  size: 11,
-                },
+            layout: {
+              padding: {
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10,
               },
             },
           },
-          layout: {
-            padding: {
-              left: 10,
-              right: 10,
-              top: 10,
-              bottom: 10,
-            },
-          },
-        },
-      });
-    }, 100);
+        });
+      }, 100);
+    }
 
     // After the container HTML is set, add resize observer
     setTimeout(() => {

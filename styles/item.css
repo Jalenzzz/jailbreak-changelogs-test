@@ -338,14 +338,10 @@ body {
 
 /* HyperChrome badge styling */
 .hyperchrome-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
   padding: 0.4rem 0.8rem;
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
-  z-index: 3;
   background: linear-gradient(
     124deg,
     #428ffe,
@@ -362,7 +358,7 @@ body {
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
   animation: rainbow 18s ease infinite;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
   backdrop-filter: blur(5px);
