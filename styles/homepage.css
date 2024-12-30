@@ -1,3 +1,5 @@
+@import url("colors.css");
+
 .hero {
   background-size: cover;
   background-position: center;
@@ -19,7 +21,7 @@
 .hero-content {
   position: relative;
   z-index: 1;
-  color: white;
+  color: var(--text-primary);
   text-align: center;
 }
 
@@ -43,16 +45,16 @@
 }
 
 .btn-primary {
-  background-color: #032b44;
-  border-color: #032b44; /* Border color on hover */
-  color: #ffffff;
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--text-primary);
 }
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active,
 .btn-primary.active {
-  background-color: #212a31 !important; /* Hover state for primary button */
-  border-color: #212a31 !important; /* Border color on hover */
+  background-color: var(--bg-primary) !important;
+  border-color: var(--bg-primary) !important;
 }
 /* made by note */
 .cursive {
@@ -60,7 +62,7 @@
   font-style: italic; /* make the text cursive */
 }
 body {
-  background-color: #2e3944;
+  background-color: var(--bg-secondary);
 }
 
 /* Adjust the body when menu is opened */
