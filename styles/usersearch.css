@@ -1,23 +1,18 @@
-:root {
-  --color-dark: #212a31;
-  --color-dark-blue: #2e3944;
-  --color-teal: #124e66;
-  --color-gray: #748d92;
-  --color-light: #d3d9d4;
-}
+@import "colors.css";
 
 /* General Styles */
 body {
-  background-color: var(--color-dark);
-  color: var(--color-light);
+  background-color: var(--background-dark);
+  color: var(--text-body);
 }
+
 .results-container {
-  background-color: #212a31;
+  background-color: var(--background-dark);
 }
 
 /* Search Box Styles */
 .search-box {
-  background: var(--color-dark-blue);
+  background: var(--background-light);
   border-radius: 1rem;
   transition: all 0.3s ease;
 }
@@ -30,37 +25,37 @@ body {
 .input-group-text {
   border: none;
   background: transparent;
-  color: var(--color-gray);
+  color: var(--text-secondary);
   font-size: 1.2rem;
 }
 
 .form-control {
   border: none;
   background: transparent;
-  color: var(--color-light);
+  color: var(--text-body);
   font-size: 1rem;
 }
 
 .form-control::placeholder {
-  color: var(--color-gray);
+  color: var(--text-secondary);
 }
 
 .form-control:focus {
   background: transparent;
-  color: var(--color-light);
+  color: var(--text-body);
   box-shadow: none;
 }
 
 .btn-primary {
-  background-color: var(--color-teal);
-  border-color: var(--color-teal);
+  background-color: var(--button-primary);
+  border-color: var(--button-primary);
   border-radius: 0.8rem;
   transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
-  background-color: #165d78 !important;
-  border-color: #165d78 !important;
+  background-color: var(--button-hover) !important;
+  border-color: var(--button-hover) !important;
   transform: translateX(2px);
 }
 
@@ -74,7 +69,7 @@ body {
 
 /* User Card Styles */
 .user-card {
-  background: var(--color-dark);
+  background: var(--background-dark);
   border-radius: 0.75rem;
   transition: all 0.2s ease;
   height: 100%; /* Ensure consistent height */
@@ -88,12 +83,12 @@ body {
   width: 70px !important;
   height: 70px !important;
   object-fit: cover;
-  border: 2px solid var(--color-teal);
+  border: 2px solid var(--button-primary);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .user-name {
-  color: var(--color-light);
+  color: var(--text-body);
   font-size: 1.2rem;
   font-weight: 500;
   margin-bottom: 0.2rem !important;
@@ -101,7 +96,7 @@ body {
 }
 
 .user-username {
-  color: var(--color-gray) !important;
+  color: var(--text-secondary) !important;
   font-size: 0.9rem;
 }
 
@@ -145,20 +140,20 @@ body {
 .no-results-message i {
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  color: var(--color-teal);
+  color: var(--button-primary);
 }
 
 .text-muted {
-  color: var(--color-gray) !important;
+  color: var(--text-secondary) !important;
 }
 
 /* Heading Styles */
 h1.display-5 {
-  color: var(--color-light);
+  color: var(--text-body);
 }
 
 h1 .bi {
-  color: var(--color-teal);
+  color: var(--button-primary);
 }
 
 /* Animations */
@@ -179,7 +174,7 @@ h1 .bi {
 
 /* Social Nav Styles */
 .social-nav {
-  background-color: var(--color-dark) !important;
+  background-color: var(--background-dark) !important;
   padding: 0.75rem 1rem;
   display: flex;
   justify-content: center;
@@ -190,7 +185,7 @@ h1 .bi {
 
 .social-nav a {
   position: relative;
-  color: var(--color-light);
+  color: var(--text-body);
   text-decoration: none;
   padding: 0.5rem 2rem;
   font-size: 1rem;
@@ -213,11 +208,11 @@ h1 .bi {
 /* Hover and active states - add spacing */
 .social-nav a:hover::after,
 .social-nav a.active::after {
-  background-color: var(--color-light);
+  background-color: var(--text-body);
 }
 
 .social-nav a.active {
-  color: var(--color-light);
+  color: var(--text-body);
   font-weight: 500;
 }
 
@@ -311,4 +306,13 @@ h1 .bi {
   .btn-primary:hover {
     transform: none;
   }
+}
+
+[data-bs-theme="dark"] .lazy-image:not([src]) {
+  background: linear-gradient(
+    110deg,
+    var(--background-light) 8%,
+    var(--background-dark) 18%,
+    var(--background-light) 33%
+  );
 }

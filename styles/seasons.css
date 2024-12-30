@@ -17,12 +17,6 @@
   --border-color: #ff6347;
   --season-rewards-hover-text: var(--text-secondary);
 
-  /* Social Media Colors */
-  --reddit-color: #ff4500; /* Reddit color: Reddit Orange */
-  --discord-color: #7289da; /* Discord color: Discord Blurple */
-  --wiki-color: #8ab4f8; /* Wiki color: Lighter Wiki Blue */
-  --github-color: #ffffff; /* GitHub color: White */
-
   /* Interaction Effects */
   --hover-bg-color: var(--hover-bg);
   --selection-bg: var(--accent-color);

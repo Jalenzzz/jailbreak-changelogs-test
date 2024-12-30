@@ -1,34 +1,36 @@
+@import "colors.css";
+
 /* Dark Theme Colors */
 [data-bs-theme="dark"] body {
-  --common-bg-color: #212a31;
-  --secondary-bg: #2e3944;
-  --accent-color: #124e66;
-  --muted-text: #748d92;
-  --main-text: #d3d9d4;
+  /* Remove redundant color definitions and use variables from colors.css */
+  --common-bg-color: var(--bg-primary);
+  --secondary-bg: var(--bg-secondary);
+  --accent-color: var(--accent-color);
+  --muted-text: var(--text-muted);
+  --main-text: var(--text-primary);
 
   /* Update existing color variables */
-  --text-color: var(--main-text);
-  --header-text: var(--main-text);
+  --text-color: var(--text-primary);
+  --header-text: var(--text-primary);
   --button-primary-bg: var(--accent-color);
-  --button-primary-hover-bg: var(--secondary-bg);
-  --gray-100: var(--secondary-bg);
+  --button-primary-hover-bg: var(--bg-secondary);
+  --gray-100: var(--bg-secondary);
   --gray-300: var(--accent-color);
-  --gray-600: var(--muted-text);
+  --gray-600: var(--text-muted);
 
-  --content-h1: #d3d9d4; /* Lighter Blue for Dark Mode */
-  --content-h2: #748d92; /* Softer Red for Dark Mode */
-  --content-h3: #748d92; /* Light Gray for H3 and Paragraph Text */
-  --content-paragraph: #d3d9d4; /* Light Gray for Paragraphs */
-  --content-bullet: #748d92; /* Lighter Blue for Bullets */
-  --content-sub-bullet: #748d92; /* Softer Red for Bullets */
+  --content-h1: var(--text-primary);
+  --content-h2: var(--text-muted);
+  --content-h3: var(--text-muted);
+  --content-paragraph: var(--text-primary);
+  --content-bullet: var(--text-muted);
+  --content-sub-bullet: var(--text-muted);
 
-  --button-primary-text: #eeeeee; /* White for Primary Button Text */
-  /* Mention Colors */
-  --mention-color: #748d92; /* Teal color for Mentions */
-  --mention-bg: #212a31; /* Dark blue-gray for Mention Background */
-  --at-color: #d3d9d4; /* Bright teal for '@' Symbol */
-  --username-color: #76abae; /* Soft cyan for Username */
-  --mention-hover-bg: #124e66; /* Hover Background Color for Mentions */
+  --button-primary-text: #eeeeee;
+  --mention-color: var(--text-muted);
+  --mention-bg: var(--bg-primary);
+  --at-color: var(--text-primary);
+  --username-color: #76abae;
+  --mention-hover-bg: var(--accent-color);
 
   --highlight-bg: rgba(
     255,
@@ -617,7 +619,7 @@ button {
 .trade-card .card-img-container {
   position: relative;
   padding-top: 100%; /* 1:1 Aspect ratio */
-  background: transparent
+  background: transparent;
   overflow: hidden;
 }
 

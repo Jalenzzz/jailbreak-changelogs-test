@@ -1,40 +1,13 @@
-/* Dark theme */
-[data-bs-theme="dark"] body {
-  --body-bg-color: #2e3944;
-  --timeline-entry-bg-color: #212a31;
-  --text-color: #d3d9d4;
-  --header-text: #d3d9d4;
-  --button-primary-bg: #124e66; /* Orange Red */
-  --button-primary-text: #eeeeee;
-  --button-primary-hover-bg: #212a31; /* Tomato */
-  --selection-bg: #4682b4; /* Steel Blue */
-  --selection-text: #ffffff;
-  --glow-color: #748d92;
-  --hover-bg-color: #5a5a5a;
-  --username-color: #76abae; /* Soft cyan for Username */
+@import "colors.css";
 
-  --reddit-color: #ff4500; /* Reddit Orange */
-  --discord-color: #7289da; /* Discord Blurple */
-  --wiki-color: #8ab4f8; /* Lighter Wiki Blue */
-  --github-color: #ffffff; /* GitHub White */
-
-  --gray-100: #333333;
-  --gray-200: #444444;
-  --gray-300: #555555;
-  --gray-400: #666666;
-  --gray-500: #777777;
-  --gray-600: #888888;
-  --gray-700: #999999;
-  --gray-800: #aaaaaa;
-  --gray-900: #bbbbbb;
-}
+/* Remove the [data-bs-theme="dark"] body section with variables since they're in colors.css */
 
 .back-to-top-btn {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: #124e66;
-  color: #d3d9d4;
+  background-color: var(--button-primary);
+  color: var(--text-body);
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -49,15 +22,15 @@
 }
 
 .back-to-top-btn:hover {
-  background-color: #2e3944;
+  background-color: var(--background-light);
   transform: translateY(-2px);
 }
 
 .offcanvas-header {
   display: flex; /* Keep the header visible */
   justify-content: space-between; /* Align items properly */
-  background-color: #212a31; /* Semi-transparent background */
-  color: #ffffff;
+  background-color: var(--background-dark);
+  color: var(--text-body);
 }
 .offcanvas-title {
   font-weight: bold; /* Bold title */
@@ -95,7 +68,7 @@ footer.hide {
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: var(--body-bg-color);
+  background-color: var(--bg-secondary);
 }
 
 .scrollMe {
@@ -142,16 +115,16 @@ body {
   top: 0;
   bottom: 0;
   width: 2px;
-  background-color: var(--text-color); /* Use the same text color as the body */
+  background-color: var(--text-body); /* Use the same text color as the body */
   transform: translateX(-50%);
 }
 
 [data-bs-theme="dark"] .timeline::before {
-  background-color: #748d92; /* Dark theme timeline line color */
+  background-color: var(--text-secondary); /* Dark theme timeline line color */
 }
 
 .timeline-entry {
-  background-color: var(--timeline-entry-bg-color);
+  background-color: var(--background-dark);
   padding: 15px; /* Reduced padding */
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -711,4 +684,193 @@ button {
 [data-bs-theme="dark"] .lazy-image:not([src]) {
   background: linear-gradient(110deg, #2e3944 8%, #212a31 18%, #2e3944 33%);
   height: 300px;
+}
+
+/* Timeline Container */
+.timeline-container {
+  background-color: var(--background-dark);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Timeline Main Track */
+.timeline-track {
+  position: relative;
+  padding: 30px 0;
+}
+
+.timeline-track::before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  background-color: var(--text-secondary);
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Timeline Items */
+.timeline-item {
+  margin-bottom: 30px;
+  position: relative;
+  width: 50%;
+}
+
+.timeline-item:nth-child(even) {
+  margin-left: 50%;
+}
+
+/* Content Box */
+.timeline-content {
+  padding: 20px;
+  background-color: var(--background-light);
+  border-radius: 8px;
+  position: relative;
+  margin: 0 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.timeline-content:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Timeline Dots */
+.timeline-dot {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: var(--button-primary);
+  border: 3px solid var(--background-light);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.timeline-item:nth-child(odd) .timeline-dot {
+  right: -8px;
+}
+
+.timeline-item:nth-child(even) .timeline-dot {
+  left: -8px;
+}
+
+/* Timeline Content Text */
+.timeline-date {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.timeline-title {
+  color: var(--text-body);
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.timeline-description {
+  color: var(--text-body);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Timeline Arrows */
+.timeline-content::before {
+  content: "";
+  position: absolute;
+  border-style: solid;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.timeline-item:nth-child(odd) .timeline-content::before {
+  right: -10px;
+  border-width: 10px 0 10px 10px;
+  border-color: transparent transparent transparent var(--background-light);
+}
+
+.timeline-item:nth-child(even) .timeline-content::before {
+  left: -10px;
+  border-width: 10px 10px 10px 0;
+  border-color: transparent var(--background-light) transparent transparent;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .timeline-track::before {
+    left: 30px;
+  }
+
+  .timeline-item {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .timeline-item:nth-child(even) {
+    margin-left: 0;
+  }
+
+  .timeline-content {
+    margin-left: 60px;
+    margin-right: 15px;
+  }
+
+  .timeline-dot {
+    left: 22px;
+  }
+
+  .timeline-item:nth-child(odd) .timeline-dot {
+    right: auto;
+    left: 22px;
+  }
+
+  .timeline-content::before {
+    left: -10px;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent var(--background-light) transparent transparent;
+  }
+
+  .timeline-item:nth-child(odd) .timeline-content::before {
+    right: auto;
+    left: -10px;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent var(--background-light) transparent transparent;
+  }
+}
+
+/* Animation Classes */
+.timeline-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.timeline-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Timeline Badge */
+.timeline-badge {
+  background-color: var(--button-primary);
+  color: var(--text-body);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+/* Timeline Links */
+.timeline-content a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.timeline-content a:hover {
+  color: var(--text-secondary);
 }

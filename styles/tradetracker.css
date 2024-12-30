@@ -1,24 +1,26 @@
+@import "colors.css";
+
 /* Dark Theme Colors */
 [data-bs-theme="dark"] body {
-  --common-bg-color: #2e3944; /* Dark background */
-  --content-h1: #d3d9d4; /* Lighter Blue for Dark Mode */
-  --content-h2: #748d92; /* Softer Red for Dark Mode */
-  --content-h3: #748d92; /* Light Gray for H3 and Paragraph Text */
-  --content-paragraph: #d3d9d4; /* Light Gray for Paragraphs */
-  --content-bullet: #748d92; /* Lighter Blue for Bullets */
-  --content-sub-bullet: #748d92; /* Softer Red for Bullets */
-  --text-color: #ffffff; /* White Text */
+  --common-bg-color: var(--bg-secondary);
+  --content-h1: var(--text-primary);
+  --content-h2: var(--text-muted);
+  --content-h3: var(--text-muted);
+  --content-paragraph: var(--text-primary);
+  --content-bullet: var(--text-muted);
+  --content-sub-bullet: var(--text-muted);
+  --text-color: #ffffff;
 
-  --header-text: #ffffff; /* White for Header Text */
-  --button-primary-bg: #124e66; /* Dark Blue for Primary Button Background */
-  --button-primary-text: #eeeeee; /* White for Primary Button Text */
-  --button-primary-hover-bg: #212a31; /* Darker Blue for Hover */
+  --header-text: #ffffff;
+  --button-primary-bg: var(--accent-color);
+  --button-primary-text: #eeeeee;
+  --button-primary-hover-bg: var(--bg-primary);
   /* Mention Colors */
-  --mention-color: #748d92; /* Teal color for Mentions */
-  --mention-bg: #212a31; /* Dark blue-gray for Mention Background */
-  --at-color: #d3d9d4; /* Bright teal for '@' Symbol */
-  --username-color: #76abae; /* Soft cyan for Username */
-  --mention-hover-bg: #124e66; /* Hover Background Color for Mentions */
+  --mention-color: var(--text-muted);
+  --mention-bg: var(--bg-primary);
+  --at-color: var(--text-primary);
+  --username-color: #76abae;
+  --mention-hover-bg: var(--accent-color);
 
   --highlight-bg: rgba(
     255,
@@ -44,7 +46,7 @@
 }
 
 [data-bs-theme="dark"] #loading-overlay {
-  background-color: #2e3944; /* Dark Background for Loading Overlay */
+  background-color: var(--bg-secondary);
 }
 [data-bs-theme="dark"] body {
   background-color: var(--common-bg-color);
@@ -90,15 +92,15 @@
 }
 
 .btn-custom-outline {
-  border: 1px solid #124e66;
-  color: #D3D9D4;
-  background-color: #124e66;
+  border: 1px solid var(--accent-color);
+  color: var(--text-primary);
+  background-color: var(--accent-color);
   transition: all 0.3s ease;
 }
 
 .btn-custom-outline:hover {
-  background-color: #124e66;
-  color: #D3D9D4;
+  background-color: var(--accent-color);
+  color: var(--text-primary);
 }
 
 /* Text Selection Styles */
@@ -166,7 +168,7 @@
 
 .clear-search-btn {
   padding: 0.375rem 0.75rem;
-  color: #748D92 !important; /* Medium grayish-blue for default state */
+  color: var(--text-muted) !important;
   transition: all 0.2s ease;
   background: transparent;
   border: none;
@@ -175,7 +177,7 @@
 }
 
 .clear-search-btn:hover {
-  color: #D3D9D4 !important; /* Deep teal for hover state */
+  color: var(--text-primary) !important;
 }
 
 .clear-search-btn i {
@@ -183,26 +185,26 @@
 }
 
 #searchInput {
-  background-color: #2E3944; /* Dark grayish-blue */
-  border-color: #748D92; /* Medium grayish-blue */
-  color: #D3D9D4; /* Very light grayish-green for text */
+  background-color: var(--bg-secondary);
+  border-color: var(--text-muted);
+  color: var(--text-primary);
 }
 
 #searchInput::placeholder {
-  color: #748D92; /* Medium grayish-blue for placeholder */
+  color: var(--text-muted);
 }
 
 #searchInput:focus {
-  color: #D3D9D4;
+  color: var(--text-primary);
   box-shadow: 0 0 0 0.25rem rgba(18, 78, 102, 0.25); /* Deep teal with opacity */
 }
 
 #searchInput:focus + .clear-search-btn {
-  color: #124E66; /* Deep teal when input is focused */
+  color: var(--accent-color);
 }
 
 #searchInput:focus + .clear-search-btn:hover {
-  color: #D3D9D4; /* Very light grayish-green for hover on focused state */
+  color: var(--text-primary);
 }
 
 /* Responsive Heading Styles */
