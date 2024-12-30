@@ -247,7 +247,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           const video = mediaContainer?.querySelector("video");
 
           sessionStorage.removeItem("firefoxNoticeShown");
-          console.log("User Agent:", navigator.userAgent.toLowerCase());
 
           if (mediaContainer && video) {
             // Add muted attribute and preload metadata
@@ -305,6 +304,37 @@ document.addEventListener("DOMContentLoaded", async () => {
           console.error("Error in video setup:", error);
         }
       }, 500);
+    } else if (item.name === "HyperShift" && item.type === "HyperChrome") {
+      element = `
+      <div class="media-container ${item.is_limited ? "limited-item" : ""}">
+          <div class="skeleton-loader"></div>
+          <video 
+              src="https://cdn.jailbreakchangelogs.xyz/images/items/hyperchromes/HyperShift.webm"
+              class="video-player card-img-top"
+              playsinline 
+              muted 
+              loop
+              autoplay
+              onloadeddata="this.parentElement.querySelector('.skeleton-loader').style.display='none'; this.style.opacity='1'"
+              onerror="handleimage(this)"
+              style="width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.3s ease;"
+          ></video>
+          ${specialBadgeHtml}
+      </div>
+  `;
+
+      // Simplified video setup that matches the container pattern
+      setTimeout(() => {
+        const mediaContainer = document.querySelector(".media-container");
+        const video = mediaContainer?.querySelector("video");
+        if (video) {
+          video.muted = true;
+          video.volume = 0;
+          video
+            .play()
+            .catch((err) => console.warn("Initial play failed:", err));
+        }
+      }, 100);
     } else {
       element = `
         <div class="media-container ${item.is_limited ? "limited-item" : ""}">
@@ -350,6 +380,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                       <div class="col-md-5 p-3">
                         ${
                           item.type === "Drift"
+                            ? element
+                            : item.name === "HyperShift" &&
+                              item.type === "HyperChrome"
                             ? element
                             : `
                           <div class="media-container ${
@@ -653,7 +686,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
         const commentsList = document.getElementById("comments-list");
         commentsList.appendChild(listItem);
-        console.log(comment);
       });
     }
   }
@@ -671,7 +703,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
   }
 
+  // Update handleimage function to skip HyperShift
   window.handleimage = function (element) {
+    console.log("handleimage called for:", {
+      id: element.id,
+      alt: element.alt,
+      tagName: element.tagName,
+      src: element.src,
+      isHyperShiftVideo: element.id === "hypershift-video",
+      isHyperShiftAlt: element.alt === "HyperShift",
+    });
+
+    const isHyperShift =
+      element.id === "hypershift-video" ||
+      (element.alt === "HyperShift" &&
+        element.closest(".media-container").querySelector("video"));
+
+    if (isHyperShift) {
+      console.log("Skipping placeholder for HyperShift");
+      return; // Don't replace HyperShift video with placeholder
+    }
     element.src =
       "https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp";
   };
@@ -856,28 +907,4 @@ function handleinvalidImage() {
 function logDimensions(container, mediaElement) {
   const containerRect = container.getBoundingClientRect();
   const mediaRect = mediaElement.getBoundingClientRect();
-
-  console.log("%c📏 Dimension Check:", "font-weight: bold; color: #748d92;");
-  console.log(
-    "%cMedia Container:",
-    "color: #c82c2c;",
-    `\nWidth: ${containerRect.width.toFixed(1)}px`,
-    `\nHeight: ${containerRect.height.toFixed(1)}px`,
-    `\nAspect Ratio: ${(containerRect.width / containerRect.height).toFixed(3)}`
-  );
-  console.log(
-    "%cMedia Element:",
-    "color: #4CAF50;",
-    `\nWidth: ${mediaRect.width.toFixed(1)}px`,
-    `\nHeight: ${mediaRect.height.toFixed(1)}px`,
-    `\nAspect Ratio: ${(mediaRect.width / mediaRect.height).toFixed(3)}`,
-    `\nObject Fit: ${getComputedStyle(mediaElement).objectFit}`
-  );
-  console.log(
-    "%cDifference:",
-    "color: #124e66;",
-    `\nWidth: ${(containerRect.width - mediaRect.width).toFixed(1)}px`,
-    `\nHeight: ${(containerRect.height - mediaRect.height).toFixed(1)}px`
-  );
-  console.log("\n");
 }

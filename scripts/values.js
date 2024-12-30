@@ -424,6 +424,22 @@ document.addEventListener("DOMContentLoaded", () => {
           onloadeddata="this.parentElement.querySelector('.skeleton-loader').style.display='none'"
         ></video>
       </div>`;
+    } else if (item.name === "HyperShift" && item.type === "HyperChrome") {
+      mediaElement = `
+        <div class="media-container">
+            <div class="skeleton-loader"></div>
+            <video 
+                src="https://cdn.jailbreakchangelogs.xyz/images/items/hyperchromes/HyperShift.webm"
+                class="card-img-top"
+                playsinline 
+                muted 
+                loop
+                autoplay
+                id="hypershift-video"
+                onloadeddata="this.parentElement.querySelector('.skeleton-loader').style.display='none'"
+                onerror="console.error('Failed to load HyperShift video:', this.src)"
+            ></video>
+        </div>`;
     } else {
       mediaElement = `
         <div class="media-container">
@@ -656,7 +672,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       let categoryName;
       if (currentSort === "hyperchromes") {
-        categoryName = "HyperChromes";
+        categoryName = "Hyperchromes";
       } else {
         categoryName = currentSort
           .split("-")
@@ -909,10 +925,19 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Default Image
-function handleimage(element) {
+window.handleimage = function (element) {
+  const isHyperShift =
+    element.id === "hypershift-video" ||
+    (element.alt === "HyperShift" &&
+      element.closest(".media-container")?.querySelector("video"));
+
+  if (isHyperShift) {
+    return;
+  }
+
   element.src =
     "https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp";
-}
+};
 
 function clearSearch() {
   const searchBar = document.getElementById("search-bar");
