@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         .replace(/\s+/g, " ");
 
       const response = await fetch(
-        `https://api.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(
+        `https://api3.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(
           itemName
         )}&type=${urlType}`
       );
