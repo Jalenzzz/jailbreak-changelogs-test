@@ -759,24 +759,15 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // Add clearFilters function
+  // Update clearFilters function
   window.clearFilters = debounce(function () {
     // Clear localStorage
     localStorage.removeItem("sortDropdown");
     localStorage.removeItem("valueSortDropdown");
-    localStorage.removeItem("searchTerm");
 
     // Reset dropdowns
     document.getElementById("sort-dropdown").value = "name-all-items";
     document.getElementById("value-sort-dropdown").value = "alpha-asc"; // Reset to A-Z
-
-    // Clear search
-    const searchBar = document.getElementById("search-bar");
-    searchBar.value = "";
-    const clearButton = document.getElementById("clear-search");
-    if (clearButton) {
-      clearButton.style.display = "none";
-    }
 
     // Hide category in breadcrumb
     const categoryNameElement = document.querySelector(".category-name");
@@ -793,8 +784,8 @@ document.addEventListener("DOMContentLoaded", () => {
     updateSearchPlaceholder();
 
     // Show success toast
-    toastr.success("All filters have been cleared", "Filters Reset");
-  }, 500); // 1 second debounce
+    toastr.success("Filters have been reset", "Filters Reset");
+  }, 500);
 
   // Modify the value-sort-dropdown options in the HTML
   const valueSortDropdown = document.getElementById("value-sort-dropdown");
@@ -833,6 +824,20 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   loadItems(); // Initial load
+
+  // Handle URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has("sort")) {
+    document.getElementById("sort-dropdown").value = urlParams.get("sort");
+  }
+  if (urlParams.has("valueSort")) {
+    document.getElementById("value-sort-dropdown").value =
+      urlParams.get("valueSort");
+  }
+  if (urlParams.has("search")) {
+    document.getElementById("search-bar").value = urlParams.get("search");
+    filterItems();
+  }
 });
 
 // Default Image
@@ -916,3 +921,45 @@ window.handleCardClick = function (name, type) {
   const url = `/item/${formattedType}/${formattedName}`;
   window.location.href = url;
 };
+
+window.shareCurrentView = debounce(function () {
+  const sortDropdown = document.getElementById("sort-dropdown");
+  const valueSortDropdown = document.getElementById("value-sort-dropdown");
+  const searchBar = document.getElementById("search-bar");
+
+  // Build URL parameters
+  const params = new URLSearchParams();
+  if (sortDropdown.value !== "name-all-items") {
+    params.append("sort", sortDropdown.value);
+  }
+  if (valueSortDropdown.value !== "none") {
+    params.append("valueSort", valueSortDropdown.value);
+  }
+  if (searchBar.value.trim()) {
+    params.append("search", searchBar.value.trim());
+  }
+
+  // Construct full URL
+  const baseUrl = `${window.location.origin}/values`;
+  const shareUrl = params.toString()
+    ? `${baseUrl}?${params.toString()}`
+    : baseUrl;
+
+  // Copy to clipboard
+  navigator.clipboard
+    .writeText(shareUrl)
+    .then(() => {
+      toastr.success("Link copied to clipboard!", "Share", {
+        timeOut: 2000,
+        closeButton: true,
+        positionClass: "toast-bottom-right",
+      });
+    })
+    .catch(() => {
+      toastr.error("Failed to copy link", "Share Error", {
+        timeOut: 2000,
+        closeButton: true,
+        positionClass: "toast-bottom-right",
+      });
+    });
+}, 1000); // 1 second debounce
