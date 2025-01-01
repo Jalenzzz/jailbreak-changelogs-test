@@ -868,18 +868,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadItems(); // Initial load
 
-  // Handle URL parameters
+  // Handle URL parameters and clean up URL
   const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has("sort")) {
-    document.getElementById("sort-dropdown").value = urlParams.get("sort");
-  }
-  if (urlParams.has("valueSort")) {
-    document.getElementById("value-sort-dropdown").value =
-      urlParams.get("valueSort");
-  }
-  if (urlParams.has("search")) {
-    document.getElementById("search-bar").value = urlParams.get("search");
-    filterItems();
+  if (
+    urlParams.has("sort") ||
+    urlParams.has("valueSort") ||
+    urlParams.has("search")
+  ) {
+    // Apply the filters from URL parameters
+    if (urlParams.has("sort")) {
+      document.getElementById("sort-dropdown").value = urlParams.get("sort");
+    }
+    if (urlParams.has("valueSort")) {
+      document.getElementById("value-sort-dropdown").value =
+        urlParams.get("valueSort");
+    }
+    if (urlParams.has("search")) {
+      document.getElementById("search-bar").value = urlParams.get("search");
+      filterItems();
+    }
+
+    // Apply the sort
+    sortItems();
+
+    // Clean up the URL without refreshing the page
+    window.history.replaceState({}, "", window.location.pathname);
   }
 });
 
