@@ -816,14 +816,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const categoryNameElement = document.querySelector(".category-name");
     categoryNameElement.style.display = "none";
 
+    // Get search value before resetting display
+    const searchBar = document.getElementById("search-bar");
+    const searchValue = searchBar ? searchBar.value : "";
+
     // Reset items display
     currentPage = 1;
     filteredItems = [...allItems];
+
     // Sort items A-Z by default
     filteredItems.sort((a, b) => a.name.localeCompare(b.name));
-    displayItems();
-    updateTotalItemsCount();
-    updateTotalItemsLabel("all-items");
+
+    // If there's a search term, perform the search
+    if (searchValue.trim()) {
+      filterItems(); // This will use the existing search term
+    } else {
+      displayItems();
+      updateTotalItemsCount();
+      updateTotalItemsLabel("all-items");
+    }
+
     updateSearchPlaceholder();
 
     // Show success toast
