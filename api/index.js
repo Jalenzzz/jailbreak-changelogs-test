@@ -622,13 +622,13 @@ app.get("/sitemap.xml", (req, res) => {
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://testing.jailbreakchangelogs.xyz/tos</loc>
+    <loc>https://testing.jailbreakchangelogs.xyz/faq</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://testing.jailbreakchangelogs.xyz/faq</loc>
+    <loc>https://testing.jailbreakchangelogs.xyz/tos</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -664,13 +664,13 @@ app.get("/sitemap.xml", (req, res) => {
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://testing.jailbreakchangelogs.xyz/timeline</loc>
+    <loc>https://testing.jailbreakchangelogs.xyz/bot</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://testing.jailbreakchangelogs.xyz/bot</loc>
+    <loc>https://testing.jailbreakchangelogs.xyz/timeline</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
