@@ -81,14 +81,9 @@ body::before {
   width: 100%;
   transition: background-color 0.3s ease;
 }
-.login-button i {
-  margin-right: 8px; /* Add space between the icon and the text */
-  font-size: 1.2rem; /* Adjust icon size */
-  vertical-align: middle;
-}
 
 .login-button:hover {
-  background-color: #212a31; /* Medium grayish-blue */
+  background-color: var(--bg-primary);
 }
 
 .login-button:disabled {

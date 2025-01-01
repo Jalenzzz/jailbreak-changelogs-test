@@ -89,7 +89,7 @@ body::before {
 }
 
 .login-button:hover {
-  background-color: var(--button-hover); /* Medium grayish-blue */
+  background-color: var(--bg-primary);
 }
 
 .discord-logo {
