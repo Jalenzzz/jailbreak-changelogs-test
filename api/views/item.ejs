@@ -5,52 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="referrer" content="no-referrer" />
 
-    <meta name="google-adsense-account" content="ca-pub-8152532464536367" />
-    <base href="/" />
-
     <!-- Primary Meta Tags -->
+    <title><%= title %></title>
+    <meta name="title" content="<%= title %>" />
     <meta
       name="description"
-      content="View information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. Find out its current value, rarity status, and make informed trading decisions."
+      content="Get detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. View current value, trading history, rarity status, and market trends to make informed trading decisions."
     />
     <meta
       name="keywords"
-      content="item values, item trading, trade deals, trading platform, item marketplace, trading items, item trades, trading information, valuable items, trade negotiation"
+      content="<%= title.replace(' / Changelogs', '').toLowerCase() %>, Jailbreak <%= itemType.toLowerCase() %>, Jailbreak trading value, <%= itemType.toLowerCase() %> worth, Jailbreak item details, Roblox Jailbreak trading, <%= itemType.toLowerCase() %> rarity, Jailbreak <%= itemType.toLowerCase() %> price Jailbreak <%= itemType.toLowerCase() %> value"
     />
-    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Jailbreak Changelogs" />
 
-    <!-- Open Graph Meta Tags -->
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="<%= title %>" />
-    <meta
-      property="og:description"
-      content="View detailed information about this <%= itemType %> item: <%= title.replace(' / Changelogs', '') %> in Jailbreak, including its value, rarity, and trading information."
-    />
-    <meta property="og:image" content="<%= image_url %>" />
     <meta
       property="og:url"
-      content="https://jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(itemName) %>"
+      content="https://testing.jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(itemName) %>"
     />
+    <meta
+      property="og:title"
+      content="<%= title %> - Item Details | JailbreakChangelogs"
+    />
+    <meta
+      property="og:description"
+      content="Get detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. View current value, trading history, rarity status, and market trends to make informed trading decisions."
+    />
+    <meta
+      property="og:image"
+      content="<%= item?.image || 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp' %>"
+    />
+    <meta property="og:site_name" content="Jailbreak Changelogs" />
 
-    <!-- Twitter Meta Tags -->
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="<%= title %>" />
+    <meta
+      name="twitter:url"
+      content="https://testing.jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(itemName) %>"
+    />
+    <meta
+      name="twitter:title"
+      content="<%= title %> - Item Details | JailbreakChangelogs"
+    />
     <meta
       name="twitter:description"
-      content="Get detailed information about this <%= itemType %> item: <%= title.replace(' / Changelogs', '') %> in Jailbreak. View its current value, rarity, and make smart trading decisions."
+      content="Get detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. View current value, trading history, rarity status, and market trends to make informed trading decisions."
     />
     <meta
       name="twitter:image"
       content="<%= item?.image || 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp' %>"
     />
 
-    <title><%= title %></title>
-
-    <!-- Canonical URL -->
+    <!-- Additional SEO tags -->
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <link
       rel="canonical"
-      href="https://testing.jailbreakchangelogs.xyz/values"
+      href="https://testing.jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(itemName) %>"
     />
+    <meta property="og:locale" content="en_US" />
+    <meta name="language" content="English" />
+
+    <!-- Schema.org markup for Google -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "<%= title.replace(' / Changelogs', '') %>",
+        "image": "<%= item?.image || 'https://cdn.jailbreakchangelogs.xyz/logos/Items_Logo.webp' %>",
+        "description": "Get detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. View current value, trading history, rarity status, and market trends.",
+        "category": "<%= itemType %>",
+        "url": "https://testing.jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(itemName) %>"
+      }
+    </script>
+
+    <!-- Google Adsense -->
+    <meta name="google-adsense-account" content="ca-pub-8152532464536367" />
+
+    <base href="/" />
+
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
 
     <!-- Stylesheets -->
     <link
