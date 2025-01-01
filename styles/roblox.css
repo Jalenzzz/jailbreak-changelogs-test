@@ -1,3 +1,5 @@
+@import url("colors.css");
+
 body,
 html {
   margin: 0;
@@ -69,6 +71,57 @@ body::before {
 .login-button:hover {
   background-color: #212a31; /* Medium grayish-blue */
 }
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.roblox-logo {
+  width: 200px;
+  height: auto;
+  margin: 20px auto;
+  display: block;
+}
+
+.privacy-notice {
+  text-align: center;
+  margin: 20px;
+  color: var(--text-muted);
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.consent-checkboxes {
+  margin: 20px auto;
+  max-width: 400px;
+}
+
+.consent-checkboxes .form-check {
+  margin-bottom: 10px;
+  text-align: left;
+  color: var(--text-primary);
+}
+
+.consent-checkboxes .form-check-input {
+  background-color: transparent;
+}
+
+.consent-checkboxes .form-check-input:checked {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.consent-checkboxes .form-check-label a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.consent-checkboxes .form-check-label a:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
 .features {
   margin-top: 2rem;
   padding: 1rem;
@@ -88,19 +141,4 @@ body::before {
 .features ul {
   color: #d3d9d4; /* Light grayish-green */
   padding-left: 1.5rem;
-}
-.footer {
-  margin-top: 2rem;
-  text-align: center;
-}
-.footer a {
-  color: #d3d9d4; /* Deep teal */
-  text-decoration: none;
-  margin: 0 10px;
-  font-size: 0.9rem;
-  transition: color 0.3s ease, text-decoration 0.3s ease;
-}
-.footer a:hover {
-  color: #748d92; /* Medium grayish-blue */
-  text-decoration: underline;
 }

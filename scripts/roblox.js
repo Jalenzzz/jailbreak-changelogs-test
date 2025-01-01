@@ -1,5 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Your code here...
+  const ageCheck = document.getElementById("ageCheck");
+  const tosCheck = document.getElementById("tosCheck");
+  const loginButton = document.getElementById("button");
+
+  function updateLoginButton() {
+    loginButton.disabled = !(ageCheck.checked && tosCheck.checked);
+  }
+
+  ageCheck.addEventListener("change", updateLoginButton);
+  tosCheck.addEventListener("change", updateLoginButton);
+
   function getCookie(name) {
     let cookieArr = document.cookie.split(";");
     for (let i = 0; i < cookieArr.length; i++) {
@@ -18,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (!token) {
     window.location.href = "/login";
   }
-  document.getElementById("button").addEventListener("click", () => {
+  loginButton.addEventListener("click", () => {
     console.log("Redirecting to Roblox OAuth...");
     window.location.href = test_redirect;
   });

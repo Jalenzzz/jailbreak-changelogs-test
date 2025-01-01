@@ -1,13 +1,16 @@
-body, html {
+@import url("colors.css");
+
+body,
+html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Poppins', sans-serif;
-  background-color: #212a3100; /* Main background */
+  font-family: "Poppins", sans-serif;
+  background-color: var(--bg-primary); /* Main background */
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url('https://cdn.jailbreakchangelogs.xyz/backgrounds/background4.webp');
+  background-image: url("https://cdn.jailbreakchangelogs.xyz/backgrounds/background4.webp");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -23,7 +26,7 @@ body::before {
   z-index: 1;
 }
 .login-container {
-  background: rgba(46, 57, 68, 0.9); /* Dark grayish-blue */
+  background: var(--bg-secondary); /* Dark grayish-blue */
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   overflow: hidden;
@@ -39,17 +42,17 @@ body::before {
   margin-bottom: 2rem;
 }
 .login-header h1 {
-  color: #D3D9D4; /* Deep teal */
+  color: var(--text-primary); /* Deep teal */
   font-size: 2rem;
   margin-bottom: 0.5rem;
 }
 .login-header p {
-  color: #D3D9D4; /* Light grayish-green */
+  color: var(--text-primary); /* Light grayish-green */
   font-size: 1rem;
 }
 .login-button {
-  background-color: #124E66; /* Deep teal */
-  color: #D3D9D4; /* Light grayish-green */
+  background-color: var(--button-primary); /* Deep teal */
+  color: var(--text-primary); /* Light grayish-green */
   border: none;
   padding: 12px 20px;
   border-radius: 24px;
@@ -66,35 +69,59 @@ body::before {
 }
 
 .login-button:hover {
-  background-color: #212A31; /* Medium grayish-blue */
+  background-color: var(--button-hover); /* Medium grayish-blue */
 }
-.features {
-  margin-top: 2rem;
-  padding: 1rem;
-  background-color: rgba(116, 141, 146, 0.1); /* Medium grayish-blue with transparency */
-  border-radius: 8px;
+
+.discord-logo {
+  width: 200px;
+  height: auto;
+  margin: 20px auto;
+  display: block;
 }
-.features h2 {
-  color: #D3D9D4; /* Deep teal */
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-}
-.features ul {
-  color: #D3D9D4; /* Light grayish-green */
-  padding-left: 1.5rem;
-}
-.footer {
-  margin-top: 2rem;
+
+.privacy-notice {
   text-align: center;
+  margin: 20px;
+  color: var(--text-muted);
+  font-size: 0.9em;
+  line-height: 1.5;
 }
-.footer a {
-  color: #D3D9D4; /* Deep teal */
+
+.consent-checkboxes {
+  margin: 20px auto;
+  max-width: 400px;
+}
+
+.consent-checkboxes .form-check {
+  margin-bottom: 10px;
+  text-align: left;
+  color: var(--text-primary);
+}
+
+.consent-checkboxes .form-check-input {
+  background-color: transparent;
+}
+
+.consent-checkboxes .form-check-input:checked {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.consent-checkboxes .form-check-label a {
+  color: var(--text-muted);
   text-decoration: none;
-  margin: 0 10px;
-  font-size: 0.9rem;
-  transition: color 0.3s ease, text-decoration 0.3s ease;
 }
-.footer a:hover {
-  color: #748D92; /* Medium grayish-blue */
+
+.consent-checkboxes .form-check-label a:hover {
+  color: var(--text-primary);
   text-decoration: underline;
+}
+
+.consent-checkboxes a {
+  color: var(--accent-color);
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
