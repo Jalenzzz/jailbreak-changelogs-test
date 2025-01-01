@@ -4,57 +4,74 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="referrer" content="no-referrer" />
-
     <meta name="google-adsense-account" content="ca-pub-8152532464536367" />
     <base href="/" />
 
-    <!-- Open Graph metadata for social media sharing -->
+    <!-- Primary Meta Tags -->
+    <meta
+      name="title"
+      content="Jailbreak Season <%= season %> | <%= title %>"
+    />
+    <meta name="author" content="Jailbreak Changelogs" />
+    <meta
+      name="description"
+      content="Explore Jailbreak Season <%= season %>: <%= title %>. Track seasonal rewards, exclusive vehicles, limited-time items, and progression milestones for Roblox Jailbreak Season <%= season %>."
+    />
+    <meta
+      name="keywords"
+      content="Jailbreak Season <%= season %>, <%= title %>, Roblox Jailbreak, seasonal rewards, exclusive vehicles, limited items, game progression, seasonal content, Jailbreak updates, seasonal milestones, game events"
+    />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Jailbreak Changelogs" />
+    <meta
+      property="og:url"
+      content="https://testing.jailbreakchangelogs.xyz/seasons/<%= season %>"
+    />
     <meta
       property="og:title"
       content="Jailbreak Season <%= season %> | <%= title %>"
     />
     <meta
       property="og:description"
-      content="Explore Jailbreak Season <%= season %>: <%= title %>. Unlock exclusive rewards, rare items, and unique vehicles in this limited-time event!"
+      content="Explore Jailbreak Season <%= season %>: <%= title %>. Track seasonal rewards, unlock exclusive items, and discover all rewards in this limited-time event!"
     />
     <meta property="og:image" content="<%= image_url %>" />
-    <meta
-      property="og:url"
-      content="https://jailbreakchangelogs.xyz/seasons/<%= season %>"
-    />
-    <meta property="og:type" content="website" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
-    <!-- Additional metadata for SEO -->
-    <meta
-      name="description"
-      content="Explore Jailbreak Season <%= season %>: <%= title %>. Unlock exclusive rewards, rare items, and unique vehicles in this limited-time event!"
-    />
-    <meta name="robots" content="index, follow" />
-
-    <meta
-      name="keywords"
-      content="Jailbreak seasons, seasonal events, exclusive vehicles, limited-time items, gameplay rewards, season updates, Roblox Jailbreak events, game features, community engagement"
-    />
-
-    <!-- Twitter Card metadata -->
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta
+      name="twitter:url"
+      content="https://testing.jailbreakchangelogs.xyz/seasons/<%= season %>"
+    />
+    <meta
       name="twitter:title"
-      content="Jailbreak Season <%= season %> | Exclusive Rewards and Time-Limited Content"
+      content="Jailbreak Season <%= season %> | <%= title %>"
     />
     <meta
       name="twitter:description"
-      content="Explore Jailbreak Season <%= season %>: <%= title %>. Unlock exclusive rewards, rare items, and unique vehicles in this limited-time event!"
+      content="Explore Jailbreak Season <%= season %>: <%= title %>. Track seasonal rewards, unlock exclusive items, and discover all rewards in this limited-time event!"
     />
     <meta name="twitter:image" content="<%= image_url %>" />
 
-    <title><%= title %></title>
+    <!-- Additional SEO -->
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="theme-color" content="#2e3944" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
     <!-- Canonical URL -->
     <link
       rel="canonical"
-      href="https://testing.jailbreakchangelogs.xyz/seasons/<%= seasonId %>"
+      href="https://testing.jailbreakchangelogs.xyz/seasons/<%= season %>"
     />
+
+    <title>Jailbreak Season <%= season %> | <%= title %></title>
 
     <!-- Stylesheets -->
     <link
