@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const itemsPerPage = 12;
   let filteredItems = [];
   let isLoading = false;
+  let sort = ""; // Track current sort state
 
   showSkeletonCards();
 
@@ -148,48 +149,19 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       allItems = await response.json();
 
-      // Get sort parameter from URL and log it
-      const urlParams = new URLSearchParams(window.location.search);
-      const sortParam = urlParams.get("sort");
+      // Get saved sort from localStorage
+      const savedSort = localStorage.getItem("sortDropdown");
 
       // Always set initial filtered items
       filteredItems = [...allItems];
 
-      if (sortParam) {
-        const validSorts = {
-          vehicles: "name-vehicles",
-          spoilers: "name-spoilers",
-          rims: "name-rims",
-          "body-colors": "name-body-colors",
-          textures: "name-textures",
-          "tire-stickers": "name-tire-stickers",
-          drifts: "name-drifts",
-          hyperchromes: "name-hyperchromes",
-          "limited-items": "name-limited-items",
-        };
-
-        if (validSorts[sortParam]) {
-          const sortDropdown = document.getElementById("sort-dropdown");
-          if (sortDropdown) {
-            sortDropdown.value = validSorts[sortParam];
-
-            // Save to localStorage to persist the selection
-            localStorage.setItem("sortDropdown", validSorts[sortParam]);
-
-            await sortItems(); // Wait for sort to complete
-            return;
-          }
-        }
-      } else {
-        // Only use localStorage if there's no URL parameter
-        const savedSort = localStorage.getItem("sortDropdown");
-        if (savedSort) {
-          const sortDropdown = document.getElementById("sort-dropdown");
-          if (sortDropdown) {
-            sortDropdown.value = savedSort;
-            await sortItems();
-            return;
-          }
+      if (savedSort) {
+        const sortDropdown = document.getElementById("sort-dropdown");
+        if (sortDropdown) {
+          sortDropdown.value = savedSort;
+          sort = savedSort;
+          await sortItems();
+          return;
         }
       }
 
@@ -662,13 +634,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const valueSortType = valueSortDropdown.value;
     const currentSort = sortValue.split("-").slice(1).join("-");
 
-    // Update breadcrumb and URL
+    // Update breadcrumb
     const categoryNameElement = document.querySelector(".category-name");
-    const newUrl = new URL(window.location);
 
     if (sortValue === "name-all-items") {
       categoryNameElement.style.display = "none";
-      newUrl.searchParams.delete("sort");
     } else {
       let categoryName;
       if (currentSort === "hyperchromes") {
@@ -681,15 +651,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       categoryNameElement.textContent = categoryName;
       categoryNameElement.style.display = "list-item";
-      newUrl.searchParams.set("sort", currentSort);
     }
-
-    // Replace current URL state instead of pushing new one
-    window.history.replaceState({}, "", newUrl);
 
     // Save current filter states
     localStorage.setItem("sortDropdown", sortValue);
     localStorage.setItem("valueSortDropdown", valueSortType);
+    sort = sortValue;
 
     updateSearchPlaceholder();
     const parts = sortValue.split("-");
@@ -825,11 +792,6 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTotalItemsLabel("all-items");
     updateSearchPlaceholder();
 
-    // Clear URL parameters
-    const newUrl = new URL(window.location);
-    newUrl.search = "";
-    window.history.pushState({}, "", newUrl);
-
     // Show success toast
     toastr.success("All filters have been cleared", "Filters Reset");
   }, 500); // 1 second debounce
@@ -869,57 +831,6 @@ document.addEventListener("DOMContentLoaded", () => {
     showMethod: "fadeIn",
     hideMethod: "fadeOut",
   };
-
-  // Get sort parameter from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const sortParam = urlParams.get("sort");
-
-  // Apply initial sort if specified in URL
-  if (sortParam) {
-    const validSorts = {
-      vehicles: "name-vehicles",
-      spoilers: "name-spoilers",
-      rims: "name-rims",
-      "body-colors": "name-body-colors",
-      textures: "name-textures",
-      "tire-stickers": "name-tire-stickers",
-      drifts: "name-drifts",
-      hyperchromes: "name-hyperchromes",
-    };
-
-    if (validSorts[sortParam]) {
-      const sortDropdown = document.getElementById("sort-dropdown");
-      if (sortDropdown) {
-        sortDropdown.value = validSorts[sortParam];
-        sortItems(); // Apply the sort
-      }
-    }
-  }
-
-  // Add popstate event listener to handle browser back/forward buttons
-  window.addEventListener("popstate", function (event) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const sortParam = urlParams.get("sort");
-
-    const validSorts = {
-      vehicles: "name-vehicles",
-      spoilers: "name-spoilers",
-      rims: "name-rims",
-      "body-colors": "name-body-colors",
-      textures: "name-textures",
-      "tire-stickers": "name-tire-stickers",
-      drifts: "name-drifts",
-      hyperchromes: "name-hyperchromes",
-    };
-
-    if (validSorts[sortParam]) {
-      const sortDropdown = document.getElementById("sort-dropdown");
-      if (sortDropdown) {
-        sortDropdown.value = validSorts[sortParam];
-        sortItems();
-      }
-    }
-  });
 
   loadItems(); // Initial load
 });
