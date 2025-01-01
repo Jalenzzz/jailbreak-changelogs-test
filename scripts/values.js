@@ -1,3 +1,55 @@
+// Global debounce function
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
+// Global shareCurrentView function
+window.shareCurrentView = debounce(function () {
+  const sortDropdown = document.getElementById("sort-dropdown");
+  const valueSortDropdown = document.getElementById("value-sort-dropdown");
+  const searchBar = document.getElementById("search-bar");
+
+  // Build URL parameters
+  const params = new URLSearchParams();
+  if (sortDropdown.value !== "name-all-items") {
+    params.append("sort", sortDropdown.value);
+  }
+  if (valueSortDropdown.value !== "none") {
+    params.append("valueSort", valueSortDropdown.value);
+  }
+  if (searchBar.value.trim()) {
+    params.append("search", searchBar.value.trim());
+  }
+
+  // Construct full URL
+  const baseUrl = `${window.location.origin}/values`;
+  const shareUrl = params.toString()
+    ? `${baseUrl}?${params.toString()}`
+    : baseUrl;
+
+  // Copy to clipboard
+  navigator.clipboard
+    .writeText(shareUrl)
+    .then(() => {
+      toastr.success("Link copied to clipboard!", "Share", {
+        timeOut: 2000,
+        closeButton: true,
+        positionClass: "toast-bottom-right",
+      });
+    })
+    .catch(() => {
+      toastr.error("Failed to copy link", "Share Error", {
+        timeOut: 2000,
+        closeButton: true,
+        positionClass: "toast-bottom-right",
+      });
+    });
+}, 1000);
+
 document.addEventListener("DOMContentLoaded", () => {
   const itemsContainer = document.querySelector("#items-container");
   if (!itemsContainer) return;
@@ -750,15 +802,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Add debounce function
-  function debounce(func, wait) {
-    let timeout;
-    return function (...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-  }
-
   // Update clearFilters function
   window.clearFilters = debounce(function () {
     // Clear localStorage
@@ -921,45 +964,3 @@ window.handleCardClick = function (name, type) {
   const url = `/item/${formattedType}/${formattedName}`;
   window.location.href = url;
 };
-
-window.shareCurrentView = debounce(function () {
-  const sortDropdown = document.getElementById("sort-dropdown");
-  const valueSortDropdown = document.getElementById("value-sort-dropdown");
-  const searchBar = document.getElementById("search-bar");
-
-  // Build URL parameters
-  const params = new URLSearchParams();
-  if (sortDropdown.value !== "name-all-items") {
-    params.append("sort", sortDropdown.value);
-  }
-  if (valueSortDropdown.value !== "none") {
-    params.append("valueSort", valueSortDropdown.value);
-  }
-  if (searchBar.value.trim()) {
-    params.append("search", searchBar.value.trim());
-  }
-
-  // Construct full URL
-  const baseUrl = `${window.location.origin}/values`;
-  const shareUrl = params.toString()
-    ? `${baseUrl}?${params.toString()}`
-    : baseUrl;
-
-  // Copy to clipboard
-  navigator.clipboard
-    .writeText(shareUrl)
-    .then(() => {
-      toastr.success("Link copied to clipboard!", "Share", {
-        timeOut: 2000,
-        closeButton: true,
-        positionClass: "toast-bottom-right",
-      });
-    })
-    .catch(() => {
-      toastr.error("Failed to copy link", "Share Error", {
-        timeOut: 2000,
-        closeButton: true,
-        positionClass: "toast-bottom-right",
-      });
-    });
-}, 1000); // 1 second debounce
