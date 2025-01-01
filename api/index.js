@@ -89,11 +89,9 @@ app.get("/owner/check/:user", (req, res) => {
 
 app.get("/changelogs/:changelog", async (req, res) => {
   let changelogId = req.params.changelog || 1;
-  console.log(`Fetching changelog with ID: ${changelogId}`);
   const apiUrl = `https://api3.jailbreakchangelogs.xyz/changelogs/get?id=${changelogId}`;
 
   try {
-    // First fetch the latest changelog ID for fallback
     const latestResponse = await fetch(
       "https://api3.jailbreakchangelogs.xyz/changelogs/latest",
       {
@@ -111,7 +109,7 @@ app.get("/changelogs/:changelog", async (req, res) => {
     const latestData = await latestResponse.json();
     const latestId = latestData.id;
 
-    // Now fetch the requested changelog
+    // Fetch the requested changelog
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
@@ -121,7 +119,6 @@ app.get("/changelogs/:changelog", async (req, res) => {
     });
 
     if (response.status === 404) {
-      // Redirect to latest changelog if requested one doesn't exist
       return res.redirect(`/changelogs/${latestId}`);
     }
 
@@ -132,6 +129,7 @@ app.get("/changelogs/:changelog", async (req, res) => {
     const data = await response.json();
     const { title, image_url } = data;
 
+    // Include additional SEO metadata
     const responseData = {
       title,
       image_url,
@@ -139,8 +137,12 @@ app.get("/changelogs/:changelog", async (req, res) => {
       logoAlt: "Changelogs Page Logo",
       changelogId,
       embed_color: 0x134d64,
+      isLatest: changelogId === latestId,
+      canonicalUrl: "https://testing.jailbreakchangelogs.xyz/changelogs",
+      metaDescription: `View detailed changelog information for Jailbreak update ${title}. Track new features, vehicles, and game improvements.`,
     };
 
+    // Handle different response types
     if (
       req.headers["user-agent"]?.includes("DiscordBot") ||
       req.query.format === "discord"
