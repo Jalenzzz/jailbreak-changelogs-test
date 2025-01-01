@@ -3,42 +3,71 @@
   <head>
     <!-- Character encoding -->
     <meta charset="UTF-8" />
-
-    <!-- Responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- Referrer policy -->
     <meta name="referrer" content="no-referrer" />
+    <base href="/" />
 
-    <!-- Open Graph metadata for social media sharing -->
+    <!-- Primary Meta Tags -->
+    <meta
+      name="title"
+      content="<%= userData.global_name %> (@<%= userData.username %>) | Jailbreak Changelogs"
+    />
+    <meta name="author" content="Jailbreak Changelogs" />
+    <meta
+      name="description"
+      content="Check out <%= userData.global_name %>'s profile on Jailbreak Changelogs. View their contributions, comments, and stay connected with updates about Roblox Jailbreak."
+    />
+    <meta
+      name="keywords"
+      content="Roblox Jailbreak, player profile, game community, Jailbreak updates, user comments, game feedback"
+    />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="profile" />
+    <meta
+      property="og:url"
+      content="https://testing.jailbreakchangelogs.xyz/users/<%= userData.id %>"
+    />
+    <meta property="og:site_name" content="Jailbreak Changelogs" />
     <meta
       property="og:title"
-      content="<%= userData.global_name %> / Jailbreak Changelogs"
+      content="<%= userData.global_name %> (@<%= userData.username %>) | Jailbreak Changelogs"
     />
     <meta
-      property="og:image"
-      content="https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp"
+      property="og:description"
+      content="Check out <%= userData.global_name %>'s profile on Jailbreak Changelogs. View their contributions and stay connected."
     />
+    <meta property="og:image" content="<%= avatar %>" />
+    <meta property="profile:username" content="<%= userData.username %>" />
 
-    <meta property="og:image:width" content="2328" />
-    <meta property="og:image:height" content="1054" />
-    <meta property="og:type" content="profile" />
-
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta
-      name="twitter:image"
-      content="https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp"
+      name="twitter:url"
+      content="https://testing.jailbreakchangelogs.xyz/users/<%= userData.id %>"
     />
-    <!-- Additional metadata for SEO -->
-    <meta name="robots" content="index, follow" />
+    <meta
+      name="twitter:title"
+      content="<%= userData.global_name %> (@<%= userData.username %>) | Jailbreak Changelogs"
+    />
+    <meta
+      name="twitter:description"
+      content="Check out <%= userData.global_name %>'s profile on Jailbreak Changelogs. View their contributions and stay connected."
+    />
+    <meta name="twitter:image" content="<%= avatar %>" />
 
-    <!-- Page title -->
-    <title>
-      <%= userData.global_name%> (@<%= userData.username %>) / Changelogs
-    </title>
+    <!-- Additional SEO -->
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="theme-color" content="#2e3944" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <!-- Canonical URL -->
     <link
       rel="canonical"
-      href="https://testing.jailbreakchangelogs.xyz/users/"
+      href="https://testing.jailbreakchangelogs.xyz/users/<%= userData.id %>"
     />
 
     <!-- CSS Links -->
@@ -60,7 +89,6 @@
     />
 
     <!-- Custom stylesheet -->
-    <base href="/" />
     <link rel="stylesheet" href="styles/main.css" />
     <link rel="stylesheet" href="styles/users.css" />
     <link rel="stylesheet" href="styles/main.css" />
