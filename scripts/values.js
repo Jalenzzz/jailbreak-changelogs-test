@@ -67,19 +67,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Define sortItems first before using it
   window.sortItems = function () {
-    console.log("sortItems called");
     const sortDropdown = document.getElementById("sort-dropdown");
     const valueSortDropdown = document.getElementById("value-sort-dropdown");
     const sortValue = sortDropdown?.value || "name-all-items"; // Provide default value and handle null
     const valueSortType = valueSortDropdown?.value || "alpha-asc"; // Default to alpha-asc
     const currentSort = sortValue.split("-").slice(1).join("-");
-
-    console.log("Current sort state:", {
-      sortValue,
-      valueSortType,
-      currentSort,
-      globalSortVariable: sort,
-    });
 
     // Save current filter states before updating anything else
     sessionStorage.setItem("sortDropdown", sortValue);
@@ -117,12 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
       valuesBreadcrumb.removeAttribute("aria-current");
       valuesBreadcrumb.innerHTML = '<a href="/values">Values</a>';
     }
-
-    console.log("After setting sessionStorage:", {
-      sortDropdown: sessionStorage.getItem("sortDropdown"),
-      valueSortDropdown: sessionStorage.getItem("valueSortDropdown"),
-      globalSortVariable: sort,
-    });
 
     updateSearchPlaceholder();
     const parts = sortValue.split("-");
@@ -186,7 +172,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Now check for saved sort
   const savedSort = sessionStorage.getItem("sortDropdown");
   if (savedSort) {
-    console.log("Restoring saved sort:", savedSort);
     const sortDropdown = document.getElementById("sort-dropdown");
     if (sortDropdown) {
       try {
@@ -873,13 +858,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Update clearFilters function
   window.clearFilters = debounce(function () {
-    console.log("clearFilters called");
-    console.log("Before clearing - sort state:", {
-      sortDropdown: sessionStorage.getItem("sortDropdown"),
-      valueSortDropdown: sessionStorage.getItem("valueSortDropdown"),
-      globalSortVariable: sort,
-    });
-
     // Clear sessionStorage
     sessionStorage.removeItem("sortDropdown");
     sessionStorage.removeItem("valueSortDropdown");
@@ -921,13 +899,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Show success toast
     toastr.success("Filters have been reset", "Filters Reset");
-
-    console.log("After clearing - sort state:", {
-      sortDropdown: sessionStorage.getItem("sortDropdown"),
-      valueSortDropdown: sessionStorage.getItem("valueSortDropdown"),
-      globalSortVariable: sort,
-      dropdownValue: document.getElementById("sort-dropdown").value,
-    });
   }, 500);
 
   // Modify the value-sort-dropdown options in the HTML
@@ -1099,7 +1070,6 @@ window.handleCardClick = function (name, type) {
 
 window.handleCategoryClick = function (event, category) {
   event.preventDefault();
-  console.log("handleCategoryClick called with category:", category);
 
   // Convert any spaces to hyphens in the category name
   const hyphenatedCategory = category.replace(/\s+/g, "-");
