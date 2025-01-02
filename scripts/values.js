@@ -82,8 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Save current filter states before updating anything else
-    localStorage.setItem("sortDropdown", sortValue);
-    localStorage.setItem("valueSortDropdown", valueSortType);
+    sessionStorage.setItem("sortDropdown", sortValue);
+    sessionStorage.setItem("valueSortDropdown", valueSortType);
     sort = sortValue; // Update global sort variable
 
     // Update breadcrumb after setting state
@@ -118,9 +118,9 @@ document.addEventListener("DOMContentLoaded", () => {
       valuesBreadcrumb.innerHTML = '<a href="/values">Values</a>';
     }
 
-    console.log("After setting localStorage:", {
-      sortDropdown: localStorage.getItem("sortDropdown"),
-      valueSortDropdown: localStorage.getItem("valueSortDropdown"),
+    console.log("After setting sessionStorage:", {
+      sortDropdown: sessionStorage.getItem("sortDropdown"),
+      valueSortDropdown: sessionStorage.getItem("valueSortDropdown"),
       globalSortVariable: sort,
     });
 
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Now check for saved sort
-  const savedSort = localStorage.getItem("sortDropdown");
+  const savedSort = sessionStorage.getItem("sortDropdown");
   if (savedSort) {
     console.log("Restoring saved sort:", savedSort);
     const sortDropdown = document.getElementById("sort-dropdown");
@@ -246,10 +246,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Restore filters from localStorage
+  // Restore filters from sessionStorage
   function restoreFilters() {
-    const savedSortDropdown = localStorage.getItem("sortDropdown");
-    const savedValueSort = localStorage.getItem("valueSortDropdown");
+    const savedSortDropdown = sessionStorage.getItem("sortDropdown");
+    const savedValueSort = sessionStorage.getItem("valueSortDropdown");
     const savedSearch = localStorage.getItem("searchTerm");
 
     if (savedSortDropdown) {
@@ -346,9 +346,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const driftItems = allItems.filter((item) => item.type === "Drift");
       preloadDriftThumbnails(driftItems);
 
-      // Get saved sort from localStorage
-      const savedSort = localStorage.getItem("sortDropdown");
-      const savedValueSort = localStorage.getItem("valueSortDropdown");
+      // Get saved sort from sessionStorage
+      const savedSort = sessionStorage.getItem("sortDropdown");
+      const savedValueSort = sessionStorage.getItem("valueSortDropdown");
 
       // Always set initial filtered items
       filteredItems = [...allItems];
@@ -875,14 +875,14 @@ document.addEventListener("DOMContentLoaded", () => {
   window.clearFilters = debounce(function () {
     console.log("clearFilters called");
     console.log("Before clearing - sort state:", {
-      sortDropdown: localStorage.getItem("sortDropdown"),
-      valueSortDropdown: localStorage.getItem("valueSortDropdown"),
+      sortDropdown: sessionStorage.getItem("sortDropdown"),
+      valueSortDropdown: sessionStorage.getItem("valueSortDropdown"),
       globalSortVariable: sort,
     });
 
-    // Clear localStorage
-    localStorage.removeItem("sortDropdown");
-    localStorage.removeItem("valueSortDropdown");
+    // Clear sessionStorage
+    sessionStorage.removeItem("sortDropdown");
+    sessionStorage.removeItem("valueSortDropdown");
 
     // Reset dropdowns
     document.getElementById("sort-dropdown").value = "name-all-items";
@@ -923,8 +923,8 @@ document.addEventListener("DOMContentLoaded", () => {
     toastr.success("Filters have been reset", "Filters Reset");
 
     console.log("After clearing - sort state:", {
-      sortDropdown: localStorage.getItem("sortDropdown"),
-      valueSortDropdown: localStorage.getItem("valueSortDropdown"),
+      sortDropdown: sessionStorage.getItem("sortDropdown"),
+      valueSortDropdown: sessionStorage.getItem("valueSortDropdown"),
       globalSortVariable: sort,
       dropdownValue: document.getElementById("sort-dropdown").value,
     });
@@ -1089,7 +1089,7 @@ window.handleCardClick = function (name, type) {
   const formattedType = type.replace(/\s+/g, "-");
 
   // Store the type-specific sort value before navigating
-  localStorage.setItem("sortDropdown", `name-${formattedType}s`);
+  sessionStorage.setItem("sortDropdown", `name-${formattedType}s`);
 
   const formattedName = encodeURIComponent(name);
   const formattedUrlType = encodeURIComponent(type.toLowerCase());
@@ -1104,11 +1104,11 @@ window.handleCategoryClick = function (event, category) {
   // Convert any spaces to hyphens in the category name
   const hyphenatedCategory = category.replace(/\s+/g, "-");
 
-  // Set both dropdown value and localStorage
+  // Set both dropdown value and sessionStorage
   const dropdown = document.getElementById("sort-dropdown");
   const newValue = `name-${hyphenatedCategory}`;
   dropdown.value = newValue;
-  localStorage.setItem("sortDropdown", newValue);
+  sessionStorage.setItem("sortDropdown", newValue);
 
   // Apply the filter
   sortItems();
