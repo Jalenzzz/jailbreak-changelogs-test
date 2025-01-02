@@ -536,15 +536,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // Format display value based on screen size
     let displayValue;
     if (window.innerWidth <= 768) {
-      // Mobile devices
+      // Mobile devices - use 2 decimal places for better precision
       if (numericValue >= 1000000) {
-        displayValue = (numericValue / 1000000).toFixed(1) + "M";
+        displayValue =
+          (numericValue / 1000000).toFixed(2).replace(/\.?0+$/, "") + "M";
       } else if (numericValue >= 1000) {
-        displayValue = (numericValue / 1000).toFixed(1) + "K";
+        displayValue =
+          (numericValue / 1000).toFixed(2).replace(/\.?0+$/, "") + "K";
       } else {
         displayValue = numericValue.toString();
       }
     } else {
+      // Desktop - use comma formatting
       displayValue = numericValue.toLocaleString("en-US");
     }
 
@@ -981,6 +984,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // Clean up the URL without refreshing the page
     window.history.replaceState({}, "", window.location.pathname);
   }
+
+  // Restore contributors section state on mobile
+  if (window.innerWidth <= 768) {
+    const grid = document.querySelector(".contributors-grid");
+    const icon = document.querySelector(".toggle-icon");
+    const expanded = localStorage.getItem("contributorsExpanded") === "true";
+
+    if (expanded) {
+      grid.classList.add("expanded");
+      icon.classList.add("collapsed");
+    }
+  }
 });
 
 // Default Image
@@ -1097,4 +1112,22 @@ if (typeof window.sortItems !== "function") {
   window.sortItems = function () {
     console.warn("Fallback sortItems called - page may need refresh");
   };
+}
+
+// Add this new function after the existing code
+
+function toggleContributors(header) {
+  const grid = header.nextElementSibling;
+  const icon = header.querySelector(".toggle-icon");
+
+  if (window.innerWidth <= 768) {
+    grid.classList.toggle("expanded");
+    icon.classList.toggle("collapsed");
+
+    // Store the state in localStorage
+    localStorage.setItem(
+      "contributorsExpanded",
+      grid.classList.contains("expanded")
+    );
+  }
 }

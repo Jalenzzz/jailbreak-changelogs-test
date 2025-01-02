@@ -18,7 +18,7 @@
 }
 .clear-button:hover {
   background-color: var(--text-muted) !important;
-  color: var(--text-primary) !important;
+  color: var (--text-primary) !important;
   border-color: var(--text-muted) !important;
   transition: all 0.3s ease;
 }
@@ -128,6 +128,7 @@
   font-size: 1.2rem;
   font-weight: bold;
   margin: 10px 0;
+  color: var(--text-primary);
 }
 
 .card-body {
@@ -446,12 +447,27 @@
   border-bottom: 2px solid var(--accent-color);
   padding-bottom: 1rem;
   width: 100%;
+  background-color: rgba(17, 76, 99, 0.2);
 }
 
 .contributor-header i {
   font-size: 1.5rem;
   margin-right: 0.75rem;
-  color: var(--accent-color);
+  color: var(--text-muted);
+}
+
+.contributor-header .bi-people-fill {
+  color: var(--text-muted);
+}
+
+.toggle-icon {
+  display: none; /* Hide by default */
+}
+
+@media (max-width: 768px) {
+  .toggle-icon {
+    display: inline-block; /* Only show on mobile */
+  }
 }
 
 .contributors-grid {
@@ -731,4 +747,45 @@
   width: 100%;
   padding: 0;
   margin: 0 auto;
+}
+
+/* Add these new styles at the end of the file */
+@media (max-width: 768px) {
+  .contributor-card {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .contributor-header {
+    cursor: pointer;
+    padding: 1rem;
+    margin-bottom: 0;
+    border-bottom: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .contributor-header:hover {
+    background-color: rgba(18, 78, 102, 0.1);
+  }
+
+  .contributor-header i.toggle-icon {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+  }
+
+  .contributor-header i.toggle-icon.collapsed {
+    transform: rotate(180deg);
+  }
+
+  .contributors-grid {
+    margin-top: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+  }
+
+  .contributors-grid.expanded {
+    max-height: 1000px;
+    transition: max-height 0.5s ease-in;
+  }
 }
