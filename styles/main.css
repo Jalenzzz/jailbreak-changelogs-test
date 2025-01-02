@@ -1,33 +1,17 @@
-@import "colors.css";
-
 /* Custom properties for the footer namespace */
 .jb-footer {
-  --jb-footer-bg-primary: var(--bg-primary);
-  --jb-footer-bg-secondary: var(--bg-secondary);
-  --jb-footer-accent: var(--accent-color);
-  --jb-footer-text-muted: var(--text-muted);
-  --jb-footer-text-primary: var(--text-primary);
+  --jb-footer-bg-primary: #212a31;
+  --jb-footer-bg-secondary: #2e3944;
+  --jb-footer-accent: #124e66;
+  --jb-footer-text-muted: #748d92;
+  --jb-footer-text-primary: #d3d9d4;
   --jb-footer-link-hover: rgba(211, 217, 212, 0.8);
   --jb-footer-spacing-sm: 0.5rem;
   --jb-footer-spacing-md: 1rem;
   --jb-footer-spacing-lg: 2rem;
   --jb-footer-transition: all 0.2s ease-in-out;
 }
-.jb-footer__social-icons {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-}
 
-.jb-footer__social-link {
-  color: #fff;
-  transition: color 0.2s ease;
-  padding: 0.5rem;
-}
-
-.jb-footer__social-link:hover {
-  color: #1da1f2;
-}
 /* Base footer styles */
 .jb-footer {
   background: linear-gradient(
@@ -40,6 +24,24 @@
   padding: var(--jb-footer-spacing-lg) 0;
   margin-top: var(--jb-footer-spacing-lg);
 }
+.jb-footer__social-icons {
+  display: flex;
+  justify-content: center;
+}
+
+.jb-footer__social-link {
+  color: #fff;
+  transition: color 0.2s ease;
+  padding: 0.25rem; /* Reduced from 0.5rem */
+}
+
+.jb-footer__social-link:hover {
+  color: #1da1f2; /* Twitter blue */
+}
+
+.jb-footer__social-link[title*="Discord"]:hover {
+  color: #5865f2; /* Discord blurple */
+}
 
 /* Section styles */
 .jb-footer__section {
@@ -51,18 +53,6 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: var(--jb-footer-spacing-md);
-  position: relative;
-}
-
-.jb-footer__heading::after {
-  content: "";
-  position: absolute;
-  bottom: -0.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 3rem;
-  height: 2px;
-  background-color: var(--jb-footer-accent);
 }
 
 /* List styles */
@@ -89,6 +79,20 @@
 .jb-footer__link:hover {
   color: var(--jb-footer-link-hover);
   transform: translateX(4px);
+}
+
+/* Platform-specific icon colors */
+.jb-footer__link:hover .bi-reddit {
+  color: #ff4500; /* Reddit orange */
+}
+
+.jb-footer__link:hover .bi-discord {
+  color: #5865f2; /* Discord blurple */
+}
+
+/* Keep other icons using default hover color */
+.jb-footer__link:hover .bi:not(.bi-reddit):not(.bi-discord) {
+  color: inherit;
 }
 
 /* Button styles */
@@ -152,7 +156,7 @@
   color: var(--jb-footer-text-primary);
 }
 .jbcl-announcement-banner {
-  background: linear-gradient(90deg, var(--bg-primary), var(--accent-color));
+  background: linear-gradient(90deg, #212a31, #124e66);
   padding: 0.75rem 1rem;
   position: relative;
   overflow: hidden;
@@ -265,6 +269,7 @@
 }
 
 .breadcrumb-item:not(:last-child)::after {
+  content: "›";
   color: #6c757d;
   margin-left: 10px; /* Smaller margin by default */
 }
@@ -298,14 +303,14 @@
 
 /* Custom Navbar Color */
 .custom-navbar-color {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: #212a31; /* Dark blue-gray */
+  color: #ffffff; /* White text color */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 /* Navbar Items Styling */
 .custom-navbar-color .navbar-nav .nav-link {
-  color: var(--text-primary);
+  color: #d3d9d4; /* Light gray for nav links */
   transition: color 0.3s ease, background-color 0.3s ease;
 }
 
@@ -319,13 +324,13 @@
 
 /* Active Nav Item Styling */
 .custom-navbar-color .navbar-nav .nav-item.active .nav-link {
-  color: var(--text-muted); /* Highlight color for active link */
+  color: #748d92; /* Highlight color for active link */
   font-weight: bold; /* Bold active link */
 }
 
 /* "Join the Discord" Button */
 .nav-link {
-  color: var(--text-primary); /* Light button text */
+  color: #d3d9d4; /* Light button text */
   border: none;
   transition: background-color 0.3s ease;
 }
@@ -401,9 +406,7 @@ body.menu-open {
   width: 400px;
   max-width: 90vw;
   height: 100%;
-  background-color: var(
-    --bg-primary
-  ); /* Darker background for better contrast */
+  background-color: #1c242a; /* Darker background for better contrast */
   z-index: 1000;
   overflow-x: hidden;
   transition: right 0.4s ease-in-out; /* Smoother transition */
@@ -444,7 +447,7 @@ body.menu-open {
 /* Navigation link styles */
 .side-menu .nav-link {
   font-size: 1.2rem; /* Slightly smaller for better readability */
-  color: var(--text-primary); /* Light color for better visibility */
+  color: #d3d9d4; /* Light color for better visibility */
   padding: 0.75rem 1rem; /* More padding for larger touch target */
   border-radius: 5px; /* Rounded corners for modern look */
   background-color: transparent; /* Make background transparent */
@@ -473,8 +476,8 @@ body.menu-open {
 .offcanvas-header {
   display: flex; /* Keep the header visible */
   justify-content: space-between; /* Align items properly */
-  background-color: var(--bg-primary); /* Match side menu background */
-  color: var(--text-primary);
+  background-color: #1c242a; /* Match side menu background */
+  color: #ffffff;
   padding: 15px 20px; /* Add padding for better spacing */
   border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider */
 }
@@ -494,20 +497,20 @@ body.menu-open {
 /* Mobile Navbar Dropdown */
 #mobileNavbarDropdown {
   text-decoration: none; /* Remove underline */
-  color: var(--text-primary);
+  color: #d3d9d4;
 }
 
 /* Mobile Navbar Toggler Line Color */
 #navbarToggler .line {
-  stroke: var(--text-primary); /* Change line color of mobile nav toggler */
+  stroke: #d3d9d4; /* Change line color of mobile nav toggler */
 }
 
 /* Off-canvas Header */
 .offcanvas-header {
   display: flex; /* Keep header visible */
   justify-content: space-between; /* Align items */
-  background-color: var(--bg-primary); /* Dark blue-gray */
-  color: var(--text-primary); /* White text */
+  background-color: #212a31; /* Dark blue-gray */
+  color: #ffffff; /* White text */
 }
 
 /* Off-canvas Title */
@@ -591,16 +594,13 @@ body.menu-open {
 
 @media (max-width: 400px) {
   .navbar-logo {
-    height: 25px; /* Adjusted height for extra small screens */
+    height: 30px; /* Adjusted height for extra small screens */
   }
   .jbcl-announcement-banner {
     padding: 0.625rem;
   }
 
   .jbcl-announcement-text {
-    font-size: 0.8125rem;
-  }
-  .jb-footer__links {
     font-size: 0.8125rem;
   }
 }
