@@ -6,11 +6,6 @@ const app = express();
 const PORT = process.env.PORT || 5500; // Set the port
 const fs = require("fs");
 
-app.use((req, res, next) => {
-  res.locals.hostname = req.hostname;
-  next();
-});
-
 // Serve your static HTML, CSS, and JS files
 const DATA_SOURCE_URL =
   "https://badimo.nyc3.digitaloceanspaces.com/trade/frequency/snapshot/month/latest.json";
@@ -21,6 +16,12 @@ app.use(
     origin: "https://jailbreakchangelogs.xyz",
   })
 );
+
+app.use((req, res, next) => {
+  res.locals.req = req;
+  next();
+});
+
 // Serve the changelogs.html file
 app.get("/trade-data", async (req, res) => {
   try {
