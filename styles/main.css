@@ -584,6 +584,18 @@ body.menu-open {
     display: block;
     margin-top: 0.25rem;
   }
+  .jb-footer__testing-banner p {
+    text-align: left;
+  }
+
+  .jb-footer__testing-banner .bi-x-lg {
+    font-size: 1.25rem;
+  }
+
+  .jb-footer__testing-banner button {
+    padding: 0.25rem !important;
+    margin-left: 0.5rem !important;
+  }
 }
 
 @media (max-width: 576px) {
@@ -603,4 +615,9 @@ body.menu-open {
   .jbcl-announcement-text {
     font-size: 0.8125rem;
   }
+}
+
+/* Banner Styles */
+.jb-footer__testing-banner p {
+  text-align: center;
 }
