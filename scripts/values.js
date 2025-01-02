@@ -50,6 +50,10 @@ window.shareCurrentView = debounce(function () {
     });
 }, 1000);
 
+// Move searchBar declaration outside of DOMContentLoaded to avoid redeclaration
+const searchBar = document.getElementById("search-bar");
+const clearButton = document.getElementById("clear-search");
+
 document.addEventListener("DOMContentLoaded", () => {
   const itemsContainer = document.querySelector("#items-container");
   if (!itemsContainer) return;
@@ -60,6 +64,145 @@ document.addEventListener("DOMContentLoaded", () => {
   let filteredItems = [];
   let isLoading = false;
   let sort = ""; // Track current sort state
+
+  // Define sortItems first before using it
+  window.sortItems = function () {
+    console.log("sortItems called");
+    const sortDropdown = document.getElementById("sort-dropdown");
+    const valueSortDropdown = document.getElementById("value-sort-dropdown");
+    const sortValue = sortDropdown?.value || "name-all-items"; // Provide default value and handle null
+    const valueSortType = valueSortDropdown?.value || "alpha-asc"; // Default to alpha-asc
+    const currentSort = sortValue.split("-").slice(1).join("-");
+
+    console.log("Current sort state:", {
+      sortValue,
+      valueSortType,
+      currentSort,
+      globalSortVariable: sort,
+    });
+
+    // Save current filter states before updating anything else
+    localStorage.setItem("sortDropdown", sortValue);
+    localStorage.setItem("valueSortDropdown", valueSortType);
+    sort = sortValue; // Update global sort variable
+
+    // Update breadcrumb after setting state
+    const categoryNameElement = document.querySelector(".category-name");
+    const valuesBreadcrumb = document.getElementById("values-breadcrumb");
+
+    if (sortValue === "name-all-items") {
+      categoryNameElement.style.display = "none";
+      valuesBreadcrumb.classList.add("active");
+      valuesBreadcrumb.setAttribute("aria-current", "page");
+      valuesBreadcrumb.innerHTML = "Values";
+    } else {
+      let categoryName;
+      if (currentSort === "hyperchromes") {
+        categoryName = "Hyperchromes";
+      } else {
+        categoryName = currentSort
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+      }
+
+      // Make the category name a clickable link that preserves the filter
+      categoryNameElement.innerHTML = `<a href="/values?sort=name-${currentSort}" onclick="handleCategoryClick(event, '${currentSort}')">${categoryName}</a>`;
+      categoryNameElement.style.display = "list-item";
+      categoryNameElement.classList.add("active");
+      categoryNameElement.setAttribute("aria-current", "page");
+
+      // Make Values a normal link
+      valuesBreadcrumb.classList.remove("active");
+      valuesBreadcrumb.removeAttribute("aria-current");
+      valuesBreadcrumb.innerHTML = '<a href="/values">Values</a>';
+    }
+
+    console.log("After setting localStorage:", {
+      sortDropdown: localStorage.getItem("sortDropdown"),
+      valueSortDropdown: localStorage.getItem("valueSortDropdown"),
+      globalSortVariable: sort,
+    });
+
+    updateSearchPlaceholder();
+    const parts = sortValue.split("-");
+    const sortType = parts[0];
+    const itemType = parts.slice(1).join("-");
+
+    // Clear search bar when switching categories
+    if (searchBar) {
+      searchBar.value = "";
+    }
+
+    // First filter by category
+    if (itemType === "all-items") {
+      filteredItems = [...allItems];
+      localStorage.removeItem("lastSort");
+    } else if (itemType === "limited-items") {
+      // Filter limited items
+      filteredItems = allItems.filter((item) => item.is_limited);
+    } else if (sortType === "name" && itemType === "hyperchromes") {
+      filteredItems = allItems.filter((item) => item.type === "HyperChrome");
+    } else {
+      filteredItems = allItems.filter((item) => {
+        const normalizedItemType = item.type.toLowerCase().replace(" ", "-");
+        const normalizedFilterType = itemType.slice(0, -1);
+        return normalizedItemType === normalizedFilterType;
+      });
+      localStorage.setItem("lastSort", sortValue);
+    }
+
+    // Then sort by value if a value sort is selected
+    if (valueSortType !== "none") {
+      const [valueType, direction] = valueSortType.split("-");
+      filteredItems.sort((a, b) => {
+        const valueA =
+          valueType === "cash"
+            ? formatValue(a.cash_value).numeric
+            : formatValue(a.duped_value).numeric;
+        const valueB =
+          valueType === "cash"
+            ? formatValue(b.cash_value).numeric
+            : formatValue(b.duped_value).numeric;
+
+        return direction === "asc" ? valueA - valueB : valueB - valueA;
+      });
+    }
+
+    // Add alphabetical sorting logic
+    if (valueSortType === "alpha-asc" || valueSortType === "alpha-desc") {
+      filteredItems.sort((a, b) => {
+        return valueSortType === "alpha-asc"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      });
+    }
+
+    updateTotalItemsLabel(itemType);
+    currentPage = 1;
+    displayItems();
+  };
+
+  // Now check for saved sort
+  const savedSort = localStorage.getItem("sortDropdown");
+  if (savedSort) {
+    console.log("Restoring saved sort:", savedSort);
+    const sortDropdown = document.getElementById("sort-dropdown");
+    if (sortDropdown) {
+      try {
+        sortDropdown.value = savedSort;
+        sort = savedSort; // Set global sort variable
+        // Safely call sortItems
+        if (typeof window.sortItems === "function") {
+          window.sortItems();
+        } else {
+          console.error("sortItems function not properly initialized");
+        }
+      } catch (err) {
+        console.error("Error restoring sort:", err);
+      }
+    }
+  }
 
   showSkeletonCards();
 
@@ -183,8 +326,6 @@ document.addEventListener("DOMContentLoaded", () => {
   updateSearchPlaceholder();
 
   // Clear search input
-  const searchBar = document.getElementById("search-bar");
-  const clearButton = document.getElementById("clear-search");
   if (searchBar) {
     searchBar.value = "";
     // Add event listener for showing/hiding clear button
@@ -203,14 +344,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Get saved sort from localStorage
       const savedSort = localStorage.getItem("sortDropdown");
+      const savedValueSort = localStorage.getItem("valueSortDropdown");
 
       // Always set initial filtered items
       filteredItems = [...allItems];
 
       if (savedSort) {
         const sortDropdown = document.getElementById("sort-dropdown");
-        if (sortDropdown) {
+        const valueSortDropdown = document.getElementById(
+          "value-sort-dropdown"
+        );
+        if (sortDropdown && valueSortDropdown) {
           sortDropdown.value = savedSort;
+          valueSortDropdown.value = savedValueSort || "alpha-asc";
           sort = savedSort;
           await sortItems();
           return;
@@ -330,10 +476,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const endIndex = startIndex + itemsPerPage;
     const itemsToDisplay = filteredItems.slice(startIndex, endIndex);
 
-    itemsToDisplay.forEach((item) => {
-      const cardDiv = createItemCard(item);
+    for (let i = 0; i < itemsToDisplay.length; i++) {
+      const cardDiv = createItemCard(itemsToDisplay[i]);
       itemsRow.appendChild(cardDiv);
-    });
+    }
 
     // Remove old sentinel if exists
     const oldSentinel = itemsContainer.querySelector(".sentinel");
@@ -679,104 +825,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return array;
   }
 
-  window.sortItems = function () {
-    const sortDropdown = document.getElementById("sort-dropdown");
-    const valueSortDropdown = document.getElementById("value-sort-dropdown");
-    const sortValue = sortDropdown.value;
-    const valueSortType = valueSortDropdown.value;
-    const currentSort = sortValue.split("-").slice(1).join("-");
-
-    // Update breadcrumb
-    const categoryNameElement = document.querySelector(".category-name");
-    const valuesBreadcrumb = document.getElementById("values-breadcrumb");
-
-    if (sortValue === "name-all-items") {
-      categoryNameElement.style.display = "none";
-      valuesBreadcrumb.classList.add("active");
-      valuesBreadcrumb.setAttribute("aria-current", "page");
-      valuesBreadcrumb.innerHTML = "Values"; // Remove link when active
-    } else {
-      let categoryName;
-      if (currentSort === "hyperchromes") {
-        categoryName = "Hyperchromes";
-      } else {
-        categoryName = currentSort
-          .split("-")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ");
-      }
-      categoryNameElement.textContent = categoryName;
-      categoryNameElement.style.display = "list-item";
-      // Make Values a link again and remove active state
-      valuesBreadcrumb.classList.remove("active");
-      valuesBreadcrumb.removeAttribute("aria-current");
-      valuesBreadcrumb.innerHTML = '<a href="/values">Values</a>';
-    }
-
-    // Save current filter states
-    localStorage.setItem("sortDropdown", sortValue);
-    localStorage.setItem("valueSortDropdown", valueSortType);
-    sort = sortValue;
-
-    updateSearchPlaceholder();
-    const parts = sortValue.split("-");
-    const sortType = parts[0];
-    const itemType = parts.slice(1).join("-");
-
-    // Clear search bar when switching categories
-    if (searchBar) {
-      searchBar.value = "";
-    }
-
-    // First filter by category
-    if (itemType === "all-items") {
-      filteredItems = [...allItems];
-      localStorage.removeItem("lastSort");
-    } else if (itemType === "limited-items") {
-      // Filter limited items
-      filteredItems = allItems.filter((item) => item.is_limited);
-    } else if (sortType === "name" && itemType === "hyperchromes") {
-      filteredItems = allItems.filter((item) => item.type === "HyperChrome");
-    } else {
-      filteredItems = allItems.filter((item) => {
-        const normalizedItemType = item.type.toLowerCase().replace(" ", "-");
-        const normalizedFilterType = itemType.slice(0, -1);
-        return normalizedItemType === normalizedFilterType;
-      });
-      localStorage.setItem("lastSort", sortValue);
-    }
-
-    // Then sort by value if a value sort is selected
-    if (valueSortType !== "none") {
-      const [valueType, direction] = valueSortType.split("-");
-      filteredItems.sort((a, b) => {
-        const valueA =
-          valueType === "cash"
-            ? formatValue(a.cash_value).numeric
-            : formatValue(a.duped_value).numeric;
-        const valueB =
-          valueType === "cash"
-            ? formatValue(b.cash_value).numeric
-            : formatValue(b.duped_value).numeric;
-
-        return direction === "asc" ? valueA - valueB : valueB - valueA;
-      });
-    }
-
-    // Add alphabetical sorting logic
-    if (valueSortType === "alpha-asc" || valueSortType === "alpha-desc") {
-      filteredItems.sort((a, b) => {
-        return valueSortType === "alpha-asc"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      });
-    }
-
-    updateTotalItemsLabel(itemType);
-    currentPage = 1;
-    displayItems();
-  };
-
   function preloadItemImages() {
     if (!allItems || allItems.length === 0) {
       return;
@@ -812,6 +860,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Update clearFilters function
   window.clearFilters = debounce(function () {
+    console.log("clearFilters called");
+    console.log("Before clearing - sort state:", {
+      sortDropdown: localStorage.getItem("sortDropdown"),
+      valueSortDropdown: localStorage.getItem("valueSortDropdown"),
+      globalSortVariable: sort,
+    });
+
     // Clear localStorage
     localStorage.removeItem("sortDropdown");
     localStorage.removeItem("valueSortDropdown");
@@ -853,6 +908,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Show success toast
     toastr.success("Filters have been reset", "Filters Reset");
+
+    console.log("After clearing - sort state:", {
+      sortDropdown: localStorage.getItem("sortDropdown"),
+      valueSortDropdown: localStorage.getItem("valueSortDropdown"),
+      globalSortVariable: sort,
+      dropdownValue: document.getElementById("sort-dropdown").value,
+    });
   }, 500);
 
   // Modify the value-sort-dropdown options in the HTML
@@ -997,8 +1059,42 @@ function updateSearchPlaceholder() {
 }
 
 window.handleCardClick = function (name, type) {
+  // Always convert spaces to hyphens for consistent storage
+  const formattedType = type.replace(/\s+/g, "-");
+
+  // Store the type-specific sort value before navigating
+  localStorage.setItem("sortDropdown", `name-${formattedType}s`);
+
   const formattedName = encodeURIComponent(name);
-  const formattedType = encodeURIComponent(type.toLowerCase());
-  const url = `/item/${formattedType}/${formattedName}`;
+  const formattedUrlType = encodeURIComponent(type.toLowerCase());
+  const url = `/item/${formattedUrlType}/${formattedName}`;
   window.location.href = url;
 };
+
+window.handleCategoryClick = function (event, category) {
+  event.preventDefault();
+  console.log("handleCategoryClick called with category:", category);
+
+  // Convert any spaces to hyphens in the category name
+  const hyphenatedCategory = category.replace(/\s+/g, "-");
+
+  // Set both dropdown value and localStorage
+  const dropdown = document.getElementById("sort-dropdown");
+  const newValue = `name-${hyphenatedCategory}`;
+  dropdown.value = newValue;
+  localStorage.setItem("sortDropdown", newValue);
+
+  // Apply the filter
+  sortItems();
+
+  // Clean up URL after applying filter
+  window.history.replaceState({}, "", "/values");
+};
+
+// Make sure sortItems is accessible globally
+if (typeof window.sortItems !== "function") {
+  console.warn("sortItems not found on window object, ensuring it's defined");
+  window.sortItems = function () {
+    console.warn("Fallback sortItems called - page may need refresh");
+  };
+}

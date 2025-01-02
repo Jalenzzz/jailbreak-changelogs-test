@@ -320,6 +320,9 @@ app.get("/item/:type/:item", async (req, res) => {
     .replace(/\s+/g, " ");
   let itemType = decodeURIComponent(req.params.type).trim().toLowerCase();
 
+  // Format the type for display (capitalize first letter)
+  const formattedUrlType = itemType.charAt(0).toUpperCase() + itemType.slice(1);
+
   const apiUrl = `https://api.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(
     itemName
   )}`;
@@ -340,6 +343,7 @@ app.get("/item/:type/:item", async (req, res) => {
         logoAlt: "Item Page Logo",
         itemName,
         itemType,
+        formattedUrlType, // Add this
         error: true,
         image_url: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
         item: {
@@ -363,6 +367,7 @@ app.get("/item/:type/:item", async (req, res) => {
       logoAlt: "Item Page Logo",
       itemName: item.name,
       itemType,
+      formattedUrlType, // Add this
       item,
       image_url,
     });
@@ -374,6 +379,7 @@ app.get("/item/:type/:item", async (req, res) => {
       logoAlt: "Item Page Logo",
       itemName,
       itemType,
+      formattedUrlType, // Add this
       error: true,
       errorMessage: "Internal Server Error",
       image_url: "https://cdn.jailbreakchangelogs.xyz/images/not-found.webp",
