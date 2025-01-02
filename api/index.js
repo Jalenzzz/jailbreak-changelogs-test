@@ -10,17 +10,17 @@ const fs = require("fs");
 const DATA_SOURCE_URL =
   "https://badimo.nyc3.digitaloceanspaces.com/trade/frequency/snapshot/month/latest.json";
 
+app.use((req, res, next) => {
+  res.locals.req = req;
+  next();
+});
+
 app.use(express.static(path.join(__dirname, "../")));
 app.use(
   cors({
     origin: "https://jailbreakchangelogs.xyz",
   })
 );
-
-app.use((req, res, next) => {
-  res.locals.req = req;
-  next();
-});
 
 // Serve the changelogs.html file
 app.get("/trade-data", async (req, res) => {
