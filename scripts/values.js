@@ -342,6 +342,10 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       allItems = await response.json();
 
+      // Preload drift thumbnails
+      const driftItems = allItems.filter((item) => item.type === "Drift");
+      preloadDriftThumbnails(driftItems);
+
       // Get saved sort from localStorage
       const savedSort = localStorage.getItem("sortDropdown");
       const savedValueSort = localStorage.getItem("valueSortDropdown");
@@ -581,49 +585,54 @@ document.addEventListener("DOMContentLoaded", () => {
     if (item.type === "Drift") {
       mediaElement = `
       <div class="media-container">
-        <div class="skeleton-loader"></div>
+        <div class="skeleton-loader active"></div>
         <img 
           src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${item.name}.webp"
           class="card-img-top thumbnail"
           alt="${item.name}"
+          style="opacity: 0; transition: opacity 0.3s ease-in-out;"
           onerror="handleimage(this)"
+          onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
         >
         <video 
           src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm"
           class="card-img-top video-player"
+          style="opacity: 0; transition: opacity 0.3s ease-in-out;"
           playsinline 
           muted 
           loop
-          onloadeddata="this.parentElement.querySelector('.skeleton-loader').style.display='none'"
+          onloadeddata="this.style.opacity='1'"
         ></video>
       </div>`;
     } else if (item.name === "HyperShift" && item.type === "HyperChrome") {
       mediaElement = `
         <div class="media-container">
-            <div class="skeleton-loader"></div>
+            <div class="skeleton-loader active"></div>
             <video 
                 src="https://cdn.jailbreakchangelogs.xyz/images/items/hyperchromes/HyperShift.webm"
                 class="card-img-top"
+                style="opacity: 0; transition: opacity 0.3s ease-in-out;"
                 playsinline 
                 muted 
                 loop
                 autoplay
                 id="hypershift-video"
-                onloadeddata="this.parentElement.querySelector('.skeleton-loader').style.display='none'"
+                onloadeddata="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
                 onerror="console.error('Failed to load HyperShift video:', this.src)"
             ></video>
         </div>`;
     } else {
       mediaElement = `
         <div class="media-container">
-        <div class="skeleton-loader"></div>
+        <div class="skeleton-loader active"></div>
         <img 
           onerror="handleimage(this)" 
           id="${item.name}" 
           src="${image_url}.webp" 
           class="card-img-top" 
           alt="${item.name}" 
-          onload="this.style.opacity='1'; this.previousElementSibling.style.display='none'"
+          style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+          onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
         >
       </div>`;
     }
@@ -1130,4 +1139,14 @@ function toggleContributors(header) {
       grid.classList.contains("expanded")
     );
   }
+}
+
+// Add preloading specifically for drift thumbnails
+function preloadDriftThumbnails(driftItems) {
+  if (!driftItems || driftItems.length === 0) return;
+
+  driftItems.forEach((item) => {
+    const img = new Image();
+    img.src = `https://cdn.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${item.name}.webp`;
+  });
 }
