@@ -576,6 +576,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (item.type === "Color") color = "#8A2BE2";
     if (item.type === "Texture") color = "#708090";
     if (item.type === "HyperChrome") color = "#E91E63";
+    if (item.type === "Furniture") color = "#9C6644";
 
     // Determine the image type and URL
     const image_type = item.type.toLowerCase();
@@ -1076,6 +1077,7 @@ function updateSearchPlaceholder() {
     "body-colors": "Search colors (e.g., Red, Blue)...",
     textures: "Search textures (e.g., Aurora, Checkers)...",
     hyperchromes: "Search HyperChromes (e.g., HyperBlue Level 2)...",
+    furniture: "Search furniture (e.g., Nukamo Fridge, Bloxy Lisa)...",
   };
 
   // Set the placeholder text

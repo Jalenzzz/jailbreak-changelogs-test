@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (item.type === "Color") color = "#8A2BE2";
     if (item.type === "Texture") color = "#708090";
     if (item.type === "HyperChrome") color = "#E91E63";
+    if (item.type === "Furniture") color = "#9C6644";
 
     // Modify the badge HTML generation
     let specialBadgeHtml = "";
