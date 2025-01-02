@@ -586,6 +586,13 @@ body.menu-open {
   }
   .jb-footer__testing-banner p {
     text-align: left;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-start;
+  }
+
+  .jb-footer__testing-banner a {
+    margin: 0;
   }
 
   .jb-footer__testing-banner .bi-x-lg {
@@ -593,8 +600,12 @@ body.menu-open {
   }
 
   .jb-footer__testing-banner button {
+    margin-left: auto !important;
     padding: 0.25rem !important;
-    margin-left: 0.5rem !important;
+  }
+
+  .jb-footer__testing-banner strong {
+    margin: 0 !important;
   }
 }
 
