@@ -688,9 +688,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Update breadcrumb
     const categoryNameElement = document.querySelector(".category-name");
+    const valuesBreadcrumb = document.getElementById("values-breadcrumb");
 
     if (sortValue === "name-all-items") {
       categoryNameElement.style.display = "none";
+      valuesBreadcrumb.classList.add("active");
+      valuesBreadcrumb.setAttribute("aria-current", "page");
+      valuesBreadcrumb.innerHTML = "Values"; // Remove link when active
     } else {
       let categoryName;
       if (currentSort === "hyperchromes") {
@@ -703,6 +707,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       categoryNameElement.textContent = categoryName;
       categoryNameElement.style.display = "list-item";
+      // Make Values a link again and remove active state
+      valuesBreadcrumb.classList.remove("active");
+      valuesBreadcrumb.removeAttribute("aria-current");
+      valuesBreadcrumb.innerHTML = '<a href="/values">Values</a>';
     }
 
     // Save current filter states
@@ -812,9 +820,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("sort-dropdown").value = "name-all-items";
     document.getElementById("value-sort-dropdown").value = "alpha-asc"; // Reset to A-Z
 
-    // Hide category in breadcrumb
+    // Update breadcrumb state
     const categoryNameElement = document.querySelector(".category-name");
+    const valuesBreadcrumb = document.getElementById("values-breadcrumb");
+
     categoryNameElement.style.display = "none";
+    valuesBreadcrumb.classList.add("active");
+    valuesBreadcrumb.setAttribute("aria-current", "page");
+    valuesBreadcrumb.innerHTML = "Values"; // Remove link when active
 
     // Get search value before resetting display
     const searchBar = document.getElementById("search-bar");
