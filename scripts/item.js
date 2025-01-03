@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               item.is_limited ? "limited-item" : ""
             }">
                 <img 
-                    src="https://cdn2.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${
+                    src="https://jailbreakchangelogs.xyz/assets/items/drifts/thumbnails/${
                       item.name
                     }.webp"
                     class="img-fluid rounded thumbnail"
@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     onerror="handleimage(this)"
                 >
                 <video 
-                  src="https://cdn2.jailbreakchangelogs.xyz/images/items/drifts/${
+                  src="https://jailbreakchangelogs.xyz/assets/items/drifts/${
                     item.name
                   }.webm"
                   class="img-fluid rounded video-player"
@@ -332,7 +332,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div class="media-container ${item.is_limited ? "limited-item" : ""}">
           <div class="skeleton-loader"></div>
           <video 
-              src="https://cdn2.jailbreakchangelogs.xyz/images/items/hyperchromes/HyperShift.webm"
+              src="https://jailbreakchangelogs.xyz/assets/items/hyperchromes/HyperShift.webm"
               class="video-player card-img-top"
               playsinline 
               muted 
@@ -361,7 +361,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       element = `
         <div class="media-container ${item.is_limited ? "limited-item" : ""}">
           <img 
-            src="https://cdn2.jailbreakchangelogs.xyz/images/items/${encodeURIComponent(
+            src="https://jailbreakchangelogs.xyz/assets/items/${encodeURIComponent(
               image_type
             )}s/${item.name}.webp"
             class="img-fluid rounded thumbnail"
@@ -462,7 +462,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             item.is_limited ? "limited-item" : ""
                           }">
                               <img 
-                                  src="https://cdn2.jailbreakchangelogs.xyz/images/items/${encodeURIComponent(
+                                  src="https://jailbreakchangelogs.xyz/assets/items/${encodeURIComponent(
                                     image_type
                                   )}s/${item.name}.webp"
                                   class="img-fluid rounded thumbnail"
