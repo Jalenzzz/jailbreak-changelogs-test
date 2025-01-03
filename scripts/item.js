@@ -767,15 +767,35 @@ document.addEventListener("DOMContentLoaded", async () => {
       const submitButton = document.getElementById("submit-comment");
       const commentInput = document.getElementById("commenter-text");
 
+      // helper function for error toasts
+      function throw_error(message) {
+        toastr.error(message, "Error creating comment.", {
+          positionClass: "toast-bottom-right",
+          timeOut: 3000,
+          closeButton: true,
+          progressBar: true,
+        });
+      }
+
       submitButton.addEventListener("click", async (event) => {
         event.preventDefault();
         if (!user) {
-          alert("Please login to comment.");
+          throw_error("Please login to comment.");
           return;
         }
+
+        // check for null global_name and use username as fallback
+        const authorName = user.global_name || user.username;
+        if (!authorName) {
+          throw_error(
+            "Unable to determine username. Please try logging in again."
+          );
+          return;
+        }
+
         const comment = commentInput.value;
         if (!comment) {
-          alert("Please enter a comment.");
+          throw_error("Please enter a comment.");
           return;
         }
         const avatarUrl = sessionStorage.getItem("avatar");
@@ -803,9 +823,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           >
             <a href="/users/${
               user.id
-            }" style="font-weight: bold; color: #748d92; text-decoration: none;">${
-          user.global_name
-        }</a>
+            }" style="font-weight: bold; color: #748d92; text-decoration: none;">${authorName}</a>
             <small class="text-muted
               "> · ${new Date().toLocaleString("en-US", {
                 month: "long",
@@ -826,14 +844,80 @@ document.addEventListener("DOMContentLoaded", async () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            author: user.global_name,
+            author: authorName,
             content: comment,
             item_id: item.id,
             item_type: item.type,
             user_id: user.id,
             owner: getCookie("token"),
           }),
-        });
+        })
+          .then(async (response) => {
+            const data = await response.json();
+
+            if (response.status === 429) {
+              throw_error(
+                `Wait ${data.remaining} seconds before commenting again.`
+              );
+              return;
+            }
+
+            if (!response.ok) {
+              throw_error(data.error || "Failed to create comment.");
+              return;
+            }
+
+            commentsList.appendChild(listItem);
+            commentInput.value = "";
+          })
+          .catch((error) => {
+            console.error("Error adding comment:", error);
+            throw_error("An unexpected error occurred while adding comment.");
+          });
+      });
+
+      const CommentForm = document.getElementById("comment-form");
+      const commentinput = document.getElementById("commenter-text");
+      const commentbutton = document.getElementById("submit-comment");
+      const avatarUrl = sessionStorage.getItem("avatar");
+      const userdata = JSON.parse(sessionStorage.getItem("user"));
+      const userid = sessionStorage.getItem("userid");
+
+      if (userid) {
+        const displayName = userdata.global_name || userdata.username;
+        commentinput.placeholder = "Comment as " + displayName;
+        commentbutton.disabled = false;
+        commentinput.disabled = false;
+      } else {
+        commentinput.disabled = true;
+        commentinput.placeholder = "Login to comment";
+        commentbutton.disabled = false;
+        commentbutton.innerHTML =
+          '<i class="bi bi-box-arrow-in-right"></i> Login';
+
+        // Remove any existing event listeners from the form
+        const newForm = CommentForm.cloneNode(true);
+        CommentForm.parentNode.replaceChild(newForm, CommentForm);
+
+        // Add click event to the button for login redirect
+        newForm
+          .querySelector("#submit-comment")
+          .addEventListener("click", function (event) {
+            event.preventDefault();
+            localStorage.setItem(
+              "redirectAfterLogin",
+              window.location.pathname
+            );
+            window.location.href = "/login";
+          });
+      }
+
+      // Add submit handler
+      CommentForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const comment = document.getElementById("commenter-text");
+        addComment(comment);
+        comment.value = "";
       });
     }
   }
@@ -1071,4 +1155,194 @@ function handleinvalidImage() {
 function logDimensions(container, mediaElement) {
   const containerRect = container.getBoundingClientRect();
   const mediaRect = mediaElement.getBoundingClientRect();
+}
+
+//  modal for editing comments
+document.body.insertAdjacentHTML(
+  "beforeend",
+  `
+  <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <textarea class="form-control" id="editCommentText" rows="3"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveCommentEdit">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+`
+);
+
+const editCommentModal = new bootstrap.Modal(
+  document.getElementById("editCommentModal")
+);
+
+// Add event listener for saving edited comment
+document
+  .getElementById("saveCommentEdit")
+  .addEventListener("click", function () {
+    const commentId = document
+      .getElementById("editCommentText")
+      .getAttribute("data-comment-id");
+    const newContent = document.getElementById("editCommentText").value.trim();
+    const token = getCookie("token");
+
+    if (newContent) {
+      fetch("https://api3.jailbreakchangelogs.xyz/comments/edit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: commentId,
+          content: newContent,
+          author: token,
+        }),
+      })
+        .then((response) => {
+          return response.json().then((data) => {
+            if (!response.ok)
+              throw new Error(data.error || "Failed to edit comment");
+            return data;
+          });
+        })
+        .then((data) => {
+          editCommentModal.hide();
+          toastr.success("Comment updated successfully!", "Success", {
+            positionClass: "toast-bottom-right",
+            timeOut: 3000,
+            closeButton: true,
+            progressBar: true,
+          });
+          setTimeout(() => {
+            loadComments(item.id, item.type);
+          }, 100);
+        })
+        .catch((error) => {
+          console.error("Error editing comment:", error);
+          toastr.error(error.message || "Failed to update comment", "Error", {
+            positionClass: "toast-bottom-right",
+            timeOut: 3000,
+            closeButton: true,
+            progressBar: true,
+          });
+        });
+    }
+  });
+
+// Modify loadComments function to include action buttons for user's own comments
+function loadComments(id, type) {
+  fetch(
+    `https://api3.jailbreakchangelogs.xyz/comments/get?id=${id}&type=${type}`
+  )
+    .then((response) => response.json())
+    .then((comments) => {
+      // Handle errors in the fetch request
+      // Log the error and return an empty array
+
+      comments.forEach((comment) => {
+        // Add action buttons container for user's own comments
+        if (userdata && comment.user_id === userdata.id) {
+          const actionsContainer = document.createElement("div");
+          actionsContainer.classList.add("comment-actions");
+
+          const actionsToggle = document.createElement("button");
+          actionsToggle.classList.add("comment-actions-toggle");
+          actionsToggle.innerHTML = '<i class="bi bi-three-dots-vertical"></i>';
+
+          const actionsMenu = document.createElement("div");
+          actionsMenu.classList.add("comment-actions-menu");
+          actionsMenu.style.display = "none";
+
+          // Create edit button
+          const editButton = document.createElement("button");
+          editButton.classList.add("comment-action-item");
+          editButton.innerHTML = '<i class="bi bi-pencil"></i> Edit';
+          editButton.setAttribute("data-comment-id", comment.id);
+          editButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const commentText = e.target
+              .closest(".comment-item")
+              .querySelector(".comment-text").textContent;
+            document.getElementById("editCommentText").value = commentText;
+            document
+              .getElementById("editCommentText")
+              .setAttribute("data-comment-id", comment.id);
+            editCommentModal.show();
+            actionsMenu.style.display = "none";
+          });
+
+          // Create delete button
+          const deleteButton = document.createElement("button");
+          deleteButton.classList.add("comment-action-item", "delete");
+          deleteButton.innerHTML = '<i class="bi bi-trash"></i> Delete';
+          deleteButton.setAttribute("data-comment-id", comment.id);
+          deleteButton.addEventListener("click", (e) => {
+            const id = e.target.getAttribute("data-comment-id");
+            fetch("https://api3.jailbreakchangelogs.xyz/comments/delete", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                id: id,
+                author: getCookie("token"),
+              }),
+            })
+              .then((response) => {
+                if (!response.ok) throw new Error("Failed to delete comment");
+                return response.json();
+              })
+              .then(() => {
+                const commentElement = document.getElementById(`comment-${id}`);
+                if (commentElement) {
+                  commentElement.remove();
+                }
+                toastr.success("Comment deleted successfully!", "Success", {
+                  positionClass: "toast-bottom-right",
+                  timeOut: 3000,
+                  closeButton: true,
+                  progressBar: true,
+                });
+              })
+              .catch((error) => {
+                console.error("Error deleting comment:", error);
+                toastr.error("Failed to delete comment", "Error", {
+                  positionClass: "toast-bottom-right",
+                  timeOut: 3000,
+                  closeButton: true,
+                  progressBar: true,
+                });
+              });
+          });
+
+          actionsMenu.appendChild(editButton);
+          actionsMenu.appendChild(deleteButton);
+          actionsContainer.appendChild(actionsToggle);
+          actionsContainer.appendChild(actionsMenu);
+
+          commentContainer.appendChild(actionsContainer);
+
+          // Toggle menu on click
+          actionsToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            actionsMenu.style.display =
+              actionsMenu.style.display === "none" ? "block" : "none";
+          });
+
+          // Close menu when clicking outside
+          document.addEventListener("click", () => {
+            actionsMenu.style.display = "none";
+          });
+        }
+      });
+    });
 }
