@@ -1302,7 +1302,8 @@ $(document).ready(function () {
   const userid = sessionStorage.getItem("userid");
 
   if (userid) {
-    commentinput.placeholder = "Comment as " + userdata.global_name;
+    const displayName = userdata.global_name || userdata.username;
+    commentinput.placeholder = "Comment as " + displayName;
     commentbutton.disabled = false;
     commentinput.disabled = false;
   } else {
@@ -1348,8 +1349,14 @@ $(document).ready(function () {
   }
   function addComment(comment) {
     if (!userdata) {
-      // Changed from userData to userdata
       throw_error("Please login to comment");
+      return;
+    }
+
+    // Add check for null global_name and use username as fallback
+    const authorName = userdata.global_name || userdata.username;
+    if (!authorName) {
+      throw_error("Unable to determine username. Please try logging in again.");
       return;
     }
 
@@ -1385,7 +1392,7 @@ $(document).ready(function () {
 
     const usernameElement = document.createElement("a");
     usernameElement.href = `/users/${userdata.id}`; // Set the href to redirect to the user's page
-    usernameElement.textContent = userdata.global_name; // Set the text to the user's global name
+    usernameElement.textContent = authorName; // Use fallback name
     usernameElement.style.fontWeight = "bold"; // Make the text bold
     usernameElement.style.color = "#748D92";
     usernameElement.style.textDecoration = "none";
@@ -1435,7 +1442,7 @@ $(document).ready(function () {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        author: userdata.global_name,
+        author: authorName, // Use fallback name here too
         content: comment.value,
         item_id: localStorage.getItem("selectedChangelogId"),
         item_type: "changelog",
@@ -1515,7 +1522,6 @@ $(document).ready(function () {
       console.error("Invalid comments data received");
       return;
     }
-
 
     comments = commentsData; // Assign the fetched comments to the global variable
     commentsList.innerHTML = ""; // Clear existing comments
@@ -1720,7 +1726,9 @@ $(document).ready(function () {
                   return response.json();
                 })
                 .then((data) => {
-                  const commentElement = document.getElementById(`comment-${id}`);
+                  const commentElement = document.getElementById(
+                    `comment-${id}`
+                  );
                   if (commentElement) {
                     commentElement.remove();
                   }
