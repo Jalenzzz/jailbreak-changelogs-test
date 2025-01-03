@@ -326,7 +326,14 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadItems() {
     try {
       const response = await fetch(
-        "https://api3.jailbreakchangelogs.xyz/items/list"
+        "https://api3.jailbreakchangelogs.xyz/items/list",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "https://jailbreakchangelogs.xyz",
+          },
+        }
       );
       allItems = await response.json();
 

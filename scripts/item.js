@@ -27,7 +27,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       const response = await fetch(
         `https://api3.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(
           itemName
-        )}&type=${urlType}`
+        )}&type=${urlType}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "https://jailbreakchangelogs.xyz",
+          },
+        }
       );
       const item = await response.json();
 
@@ -842,6 +848,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Origin: "https://jailbreakchangelogs.xyz",
           },
           body: JSON.stringify({
             author: authorName,
@@ -923,7 +930,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   function loadComments(id, type) {
     fetch(
-      `https://api3.jailbreakchangelogs.xyz/comments/get?id=${id}&type=${type}`
+      `https://api3.jailbreakchangelogs.xyz/comments/get?id=${id}&type=${type}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
     )
       .then((response) => response.json())
       .then((comments) => {
@@ -949,7 +963,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         // If we have comments, proceed with rendering them
         comments.forEach((comment) => {
           fetch(
-            `https://api3.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`
+            `https://api3.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Origin: "https://jailbreakchangelogs.xyz",
+              },
+            }
           )
             .then((response) => response.json())
             // Handle errors in the fetch request
@@ -1224,6 +1245,7 @@ document
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
         },
         body: JSON.stringify({
           id: commentId,
@@ -1265,7 +1287,14 @@ document
 // Modify loadComments function to include action buttons for user's own comments
 function loadComments(id, type) {
   fetch(
-    `https://api3.jailbreakchangelogs.xyz/comments/get?id=${id}&type=${type}`
+    `https://api3.jailbreakchangelogs.xyz/comments/get?id=${id}&type=${type}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://jailbreakchangelogs.xyz",
+      },
+    }
   )
     .then((response) => response.json())
     .then((comments) => {
@@ -1332,6 +1361,7 @@ function loadComments(id, type) {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
+                Origin: "https://jailbreakchangelogs.xyz",
               },
               body: JSON.stringify({
                 id: id,
