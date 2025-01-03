@@ -380,22 +380,14 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .limited-badge {
-    font-size: 0.7rem;
-    padding: 0.25rem 0.5rem;
-  }
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
   .pagination-container {
     margin-top: 20px;
   }
 
   .media-container {
-    width: 90%;
+    width: 100%; /* Changed from 90% to 100% */
     height: 250px;
-    margin: 0;
+    margin: 0 auto; /* Added auto margins */
   }
 
   .chart-container {
@@ -436,8 +428,9 @@ body {
 /* For extra small devices */
 @media (max-width: 576px) {
   .media-container {
-    width: 95%;
+    width: 100%; /* Changed from 95% to 100% */
     height: 200px;
+    margin: 0 auto; /* Added auto margins */
   }
 
   .chart-container {
@@ -492,4 +485,126 @@ body {
 
 .comments-wrapper {
   transition: opacity 0.3s ease;
+}
+
+/* Values Section Styling */
+.values-section .value-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
+}
+
+.values-section .value-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.values-section .bi {
+  font-size: 1.2rem;
+}
+
+.info-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .values-section .value-card {
+    margin-bottom: 1rem;
+  }
+
+  .values-section .h2 {
+    font-size: 1.5rem;
+  }
+
+  .info-card {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Values Section Mobile Optimization */
+@media (max-width: 768px) {
+  .values-section {
+    padding: 1rem 0 !important;
+    margin: 1rem 0 !important;
+  }
+
+  .values-section .value-card {
+    padding: 1rem !important;
+  }
+
+  .values-section .h2 {
+    font-size: 1.25rem !important;
+  }
+
+  .values-section h4 {
+    font-size: 0.9rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .values-section .bi {
+    font-size: 1rem !important;
+  }
+
+  .info-card {
+    padding: 1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .info-card h4 {
+    font-size: 0.9rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .info-card p {
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .text-muted {
+    font-size: 0.85rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .values-section .row {
+    margin: -0.5rem !important;
+  }
+
+  .values-section [class*="col-"] {
+    padding: 0.5rem !important;
+  }
+
+  .values-section .value-card {
+    border-width: 1px !important;
+  }
+}
+
+/* Duped Owners styling */
+.duped-owners-grid {
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.duped-owners-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.duped-owners-grid::-webkit-scrollbar-track {
+  background: rgba(46, 57, 68, 0.3);
+  border-radius: 3px;
+}
+
+.duped-owners-grid::-webkit-scrollbar-thumb {
+  background: #124e66;
+  border-radius: 3px;
+}
+
+.duped-owner-item:hover {
+  background-color: rgba(18, 78, 102, 0.4) !important;
+  transition: background-color 0.2s ease;
 }

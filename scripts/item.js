@@ -302,23 +302,179 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Show graph if either value exists
     const hasValues = value !== "-" || duped_value !== "-";
 
-    const valuesSection = `
-      <div class="border-top border-bottom py-4 my-4">
-        <div class="row g-4">
-          <div class="col-6">
-            <h4 class="text-muted mb-3">Cash Value</h4>
-            <p class="h2 mb-0" style="color:rgb(24, 101, 131); font-weight: 600;">
-              ${value === "-" ? "" : value}
-            </p>
+    // Add this function to format duped owners
+    function formatDupedOwners(ownerString) {
+      if (!ownerString) return null;
+      const owners = ownerString.split(",").filter((owner) => owner.trim());
+      return {
+        count: owners.length,
+        list: owners,
+      };
+    }
+
+    const dupedOwners = formatDupedOwners(item.duped_owners);
+    const dupedOwnersSection = dupedOwners
+      ? `
+      <div class="duped-owners-section mt-4">
+        <div class="info-card p-4 rounded-3" style="background-color: rgba(46, 57, 68, 0.3); border: 1px solid rgba(46, 57, 68, 0.4);">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h4 class="text-muted mb-0 d-flex align-items-center">
+              <i class="bi bi-people-fill me-2"></i>
+              Known Duped Owners
+            </h4>
+            <span class="badge bg-secondary">${dupedOwners.count} owners</span>
           </div>
-          <div class="col-6">
-            <h4 class="text-muted mb-3">Duped Value</h4>
-            <p class="h2 mb-0" style="color: #748D92; font-weight: 600;">
-              ${duped_value === "-" ? "" : duped_value}
-            </p>
+          <div class="collapse" id="dupedOwnersList">
+            <div class="duped-owners-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px;">
+              ${dupedOwners.list
+                .map(
+                  (owner) => `
+                <a 
+                  href="https://www.roblox.com/search/users?keyword=${encodeURIComponent(
+                    owner.trim()
+                  )}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="duped-owner-item p-2 rounded" 
+                  style="
+                    background-color: rgba(18, 78, 102, 0.2);
+                    font-size: 0.9rem;
+                    color: #d3d9d4;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    text-decoration: none;
+                    transition: background-color 0.2s ease, color 0.2s ease;
+                    cursor: pointer;
+                  "
+                  onmouseover="this.style.backgroundColor='rgba(18, 78, 102, 0.4)'; this.style.color='#ffffff';"
+                  onmouseout="this.style.backgroundColor='rgba(18, 78, 102, 0.2)'; this.style.color='#d3d9d4';"
+                >
+                  ${owner.trim()}
+                </a>
+              `
+                )
+                .join("")}
+            </div>
+          </div>
+          <button class="btn btn-link text-decoration-none w-100 mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#dupedOwnersList" aria-expanded="false" aria-controls="dupedOwnersList" style="color: #748d92;">
+            <i class="bi bi-chevron-down me-1"></i>
+            <span class="toggle-text">Show Owners</span>
+          </button>
+        </div>
+      </div>`
+      : "";
+
+    // Add event listener for toggle button text
+    setTimeout(() => {
+      const toggleBtn = document.querySelector('[data-bs-toggle="collapse"]');
+      if (toggleBtn) {
+        const toggleText = toggleBtn.querySelector(".toggle-text");
+        document
+          .querySelector("#dupedOwnersList")
+          .addEventListener("show.bs.collapse", () => {
+            toggleText.textContent = "Hide Owners";
+            toggleBtn
+              .querySelector(".bi")
+              .classList.replace("bi-chevron-down", "bi-chevron-up");
+          });
+        document
+          .querySelector("#dupedOwnersList")
+          .addEventListener("hide.bs.collapse", () => {
+            toggleText.textContent = "Show Owners";
+            toggleBtn
+              .querySelector(".bi")
+              .classList.replace("bi-chevron-up", "bi-chevron-down");
+          });
+      }
+    }, 100);
+
+    const additionalInfo = `
+  ${
+    (item.description && item.description !== "N/A") ||
+    (item.notes && item.notes !== "N/A")
+      ? `
+    <div class="additional-info mt-4">
+      ${
+        item.description && item.description !== "N/A"
+          ? `
+        <div class="info-card mb-4 p-4 rounded-3" style="background-color: rgba(46, 57, 68, 0.3); border: 1px solid rgba(46, 57, 68, 0.4);">
+          <h4 class="text-muted mb-3 d-flex align-items-center">
+            <i class="bi bi-info-circle me-2"></i>
+            Description
+          </h4>
+          <p class="mb-0" style="color: #D3D9D4; line-height: 1.6;">
+            ${item.description}
+          </p>
+        </div>
+      `
+          : ""
+      }
+      ${
+        item.notes && item.notes !== "N/A"
+          ? `
+        <div class="info-card p-4 rounded-3" style="background-color: rgba(46, 57, 68, 0.3); border: 1px solid rgba(46, 57, 68, 0.4);">
+          <h4 class="text-muted mb-3 d-flex align-items-center">
+            <i class="bi bi-journal-text me-2"></i>
+            Notes
+          </h4>
+          <p class="mb-0" style="color: #D3D9D4; line-height: 1.6;">
+            ${item.notes}
+          </p>
+        </div>
+      `
+          : ""
+      }
+    </div>
+  `
+      : `
+    <div class="additional-info mt-4">
+      <div class="info-card p-4 rounded-3 text-center" style="background-color: rgba(46, 57, 68, 0.3); border: 1px solid rgba(46, 57, 68, 0.4);">
+        <i class="bi bi-info-circle mb-3" style="font-size: 1.5rem; color: #748D92;"></i>
+        <p class="mb-0" style="color: #748D92;">No additional information available for this item.</p>
+      </div>
+    </div>
+  `
+  }`;
+
+    // Modify the valuesSection template to include additionalInfo:
+    const valuesSection = `
+      <div class="values-section border-top border-bottom py-4 my-4">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="value-card p-4 rounded-3" style="background-color: rgba(24, 101, 131, 0.1); border: 1px solid rgba(24, 101, 131, 0.2);">
+              <h4 class="text-muted mb-3 d-flex align-items-center">
+                <i class="bi bi-cash-stack me-2"></i>
+                Cash Value
+              </h4>
+              <p class="h2 mb-0" style="color: rgb(24, 101, 131); font-weight: 600;">
+                ${
+                  value === "-"
+                    ? '<span class="text-muted">Not Available</span>'
+                    : value
+                }
+              </p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="value-card p-4 rounded-3" style="background-color: rgba(116, 141, 146, 0.1); border: 1px solid rgba(116, 141, 146, 0.2);">
+              <h4 class="text-muted mb-3 d-flex align-items-center">
+                <i class="bi bi-graph-down me-2"></i>
+                Duped Value
+              </h4>
+              <p class="h2 mb-0" style="color: #748D92; font-weight: 600;">
+                ${
+                  duped_value === "-"
+                    ? '<span class="text-muted">Not Available</span>'
+                    : duped_value
+                }
+              </p>
+            </div>
           </div>
         </div>
-      </div>`;
+      </div>
+      ${additionalInfo}
+      ${dupedOwnersSection}`;
 
     // Determine if we should show the graph
     const graphSection = hasValues
