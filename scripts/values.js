@@ -565,7 +565,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Determine the image type and URL
     const image_type = item.type.toLowerCase();
-    const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}`;
+    const image_url = `https://cdn2.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}`;
 
     let mediaElement = "";
     if (item.type === "Drift") {
@@ -573,7 +573,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="media-container">
         <div class="skeleton-loader active"></div>
         <img 
-          src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${item.name}.webp"
+          src="https://cdn2.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${item.name}.webp"
           class="card-img-top thumbnail"
           alt="${item.name}"
           style="opacity: 0; transition: opacity 0.3s ease-in-out;"
@@ -581,7 +581,7 @@ document.addEventListener("DOMContentLoaded", () => {
           onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
         >
         <video 
-          src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm"
+          src="https://cdn2.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm"
           class="card-img-top video-player"
           style="opacity: 0; transition: opacity 0.3s ease-in-out;"
           playsinline 
@@ -595,7 +595,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="media-container">
             <div class="skeleton-loader active"></div>
             <video 
-                src="https://cdn.jailbreakchangelogs.xyz/images/items/hyperchromes/HyperShift.webm"
+                src="https://cdn2.jailbreakchangelogs.xyz/images/items/hyperchromes/HyperShift.webm"
                 class="card-img-top"
                 style="opacity: 0; transition: opacity 0.3s ease-in-out;"
                 playsinline 
@@ -834,7 +834,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (item.type.toLowerCase() === "drift") continue;
 
       const image_type = item.type.toLowerCase();
-      const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
+      const image_url = `https://cdn2.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
 
       const promise = new Promise((resolve, reject) => {
         const img = new Image();
@@ -1119,6 +1119,6 @@ function preloadDriftThumbnails(driftItems) {
 
   driftItems.forEach((item) => {
     const img = new Image();
-    img.src = `https://cdn.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${item.name}.webp`;
+    img.src = `https://cdn2.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${item.name}.webp`;
   });
 }
