@@ -70,6 +70,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     return numericValue.toLocaleString("en-US");
   }
 
+  
+
   function displayItemDetails(item) {
     const image_type = item.type.toLowerCase();
     let color = "#124E66";
@@ -85,6 +87,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (item.type === "Texture") color = "#708090";
     if (item.type === "HyperChrome") color = "#E91E63";
     if (item.type === "Furniture") color = "#9C6644";
+    loadComments(item.id, item.type);
 
     // Modify the badge HTML generation
     let specialBadgeHtml = "";
@@ -678,6 +681,65 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     }
   }
+  function loadComments(id, type) {
+    fetch(`https://api3.jailbreakchangelogs.xyz/comments/get?id=${id}&type=${type}`)
+      .then((response) => response.json())
+      // Handle errors in the fetch request
+      // Log the error and return an empty array
+     .catch((error) => {
+       console.error("Error fetching comments:", error);
+       return [];
+     })
+      .then((comments) => {
+
+        const commentsList = document.getElementById("comments-list");
+        commentsList.innerHTML = "";
+        comments.forEach((comment) => {
+          fetch(`https://api3.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`)
+           .then((response) => response.json())
+            // Handle errors in the fetch request
+            // Log the error and return the comment
+           .catch((error) => {
+             console.error("Error fetching user:", error);
+             return comment;
+            })
+            .then((userdata) => {
+              const avatarUrl = userdata.avatar
+              ? `https://cdn.discordapp.com/avatars/${userdata.id}/${userdata.avatar}.png`
+              : "assets/profile-pic-placeholder.png";
+            
+            // Create and append the comment to the comments list
+            const formattedDate = formatDate(comment.date);
+            const listItem = document.createElement("li");
+            listItem.className = "d-flex align-items-start mb-3";
+            listItem.innerHTML = `
+              <img
+                src=${avatarUrl}
+                class="rounded-circle m-1"
+                width="32"
+                height="32"
+                alt="User Avatar"
+                onerror=handleinvalidImage
+              />
+              <div
+                class="ms-2 comment-item w-100"
+                style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
+              >
+               <a href="/users/${comment.user_id}" style="font-weight: bold; color: #748d92; text-decoration: none;">${
+                 comment.author
+               }</a>
+                <small class="text-muted
+                  "> · ${formattedDate}</small>
+                <p class="mb-0 comment-text" style="color: #d3d9d4; margin-top: 4px">
+                 ${comment.content}
+                </p>
+                </div>
+                `;
+          commentsList.appendChild(listItem);
+        });
+      });
+      })
+    }
 
   function showErrorMessage(message) {
     const container = document.getElementById("item-container");
@@ -717,7 +779,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   loadItemDetails();
-});
+  });
+
+  function formatDate(timestamp) {
+    // Convert Unix timestamp to milliseconds and create a Date object
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
 
 const commentTemplate = (item, disabled, placeholder) => `
   <h2
