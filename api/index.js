@@ -360,8 +360,19 @@ app.get("/item/:type/:item", async (req, res) => {
       });
     }
 
-    // For successful responses, continue as before
-    const image_url = `/assets/items/${itemType}s/${item.name}.webp`;
+    // For successful responses, generate image URL based on item type from API
+    let image_url;
+    if (item.type === "Drift") {
+      // Special case for drifts - use thumbnails
+      image_url = `/assets/items/drifts/thumbnails/${item.name}.webp`;
+    } else if (item.type === "HyperChrome" && item.name === "HyperShift") {
+      // Special case for HyperShift - use video
+      image_url = `/assets/items/hyperchromes/HyperShift.webm`;
+    } else {
+      // For all other items, use type directly from API response
+      const pluralType = `${item.type.toLowerCase()}s`;
+      image_url = `/assets/items/${pluralType}/${item.name}.webp`;
+    }
     item.image = image_url;
 
     res.render("item", {

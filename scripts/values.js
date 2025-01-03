@@ -138,8 +138,11 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("lastSort", sortValue);
     }
 
-    // Then sort by value if a value sort is selected
-    if (valueSortType !== "none") {
+    // Add handling for random sort
+    if (valueSortType === "random") {
+      filteredItems = shuffleArray([...filteredItems]);
+    } else if (valueSortType !== "none") {
+      // Then sort by value if a value sort is selected
       const [valueType, direction] = valueSortType.split("-");
       filteredItems.sort((a, b) => {
         const valueA =
@@ -335,8 +338,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const savedSort = sessionStorage.getItem("sortDropdown");
       const savedValueSort = sessionStorage.getItem("valueSortDropdown");
 
-      // Always set initial filtered items
-      filteredItems = [...allItems];
+      // Always set initial filtered items and shuffle them
+      filteredItems = shuffleArray([...allItems]);
 
       if (savedSort) {
         const sortDropdown = document.getElementById("sort-dropdown");
@@ -345,15 +348,18 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         if (sortDropdown && valueSortDropdown) {
           sortDropdown.value = savedSort;
-          valueSortDropdown.value = savedValueSort || "alpha-asc";
+          valueSortDropdown.value = savedValueSort || "random";
           sort = savedSort;
-          await sortItems();
+          if (savedValueSort === "random") {
+            displayItems(); // Just display shuffled items
+          } else {
+            await sortItems(); // Apply saved sort
+          }
           return;
         }
       }
 
-      // If no saved sort, use default behavior
-      filteredItems = shuffleArray([...allItems]);
+      // If no saved sort, just display shuffled items
       displayItems();
       updateTotalItemsCount();
       updateTotalItemsLabel("all-items");
@@ -563,65 +569,57 @@ document.addEventListener("DOMContentLoaded", () => {
     if (item.type === "HyperChrome") color = "#E91E63";
     if (item.type === "Furniture") color = "#9C6644";
 
-    // Determine the image type and URL
-    const image_type = item.type.toLowerCase();
-    const image_url = `/assets/items/${image_type}s/${item.name}`;
-
-    let mediaElement = "";
-    if (item.type === "Drift") {
-      mediaElement = `
-      <div class="media-container">
-        <div class="skeleton-loader active"></div>
-        <img 
-          src="/assets/items/drifts/thumbnails/${item.name}.webp"
-          class="card-img-top thumbnail"
-          alt="${item.name}"
-          style="opacity: 0; transition: opacity 0.3s ease-in-out;"
-          onerror="handleimage(this)"
-          onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
-        >
-        <video 
-          src="/assets/items/drifts/${item.name}.webm"
-          class="card-img-top video-player"
-          style="opacity: 0; transition: opacity 0.3s ease-in-out;"
-          playsinline 
-          muted 
-          loop
-          onloadeddata="this.style.opacity='1'"
-        ></video>
-      </div>`;
-    } else if (item.name === "HyperShift" && item.type === "HyperChrome") {
-      mediaElement = `
-        <div class="media-container">
-            <div class="skeleton-loader active"></div>
-            <video 
-                src="/assets/items/hyperchromes/HyperShift.webm"
-                class="card-img-top"
-                style="opacity: 0; transition: opacity 0.3s ease-in-out;"
-                playsinline 
-                muted 
-                loop
-                autoplay
-                id="hypershift-video"
-                onloadeddata="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
-                onerror="console.error('Failed to load HyperShift video:', this.src)"
-            ></video>
+    // Determine the image URL directly from item type
+    const mediaElement =
+      item.type === "Drift"
+        ? `<div class="media-container">
+          <div class="skeleton-loader active"></div>
+          <img 
+            src="/assets/items/drifts/thumbnails/${item.name}.webp"
+            class="card-img-top thumbnail"
+            alt="${item.name}"
+            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+            onerror="handleimage(this)"
+            onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
+          >
+          <video 
+            src="/assets/items/drifts/${item.name}.webm"
+            class="card-img-top video-player"
+            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+            playsinline 
+            muted 
+            loop
+            onloadeddata="this.style.opacity='1'"
+          ></video>
+        </div>`
+        : item.type === "HyperChrome" && item.name === "HyperShift"
+        ? `<div class="media-container">
+          <div class="skeleton-loader active"></div>
+          <video 
+            src="/assets/items/hyperchromes/HyperShift.webm"
+            class="card-img-top"
+            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+            playsinline 
+            muted 
+            loop
+            autoplay
+            id="hypershift-video"
+            onloadeddata="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
+            onerror="handleimage(this)"
+          ></video>
+        </div>`
+        : `<div class="media-container">
+          <div class="skeleton-loader active"></div>
+          <img 
+            onerror="handleimage(this)" 
+            id="${item.name}" 
+            src="/assets/items/${item.type.toLowerCase()}s/${item.name}.webp" 
+            class="card-img-top" 
+            alt="${item.name}" 
+            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+            onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
+          >
         </div>`;
-    } else {
-      mediaElement = `
-        <div class="media-container">
-        <div class="skeleton-loader active"></div>
-        <img 
-          onerror="handleimage(this)" 
-          id="${item.name}" 
-          src="${image_url}.webp" 
-          class="card-img-top" 
-          alt="${item.name}" 
-          style="opacity: 0; transition: opacity 0.3s ease-in-out;"
-          onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
-        >
-      </div>`;
-    }
 
     // Format values
     const cashValue = formatValue(item.cash_value);
@@ -864,7 +862,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Reset dropdowns
     document.getElementById("sort-dropdown").value = "name-all-items";
-    document.getElementById("value-sort-dropdown").value = "alpha-asc"; // Reset to A-Z
+    document.getElementById("value-sort-dropdown").value = "random"; // Match initial load state
 
     // Update breadcrumb state
     const categoryNameElement = document.querySelector(".category-name");
@@ -873,22 +871,17 @@ document.addEventListener("DOMContentLoaded", () => {
     categoryNameElement.style.display = "none";
     valuesBreadcrumb.classList.add("active");
     valuesBreadcrumb.setAttribute("aria-current", "page");
-    valuesBreadcrumb.innerHTML = "Values"; // Remove link when active
-
-    // Get search value before resetting display
-    const searchBar = document.getElementById("search-bar");
-    const searchValue = searchBar ? searchBar.value : "";
+    valuesBreadcrumb.innerHTML = "Values";
 
     // Reset items display
     currentPage = 1;
     filteredItems = [...allItems];
-
-    // Sort items A-Z by default
-    filteredItems.sort((a, b) => a.name.localeCompare(b.name));
+    filteredItems = shuffleArray(filteredItems); // Shuffle items to match 'random' sort
 
     // If there's a search term, perform the search
-    if (searchValue.trim()) {
-      filterItems(); // This will use the existing search term
+    const searchValue = searchBar?.value?.trim() || "";
+    if (searchValue) {
+      filterItems();
     } else {
       displayItems();
       updateTotalItemsCount();
@@ -897,7 +890,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateSearchPlaceholder();
 
-    // Show success toast
     toastr.success("Filters have been reset", "Filters Reset");
   }, 500);
 
@@ -905,17 +897,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const valueSortDropdown = document.getElementById("value-sort-dropdown");
   if (valueSortDropdown) {
     valueSortDropdown.innerHTML = `
-     <option value="separator" disabled>───── Alphabetically ─────</option>
-      <option value="alpha-asc">Name (A to Z)</option>
-      <option value="alpha-desc">Name (Z to A)</option>
-      <option value="separator" disabled>───── Values ─────</option>
-      <option value="cash-asc">Cash Value (Low to High)</option>
-      <option value="cash-desc">Cash Value (High to Low)</option>
-      <option value="duped-asc">Duped Value (Low to High)</option>
-      <option value="duped-desc">Duped Value (High to Low)</option>
+    <option value="random">Random</option>
+    <option value="separator" disabled>───── Alphabetically ─────</option>
+    <option value="alpha-asc">Name (A to Z)</option>
+    <option value="alpha-desc">Name (Z to A)</option>
+    <option value="separator" disabled>───── Values ─────</option>
+    <option value="cash-asc">Cash Value (Low to High)</option>
+    <option value="cash-desc">Cash Value (High to Low)</option>
+    <option value="duped-asc">Duped Value (Low to High)</option>
+    <option value="duped-desc">Duped Value (High to Low)</option>
     `;
-    // Set default sort to A-Z
-    valueSortDropdown.value = "alpha-asc";
+    // Set default sort to random
+    valueSortDropdown.value = "random";
     sortItems(); // Apply initial sort
   }
 
