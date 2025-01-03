@@ -208,7 +208,7 @@ function displayAvailableItems(type) {
             <div class="card-header">
               ${item.name}
             </div>
-            <img src="https://cdn.jailbreakchangelogs.xyz/images/items/${item.type.toLowerCase()}s/${
+            <img src="https://cdn2.jailbreakchangelogs.xyz/images/items/${item.type.toLowerCase()}s/${
         item.name
       }.webp" 
                  class="card-img-top" 
@@ -390,7 +390,7 @@ function renderTradeItems(tradeType) {
         <div class="col-md-3 mb-3">
           <div class="card h-100 trade-card">
             <div class="card-img-container">
-              <img src="https://cdn.jailbreakchangelogs.xyz/images/items/${item.type.toLowerCase()}s/${
+              <img src="https://cdn2.jailbreakchangelogs.xyz/images/items/${item.type.toLowerCase()}s/${
           item.name
         }.webp" 
                    class="card-img-top" 
@@ -602,7 +602,7 @@ function renderPreviewItems(containerId, items) {
     .map(
       (item) => `
       <div class="preview-item">
-        <img src="https://cdn.jailbreakchangelogs.xyz/images/items/${item.type.toLowerCase()}s/${
+        <img src="https://cdn2.jailbreakchangelogs.xyz/images/items/${item.type.toLowerCase()}s/${
         item.name
       }.webp" 
              alt="${item.name}"

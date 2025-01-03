@@ -480,11 +480,11 @@ document.addEventListener("DOMContentLoaded", function () {
           );
           imageUrl =
             level10Reward?.link ||
-            "https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp";
+            "https://cdn2.jailbreakchangelogs.xyz/images/changelogs/347.webp";
         } else {
           imageUrl =
             item.image_url ||
-            "https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp";
+            "https://cdn2.jailbreakchangelogs.xyz/images/changelogs/347.webp";
         }
 
         commentElement.className = "list-group-item";
