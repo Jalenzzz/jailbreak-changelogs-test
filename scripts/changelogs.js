@@ -1217,9 +1217,8 @@ $(document).ready(function () {
     localStorage.setItem("selectedChangelogId", changelog.id);
 
     document.title = changelog.title;
-    setTimeout(() => {
-      reloadcomments();
-    }, 100);
+    commentsList.innerHTML = ""; // Clear the comments list
+    reloadcomments();
 
     if (titleElement) {
       titleElement.textContent = changelog.title;
@@ -1877,7 +1876,6 @@ $(document).ready(function () {
           console.error("Unexpected response status:", response.status);
           return null; // Exit early if the response is not OK
         }
-        commentsList.innerHTML = ""; // Clear existing comments
         return response.json();
       })
       .then((data) => {
