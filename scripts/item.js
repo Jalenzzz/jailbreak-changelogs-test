@@ -321,11 +321,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Add this function to format duped owners
     function formatDupedOwners(ownerString) {
       if (!ownerString) return null;
-      const owners = ownerString.split(",").filter((owner) => owner.trim());
-      return {
-        count: owners.length,
-        list: owners,
-      };
+      const owners = ownerString
+        .split(",")
+        .filter((owner) => owner.trim())
+        .filter((owner) => owner.trim() !== "N/A"); // Filter out N/A values
+      return owners.length
+        ? {
+            count: owners.length,
+            list: owners,
+          }
+        : null;
     }
 
     const dupedOwners = formatDupedOwners(item.duped_owners);
@@ -942,14 +947,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       .then((response) => response.json())
       .then((comments) => {
         const commentsList = document.getElementById("comments-list");
+        const paginationControls =
+          document.getElementById("paginationControls");
         commentsList.innerHTML = "";
 
-        // Check if comments is null, undefined, or not an array
+        // Toggle pagination controls visibility
         if (!comments || !Array.isArray(comments) || comments.length === 0) {
-          // Display "No comments yet" message with style to hide marker
+          if (paginationControls) {
+            paginationControls.style.display = "none";
+          }
+          // Display "No comments yet" message
           const noCommentsMessage = document.createElement("li");
           noCommentsMessage.className = "text-center p-4";
-          noCommentsMessage.style.listStyle = "none"; // Add this line to hide the marker
+          noCommentsMessage.style.listStyle = "none";
           noCommentsMessage.innerHTML = `
             <div class="text-muted">
               <i class="bi bi-chat-square"></i>
@@ -958,6 +968,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           `;
           commentsList.appendChild(noCommentsMessage);
           return;
+        } else {
+          if (paginationControls) {
+            paginationControls.style.display = "flex";
+          }
         }
 
         // If we have comments, proceed with rendering them
@@ -1113,20 +1127,17 @@ const commentTemplate = (item, disabled, placeholder) => `
   </form>
 
   <ul id="comments-list" class="list-group">
-    <!-- Dummy comments for ${item.name} -->
-
-
-
-
+    <!-- Comments will be loaded here -->
   </ul>
 
   <!-- Pagination Controls -->
   <div
     id="paginationControls"
     class="pagination d-flex align-items-center justify-content-center gap-2 flex-nowrap mt-4"
+    style="display: none"
   >
     <button
-      class="btn btn-primary rounded-circle pagination-btn"
+      class="btn btn-primary rounded-circle pagination-btn prev-page"
       disabled
       style="
         width: 35px;
@@ -1167,10 +1178,10 @@ const commentTemplate = (item, disabled, placeholder) => `
           font-size: 14px;
         "
       />
-      <span class="text-muted" style="font-size: 14px"> / 1</span>
+      <span class="text-muted total-pages" style="font-size: 14px">/ 1</span>
     </div>
     <button
-      class="btn btn-primary rounded-circle pagination-btn"
+      class="btn btn-primary rounded-circle pagination-btn next-page"
       disabled
       style="
         width: 35px;
@@ -1284,7 +1295,6 @@ document
     }
   });
 
-// Modify loadComments function to include action buttons for user's own comments
 function loadComments(id, type) {
   fetch(
     `https://api3.jailbreakchangelogs.xyz/comments/get?id=${id}&type=${type}`,
@@ -1299,14 +1309,18 @@ function loadComments(id, type) {
     .then((response) => response.json())
     .then((comments) => {
       const commentsList = document.getElementById("comments-list");
+      const paginationControls = document.getElementById("paginationControls");
       commentsList.innerHTML = "";
 
-      // Check if comments is null, undefined, or not an array
+      // Toggle pagination controls visibility
       if (!comments || !Array.isArray(comments) || comments.length === 0) {
-        // Display "No comments yet" message with style to hide marker
+        if (paginationControls) {
+          paginationControls.style.display = "none";
+        }
+        // Display "No comments yet" message
         const noCommentsMessage = document.createElement("li");
         noCommentsMessage.className = "text-center p-4";
-        noCommentsMessage.style.listStyle = "none"; // Add this line to hide the marker
+        noCommentsMessage.style.listStyle = "none";
         noCommentsMessage.innerHTML = `
           <div class="text-muted">
             <i class="bi bi-chat-square"></i>
@@ -1315,6 +1329,10 @@ function loadComments(id, type) {
         `;
         commentsList.appendChild(noCommentsMessage);
         return;
+      } else {
+        if (paginationControls) {
+          paginationControls.style.display = "flex";
+        }
       }
 
       // If we have comments, proceed with rendering them
