@@ -556,6 +556,13 @@ body.menu-open {
   margin-right: 0; /* No margin */
 }
 
+/* Dropdown item styles */
+.dropdown-menu-dark .dropdown-item:active,
+.dropdown-menu-dark .dropdown-item:focus {
+  background-color: #124e66;
+  color: #ffffff;
+}
+
 @media (max-width: 768px) {
   .breadcrumb {
     padding: 12px 20px;
