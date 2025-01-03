@@ -1217,8 +1217,10 @@ $(document).ready(function () {
     localStorage.setItem("selectedChangelogId", changelog.id);
 
     document.title = changelog.title;
-    reloadcomments();
-
+    setTimeout(() => {
+      reloadcomments();
+    }, 100);
+    
     if (titleElement) {
       titleElement.textContent = changelog.title;
     }
