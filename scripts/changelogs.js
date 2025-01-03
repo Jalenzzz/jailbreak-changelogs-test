@@ -1516,10 +1516,6 @@ $(document).ready(function () {
       return;
     }
     // clean the comments for duplicates
-    comments = commentsData.filter(
-      (comment, index, self) =>
-        index === self.findIndex((t) => t.id === comment.id)
-    );
     commentsList.innerHTML = ""; // Clear existing comments
     comments.sort((a, b) => b.date - a.date);
 
@@ -1568,6 +1564,10 @@ $(document).ready(function () {
             : "assets/profile-pic-placeholder.png";
 
           const listItem = document.createElement("li");
+          const comment = document.getElementById(`comment-${comment.id}`); // Fixed: comment instead of comment
+          if (comment) {
+            comment.remove();
+          }
           listItem.id = `comment-${comment.id}`; // Fixed: comment instead of comment
           listItem.classList.add(
             "list-group-item",
