@@ -240,7 +240,7 @@ tokenInput.style.setProperty('::placeholder', 'color: #999999'); // Light gray p
       const token = tokenInput.value;
 
       fetch(
-        "https://api.jailbreakchangelogs.xyz/users/get/token?token=" + token
+        "https://api3.jailbreakchangelogs.xyz/users/get/token?token=" + token
       )
         .then((response) => {
           if (!response.ok) {

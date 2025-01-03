@@ -85,6 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (item.type === "Texture") color = "#708090";
     if (item.type === "HyperChrome") color = "#E91E63";
     if (item.type === "Furniture") color = "#9C6644";
+    loadComments(item.id, item.type);
 
     // Modify the badge HTML generation
     let specialBadgeHtml = "";
@@ -120,7 +121,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
       }
     }
-
+    function getCookie(name) {
+      let cookieArr = document.cookie.split(";");
+      for (let i = 0; i < cookieArr.length; i++) {
+        let cookiePair = cookieArr[i].split("=");
+        if (name === cookiePair[0].trim()) {
+          return decodeURIComponent(cookiePair[1]);
+        }
+      }
+      return null;
+    }
     function showFirefoxAutoplayNotice() {
       // Remove existing notice if present
       const existingNotice = document.querySelector(".firefox-autoplay-notice");
@@ -756,6 +766,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       commentsWrapper.innerHTML = commentTemplate(item, disabled, placeholder);
       const submitButton = document.getElementById("submit-comment");
       const commentInput = document.getElementById("commenter-text");
+
       submitButton.addEventListener("click", async (event) => {
         event.preventDefault();
         if (!user) {
@@ -790,9 +801,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             class="ms-2 comment-item w-100"
             style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
           >
-            <a href="#" style="font-weight: bold; color: #748d92; text-decoration: none;">${
-              user.global_name
-            }</a>
+            <a href="/users/${
+              user.id
+            }" style="font-weight: bold; color: #748d92; text-decoration: none;">${
+          user.global_name
+        }</a>
             <small class="text-muted
               "> · ${new Date().toLocaleString("en-US", {
                 month: "long",
@@ -807,8 +820,82 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
         const commentsList = document.getElementById("comments-list");
         commentsList.appendChild(listItem);
+        fetch("https://api3.jailbreakchangelogs.xyz/comments/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            author: user.global_name,
+            content: comment,
+            item_id: item.id,
+            item_type: item.type,
+            user_id: user.id,
+            owner: getCookie("token"),
+          }),
+        });
       });
     }
+  }
+  function loadComments(id, type) {
+    fetch(
+      `https://api3.jailbreakchangelogs.xyz/comments/get?id=${id}&type=${type}`
+    )
+      .then((response) => response.json())
+      // Handle errors in the fetch request
+      // Log the error and return an empty array
+      .catch((error) => {
+        console.error("Error fetching comments:", error);
+        return [];
+      })
+      .then((comments) => {
+        const commentsList = document.getElementById("comments-list");
+        commentsList.innerHTML = "";
+        comments.forEach((comment) => {
+          fetch(
+            `https://api3.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`
+          )
+            .then((response) => response.json())
+            // Handle errors in the fetch request
+            // Log the error and return the comment
+            .catch((error) => {
+              console.error("Error fetching user:", error);
+              return comment;
+            })
+            .then((userdata) => {
+              const avatarUrl = userdata.avatar
+                ? `https://cdn.discordapp.com/avatars/${userdata.id}/${userdata.avatar}.png`
+                : "assets/profile-pic-placeholder.png";
+
+              // Create and append the comment to the comments list
+              const formattedDate = formatDate(comment.date);
+              const listItem = document.createElement("li");
+              listItem.className = "d-flex align-items-start mb-3";
+              listItem.innerHTML = `
+              <img
+                src=${avatarUrl}
+                class="rounded-circle m-1"
+                width="32"
+                height="32"
+                alt="User Avatar"
+                onerror=handleinvalidImage
+              />
+              <div
+                class="ms-2 comment-item w-100"
+                style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
+              >
+               <a href="/users/${comment.user_id}" style="font-weight: bold; color: #748d92; text-decoration: none;">${comment.author}</a>
+                <small class="text-muted
+                  "> · ${formattedDate}</small>
+                <p class="mb-0 comment-text" style="color: #d3d9d4; margin-top: 4px">
+                 ${comment.content}
+                </p>
+                </div>
+                `;
+              commentsList.appendChild(listItem);
+            });
+        });
+      });
   }
 
   function showErrorMessage(message) {
@@ -851,6 +938,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadItemDetails();
 });
 
+function formatDate(timestamp) {
+  // Convert Unix timestamp to milliseconds and create a Date object
+  const date = new Date(timestamp * 1000);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 const commentTemplate = (item, disabled, placeholder) => `
   <h2
     class="comment-header text-center"
@@ -888,63 +985,9 @@ const commentTemplate = (item, disabled, placeholder) => `
 
   <ul id="comments-list" class="list-group">
     <!-- Dummy comments for ${item.name} -->
-    <li class="d-flex align-items-start mb-3">
-      <img
-        src="https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"
-        class="rounded-circle m-1"
-        width="32"
-        height="32"
-        alt="User Avatar"
-      />
-      <div
-        class="ms-2 comment-item w-100"
-        style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
-      >
-        <a href="#" style="font-weight: bold; color: #748d92; text-decoration: none;">Dummy User 1</a>
-        <small class="text-muted"> · December 21st at 07:38 AM</small>
-        <p class="mb-0 comment-text" style="color: #d3d9d4; margin-top: 4px">
-          What will the value be?
-        </p>
-      </div>
-    </li>
-    <li class="d-flex align-items-start mb-3">
-      <img
-        src="https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"
-        class="rounded-circle m-1"
-        width="32"
-        height="32"
-        alt="User Avatar"
-      />
-      <div
-        class="ms-2 comment-item w-100"
-        style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
-      >
-        <a href="#" style="font-weight: bold; color: #748d92; text-decoration: none;">Dummy User 1</a>
-        <small class="text-muted"> · December 21st at 07:38 AM</small>
-        <p class="mb-0 comment-text" style="color: #d3d9d4; margin-top: 4px">
-          What will the value be?
-        </p>
-      </div>
-    </li>
-    <li class="d-flex align-items-start mb-3">
-      <img
-        src="https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"
-        class="rounded-circle m-1"
-        width="32"
-        height="32"
-        alt="User Avatar"
-      />
-      <div
-        class="ms-2 comment-item w-100"
-        style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
-      >
-        <a href="#" style="font-weight: bold; color: #748d92; text-decoration: none;">Dummy User 1</a>
-        <small class="text-muted"> · December 21st at 07:38 AM</small>
-        <p class="mb-0 comment-text" style="color: #d3d9d4; margin-top: 4px">
-          What will the value be?
-        </p>
-      </div>
-    </li>
+
+
+
 
   </ul>
 

@@ -1217,6 +1217,7 @@ $(document).ready(function () {
     localStorage.setItem("selectedChangelogId", changelog.id);
 
     document.title = changelog.title;
+    commentsList.innerHTML = ""; // Clear the comments list
     reloadcomments();
 
     if (titleElement) {
@@ -1428,16 +1429,18 @@ $(document).ready(function () {
     const token = getCookie("token");
 
     // Post the comment to the server
-    fetch("https://api.jailbreakchangelogs.xyz/comments/add", {
+    fetch("https://api3.jailbreakchangelogs.xyz/comments/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        author: token,
+        author: userdata.global_name,
         content: comment.value,
         item_id: localStorage.getItem("selectedChangelogId"),
         item_type: "changelog",
+        user_id: userdata.id,
+        owner: token,
       }),
     })
       .then(async (response) => {
@@ -1451,7 +1454,8 @@ $(document).ready(function () {
 
         if (response.ok) {
           commentsList.prepend(listItem);
-          reloadcomments();
+          // im going to kill you
+          // DO NOT MAKE UNNECESSARY REQUESTS
         } else {
           // Handle other non-429 errors (e.g., validation)
           throw_error(data.error || "An error occurred.");
@@ -1512,6 +1516,7 @@ $(document).ready(function () {
       return;
     }
 
+
     comments = commentsData; // Assign the fetched comments to the global variable
     commentsList.innerHTML = ""; // Clear existing comments
     comments.sort((a, b) => b.date - a.date);
@@ -1531,7 +1536,7 @@ $(document).ready(function () {
       }
 
       return fetch(
-        `https://api.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`
+        `https://api3.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`
       )
         .then((response) => {
           if (!response.ok) {
@@ -1561,6 +1566,11 @@ $(document).ready(function () {
             : "assets/profile-pic-placeholder.png";
 
           const listItem = document.createElement("li");
+          const commentel = document.getElementById(`comment-${comment.id}`); // Fixed: comment instead of comment
+          if (commentel) {
+            commentel.remove();
+          }
+          listItem.id = `comment-${comment.id}`; // Fixed: comment instead of comment
           listItem.classList.add(
             "list-group-item",
             "d-flex",
@@ -1693,13 +1703,13 @@ $(document).ready(function () {
               const id = e.target.getAttribute("data-comment-id");
 
               // make an http request to delete the comment
-              fetch("https://api.jailbreakchangelogs.xyz/comments/delete", {
+              fetch("https://api3.jailbreakchangelogs.xyz/comments/delete", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  comment_id: id,
+                  id: id,
                   author: getCookie("token"),
                 }),
               })
@@ -1710,7 +1720,10 @@ $(document).ready(function () {
                   return response.json();
                 })
                 .then((data) => {
-                  reloadcomments();
+                  const commentElement = document.getElementById(`comment-${id}`);
+                  if (commentElement) {
+                    commentElement.remove();
+                  }
                   // Add toast notification for successful deletion
                   toastr.success("Comment deleted successfully!", "Success", {
                     positionClass: "toast-bottom-right",
@@ -1860,7 +1873,7 @@ $(document).ready(function () {
     CommentHeader.textContent =
       "Comments For Changelog " + localStorage.getItem("selectedChangelogId");
     fetch(
-      "https://api.jailbreakchangelogs.xyz/comments/get?type=changelog&id=" +
+      "https://api3.jailbreakchangelogs.xyz/comments/get?type=changelog&id=" +
         localStorage.getItem("selectedChangelogId")
     )
       .then((response) => {
@@ -1946,13 +1959,13 @@ $(document).ready(function () {
       const token = getCookie("token");
 
       if (newContent) {
-        fetch("https://api.jailbreakchangelogs.xyz/comments/edit", {
+        fetch("https://api3.jailbreakchangelogs.xyz/comments/edit", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            comment_id: commentId,
+            id: commentId,
             content: newContent,
             author: token,
           }),
