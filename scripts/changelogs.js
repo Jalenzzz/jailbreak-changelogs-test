@@ -1515,8 +1515,11 @@ $(document).ready(function () {
       console.error("Invalid comments data received");
       return;
     }
-
-    comments = commentsData; // Assign the fetched comments to the global variable
+    // clean the comments for duplicates
+    comments = commentsData.filter(
+      (comment, index, self) =>
+        index === self.findIndex((t) => t.id === comment.id)
+    );
     commentsList.innerHTML = ""; // Clear existing comments
     comments.sort((a, b) => b.date - a.date);
 
