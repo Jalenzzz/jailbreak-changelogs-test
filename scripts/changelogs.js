@@ -1564,9 +1564,9 @@ $(document).ready(function () {
             : "assets/profile-pic-placeholder.png";
 
           const listItem = document.createElement("li");
-          const comment = document.getElementById(`comment-${comment.id}`); // Fixed: comment instead of comment
-          if (comment) {
-            comment.remove();
+          const commentel = document.getElementById(`comment-${comment.id}`); // Fixed: comment instead of comment
+          if (commentel) {
+            commentel.remove();
           }
           listItem.id = `comment-${comment.id}`; // Fixed: comment instead of comment
           listItem.classList.add(
