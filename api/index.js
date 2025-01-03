@@ -235,8 +235,7 @@ app.get("/seasons/:season", async (req, res) => {
       return res.render("seasons", {
         season: "???",
         title: "Season not found",
-        image_url:
-          "/assets/images/changelogs/346.webp",
+        image_url: "/assets/images/changelogs/346.webp",
         logoUrl: "/assets/logos/Seasons_Logo.webpg",
         logoAlt: "Jailbreak Seasons Logo",
         seasonId,
@@ -252,8 +251,7 @@ app.get("/seasons/:season", async (req, res) => {
     );
 
     // Ensure we got the reward before accessing properties
-    let image_url =
-      "/assets/images/changelogs/346.webp";
+    let image_url = "/assets/images/changelogs/346.webp";
     if (level_10_reward) {
       image_url = level_10_reward.link;
     }
@@ -327,9 +325,9 @@ app.get("/item/:type/:item", async (req, res) => {
   let itemType = decodeURIComponent(req.params.type).trim().toLowerCase();
   const formattedUrlType = itemType.charAt(0).toUpperCase() + itemType.slice(1);
 
-  const apiUrl = `https://api.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(
+  const apiUrl = `https://api3.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(
     itemName
-  )}`;
+  )}&type=${itemType}`;
 
   try {
     const response = await fetch(apiUrl, {
@@ -408,11 +406,10 @@ app.get("/item/:type/:item", async (req, res) => {
 
 // Keep the old route for backward compatibility
 app.get("/item/:item", async (req, res) => {
-  // Redirect to the new route structure
   const itemName = decodeURIComponent(req.params.item);
 
-  // First, fetch the item to get its type
-  const apiUrl = `https://api.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(
+  // First, fetch the item without type to maintain backward compatibility
+  const apiUrl = `https://api3.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(
     itemName
   )}`;
 
@@ -430,7 +427,7 @@ app.get("/item/:item", async (req, res) => {
     }
 
     const item = await response.json();
-    // Redirect to the new URL structure
+    // Redirect to the new URL structure with the correct type
     res.redirect(`/item/${item.type.toLowerCase()}/${itemName}`);
   } catch (error) {
     console.error("Error fetching item data:", error);

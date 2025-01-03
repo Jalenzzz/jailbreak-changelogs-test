@@ -358,7 +358,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/">Home</a></li>
                         <li class="breadcrumb-item"><a href="/values">Values</a></li>
-                        <li class="breadcrumb-item"><a href="/values">${formattedUrlType}s</a></li>
+                        <li class="breadcrumb-item">
+                            <a href="/values?sort=name-${formattedUrlType.toLowerCase()}s&valueSort=alpha-asc">
+                                ${formattedUrlType}s
+                            </a>
+                        </li>
                         <li class="breadcrumb-item active" aria-current="page">${
                           item.name
                         }</li>
