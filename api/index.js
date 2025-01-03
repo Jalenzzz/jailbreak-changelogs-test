@@ -58,23 +58,7 @@ app.set("views", path.join(__dirname, "views")); // Set the directory for your E
 
 app.get("/changelogs", async (req, res) => {
   try {
-    const latestResponse = await fetch(
-      "https://api3.jailbreakchangelogs.xyz/changelogs/latest",
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Origin: "https://jailbreakchangelogs.xyz",
-        },
-      }
-    );
-
-    if (!latestResponse.ok) {
-      throw new Error("Failed to fetch latest changelog ID");
-    }
-
-    const latestData = await latestResponse.json();
-    const latestId = latestData.id;
-
+    const latestId = 351;
     res.redirect(`/changelogs/${latestId}`);
   } catch (error) {
     console.error("Error fetching latest changelog:", error);
@@ -96,24 +80,13 @@ app.get("/owner/check/:user", (req, res) => {
 app.get("/changelogs/:changelog", async (req, res) => {
   let changelogId = req.params.changelog || 1;
   const apiUrl = `https://api3.jailbreakchangelogs.xyz/changelogs/get?id=${changelogId}`;
-
+  const latestId = 351; 
+  // jalen why would you fetch the latest changelog here, islatest is not needed, pls remove it
+  // this part of the code needs to be as fast as possible, this is the server side 
+  // this is the reason the changelogs page is loading so slowly, we are making multiple requests pre load
+  // we should only do the bare essentials in here, such as forming the embed, thats all.
+  // alternatively, just use a constant for the id, since thats all you need, and it rarely changes.
   try {
-    const latestResponse = await fetch(
-      "https://api3.jailbreakchangelogs.xyz/changelogs/latest",
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Origin: "https://jailbreakchangelogs.xyz",
-        },
-      }
-    );
-
-    if (!latestResponse.ok) {
-      throw new Error("Failed to fetch latest changelog");
-    }
-
-    const latestData = await latestResponse.json();
-    const latestId = latestData.id;
 
     // Fetch the requested changelog
     const response = await fetch(apiUrl, {
@@ -165,22 +138,8 @@ app.get("/changelogs/:changelog", async (req, res) => {
 
 app.get("/seasons", async (req, res) => {
   try {
-    const latestResponse = await fetch(
-      "https://api3.jailbreakchangelogs.xyz/seasons/latest",
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Origin: "https://jailbreakchangelogs.xyz",
-        },
-      }
-    );
-
-    if (!latestResponse.ok) {
-      throw new Error("Failed to fetch latest season");
-    }
-
-    const latestData = await latestResponse.json();
-    res.redirect(`/seasons/${latestData.season}`);
+    const latestSeason = 24;
+    res.redirect(`/seasons/${latestSeason}`);
   } catch (error) {
     console.error("Error fetching latest season:", error);
     res.status(500).send("Internal Server Error");
@@ -191,25 +150,8 @@ app.get("/seasons/:season", async (req, res) => {
   let seasonId = req.params.season;
   const apiUrl = `https://api3.jailbreakchangelogs.xyz/seasons/get?season=${seasonId}`;
   const rewardsUrl = `https://api3.jailbreakchangelogs.xyz/rewards/get?season=${seasonId}`;
-
+  const latestSeason = 24;
   try {
-    // First fetch the latest season for fallback
-    const latestResponse = await fetch(
-      "https://api3.jailbreakchangelogs.xyz/seasons/latest",
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Origin: "https://jailbreakchangelogs.xyz",
-        },
-      }
-    );
-
-    if (!latestResponse.ok) {
-      throw new Error("Failed to fetch latest season");
-    }
-
-    const latestData = await latestResponse.json();
-
     // Then fetch the requested season
     const response = await fetch(apiUrl, {
       method: "GET",
@@ -221,7 +163,7 @@ app.get("/seasons/:season", async (req, res) => {
 
     if (response.status === 404 || !response.ok) {
       // Redirect to latest season if requested one doesn't exist
-      return res.redirect(`/seasons/${latestData.season}`);
+      return res.redirect(`/seasons/${latestSeason}`);
     }
 
     const rewardsResponse = await fetch(rewardsUrl, {

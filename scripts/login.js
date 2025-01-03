@@ -30,7 +30,7 @@ $(document).ready(function () {
   });
   if (window.location.search.includes("code=")) {
     const code = new URLSearchParams(window.location.search).get("code");
-    fetch("https://api.jailbreakchangelogs.xyz/auth?code=" + code, {
+    fetch("https://api3.jailbreakchangelogs.xyz/auth?code=" + code, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

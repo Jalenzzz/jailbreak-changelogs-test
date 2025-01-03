@@ -485,16 +485,18 @@ $(document).ready(function () {
     const token = getCookie("token");
 
     // Post the comment to the server
-    fetch("https://api.jailbreakchangelogs.xyz/comments/add", {
+    fetch("https://api3.jailbreakchangelogs.xyz/comments/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        author: token,
+        author: userdata.global_name,
         content: comment.value,
         item_id: localStorage.getItem("selectedSeason"),
         item_type: "season",
+        user_id: userdata.id,
+        owner: token,
       }),
     })
       .then(async (response) => {
@@ -508,7 +510,6 @@ $(document).ready(function () {
 
         if (response.ok) {
           commentsList.prepend(listItem);
-          debouncedReloadComments();
         } else {
           // Handle other non-429 errors (e.g., validation)
           throw_error(data.error || "An error occurred.");
@@ -574,7 +575,7 @@ $(document).ready(function () {
 
     const userDataPromises = commentsToDisplay.map((comment) => {
       return fetch(
-        "https://api.jailbreakchangelogs.xyz/users/get?id=" + comment.user_id
+        "https://api3.jailbreakchangelogs.xyz/users/get?id=" + comment.user_id
       )
         .then((response) => response.json())
         .then((userdata) => ({ comment, userdata }))
@@ -599,6 +600,7 @@ $(document).ready(function () {
             : "assets/profile-pic-placeholder.png";
 
           const listItem = document.createElement("li");
+          listItem.id = `comment-${comment.id}`; // Fixed: comment instead of comment
           listItem.classList.add(
             "list-group-item",
             "d-flex",
@@ -766,13 +768,13 @@ $(document).ready(function () {
             deleteButton.addEventListener("click", (e) => {
               const id = e.target.getAttribute("data-comment-id");
 
-              fetch("https://api.jailbreakchangelogs.xyz/comments/delete", {
+              fetch("https://api3.jailbreakchangelogs.xyz/comments/delete", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  comment_id: id,
+                  id: id,
                   author: getCookie("token"),
                 }),
               })
@@ -783,7 +785,10 @@ $(document).ready(function () {
                   return response.json();
                 })
                 .then((data) => {
-                  reloadcomments();
+                  comment = document.getElementById(`comment-${id}`);
+                  if (comment) {
+                    comment.remove();
+                  }
                   // Add toast notification for successful deletion
                   toastr.success("Comment deleted successfully!", "Success", {
                     positionClass: "toast-bottom-right",
@@ -914,7 +919,7 @@ $(document).ready(function () {
     CommentHeader.textContent =
       "Comments For Season " + localStorage.getItem("selectedSeason");
     fetch(
-      "https://api.jailbreakchangelogs.xyz/comments/get?type=season&id=" +
+      "https://api3.jailbreakchangelogs.xyz/comments/get?type=season&id=" +
         localStorage.getItem("selectedSeason")
     )
       .then((response) => {
@@ -998,13 +1003,13 @@ $(document).ready(function () {
       const token = getCookie("token");
 
       if (newContent) {
-        fetch("https://api.jailbreakchangelogs.xyz/comments/edit", {
+        fetch("https://api3.jailbreakchangelogs.xyz/comments/edit", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            comment_id: commentId,
+            id: commentId,
             content: newContent,
             author: token,
           }),

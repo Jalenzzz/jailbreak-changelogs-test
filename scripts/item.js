@@ -120,7 +120,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
       }
     }
-
+    function getCookie(name) {
+      let cookieArr = document.cookie.split(";");
+      for (let i = 0; i < cookieArr.length; i++) {
+        let cookiePair = cookieArr[i].split("=");
+        if (name === cookiePair[0].trim()) {
+          return decodeURIComponent(cookiePair[1]);
+        }
+      }
+      return null;
+    }
     function showFirefoxAutoplayNotice() {
       // Remove existing notice if present
       const existingNotice = document.querySelector(".firefox-autoplay-notice");
@@ -600,6 +609,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       commentsWrapper.innerHTML = commentTemplate(item, disabled, placeholder);
       const submitButton = document.getElementById("submit-comment");
       const commentInput = document.getElementById("commenter-text");
+
       submitButton.addEventListener("click", async (event) => {
         event.preventDefault();
         if (!user) {
@@ -634,7 +644,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             class="ms-2 comment-item w-100"
             style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
           >
-            <a href="#" style="font-weight: bold; color: #748d92; text-decoration: none;">${
+            <a href="/users/${user.id}" style="font-weight: bold; color: #748d92; text-decoration: none;">${
               user.global_name
             }</a>
             <small class="text-muted
@@ -651,6 +661,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
         const commentsList = document.getElementById("comments-list");
         commentsList.appendChild(listItem);
+        fetch("https://api3.jailbreakchangelogs.xyz/comments/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            author: user.global_name,
+            content: comment,
+            item_id: item.id,
+            item_type: item.type,
+            user_id: user.id,
+            owner: getCookie("token")
+          }),
+        })
       });
     }
   }
@@ -732,63 +756,9 @@ const commentTemplate = (item, disabled, placeholder) => `
 
   <ul id="comments-list" class="list-group">
     <!-- Dummy comments for ${item.name} -->
-    <li class="d-flex align-items-start mb-3">
-      <img
-        src="https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"
-        class="rounded-circle m-1"
-        width="32"
-        height="32"
-        alt="User Avatar"
-      />
-      <div
-        class="ms-2 comment-item w-100"
-        style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
-      >
-        <a href="#" style="font-weight: bold; color: #748d92; text-decoration: none;">Dummy User 1</a>
-        <small class="text-muted"> · December 21st at 07:38 AM</small>
-        <p class="mb-0 comment-text" style="color: #d3d9d4; margin-top: 4px">
-          What will the value be?
-        </p>
-      </div>
-    </li>
-    <li class="d-flex align-items-start mb-3">
-      <img
-        src="https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"
-        class="rounded-circle m-1"
-        width="32"
-        height="32"
-        alt="User Avatar"
-      />
-      <div
-        class="ms-2 comment-item w-100"
-        style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
-      >
-        <a href="#" style="font-weight: bold; color: #748d92; text-decoration: none;">Dummy User 1</a>
-        <small class="text-muted"> · December 21st at 07:38 AM</small>
-        <p class="mb-0 comment-text" style="color: #d3d9d4; margin-top: 4px">
-          What will the value be?
-        </p>
-      </div>
-    </li>
-    <li class="d-flex align-items-start mb-3">
-      <img
-        src="https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg"
-        class="rounded-circle m-1"
-        width="32"
-        height="32"
-        alt="User Avatar"
-      />
-      <div
-        class="ms-2 comment-item w-100"
-        style="background-color: #2e3944; padding: 12px; border-radius: 8px; margin-bottom: 8px;"
-      >
-        <a href="#" style="font-weight: bold; color: #748d92; text-decoration: none;">Dummy User 1</a>
-        <small class="text-muted"> · December 21st at 07:38 AM</small>
-        <p class="mb-0 comment-text" style="color: #d3d9d4; margin-top: 4px">
-          What will the value be?
-        </p>
-      </div>
-    </li>
+
+
+
 
   </ul>
 
