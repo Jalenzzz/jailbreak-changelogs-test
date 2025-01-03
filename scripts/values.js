@@ -581,7 +581,7 @@ document.addEventListener("DOMContentLoaded", () => {
           onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
         >
         <video 
-          src="/assets/items/items/drifts/${item.name}.webm"
+          src="/assets/items/drifts/${item.name}.webm"
           class="card-img-top video-player"
           style="opacity: 0; transition: opacity 0.3s ease-in-out;"
           playsinline 
