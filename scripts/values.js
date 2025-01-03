@@ -50,6 +50,10 @@ window.shareCurrentView = debounce(function () {
     });
 }, 1000);
 
+// Move searchBar declaration outside of DOMContentLoaded to avoid redeclaration
+const searchBar = document.getElementById("search-bar");
+const clearButton = document.getElementById("clear-search");
+
 document.addEventListener("DOMContentLoaded", () => {
   const itemsContainer = document.querySelector("#items-container");
   if (!itemsContainer) return;
@@ -60,6 +64,133 @@ document.addEventListener("DOMContentLoaded", () => {
   let filteredItems = [];
   let isLoading = false;
   let sort = ""; // Track current sort state
+
+  // Define sortItems first before using it
+  window.sortItems = function () {
+    const sortDropdown = document.getElementById("sort-dropdown");
+    const valueSortDropdown = document.getElementById("value-sort-dropdown");
+    const sortValue = sortDropdown?.value || "name-all-items"; // Provide default value and handle null
+    const valueSortType = valueSortDropdown?.value || "alpha-asc"; // Default to alpha-asc
+    const currentSort = sortValue.split("-").slice(1).join("-");
+
+    // Save current filter states before updating anything else
+    sessionStorage.setItem("sortDropdown", sortValue);
+    sessionStorage.setItem("valueSortDropdown", valueSortType);
+    sort = sortValue; // Update global sort variable
+
+    // Update breadcrumb after setting state
+    const categoryNameElement = document.querySelector(".category-name");
+    const valuesBreadcrumb = document.getElementById("values-breadcrumb");
+
+    if (sortValue === "name-all-items") {
+      categoryNameElement.style.display = "none";
+      valuesBreadcrumb.classList.add("active");
+      valuesBreadcrumb.setAttribute("aria-current", "page");
+      valuesBreadcrumb.innerHTML = "Values";
+    } else {
+      let categoryName;
+      if (currentSort === "hyperchromes") {
+        categoryName = "Hyperchromes";
+      } else {
+        categoryName = currentSort
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+      }
+
+      // Make the category name a clickable link that preserves the filter
+      categoryNameElement.innerHTML = `<a href="/values?sort=name-${currentSort}" onclick="handleCategoryClick(event, '${currentSort}')">${categoryName}</a>`;
+      categoryNameElement.style.display = "list-item";
+      categoryNameElement.classList.add("active");
+      categoryNameElement.setAttribute("aria-current", "page");
+
+      // Make Values a normal link
+      valuesBreadcrumb.classList.remove("active");
+      valuesBreadcrumb.removeAttribute("aria-current");
+      valuesBreadcrumb.innerHTML = '<a href="/values">Values</a>';
+    }
+
+    updateSearchPlaceholder();
+    const parts = sortValue.split("-");
+    const sortType = parts[0];
+    const itemType = parts.slice(1).join("-");
+
+    // Clear search bar when switching categories
+    if (searchBar) {
+      searchBar.value = "";
+    }
+
+    // First filter by category
+    if (itemType === "all-items") {
+      filteredItems = [...allItems];
+      localStorage.removeItem("lastSort");
+    } else if (itemType === "limited-items") {
+      // Filter limited items
+      filteredItems = allItems.filter((item) => item.is_limited);
+    } else if (sortType === "name" && itemType === "hyperchromes") {
+      filteredItems = allItems.filter((item) => item.type === "HyperChrome");
+    } else {
+      filteredItems = allItems.filter((item) => {
+        const normalizedItemType = item.type.toLowerCase().replace(" ", "-");
+        const normalizedFilterType = itemType.slice(0, -1);
+        return normalizedItemType === normalizedFilterType;
+      });
+      localStorage.setItem("lastSort", sortValue);
+    }
+
+    // Add handling for random sort
+    if (valueSortType === "random") {
+      filteredItems = shuffleArray([...filteredItems]);
+    } else if (valueSortType !== "none") {
+      // Then sort by value if a value sort is selected
+      const [valueType, direction] = valueSortType.split("-");
+      filteredItems.sort((a, b) => {
+        const valueA =
+          valueType === "cash"
+            ? formatValue(a.cash_value).numeric
+            : formatValue(a.duped_value).numeric;
+        const valueB =
+          valueType === "cash"
+            ? formatValue(b.cash_value).numeric
+            : formatValue(b.duped_value).numeric;
+
+        return direction === "asc" ? valueA - valueB : valueB - valueA;
+      });
+    }
+
+    // Add alphabetical sorting logic
+    if (valueSortType === "alpha-asc" || valueSortType === "alpha-desc") {
+      filteredItems.sort((a, b) => {
+        return valueSortType === "alpha-asc"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      });
+    }
+
+    updateTotalItemsLabel(itemType);
+    currentPage = 1;
+    displayItems();
+  };
+
+  // Now check for saved sort
+  const savedSort = sessionStorage.getItem("sortDropdown");
+  if (savedSort) {
+    const sortDropdown = document.getElementById("sort-dropdown");
+    if (sortDropdown) {
+      try {
+        sortDropdown.value = savedSort;
+        sort = savedSort; // Set global sort variable
+        // Safely call sortItems
+        if (typeof window.sortItems === "function") {
+          window.sortItems();
+        } else {
+          console.error("sortItems function not properly initialized");
+        }
+      } catch (err) {
+        console.error("Error restoring sort:", err);
+      }
+    }
+  }
 
   showSkeletonCards();
 
@@ -103,10 +234,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Restore filters from localStorage
+  // Restore filters from sessionStorage
   function restoreFilters() {
-    const savedSortDropdown = localStorage.getItem("sortDropdown");
-    const savedValueSort = localStorage.getItem("valueSortDropdown");
+    const savedSortDropdown = sessionStorage.getItem("sortDropdown");
+    const savedValueSort = sessionStorage.getItem("valueSortDropdown");
     const savedSearch = localStorage.getItem("searchTerm");
 
     if (savedSortDropdown) {
@@ -183,8 +314,6 @@ document.addEventListener("DOMContentLoaded", () => {
   updateSearchPlaceholder();
 
   // Clear search input
-  const searchBar = document.getElementById("search-bar");
-  const clearButton = document.getElementById("clear-search");
   if (searchBar) {
     searchBar.value = "";
     // Add event listener for showing/hiding clear button
@@ -201,24 +330,36 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       allItems = await response.json();
 
-      // Get saved sort from localStorage
-      const savedSort = localStorage.getItem("sortDropdown");
+      // Preload drift thumbnails
+      const driftItems = allItems.filter((item) => item.type === "Drift");
+      preloadDriftThumbnails(driftItems);
 
-      // Always set initial filtered items
-      filteredItems = [...allItems];
+      // Get saved sort from sessionStorage
+      const savedSort = sessionStorage.getItem("sortDropdown");
+      const savedValueSort = sessionStorage.getItem("valueSortDropdown");
+
+      // Always set initial filtered items and shuffle them
+      filteredItems = shuffleArray([...allItems]);
 
       if (savedSort) {
         const sortDropdown = document.getElementById("sort-dropdown");
-        if (sortDropdown) {
+        const valueSortDropdown = document.getElementById(
+          "value-sort-dropdown"
+        );
+        if (sortDropdown && valueSortDropdown) {
           sortDropdown.value = savedSort;
+          valueSortDropdown.value = savedValueSort || "random";
           sort = savedSort;
-          await sortItems();
+          if (savedValueSort === "random") {
+            displayItems(); // Just display shuffled items
+          } else {
+            await sortItems(); // Apply saved sort
+          }
           return;
         }
       }
 
-      // If no saved sort, use default behavior
-      filteredItems = shuffleArray([...allItems]);
+      // If no saved sort, just display shuffled items
       displayItems();
       updateTotalItemsCount();
       updateTotalItemsLabel("all-items");
@@ -330,10 +471,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const endIndex = startIndex + itemsPerPage;
     const itemsToDisplay = filteredItems.slice(startIndex, endIndex);
 
-    itemsToDisplay.forEach((item) => {
-      const cardDiv = createItemCard(item);
+    for (let i = 0; i < itemsToDisplay.length; i++) {
+      const cardDiv = createItemCard(itemsToDisplay[i]);
       itemsRow.appendChild(cardDiv);
-    });
+    }
 
     // Remove old sentinel if exists
     const oldSentinel = itemsContainer.querySelector(".sentinel");
@@ -390,15 +531,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // Format display value based on screen size
     let displayValue;
     if (window.innerWidth <= 768) {
-      // Mobile devices
+      // Mobile devices - use 2 decimal places for better precision
       if (numericValue >= 1000000) {
-        displayValue = (numericValue / 1000000).toFixed(1) + "M";
+        displayValue =
+          (numericValue / 1000000).toFixed(2).replace(/\.?0+$/, "") + "M";
       } else if (numericValue >= 1000) {
-        displayValue = (numericValue / 1000).toFixed(1) + "K";
+        displayValue =
+          (numericValue / 1000).toFixed(2).replace(/\.?0+$/, "") + "K";
       } else {
         displayValue = numericValue.toString();
       }
     } else {
+      // Desktop - use comma formatting
       displayValue = numericValue.toLocaleString("en-US");
     }
 
@@ -423,61 +567,59 @@ document.addEventListener("DOMContentLoaded", () => {
     if (item.type === "Color") color = "#8A2BE2";
     if (item.type === "Texture") color = "#708090";
     if (item.type === "HyperChrome") color = "#E91E63";
+    if (item.type === "Furniture") color = "#9C6644";
 
-    // Determine the image type and URL
-    const image_type = item.type.toLowerCase();
-    const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}`;
-
-    let mediaElement = "";
-    if (item.type === "Drift") {
-      mediaElement = `
-      <div class="media-container">
-        <div class="skeleton-loader"></div>
-        <img 
-          src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${item.name}.webp"
-          class="card-img-top thumbnail"
-          alt="${item.name}"
-          onerror="handleimage(this)"
-        >
-        <video 
-          src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${item.name}.webm"
-          class="card-img-top video-player"
-          playsinline 
-          muted 
-          loop
-          onloadeddata="this.parentElement.querySelector('.skeleton-loader').style.display='none'"
-        ></video>
-      </div>`;
-    } else if (item.name === "HyperShift" && item.type === "HyperChrome") {
-      mediaElement = `
-        <div class="media-container">
-            <div class="skeleton-loader"></div>
-            <video 
-                src="https://cdn.jailbreakchangelogs.xyz/images/items/hyperchromes/HyperShift.webm"
-                class="card-img-top"
-                playsinline 
-                muted 
-                loop
-                autoplay
-                id="hypershift-video"
-                onloadeddata="this.parentElement.querySelector('.skeleton-loader').style.display='none'"
-                onerror="console.error('Failed to load HyperShift video:', this.src)"
-            ></video>
+    // Determine the image URL directly from item type
+    const mediaElement =
+      item.type === "Drift"
+        ? `<div class="media-container">
+          <div class="skeleton-loader active"></div>
+          <img 
+            src="/assets/items/drifts/thumbnails/${item.name}.webp"
+            class="card-img-top thumbnail"
+            alt="${item.name}"
+            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+            onerror="handleimage(this)"
+            onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
+          >
+          <video 
+            src="/assets/items/drifts/${item.name}.webm"
+            class="card-img-top video-player"
+            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+            playsinline 
+            muted 
+            loop
+            onloadeddata="this.style.opacity='1'"
+          ></video>
+        </div>`
+        : item.type === "HyperChrome" && item.name === "HyperShift"
+        ? `<div class="media-container">
+          <div class="skeleton-loader active"></div>
+          <video 
+            src="/assets/items/hyperchromes/HyperShift.webm"
+            class="card-img-top"
+            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+            playsinline 
+            muted 
+            loop
+            autoplay
+            id="hypershift-video"
+            onloadeddata="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
+            onerror="handleimage(this)"
+          ></video>
+        </div>`
+        : `<div class="media-container">
+          <div class="skeleton-loader active"></div>
+          <img 
+            onerror="handleimage(this)" 
+            id="${item.name}" 
+            src="/assets/items/${item.type.toLowerCase()}s/${item.name}.webp" 
+            class="card-img-top" 
+            alt="${item.name}" 
+            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+            onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
+          >
         </div>`;
-    } else {
-      mediaElement = `
-        <div class="media-container">
-        <div class="skeleton-loader"></div>
-        <img 
-          onerror="handleimage(this)" 
-          id="${item.name}" 
-          src="${image_url}.webp" 
-          class="card-img-top" 
-          alt="${item.name}" 
-          onload="this.style.opacity='1'; this.previousElementSibling.style.display='none'"
-        >
-      </div>`;
-    }
 
     // Format values
     const cashValue = formatValue(item.cash_value);
@@ -679,96 +821,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return array;
   }
 
-  window.sortItems = function () {
-    const sortDropdown = document.getElementById("sort-dropdown");
-    const valueSortDropdown = document.getElementById("value-sort-dropdown");
-    const sortValue = sortDropdown.value;
-    const valueSortType = valueSortDropdown.value;
-    const currentSort = sortValue.split("-").slice(1).join("-");
-
-    // Update breadcrumb
-    const categoryNameElement = document.querySelector(".category-name");
-
-    if (sortValue === "name-all-items") {
-      categoryNameElement.style.display = "none";
-    } else {
-      let categoryName;
-      if (currentSort === "hyperchromes") {
-        categoryName = "Hyperchromes";
-      } else {
-        categoryName = currentSort
-          .split("-")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ");
-      }
-      categoryNameElement.textContent = categoryName;
-      categoryNameElement.style.display = "list-item";
-    }
-
-    // Save current filter states
-    localStorage.setItem("sortDropdown", sortValue);
-    localStorage.setItem("valueSortDropdown", valueSortType);
-    sort = sortValue;
-
-    updateSearchPlaceholder();
-    const parts = sortValue.split("-");
-    const sortType = parts[0];
-    const itemType = parts.slice(1).join("-");
-
-    // Clear search bar when switching categories
-    if (searchBar) {
-      searchBar.value = "";
-    }
-
-    // First filter by category
-    if (itemType === "all-items") {
-      filteredItems = [...allItems];
-      localStorage.removeItem("lastSort");
-    } else if (itemType === "limited-items") {
-      // Filter limited items
-      filteredItems = allItems.filter((item) => item.is_limited);
-    } else if (sortType === "name" && itemType === "hyperchromes") {
-      filteredItems = allItems.filter((item) => item.type === "HyperChrome");
-    } else {
-      filteredItems = allItems.filter((item) => {
-        const normalizedItemType = item.type.toLowerCase().replace(" ", "-");
-        const normalizedFilterType = itemType.slice(0, -1);
-        return normalizedItemType === normalizedFilterType;
-      });
-      localStorage.setItem("lastSort", sortValue);
-    }
-
-    // Then sort by value if a value sort is selected
-    if (valueSortType !== "none") {
-      const [valueType, direction] = valueSortType.split("-");
-      filteredItems.sort((a, b) => {
-        const valueA =
-          valueType === "cash"
-            ? formatValue(a.cash_value).numeric
-            : formatValue(a.duped_value).numeric;
-        const valueB =
-          valueType === "cash"
-            ? formatValue(b.cash_value).numeric
-            : formatValue(b.duped_value).numeric;
-
-        return direction === "asc" ? valueA - valueB : valueB - valueA;
-      });
-    }
-
-    // Add alphabetical sorting logic
-    if (valueSortType === "alpha-asc" || valueSortType === "alpha-desc") {
-      filteredItems.sort((a, b) => {
-        return valueSortType === "alpha-asc"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      });
-    }
-
-    updateTotalItemsLabel(itemType);
-    currentPage = 1;
-    displayItems();
-  };
-
   function preloadItemImages() {
     if (!allItems || allItems.length === 0) {
       return;
@@ -780,7 +832,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (item.type.toLowerCase() === "drift") continue;
 
       const image_type = item.type.toLowerCase();
-      const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${image_type}s/${item.name}.webp`;
+      const image_url = `/assets/items/${image_type}s/${item.name}.webp`;
 
       const promise = new Promise((resolve, reject) => {
         const img = new Image();
@@ -804,32 +856,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Update clearFilters function
   window.clearFilters = debounce(function () {
-    // Clear localStorage
-    localStorage.removeItem("sortDropdown");
-    localStorage.removeItem("valueSortDropdown");
+    // Clear sessionStorage
+    sessionStorage.removeItem("sortDropdown");
+    sessionStorage.removeItem("valueSortDropdown");
 
     // Reset dropdowns
     document.getElementById("sort-dropdown").value = "name-all-items";
-    document.getElementById("value-sort-dropdown").value = "alpha-asc"; // Reset to A-Z
+    document.getElementById("value-sort-dropdown").value = "random"; // Match initial load state
 
-    // Hide category in breadcrumb
+    // Update breadcrumb state
     const categoryNameElement = document.querySelector(".category-name");
-    categoryNameElement.style.display = "none";
+    const valuesBreadcrumb = document.getElementById("values-breadcrumb");
 
-    // Get search value before resetting display
-    const searchBar = document.getElementById("search-bar");
-    const searchValue = searchBar ? searchBar.value : "";
+    categoryNameElement.style.display = "none";
+    valuesBreadcrumb.classList.add("active");
+    valuesBreadcrumb.setAttribute("aria-current", "page");
+    valuesBreadcrumb.innerHTML = "Values";
 
     // Reset items display
     currentPage = 1;
     filteredItems = [...allItems];
-
-    // Sort items A-Z by default
-    filteredItems.sort((a, b) => a.name.localeCompare(b.name));
+    filteredItems = shuffleArray(filteredItems); // Shuffle items to match 'random' sort
 
     // If there's a search term, perform the search
-    if (searchValue.trim()) {
-      filterItems(); // This will use the existing search term
+    const searchValue = searchBar?.value?.trim() || "";
+    if (searchValue) {
+      filterItems();
     } else {
       displayItems();
       updateTotalItemsCount();
@@ -838,7 +890,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateSearchPlaceholder();
 
-    // Show success toast
     toastr.success("Filters have been reset", "Filters Reset");
   }, 500);
 
@@ -846,17 +897,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const valueSortDropdown = document.getElementById("value-sort-dropdown");
   if (valueSortDropdown) {
     valueSortDropdown.innerHTML = `
-     <option value="separator" disabled>───── Alphabetically ─────</option>
-      <option value="alpha-asc">Name (A to Z)</option>
-      <option value="alpha-desc">Name (Z to A)</option>
-      <option value="separator" disabled>───── Values ─────</option>
-      <option value="cash-asc">Cash Value (Low to High)</option>
-      <option value="cash-desc">Cash Value (High to Low)</option>
-      <option value="duped-asc">Duped Value (Low to High)</option>
-      <option value="duped-desc">Duped Value (High to Low)</option>
+    <option value="random">Random</option>
+    <option value="separator" disabled>───── Alphabetically ─────</option>
+    <option value="alpha-asc">Name (A to Z)</option>
+    <option value="alpha-desc">Name (Z to A)</option>
+    <option value="separator" disabled>───── Values ─────</option>
+    <option value="cash-asc">Cash Value (Low to High)</option>
+    <option value="cash-desc">Cash Value (High to Low)</option>
+    <option value="duped-asc">Duped Value (Low to High)</option>
+    <option value="duped-desc">Duped Value (High to Low)</option>
     `;
-    // Set default sort to A-Z
-    valueSortDropdown.value = "alpha-asc";
+    // Set default sort to random
+    valueSortDropdown.value = "random";
     sortItems(); // Apply initial sort
   }
 
@@ -905,6 +957,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Clean up the URL without refreshing the page
     window.history.replaceState({}, "", window.location.pathname);
+  }
+
+  // Restore contributors section state on mobile
+  if (window.innerWidth <= 768) {
+    const grid = document.querySelector(".contributors-grid");
+    const icon = document.querySelector(".toggle-icon");
+    const expanded = localStorage.getItem("contributorsExpanded") === "true";
+
+    if (expanded) {
+      grid.classList.add("expanded");
+      icon.classList.add("collapsed");
+    }
   }
 });
 
@@ -977,6 +1041,7 @@ function updateSearchPlaceholder() {
     "body-colors": "Search colors (e.g., Red, Blue)...",
     textures: "Search textures (e.g., Aurora, Checkers)...",
     hyperchromes: "Search HyperChromes (e.g., HyperBlue Level 2)...",
+    furniture: "Search furniture (e.g., Nukamo Fridge, Bloxy Lisa)...",
   };
 
   // Set the placeholder text
@@ -984,8 +1049,67 @@ function updateSearchPlaceholder() {
 }
 
 window.handleCardClick = function (name, type) {
+  // Always convert spaces to hyphens for consistent storage
+  const formattedType = type.replace(/\s+/g, "-");
+
+  // Store the type-specific sort value before navigating
+  sessionStorage.setItem("sortDropdown", `name-${formattedType}s`);
+
   const formattedName = encodeURIComponent(name);
-  const formattedType = encodeURIComponent(type.toLowerCase());
-  const url = `/item/${formattedType}/${formattedName}`;
+  const formattedUrlType = encodeURIComponent(type.toLowerCase());
+  const url = `/item/${formattedUrlType}/${formattedName}`;
   window.location.href = url;
 };
+
+window.handleCategoryClick = function (event, category) {
+  event.preventDefault();
+
+  // Convert any spaces to hyphens in the category name
+  const hyphenatedCategory = category.replace(/\s+/g, "-");
+
+  // Set both dropdown value and sessionStorage
+  const dropdown = document.getElementById("sort-dropdown");
+  const newValue = `name-${hyphenatedCategory}`;
+  dropdown.value = newValue;
+  sessionStorage.setItem("sortDropdown", newValue);
+
+  // Apply the filter
+  sortItems();
+
+  // Clean up URL after applying filter
+  window.history.replaceState({}, "", "/values");
+};
+
+// Make sure sortItems is accessible globally
+if (typeof window.sortItems !== "function") {
+  console.warn("sortItems not found on window object, ensuring it's defined");
+  window.sortItems = function () {
+    console.warn("Fallback sortItems called - page may need refresh");
+  };
+}
+
+function toggleContributors(header) {
+  const grid = header.nextElementSibling;
+  const icon = header.querySelector(".toggle-icon");
+
+  if (window.innerWidth <= 768) {
+    grid.classList.toggle("expanded");
+    icon.classList.toggle("collapsed");
+
+    // Store the state in localStorage
+    localStorage.setItem(
+      "contributorsExpanded",
+      grid.classList.contains("expanded")
+    );
+  }
+}
+
+// Add preloading specifically for drift thumbnails
+function preloadDriftThumbnails(driftItems) {
+  if (!driftItems || driftItems.length === 0) return;
+
+  driftItems.forEach((item) => {
+    const img = new Image();
+    img.src = `/assets/items/drifts/thumbnails/${item.name}.webp`;
+  });
+}

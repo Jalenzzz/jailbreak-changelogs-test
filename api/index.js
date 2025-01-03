@@ -10,12 +10,18 @@ const fs = require("fs");
 const DATA_SOURCE_URL =
   "https://badimo.nyc3.digitaloceanspaces.com/trade/frequency/snapshot/month/latest.json";
 
+app.use((req, res, next) => {
+  res.locals.req = req;
+  next();
+});
+
 app.use(express.static(path.join(__dirname, "../")));
 app.use(
   cors({
     origin: "https://jailbreakchangelogs.xyz",
   })
 );
+
 // Serve the changelogs.html file
 app.get("/trade-data", async (req, res) => {
   try {
@@ -89,11 +95,9 @@ app.get("/owner/check/:user", (req, res) => {
 
 app.get("/changelogs/:changelog", async (req, res) => {
   let changelogId = req.params.changelog || 1;
-  console.log(`Fetching changelog with ID: ${changelogId}`);
   const apiUrl = `https://api3.jailbreakchangelogs.xyz/changelogs/get?id=${changelogId}`;
 
   try {
-    // First fetch the latest changelog ID for fallback
     const latestResponse = await fetch(
       "https://api3.jailbreakchangelogs.xyz/changelogs/latest",
       {
@@ -111,7 +115,7 @@ app.get("/changelogs/:changelog", async (req, res) => {
     const latestData = await latestResponse.json();
     const latestId = latestData.id;
 
-    // Now fetch the requested changelog
+    // Fetch the requested changelog
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
@@ -121,7 +125,6 @@ app.get("/changelogs/:changelog", async (req, res) => {
     });
 
     if (response.status === 404) {
-      // Redirect to latest changelog if requested one doesn't exist
       return res.redirect(`/changelogs/${latestId}`);
     }
 
@@ -132,15 +135,20 @@ app.get("/changelogs/:changelog", async (req, res) => {
     const data = await response.json();
     const { title, image_url } = data;
 
+    // Include additional SEO metadata
     const responseData = {
       title,
       image_url,
-      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Changelogs_Logo.webp",
+      logoUrl: "/assets/logos/Changelogs_Logo.webp",
       logoAlt: "Changelogs Page Logo",
       changelogId,
       embed_color: 0x134d64,
+      isLatest: changelogId === latestId,
+      canonicalUrl: "https://testing.jailbreakchangelogs.xyz/changelogs",
+      metaDescription: `View detailed changelog information for Jailbreak update ${title}. Track new features, vehicles, and game improvements.`,
     };
 
+    // Handle different response types
     if (
       req.headers["user-agent"]?.includes("DiscordBot") ||
       req.query.format === "discord"
@@ -227,9 +235,8 @@ app.get("/seasons/:season", async (req, res) => {
       return res.render("seasons", {
         season: "???",
         title: "Season not found",
-        image_url:
-          "https://cdn.jailbreakchangelogs.xyz/images/changelogs/346.webp",
-        logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Seasons_Logo.webpg",
+        image_url: "/assets/images/changelogs/346.webp",
+        logoUrl: "/assets/logos/Seasons_Logo.webpg",
         logoAlt: "Jailbreak Seasons Logo",
         seasonId,
       });
@@ -244,8 +251,7 @@ app.get("/seasons/:season", async (req, res) => {
     );
 
     // Ensure we got the reward before accessing properties
-    let image_url =
-      "https://cdn.jailbreakchangelogs.xyz/images/changelogs/346.webp";
+    let image_url = "/assets/images/changelogs/346.webp";
     if (level_10_reward) {
       image_url = level_10_reward.link;
     }
@@ -255,7 +261,7 @@ app.get("/seasons/:season", async (req, res) => {
       season,
       title,
       image_url,
-      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Seasons_Logo.webp",
+      logoUrl: "/assets/logos/Seasons_Logo.webp",
       logoAlt: "Jailbreak Seasons Logo",
       seasonId,
     }); // Render the seasons page with the retrieved data
@@ -268,7 +274,7 @@ app.get("/seasons/:season", async (req, res) => {
 app.get("/trading", (req, res) => {
   res.render("trading", {
     title: "Trading / Changelogs",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Trade_Ads_Logo.webp",
+    logoUrl: "/assets/logos/Trade_Ads_Logo.webp",
     logoAlt: "Trading Page Logo",
   });
 });
@@ -276,17 +282,17 @@ app.get("/trading", (req, res) => {
 app.get("/dashboard", (req, res) => {
   res.render("dashboard", {
     title: "Admin Control Panel / Changelogs",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Admin_Logo.webp", //TODO: Add logo for trading page
+    logoUrl: "/assets/logos/Admin_Logo.webp", //TODO: Add logo for trading page
     logoAlt: "Admin Page Logo",
   });
 });
 
 app.get("/bot", (req, res) => {
   const randomNumber = Math.floor(Math.random() * 10) + 1;
-  const image = `https://cdn.jailbreakchangelogs.xyz/backgrounds/background${randomNumber}.webp`;
+  const image = `/assets/backgrounds/background${randomNumber}.webp`;
   res.render("bot", {
     title: "Discord Bot / Changelogs",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Discord_Bot_Logo.webp",
+    logoUrl: "/assets/logos/Discord_Bot_Logo.webp",
     logoAlt: "Bot Page Logo",
     image,
   });
@@ -306,9 +312,17 @@ app.get("/values", (req, res) => {
 
   res.render("values", {
     title: "Values / Changelogs",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
+    logoUrl: "/assets/logos/Values_Logo.webp",
     logoAlt: "Values Page Logo",
     initialSort: validSorts.includes(sortParam) ? sortParam : null,
+  });
+});
+
+app.get("/values/calculator", (req, res) => {
+  res.render("calculator", {
+    title: "Value Calculator / Changelogs",
+    logoUrl: "/assets/logos/Values_Logo.webp",
+    logoAlt: "Values Calculator Logo",
   });
 });
 
@@ -317,10 +331,11 @@ app.get("/item/:type/:item", async (req, res) => {
     .trim()
     .replace(/\s+/g, " ");
   let itemType = decodeURIComponent(req.params.type).trim().toLowerCase();
+  const formattedUrlType = itemType.charAt(0).toUpperCase() + itemType.slice(1);
 
-  const apiUrl = `https://api.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(
+  const apiUrl = `https://api3.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(
     itemName
-  )}`;
+  )}&type=${itemType}`;
 
   try {
     const response = await fetch(apiUrl, {
@@ -331,52 +346,67 @@ app.get("/item/:type/:item", async (req, res) => {
       },
     });
 
-    if (response.status === 404) {
+    const item = await response.json();
+
+    // If item not found, return the error page but with itemName in the title
+    if (response.status === 404 || item.error) {
       return res.render("item", {
-        title: "Item not found",
-        logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
+        title: `${itemName} / Changelogs`, // Keep the item name in title
+        logoUrl: "/assets/logos/Values_Logo.webp",
         logoAlt: "Item Page Logo",
         itemName,
         itemType,
+        formattedUrlType,
         error: true,
-        image_url: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
+        image_url: "/assets/logos/Values_Logo.webp",
         item: {
-          image: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
+          name: itemName, // Include the name in the item object
+          image: "/assets/logos/Values_Logo.webp",
         },
       });
     }
 
-    if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}`);
+    // For successful responses, generate image URL based on item type from API
+    let image_url;
+    if (item.type === "Drift") {
+      // Special case for drifts - use thumbnails
+      image_url = `/assets/items/drifts/thumbnails/${item.name}.webp`;
+    } else if (item.type === "HyperChrome" && item.name === "HyperShift") {
+      // Special case for HyperShift - use video
+      image_url = `/assets/items/hyperchromes/HyperShift.webm`;
+    } else {
+      // For all other items, use type directly from API response
+      const pluralType = `${item.type.toLowerCase()}s`;
+      image_url = `/assets/items/${pluralType}/${item.name}.webp`;
     }
-
-    const item = await response.json();
-
-    const image_url = `https://cdn.jailbreakchangelogs.xyz/images/items/${itemType}s/${item.name}.webp`;
     item.image = image_url;
 
     res.render("item", {
       title: `${item.name} / Changelogs`,
-      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
+      logoUrl: "/assets/logos/Values_Logo.webp",
       logoAlt: "Item Page Logo",
       itemName: item.name,
       itemType,
+      formattedUrlType,
       item,
       image_url,
     });
   } catch (error) {
     console.error("Error fetching item data:", error);
+    // Even in case of error, keep the item name in the title
     res.render("item", {
-      title: "Error",
-      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Values_Logo.webp",
+      title: `${itemName} / Changelogs`,
+      logoUrl: "/assets/logos/Values_Logo.webp",
       logoAlt: "Item Page Logo",
       itemName,
       itemType,
+      formattedUrlType,
       error: true,
       errorMessage: "Internal Server Error",
-      image_url: "https://cdn.jailbreakchangelogs.xyz/images/not-found.webp",
+      image_url: "/assets/logos/Values_Logo.webp",
       item: {
-        image: "https://cdn.jailbreakchangelogs.xyz/images/not-found.webp",
+        name: itemName,
+        image: "/assets/logos/Values_Logo.webp",
       },
     });
   }
@@ -384,11 +414,10 @@ app.get("/item/:type/:item", async (req, res) => {
 
 // Keep the old route for backward compatibility
 app.get("/item/:item", async (req, res) => {
-  // Redirect to the new route structure
   const itemName = decodeURIComponent(req.params.item);
 
-  // First, fetch the item to get its type
-  const apiUrl = `https://api.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(
+  // First, fetch the item without type to maintain backward compatibility
+  const apiUrl = `https://api3.jailbreakchangelogs.xyz/items/get?name=${encodeURIComponent(
     itemName
   )}`;
 
@@ -406,7 +435,7 @@ app.get("/item/:item", async (req, res) => {
     }
 
     const item = await response.json();
-    // Redirect to the new URL structure
+    // Redirect to the new URL structure with the correct type
     res.redirect(`/item/${item.type.toLowerCase()}/${itemName}`);
   } catch (error) {
     console.error("Error fetching item data:", error);
@@ -417,7 +446,7 @@ app.get("/item/:item", async (req, res) => {
 app.get("/faq", (req, res) => {
   res.render("faq", {
     title: "User FAQ",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/FAQ_Logo.webp",
+    logoUrl: "/assets/logos/FAQ_Logo.webp",
     logoAlt: "FAQ Page Logo",
   });
 });
@@ -425,7 +454,7 @@ app.get("/faq", (req, res) => {
 app.get("/privacy", (req, res) => {
   res.render("privacy", {
     title: "Privacy Policy / Changelogs",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Privacy_Logo.webp",
+    logoUrl: "/assets/logos/Privacy_Logo.webp",
     logoAlt: "Privacy Policy Page Logo",
   });
 });
@@ -433,7 +462,7 @@ app.get("/privacy", (req, res) => {
 app.get("/tos", (req, res) => {
   res.render("tos", {
     title: "Terms Of Service / Changelogs",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Tos_Logo.webp",
+    logoUrl: "/assets/logos/Tos_Logo.webp",
     logoAlt: "TOS Page Logo",
   });
 });
@@ -445,11 +474,10 @@ app.get("/botinvite", (req, res) => {
 app.get("/keys", (req, res) => {
   res.render("keys", {
     title: "API / Changelogs",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Api_Logo.webp",
+    logoUrl: "/assets/logos/Api_Logo.webp",
     logoAlt: "API Page Logo",
   });
 });
-
 app.get("/roblox", (req, res) => {
   res.render("roblox");
 });
@@ -497,7 +525,7 @@ app.get("/users/:user/followers", async (req, res) => {
       isPrivate: true, // Ensure isPrivate is set for private profiles
       path: req.path, // Add this line
       title: "Followers / Changelogs",
-      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
+      logoUrl: "/assets/logos/Users_Logo.webp",
       logoAlt: "Users Page Logo",
       user: req.user || null, // Add this line - passes the logged in user or null if not logged in
     });
@@ -526,7 +554,7 @@ app.get("/users/:user/followers", async (req, res) => {
     isPrivate: false, // Add this line to define isPrivate for public profiles
     path: req.path, // Add this line
     title: "Followers / Changelogs",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
+    logoUrl: "/assets/logos/Users_Logo.webp",
     logoAlt: "Users Page Logo",
     user: req.user || null, // Add this line - passes the logged in user or null if not logged in
   });
@@ -571,7 +599,7 @@ app.get("/users/:user/following", async (req, res) => {
       isPrivate: true, // Ensure isPrivate is set for private profiles
       path: req.path, // Add this line
       title: "Following / Changelogs",
-      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
+      logoUrl: "/assets/logos/Users_Logo.webp",
       logoAlt: "Users Page Logo",
       user: req.user || null, // Add this line - passes the logged in user or null if not logged in
     });
@@ -600,7 +628,7 @@ app.get("/users/:user/following", async (req, res) => {
     isPrivate: false, // Add this line to define isPrivate for public profiles
     path: req.path, // Add this line
     title: "Users - Following",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
+    logoUrl: "/assets/logos/Users_Logo.webp",
     logoAlt: "Users Page Logo",
     user: req.user || null, // Add this line - passes the logged in user or null if not logged in
   });
@@ -611,89 +639,83 @@ app.get("/sitemap.xml", (req, res) => {
   res.header("Content-Type", "application/xml");
 
   const sitemap = `
-  <?xml version="1.0" encoding="utf-8"?><!--Generated by Screaming Frog SEO Spider 21.1-->
+  <?xml version="1.0" encoding="utf-8"?><!--Generated by Screaming Frog SEO Spider 21.3-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://testing.jailbreakchangelogs.xyz/</loc>
-    <lastmod>2024-12-30</lastmod>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://testing.jailbreakchangelogs.xyz/tos</loc>
-    <lastmod>2024-12-30</lastmod>
+    <loc>https://testing.jailbreakchangelogs.xyz/faq</loc>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://testing.jailbreakchangelogs.xyz/faq</loc>
-    <lastmod>2024-12-30</lastmod>
+    <loc>https://testing.jailbreakchangelogs.xyz/tos</loc>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://testing.jailbreakchangelogs.xyz/trading</loc>
-    <lastmod>2024-12-30</lastmod>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://testing.jailbreakchangelogs.xyz/privacy</loc>
-    <lastmod>2024-12-30</lastmod>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://testing.jailbreakchangelogs.xyz/keys</loc>
-    <lastmod>2024-12-30</lastmod>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://testing.jailbreakchangelogs.xyz/tradetracker</loc>
-    <lastmod>2024-12-30</lastmod>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://testing.jailbreakchangelogs.xyz/values</loc>
-    <lastmod>2024-12-30</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://testing.jailbreakchangelogs.xyz/timeline</loc>
-    <lastmod>2024-12-30</lastmod>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://testing.jailbreakchangelogs.xyz/bot</loc>
-    <lastmod>2024-12-30</lastmod>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://testing.jailbreakchangelogs.xyz/timeline</loc>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://testing.jailbreakchangelogs.xyz/users</loc>
-    <lastmod>2024-12-30</lastmod>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://testing.jailbreakchangelogs.xyz/botinvite</loc>
-    <lastmod>2024-12-30</lastmod>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://testing.jailbreakchangelogs.xyz/seasons/24</loc>
-    <lastmod>2024-12-30</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://testing.jailbreakchangelogs.xyz/changelogs/351</loc>
-    <lastmod>2024-12-30</lastmod>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -707,7 +729,7 @@ app.get("/sitemap.xml", (req, res) => {
 app.get("/users", (req, res) => {
   res.render("usersearch", {
     title: "Users / Changelogs",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
+    logoUrl: "/assets/logos/Users_Logo.webp",
     logoAlt: "Users Page Logo",
   });
 });
@@ -732,7 +754,7 @@ app.get("/users/:user", async (req, res) => {
   if (!user) {
     return res.render("usersearch", {
       title: "Users / Changelogs",
-      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
+      logoUrl: "/assets/logos/Users_Logo.webp",
       logoAlt: "Users Page Logo",
     });
   }
@@ -797,7 +819,7 @@ app.get("/users/:user", async (req, res) => {
       avatar,
       settings,
       title: "User Profile / Changelogs",
-      logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Users_Logo.webp",
+      logoUrl: "/assets/logos/Users_Logo.webp",
       logoAlt: "User Profile Logo",
     });
   } catch (error) {
@@ -809,7 +831,7 @@ app.get("/users/:user", async (req, res) => {
 app.get("/timeline", (req, res) => {
   res.render("timeline", {
     title: "Timeline / Changelogs",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Timeline_Logo.webp",
+    logoUrl: "/assets/logos/Timeline_Logo.webp",
     logoAlt: "Timeline Page Logo",
   });
 });
@@ -817,18 +839,17 @@ app.get("/timeline", (req, res) => {
 app.get("/tradetracker", (req, res) => {
   res.render("tradetracker", {
     title: "Trade Tracker / Changelogs",
-    logoUrl:
-      "https://cdn.jailbreakchangelogs.xyz/logos/Trade_Tracker_Logo.webp",
+    logoUrl: "/assets/logos/Trade_Tracker_Logo.webp",
     logoAlt: "Trade Tracker Page Logo",
   });
 });
 
 app.get("/", (req, res) => {
   const randomNumber = Math.floor(Math.random() * 10) + 1;
-  const image = `https://cdn.jailbreakchangelogs.xyz/backgrounds/background${randomNumber}.webp`;
+  const image = `/assets/backgrounds/background${randomNumber}.webp`;
   res.render("index", {
     title: "Home / Changelogs",
-    logoUrl: "https://cdn.jailbreakchangelogs.xyz/logos/Homepage_Logo.webp",
+    logoUrl: "/assets/logos/Homepage_Logo.webp",
     logoAlt: "Home Page Logo",
     image,
   });

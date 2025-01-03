@@ -47,7 +47,29 @@ body[data-bs-theme="dark"] {
   background-color: var(--bg-secondary);
   padding-bottom: 80px;
 }
+.btn-calculator {
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 
+.btn-calculator:hover {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.btn-calculator i {
+  font-size: 1.1rem;
+}
 .btn-primary {
   background-color: var(
     --button-primary-bg
@@ -209,6 +231,14 @@ button {
   }
   .preview-items {
     grid-template-columns: repeat(2, 1fr); /* 2 items per row */
+  }
+  .btn-calculator {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-calculator i {
+    font-size: 1rem;
   }
 }
 
@@ -588,25 +618,11 @@ button {
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 280px; /* Ensure consistent height */
+  position: relative;
+  overflow: hidden;
 }
 
-.trade-card.empty-slot.selected,
-.trade-card.empty-slot:hover,
-.trade-card.empty-slot:focus {
-  border-color: var(--text-muted);
-  background-image: url("/assets/add_item.png");
-  background-size: 60%;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.trade-card.empty-slot.selected .empty-slot-content,
-.trade-card.empty-slot:hover .empty-slot-content,
-.trade-card.empty-slot:focus .empty-slot-content {
-  opacity: 0;
-}
-
-.empty-slot-content {
+.trade-card.empty-slot .empty-slot-content {
   position: absolute;
   top: 0;
   left: 0;
@@ -618,6 +634,47 @@ button {
   justify-content: center;
   transition: opacity 0.2s ease;
   background-color: var(--bg-primary);
+}
+
+.trade-card.empty-slot:hover .empty-slot-content,
+.trade-card.empty-slot.selected .empty-slot-content {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Update hover icon styles */
+.trade-card.empty-slot::before {
+  content: "\F4FA";
+  font-family: "bootstrap-icons";
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 3rem;
+  color: var(--text-primary);
+  transition: top 0.3s ease;
+  z-index: 2;
+}
+
+.trade-card.empty-slot:hover::before {
+  top: 40%;
+}
+
+.trade-card.empty-slot.selected::before {
+  top: 40%;
+}
+
+/* Update hover states */
+.trade-card.empty-slot.selected,
+.trade-card.empty-slot:hover,
+.trade-card.empty-slot:focus {
+  border-color: var(--text-muted);
+  background-color: var(--bg-primary);
+}
+
+.trade-card.empty-slot.selected .empty-slot-content,
+.trade-card.empty-slot:hover .empty-slot-content {
+  opacity: 0.2;
 }
 
 /* Remove Button Styles */

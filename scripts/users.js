@@ -480,11 +480,11 @@ document.addEventListener("DOMContentLoaded", function () {
           );
           imageUrl =
             level10Reward?.link ||
-            "https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp";
+            "https://cdn2.jailbreakchangelogs.xyz/images/changelogs/347.webp";
         } else {
           imageUrl =
             item.image_url ||
-            "https://cdn.jailbreakchangelogs.xyz/images/changelogs/347.webp";
+            "https://cdn2.jailbreakchangelogs.xyz/images/changelogs/347.webp";
         }
 
         commentElement.className = "list-group-item";
@@ -669,6 +669,17 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchUserComments(userId);
   }
 
+  function setAvatarWithFallback(username) {
+    const userAvatar = document.getElementById("user-avatar");
+    const fallbackUrl = `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${encodeURIComponent(
+      username
+    )}&bold=true&format=svg`;
+
+    userAvatar.onerror = function () {
+      userAvatar.src = fallbackUrl;
+    };
+  }
+
   userAvatar = document.getElementById("user-avatar");
   if (!udata.accent_color) {
     userAvatar.style.border = "4px solid #000"; // Default blue border color
@@ -676,6 +687,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const hexColor = decimalToHex(udata.accent_color);
     userAvatar.style.border = `4px solid ${hexColor}`;
   }
+  setAvatarWithFallback(udata.username);
+
   const savebio_button = document.getElementById("save-bio-button");
   const cancel_button = document.getElementById("canceledit");
   updateUserCounts(userId);

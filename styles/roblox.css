@@ -1,3 +1,5 @@
+@import url("colors.css");
+
 body,
 html {
   margin: 0;
@@ -13,6 +15,25 @@ html {
   background-position: center;
   background-attachment: fixed;
 }
+.toggle-container {
+  display: none;
+}
+
+.toggle-button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  background-color: #5865f2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.toggle-button:hover {
+  background-color: #4752c4;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -60,15 +81,61 @@ body::before {
   width: 100%;
   transition: background-color 0.3s ease;
 }
-.login-button i {
-  margin-right: 8px; /* Add space between the icon and the text */
-  font-size: 1.2rem; /* Adjust icon size */
-  vertical-align: middle;
-}
 
 .login-button:hover {
-  background-color: #212a31; /* Medium grayish-blue */
+  background-color: var(--bg-primary);
 }
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.roblox-logo {
+  width: 200px;
+  height: auto;
+  margin: 20px auto;
+  display: block;
+}
+
+.privacy-notice {
+  text-align: center;
+  margin: 20px;
+  color: var(--text-muted);
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.consent-checkboxes {
+  margin: 20px auto;
+  max-width: 400px;
+}
+
+.consent-checkboxes .form-check {
+  margin-bottom: 10px;
+  text-align: left;
+  color: var(--text-primary);
+}
+
+.consent-checkboxes .form-check-input {
+  background-color: transparent;
+}
+
+.consent-checkboxes .form-check-input:checked {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.consent-checkboxes .form-check-label a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.consent-checkboxes .form-check-label a:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
 .features {
   margin-top: 2rem;
   padding: 1rem;
@@ -89,18 +156,29 @@ body::before {
   color: #d3d9d4; /* Light grayish-green */
   padding-left: 1.5rem;
 }
-.footer {
-  margin-top: 2rem;
-  text-align: center;
+.auth-toggle {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
 }
-.footer a {
-  color: #d3d9d4; /* Deep teal */
-  text-decoration: none;
-  margin: 0 10px;
-  font-size: 0.9rem;
-  transition: color 0.3s ease, text-decoration 0.3s ease;
+
+.auth-toggle-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: rgba(46, 57, 68, 0.5);
+  color: #d3d9d4;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
-.footer a:hover {
-  color: #748d92; /* Medium grayish-blue */
-  text-decoration: underline;
+
+.auth-toggle-btn.active {
+  background: #124e66;
+}
+
+.auth-toggle-btn:not(.active) {
+  background: var(--active-bg);
 }

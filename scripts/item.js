@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (item.type === "Color") color = "#8A2BE2";
     if (item.type === "Texture") color = "#708090";
     if (item.type === "HyperChrome") color = "#E91E63";
+    if (item.type === "Furniture") color = "#9C6644";
 
     // Modify the badge HTML generation
     let specialBadgeHtml = "";
@@ -233,25 +234,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     const container = document.getElementById("item-container");
 
-    // Determine media element based on type - following values.js pattern
-    let element = "";
+    // Determine media element based on type
+    let element;
     if (item.type === "Drift") {
       element = `
             <div class="media-container ${
               item.is_limited ? "limited-item" : ""
             }">
                 <img 
-                    src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/thumbnails/${
-                      item.name
-                    }.webp"
+                    src="/assets/items/drifts/thumbnails/${item.name}.webp"
                     class="img-fluid rounded thumbnail"
                     alt="${item.name}"
                     onerror="handleimage(this)"
                 >
                 <video 
-                  src="https://cdn.jailbreakchangelogs.xyz/images/items/drifts/${
-                    item.name
-                  }.webm"
+                  src="/assets/items/drifts/${item.name}.webm"
                   class="img-fluid rounded video-player"
                   playsinline 
                   muted 
@@ -262,107 +259,31 @@ document.addEventListener("DOMContentLoaded", async () => {
                 ${item.is_limited ? specialBadgeHtml : ""}
             </div>
             `;
-
-      setTimeout(() => {
-        try {
-          const mediaContainer = document.querySelector(".media-container");
-          const video = mediaContainer?.querySelector("video");
-
-          sessionStorage.removeItem("firefoxNoticeShown");
-
-          if (mediaContainer && video) {
-            // Add muted attribute and preload metadata
-            video.muted = true;
-            video.preload = "metadata";
-            video.volume = 0; // Explicitly set volume to 0
-
-            // Add click handler for Firefox
-            video.addEventListener("click", () => {
-              if (video.paused) {
-                video.play();
-              } else {
-                video.pause();
-              }
-            });
-
-            mediaContainer.addEventListener("mouseenter", async () => {
-              console.log("Mouse enter detected");
-              video.style.opacity = "1";
-
-              try {
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                  playPromise.catch((error) => {
-                    console.warn("Video playback error:", error);
-
-                    // Wait a short moment to check if video is actually playing
-                    setTimeout(() => {
-                      if (
-                        error.name === "NotAllowedError" &&
-                        navigator.userAgent.toLowerCase().indexOf("firefox") >
-                          -1 &&
-                        video.paused &&
-                        !video.currentTime > 0 // Additional check if video hasn't started
-                      ) {
-                        showFirefoxAutoplayNotice();
-                      }
-                    }, 100);
-                  });
-                }
-              } catch (error) {
-                console.error("Video playback error:", error);
-              }
-            });
-
-            mediaContainer.addEventListener("mouseleave", () => {
-              video.style.opacity = "0";
-              if (!video.paused) {
-                video.pause();
-                video.currentTime = 0;
-              }
-            });
-          }
-        } catch (error) {
-          console.error("Error in video setup:", error);
-        }
-      }, 500);
-    } else if (item.name === "HyperShift" && item.type === "HyperChrome") {
+    } else if (item.type === "HyperChrome" && item.name === "HyperShift") {
       element = `
       <div class="media-container ${item.is_limited ? "limited-item" : ""}">
           <div class="skeleton-loader"></div>
           <video 
-              src="https://cdn.jailbreakchangelogs.xyz/images/items/hyperchromes/HyperShift.webm"
+              src="/assets/items/hyperchromes/HyperShift.webm"
               class="video-player card-img-top"
               playsinline 
               muted 
               loop
               autoplay
+              id="hypershift-video"
               onloadeddata="this.parentElement.querySelector('.skeleton-loader').style.display='none'; this.style.opacity='1'"
               onerror="handleimage(this)"
               style="width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.3s ease;"
           ></video>
       </div>
   `;
-
-      // Simplified video setup that matches the container pattern
-      setTimeout(() => {
-        const mediaContainer = document.querySelector(".media-container");
-        const video = mediaContainer?.querySelector("video");
-        if (video) {
-          video.muted = true;
-          video.volume = 0;
-          video
-            .play()
-            .catch((err) => console.warn("Initial play failed:", err));
-        }
-      }, 100);
     } else {
       element = `
         <div class="media-container ${item.is_limited ? "limited-item" : ""}">
           <img 
-            src="https://cdn.jailbreakchangelogs.xyz/images/items/${encodeURIComponent(
-              image_type
-            )}s/${item.name}.webp"
+            src="/assets/items/${encodeURIComponent(image_type)}/${
+        item.name
+      }s.webp"
             class="img-fluid rounded thumbnail"
             alt="${item.name}"
             onerror="handleimage(this)"
@@ -378,7 +299,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const urlType = urlPath[2];
     const formattedUrlType = item.type;
 
-    const hasValues = value !== "-" && duped_value !== "-";
+    // Show graph if either value exists
+    const hasValues = value !== "-" || duped_value !== "-";
 
     const valuesSection = `
       <div class="border-top border-bottom py-4 my-4">
@@ -436,7 +358,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/">Home</a></li>
                         <li class="breadcrumb-item"><a href="/values">Values</a></li>
-                        <li class="breadcrumb-item"><a href="/values">${formattedUrlType}s</a></li>
+                        <li class="breadcrumb-item">
+                            <a href="/values?sort=name-${formattedUrlType.toLowerCase()}s&valueSort=alpha-asc">
+                                ${formattedUrlType}s
+                            </a>
+                        </li>
                         <li class="breadcrumb-item active" aria-current="page">${
                           item.name
                         }</li>
@@ -461,7 +387,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             item.is_limited ? "limited-item" : ""
                           }">
                               <img 
-                                  src="https://cdn.jailbreakchangelogs.xyz/images/items/${encodeURIComponent(
+                                  src="/assets/items/${encodeURIComponent(
                                     image_type
                                   )}s/${item.name}.webp"
                                   class="img-fluid rounded thumbnail"

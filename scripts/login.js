@@ -1,4 +1,18 @@
 $(document).ready(function () {
+  const ageCheck = $("#ageCheck");
+  const tosCheck = $("#tosCheck");
+  const loginButton = $("#login-button");
+
+  function updateLoginButton() {
+    loginButton.prop(
+      "disabled",
+      !(ageCheck.prop("checked") && tosCheck.prop("checked"))
+    );
+  }
+
+  ageCheck.change(updateLoginButton);
+  tosCheck.change(updateLoginButton);
+
   function setCookie(name, value, days) {
     let date = new Date();
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000); // Set expiration time
