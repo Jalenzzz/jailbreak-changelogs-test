@@ -156,29 +156,6 @@
       </div>
     </div>
 
-    <!-- Breadcrumb Navigation -->
-    <div class="container-fluid mt-3">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/values">Values</a></li>
-          <li class="breadcrumb-item">
-            <a
-              href="/values"
-              onclick="event.preventDefault(); 
-                        localStorage.setItem('sortDropdown', 'name-<%= itemType.toLowerCase().replace(/\s+/g, '-') %>s');
-                        window.location.href='/values'"
-            >
-              <%= formattedUrlType %>s
-            </a>
-          </li>
-          <li class="breadcrumb-item active" aria-current="page">
-            <%= item.name %>
-          </li>
-        </ol>
-      </nav>
-    </div>
-
     <div class="comment-container my-5 container-fluid px-3 px-sm-auto">
       <div class="row justify-content-center">
         <div class="col-12 col-md-10 col-lg-8">

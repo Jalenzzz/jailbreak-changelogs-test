@@ -21,7 +21,7 @@ let filteredItems = [];
 async function loadItems() {
   try {
     const response = await fetch(
-      "https://api.jailbreakchangelogs.xyz/items/list"
+      "https://api3.jailbreakchangelogs.xyz/items/list"
     );
     allItems = await response.json();
 
