@@ -451,7 +451,7 @@ app.get("/users/:user/followers", async (req, res) => {
   if (!showfollowers) {
     // User has hidden their followers
     const userData = await fetch(
-      `https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`,
+      `https://api.jailbreakchangelogs.xyz/users/get?id=${user}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -713,7 +713,7 @@ app.get("/users/:user", async (req, res) => {
   ).then((response) => response.json());
 
   const userFetch = fetch(
-    `https://api.jailbreakchangelogs.xyz/users/get?id=${user}`,
+    `https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`,
     {
       headers: {
         "Content-Type": "application/json",
