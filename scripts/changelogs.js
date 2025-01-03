@@ -1220,7 +1220,7 @@ $(document).ready(function () {
     setTimeout(() => {
       reloadcomments();
     }, 100);
-    
+
     if (titleElement) {
       titleElement.textContent = changelog.title;
     }
@@ -1877,6 +1877,7 @@ $(document).ready(function () {
           console.error("Unexpected response status:", response.status);
           return null; // Exit early if the response is not OK
         }
+        commentsList.innerHTML = ""; // Clear existing comments
         return response.json();
       })
       .then((data) => {
