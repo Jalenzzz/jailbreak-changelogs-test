@@ -478,17 +478,12 @@ app.get("/keys", (req, res) => {
     logoAlt: "API Page Logo",
   });
 });
-
-app.get("/login/roblox", (req, res) => {
+app.get("/roblox", (req, res) => {
   res.render("roblox");
 });
 
-app.get("/login/discord", (req, res) => {
-  res.render("login");
-});
-
 app.get("/login", (req, res) => {
-  res.redirect("/login/discord");
+  res.render("login");
 });
 
 app.get("/users/:user/followers", async (req, res) => {
