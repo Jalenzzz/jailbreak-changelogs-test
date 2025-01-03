@@ -1095,8 +1095,6 @@ if (typeof window.sortItems !== "function") {
   };
 }
 
-// Add this new function after the existing code
-
 function toggleContributors(header) {
   const grid = header.nextElementSibling;
   const icon = header.querySelector(".toggle-icon");
