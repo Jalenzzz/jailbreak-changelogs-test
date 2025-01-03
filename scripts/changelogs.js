@@ -1515,7 +1515,9 @@ $(document).ready(function () {
       console.error("Invalid comments data received");
       return;
     }
-    // clean the comments for duplicates
+
+
+    comments = commentsData; // Assign the fetched comments to the global variable
     commentsList.innerHTML = ""; // Clear existing comments
     comments.sort((a, b) => b.date - a.date);
 
