@@ -232,6 +232,29 @@
   border-radius: 20px;
   margin-bottom: 10px; /* Adds space between badge and title */
 }
+.btn-calculator {
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-calculator:hover {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.btn-calculator i {
+  font-size: 1.1rem;
+}
 .pagination li {
   margin-right: 10px; /* Adjust the margin as needed */
 }
@@ -797,5 +820,13 @@
   .contributors-grid.expanded {
     max-height: 1000px;
     transition: max-height 0.5s ease-in;
+  }
+  .btn-calculator {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-calculator i {
+    font-size: 1rem;
   }
 }

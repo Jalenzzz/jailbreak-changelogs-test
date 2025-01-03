@@ -318,6 +318,14 @@ app.get("/values", (req, res) => {
   });
 });
 
+app.get("/values/calculator", (req, res) => {
+  res.render("calculator", {
+    title: "Value Calculator / Changelogs",
+    logoUrl: "/assets/logos/Values_Logo.webp",
+    logoAlt: "Values Calculator Logo",
+  });
+});
+
 app.get("/item/:type/:item", async (req, res) => {
   let itemName = decodeURIComponent(req.params.item)
     .trim()
@@ -471,12 +479,16 @@ app.get("/keys", (req, res) => {
   });
 });
 
-app.get("/roblox", (req, res) => {
+app.get("/login/roblox", (req, res) => {
   res.render("roblox");
 });
 
-app.get("/login", (req, res) => {
+app.get("/login/discord", (req, res) => {
   res.render("login");
+});
+
+app.get("/login", (req, res) => {
+  res.redirect("/login/discord");
 });
 
 app.get("/users/:user/followers", async (req, res) => {
