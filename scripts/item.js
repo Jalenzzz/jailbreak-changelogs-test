@@ -926,15 +926,27 @@ document.addEventListener("DOMContentLoaded", async () => {
       `https://api3.jailbreakchangelogs.xyz/comments/get?id=${id}&type=${type}`
     )
       .then((response) => response.json())
-      // Handle errors in the fetch request
-      // Log the error and return an empty array
-      .catch((error) => {
-        console.error("Error fetching comments:", error);
-        return [];
-      })
       .then((comments) => {
         const commentsList = document.getElementById("comments-list");
         commentsList.innerHTML = "";
+
+        // Check if comments is null, undefined, or not an array
+        if (!comments || !Array.isArray(comments) || comments.length === 0) {
+          // Display "No comments yet" message with style to hide marker
+          const noCommentsMessage = document.createElement("li");
+          noCommentsMessage.className = "text-center p-4";
+          noCommentsMessage.style.listStyle = "none"; // Add this line to hide the marker
+          noCommentsMessage.innerHTML = `
+            <div class="text-muted">
+              <i class="bi bi-chat-square"></i>
+              <p class="mb-0">No comments yet. Be the first to comment!</p>
+            </div>
+          `;
+          commentsList.appendChild(noCommentsMessage);
+          return;
+        }
+
+        // If we have comments, proceed with rendering them
         comments.forEach((comment) => {
           fetch(
             `https://api3.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`
@@ -979,6 +991,18 @@ document.addEventListener("DOMContentLoaded", async () => {
               commentsList.appendChild(listItem);
             });
         });
+      })
+      .catch((error) => {
+        console.error("Error loading comments:", error);
+        const commentsList = document.getElementById("comments-list");
+        commentsList.innerHTML = `
+          <li class="text-center p-4">
+            <div class="text-danger">
+              <i class="bi bi-exclamation-circle"></i>
+              <p class="mb-0">Error loading comments. Please try again later.</p>
+            </div>
+          </li>
+        `;
       });
   }
 
@@ -1245,9 +1269,26 @@ function loadComments(id, type) {
   )
     .then((response) => response.json())
     .then((comments) => {
-      // Handle errors in the fetch request
-      // Log the error and return an empty array
+      const commentsList = document.getElementById("comments-list");
+      commentsList.innerHTML = "";
 
+      // Check if comments is null, undefined, or not an array
+      if (!comments || !Array.isArray(comments) || comments.length === 0) {
+        // Display "No comments yet" message with style to hide marker
+        const noCommentsMessage = document.createElement("li");
+        noCommentsMessage.className = "text-center p-4";
+        noCommentsMessage.style.listStyle = "none"; // Add this line to hide the marker
+        noCommentsMessage.innerHTML = `
+          <div class="text-muted">
+            <i class="bi bi-chat-square"></i>
+            <p class="mb-0">No comments yet. Be the first to comment!</p>
+          </div>
+        `;
+        commentsList.appendChild(noCommentsMessage);
+        return;
+      }
+
+      // If we have comments, proceed with rendering them
       comments.forEach((comment) => {
         // Add action buttons container for user's own comments
         if (userdata && comment.user_id === userdata.id) {

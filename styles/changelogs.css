@@ -843,7 +843,6 @@ body.menu-open {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
   color: #d3d9d4; /* Very light grayish-green text */
-  display: flex;
   flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
@@ -852,7 +851,6 @@ body.menu-open {
 
 /* Button Styles */
 #paginationControls .btn {
-  display: flex;
   align-items: center;
   justify-content: center;
   width: 35px;
@@ -877,7 +875,6 @@ body.menu-open {
 
 /* Input Group Styles */
 #paginationControls .input-group {
-  display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;

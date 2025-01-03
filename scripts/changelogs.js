@@ -1542,7 +1542,16 @@ $(document).ready(function () {
       }
 
       return fetch(
-        `https://api3.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`
+        `https://api3.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "https://jailbreakchangelogs.xyz",
+          },
+          credentials: "omit", // Changed from "include" to "omit"
+          mode: "cors",
+        }
       )
         .then((response) => {
           if (!response.ok) {
@@ -1880,40 +1889,63 @@ $(document).ready(function () {
   function reloadcomments() {
     CommentHeader.textContent =
       "Comments For Changelog " + localStorage.getItem("selectedChangelogId");
+    const paginationControls = document.getElementById("paginationControls");
+
+    // Reset pagination controls visibility and styling
+    paginationControls.style.cssText =
+      "display: none !important; visibility: hidden;";
+
     fetch(
       "https://api3.jailbreakchangelogs.xyz/comments/get?type=changelog&id=" +
-        localStorage.getItem("selectedChangelogId")
+        localStorage.getItem("selectedChangelogId"),
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+        credentials: "omit",
+        mode: "cors",
+      }
     )
       .then((response) => {
         if (!response.ok) {
           console.error("Unexpected response status:", response.status);
-          return null; // Exit early if the response is not OK
+          return null;
         }
         return response.json();
       })
       .then((data) => {
-        if (!data) return; // Prevent further execution if the response was not OK
+        if (!data) return;
 
-        // Check if data contains a message like "No comments found"
-        if (data.message && data.message === "No comments found") {
-          commentsList.innerHTML =
-            "<p class='text-muted text-center'>Be the first to comment on this entry!</p>";
-          // Hide the pagination if no comments are available
-          document.getElementById("paginationControls").innerHTML = "";
+        if (
+          (data.message && data.message === "No comments found") ||
+          (Array.isArray(data) && data.length === 0)
+        ) {
+          commentsList.innerHTML = `
+            <div class="text-muted text-center d-flex flex-column align-items-center justify-content-center p-4">
+              <i class="bi bi-chat-square mb-2 fs-4"></i>
+              <p class="mb-0">No comments yet. Be the first to comment!</p>
+            </div>
+          `;
+          // Keep pagination controls hidden
           return;
         }
 
-        // Check if data contains the comments as an array
+        // Only show pagination if we have comments
+        paginationControls.style.cssText =
+          "display: flex !important; visibility: visible;";
+
         if (Array.isArray(data)) {
-          loadComments(data); // Load the comments if data is an array
+          loadComments(data);
         } else if (data.comments && Array.isArray(data.comments)) {
-          loadComments(data.comments); // Load nested comments if available
+          loadComments(data.comments);
         } else {
-          console.error("Unexpected response format:", data); // Handle unexpected format
+          console.error("Unexpected response format:", data);
         }
       })
       .catch((error) => {
-        console.error("Error fetching comments:", error); // Handle any errors
+        console.error("Error fetching comments:", error);
       });
   }
 
