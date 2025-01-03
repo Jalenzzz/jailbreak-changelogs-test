@@ -364,7 +364,7 @@ app.get("/item/:type/:item", async (req, res) => {
     }
 
     // For successful responses, continue as before
-    const image_url = `https://jailbreakchangelogs.xyz/assets/items/${itemType}s/${item.name}.webp`;
+    const image_url = `/assets/items/${itemType}s/${item.name}.webp`;
     item.image = image_url;
 
     res.render("item", {
