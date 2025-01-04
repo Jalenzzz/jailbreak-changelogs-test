@@ -19,7 +19,7 @@
     />
     <meta
       name="keywords"
-      content="Jailbreak Season <%= season %>, <%= title %>, Roblox Jailbreak, seasonal rewards, exclusive vehicles, limited items, game progression, seasonal content, Jailbreak updates, seasonal milestones, game events"
+      content="Jailbreak Season <%= season %>, <%= title %>, jb wiki seasons, jailbreak wiki seasons, Roblox Jailbreak, seasonal rewards, exclusive vehicles, limited items, game progression, seasonal content, Jailbreak updates, seasonal milestones, game events"
     />
 
     <!-- Open Graph / Facebook -->
@@ -81,9 +81,9 @@
       crossorigin="anonymous"
     />
     <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-  />
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
 
     <link rel="stylesheet" href="styles/seasons.css" />
     <link rel="stylesheet" href="styles/main.css" />
@@ -119,6 +119,32 @@
       })(window, document, "script", "dataLayer", "GTM-KM853GJ6");
     </script>
     <!-- End Google Tag Manager -->
+
+    <!-- Additional SEO Questions -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "When does Jailbreak Season <%= season %> end?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Jailbreak Season <%= season %> ends on February 25, 2025. Check our countdown timer above for the exact time remaining. New seasons typically start shortly after the previous season ends."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What rewards are available in Jailbreak Season <%= season %>?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Season <%= season %> features exclusive rewards including limited-time vehicles, items, and customizations. View the complete list of rewards and their level requirements on our season details page."
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <!-- prettier-ignore -->
   <%- include('partials/nav') %>
@@ -163,6 +189,79 @@
           ></li>
         </ol>
       </nav>
+
+      <!-- New Seasons Introduction Section -->
+      <div class="seasons-intro mb-4">
+        <h1 class="display-4 mb-3">Roblox Jailbreak Season Archives</h1>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="intro-text">
+              <p class="lead">
+                Explore every season of Roblox Jailbreak! Each season brings
+                exciting limited-time rewards, exclusive vehicles, and unique
+                customization items. Level up, earn XP, and unlock special
+                prizes during these time-limited events.
+              </p>
+
+              <!-- Add Season Countdown -->
+              <div class="season-countdown text-center my-4">
+                <h3 class="countdown-title">Current Season Ends In:</h3>
+                <div class="countdown-timer">
+                  <div class="countdown-item">
+                    <span id="countdown-days">00</span>
+                    <span class="countdown-label">Days</span>
+                  </div>
+                  <div class="countdown-item">
+                    <span id="countdown-hours">00</span>
+                    <span class="countdown-label">Hours</span>
+                  </div>
+                  <div class="countdown-item">
+                    <span id="countdown-minutes">00</span>
+                    <span class="countdown-label">Minutes</span>
+                  </div>
+                  <div class="countdown-item">
+                    <span id="countdown-seconds">00</span>
+                    <span class="countdown-label">Seconds</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="feature-grid mt-4">
+                <div class="feature-item">
+                  <i class="bi bi-trophy text-primary"></i>
+                  <h5>Limited-Time Rewards</h5>
+                  <p>
+                    Browse exclusive vehicles, items, and customizations
+                    available only during specific seasons. Track current and
+                    past seasonal rewards all in one place.
+                  </p>
+                </div>
+
+                <div class="feature-item">
+                  <i class="bi bi-stars text-primary"></i>
+                  <h5>Season Progress</h5>
+                  <p>
+                    View level requirements, XP thresholds, and bonus rewards
+                    for each season. Plan your progress and track seasonal
+                    milestones.
+                  </p>
+                </div>
+
+                <div class="feature-item">
+                  <i class="bi bi-calendar-event text-primary"></i>
+                  <h5>Season History</h5>
+                  <p>
+                    Access complete information about past seasons, including
+                    theme details, special events, and exclusive content from
+                    previous updates.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="row">
         <div class="col-12 col-lg-8">
           <!-- This aligns with the content wrapper width -->
@@ -337,6 +436,44 @@
         }
         signalGooglefcPresent();
       })();
+    </script>
+    <script>
+      function updateCountdown() {
+        const endDate = new Date("2025-02-25T00:00:00Z");
+        const now = new Date();
+        const diff = endDate - now;
+
+        if (diff > 0) {
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor(
+            (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          );
+          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+          document.getElementById("countdown-days").textContent = days
+            .toString()
+            .padStart(2, "0");
+          document.getElementById("countdown-hours").textContent = hours
+            .toString()
+            .padStart(2, "0");
+          document.getElementById("countdown-minutes").textContent = minutes
+            .toString()
+            .padStart(2, "0");
+          document.getElementById("countdown-seconds").textContent = seconds
+            .toString()
+            .padStart(2, "0");
+        } else {
+          // Season has ended
+          document.querySelector(".countdown-timer").innerHTML =
+            '<div class="season-ended">Season has ended!</div>';
+        }
+      }
+
+      // Update countdown every second
+      setInterval(updateCountdown, 1000);
+      // Initial update
+      updateCountdown();
     </script>
   </body>
 </html>

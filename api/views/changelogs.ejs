@@ -23,7 +23,7 @@
     <!-- Keywords -->
     <meta
       name="keywords"
-      content="Roblox Jailbreak, game updates, patch notes, changelogs, new features, vehicles, map changes, game balance, bug fixes, community updates, trading, seasons, gameplay changes"
+      content="Roblox Jailbreak, jb wiki changelogs, jailbreak wiki changelogs, jailbreak wiki updates, game updates, patch notes, changelogs, new features, vehicles, map changes, game balance, bug fixes, community updates, trading, seasons, gameplay changes"
     />
 
     <!-- Open Graph / Facebook -->
@@ -81,9 +81,9 @@
       referrerpolicy="no-referrer"
     />
     <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-  />
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
 
     <!-- Custom stylesheet -->
     <link rel="stylesheet" href="styles/changelogs.css" />
@@ -114,6 +114,32 @@
       href="https://fonts.googleapis.com/css2?family=Bangers&family=Luckiest+Guy&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Additional SEO Questions -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "When does the current Jailbreak season end?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The current Jailbreak season ends on February 25, 2025. Check our seasons page for a detailed countdown timer and complete information about seasonal rewards."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Where can I find Jailbreak changelogs?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "You can find all Roblox Jailbreak changelogs and updates on our website. We maintain a comprehensive archive of all game changes, updates, and patch notes."
+            }
+          }
+        ]
+      }
+    </script>
   </head>
 
   <body>
@@ -153,6 +179,71 @@
           <li class="breadcrumb-item active" aria-current="page">Changelogs</li>
         </ol>
       </nav>
+
+      <!-- New SEO-Optimized Introduction Section -->
+      <div class="changelog-intro mb-4">
+        <h1 class="display-4 mb-3">
+          Roblox Jailbreak Changelogs & Update History
+        </h1>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="intro-text">
+              <p class="lead">
+                Welcome to the our comprehensive collection of Roblox Jailbreak
+                changelogs! Track every update, feature release, and game
+                modification in Jailbreak's history. Whether you're looking for
+                the latest vehicle additions, seasonal updates, or gameplay
+                changes, our detailed changelog archive has everything you need
+                to stay informed. Some updates and features may be unaccounted
+                for, as they may not have been directly announced by Badimo.
+              </p>
+
+              <div class="feature-grid mt-4">
+                <div class="feature-item">
+                  <i class="bi bi-clock-history text-primary"></i>
+                  <h5>Complete Update History</h5>
+                  <p>
+                    Access every Jailbreak update since release, including
+                    seasonal events, new vehicles, map changes, and game
+                    mechanics updates.
+                  </p>
+                </div>
+
+                <div class="feature-item">
+                  <i class="bi bi-search text-primary"></i>
+                  <h5>Advanced Search Features</h5>
+                  <p>
+                    Find specific Jailbreak updates by searching keywords,
+                    dates, or content types - perfect for tracking down vehicle
+                    releases or major game changes.
+                  </p>
+                </div>
+
+                <div class="feature-item">
+                  <i class="bi bi-chat-dots text-primary"></i>
+                  <h5>Community Insights</h5>
+                  <p>
+                    Join discussions about Jailbreak updates, share strategies,
+                    and connect with other players in our community through the
+                    comments sections.
+                  </p>
+                </div>
+
+                <div class="feature-item">
+                  <i class="bi bi-calendar-check text-primary"></i>
+                  <h5>Date-Based Navigation</h5>
+                  <p>
+                    Browse Jailbreak updates by date range to track the game's
+                    evolution and find specific seasonal events or major
+                    releases.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="row">
         <div class="col-12 col-lg-8">
           <div class="row">
@@ -172,28 +263,42 @@
                   <!-- Changed to calendar-range -->
                 </button>
 
-                <button
-                  class="btn btn-primary"
-                  type="button"
-                  id="desktopCopyChangelog"
-                  aria-label="Copy the changelog"
-                  data-bs-toggle="tooltip"
-                  title="Copy Changelog"
-                >
-                  <i class="bi bi-clipboard" aria-hidden="true"></i>
-                  <!-- Changed to file-earmark-text -->
-                </button>
-
-                <button
-                  class="btn btn-primary"
-                  type="button"
-                  id="desktopLatestChangelogBtn"
-                  aria-label="Jump to the latest changelog"
-                  data-bs-toggle="tooltip"
-                  title="Jump to Latest"
-                >
-                  <i class="bi bi-rocket-takeoff" aria-hidden="true"></i>
-                </button>
+                <!-- Add before the copy button -->
+                <div class="dropdown">
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    id="desktopShareChangelog"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    title="Share Changelog"
+                  >
+                    <i class="bi bi-share"></i>
+                  </button>
+                  <ul class="dropdown-menu share-menu">
+                    <li>
+                      <button class="dropdown-item" onclick="shareOnDiscord()">
+                        <i class="bi bi-discord"></i> Discord
+                      </button>
+                    </li>
+                    <li>
+                      <button class="dropdown-item" onclick="shareOnTwitter()">
+                        <i class="bi bi-twitter-x"></i> X (Twitter)
+                      </button>
+                    </li>
+                    <li>
+                      <button class="dropdown-item" onclick="shareOnReddit()">
+                        <i class="bi bi-reddit"></i> Reddit
+                      </button>
+                    </li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                      <button class="dropdown-item" onclick="copyShareLink()">
+                        <i class="bi bi-link-45deg"></i> Copy Link
+                      </button>
+                    </li>
+                  </ul>
+                </div>
 
                 <button
                   class="btn btn-primary"
@@ -350,6 +455,40 @@
                       id="mobileChangelogList"
                     ></ul>
                   </div>
+
+                  <!-- Add before the copy button -->
+                  <button
+                    class="btn mobile-menu-btn dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    style="background-color: #124e66; color: #d3d9d4"
+                  >
+                    <i class="bi bi-share me-2"></i> Share Changelog
+                  </button>
+                  <ul class="dropdown-menu w-100 share-menu">
+                    <li>
+                      <button class="dropdown-item" onclick="shareOnDiscord()">
+                        <i class="bi bi-discord"></i> Share on Discord
+                      </button>
+                    </li>
+                    <li>
+                      <button class="dropdown-item" onclick="shareOnTwitter()">
+                        <i class="bi bi-twitter-x"></i> Share on X (Twitter)
+                      </button>
+                    </li>
+                    <li>
+                      <button class="dropdown-item" onclick="shareOnReddit()">
+                        <i class="bi bi-reddit"></i> Share on Reddit
+                      </button>
+                    </li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                      <button class="dropdown-item" onclick="copyShareLink()">
+                        <i class="bi bi-link-45deg"></i> Copy Link
+                      </button>
+                    </li>
+                  </ul>
 
                   <!-- Copy Changelog -->
                   <button
@@ -573,6 +712,78 @@
         }
         signalGooglefcPresent();
       })();
+    </script>
+    <script>
+      function shareOnDiscord() {
+        const changelogId = localStorage.getItem("selectedChangelogId");
+        const title = document.querySelector("#content h1").textContent;
+        const url = `${window.location.origin}/changelogs/${changelogId}`;
+
+        // Create a Discord-friendly formatted message
+        const discordMessage = `**${title}**\n${url}`;
+
+        // Copy to clipboard
+        navigator.clipboard
+          .writeText(discordMessage)
+          .then(() => {
+            toastr.success(
+              "Discord formatted message copied to clipboard! Now you can paste it in any Discord channel.",
+              "Share",
+              {
+                positionClass: "toast-bottom-right",
+                timeOut: 5000,
+                closeButton: true,
+                progressBar: true,
+                onclick: () => toastr.clear(), // Close on click
+              }
+            );
+          })
+          .catch(() => {
+            toastr.error("Failed to copy message. Please try again.", "Error", {
+              positionClass: "toast-bottom-right",
+              timeOut: 3000,
+              closeButton: true,
+              progressBar: true,
+            });
+          });
+      }
+
+      function shareOnTwitter() {
+        const changelogId = localStorage.getItem("selectedChangelogId");
+        const title = document.querySelector("#content h1").textContent;
+        const url = `${window.location.origin}/changelogs/${changelogId}`;
+        const text = `Check out this Roblox Jailbreak changelog: ${title}`;
+
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+          text
+        )}&url=${encodeURIComponent(url)}`;
+        window.open(twitterUrl, "_blank");
+      }
+
+      function shareOnReddit() {
+        const changelogId = localStorage.getItem("selectedChangelogId");
+        const title = document.querySelector("#content h1").textContent;
+        const url = `${window.location.origin}/changelogs/${changelogId}`;
+
+        const redditUrl = `https://www.reddit.com/submit?url=${encodeURIComponent(
+          url
+        )}&title=${encodeURIComponent(title)}`;
+        window.open(redditUrl, "_blank");
+      }
+
+      function copyShareLink() {
+        const changelogId = localStorage.getItem("selectedChangelogId");
+        const url = `${window.location.origin}/changelogs/${changelogId}`;
+
+        navigator.clipboard.writeText(url).then(() => {
+          toastr.success("Link copied to clipboard!", "Share", {
+            positionClass: "toast-bottom-right",
+            timeOut: 3000,
+            closeButton: true,
+            progressBar: true,
+          });
+        });
+      }
     </script>
   </body>
 </html>

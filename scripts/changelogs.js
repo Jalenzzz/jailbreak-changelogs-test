@@ -20,13 +20,6 @@ $(document).ready(function () {
     document.getElementById("dateFilterModal")
   );
 
-  const desktopLatestChangelogBtn = document.getElementById(
-    "desktopLatestChangelogBtn"
-  );
-  const mobileLatestChangelogBtn = document.getElementById(
-    "mobileLatestChangelogBtn"
-  );
-
   // jQuery references for search results and navbar
   const $searchResultsContainer = $("#search-results");
   const $navbarCollapse = $("#navbarContent");
@@ -76,15 +69,6 @@ $(document).ready(function () {
       changelogToast("No changelog data available.");
     }
   }
-
-  // Event listener for the desktop version of the "Latest Changelog" button
-  desktopLatestChangelogBtn.addEventListener("click", displayLatestChangelog);
-
-  // Event listener for the mobile version of the "Latest Changelog" button
-  mobileLatestChangelogBtn.addEventListener("click", function (e) {
-    e.preventDefault(); // Prevent default action if the button is a link
-    displayLatestChangelog(); // Show the latest changelog
-  });
 
   // Function to show the loading overlay
   function showLoadingOverlay() {
@@ -152,7 +136,6 @@ $(document).ready(function () {
     openDatePicker("endDate", "endDateBtn");
   });
 
-  // Event listeners for the date inputs
   document.getElementById("startDate").addEventListener("change", function () {
     updateButtonText("startDateBtn", new Date(this.value));
     this.style.display = "none";
@@ -592,113 +575,6 @@ $(document).ready(function () {
     return new bootstrap.Dropdown(dropdownToggleEl); // Create Bootstrap dropdown instances
   });
 
-  // Define buttons for copying changelog
-  const mobileCopyChangelogBtn = $("#mobileCopyChangelog");
-  const desktopCopyChangelogBtn = $("#desktopCopyChangelog");
-
-  function copyChangelog() {
-    // Get the content of the changelog
-    const changelogContent = $("#content").clone();
-
-    // Check if there's actual changelog content to copy
-    if (
-      changelogContent.find("h1.display-4").length === 0 ||
-      changelogContent.find(".api-error-container").length > 0
-    ) {
-      console.warn("No changelog data available to copy");
-      alert("No changelog data available to copy!");
-      return;
-    }
-
-    // Disable buttons to prevent spamming
-    mobileCopyChangelogBtn.prop("disabled", true);
-    desktopCopyChangelogBtn.prop("disabled", true);
-
-    // Get the current page URL
-    const currentPageUrl = window.location.href;
-
-    // Process the content into an array
-    let processedContent = [];
-
-    // Add the title (h1) with '#' before it
-    const title = changelogContent.find("h1.display-4").first().text().trim();
-    processedContent.push("# " + title, "");
-
-    // Process other elements in the changelog
-    changelogContent.children().each(function () {
-      const $elem = $(this);
-      if ($elem.is("h2")) {
-        // Add two newlines before each h2 to separate sections
-        processedContent.push("", "## " + $elem.text().trim(), "");
-      } else if ($elem.is("p.lead")) {
-        // Handle italicized text in paragraphs
-        let text = $elem.html();
-        // Replace italic spans with underscore-wrapped text
-        text = text.replace(
-          /<span style="font-style: italic;[^"]*">([^<]+)<\/span>/g,
-          "_$1_"
-        );
-        // Remove any other HTML tags and trim
-        text = $("<div>").html(text).text().trim();
-        processedContent.push(text);
-      } else if ($elem.hasClass("d-flex")) {
-        const $leadElem = $elem.find(".lead");
-        // Handle italicized text in list items
-        let text = $leadElem.html();
-        // Replace italic spans with underscore-wrapped text
-        text = text.replace(
-          /<span style="font-style: italic;[^"]*">([^<]+)<\/span>/g,
-          "_$1_"
-        );
-        // Remove any other HTML tags and trim
-        text = $("<div>").html(text).text().trim();
-        if ($elem.find(".bi-arrow-return-right").length > 0) {
-          // Inline item indicator
-          processedContent.push("  - " + text);
-        } else if ($elem.find(".bi-arrow-right").length > 0) {
-          // Regular item indicator
-          processedContent.push("- " + text);
-        } else {
-          // Fallback for any items without hyphens
-          processedContent.push("- " + text);
-        }
-      }
-    });
-
-    // Add custom message at the end with the current page URL
-    processedContent.push(
-      "",
-      "",
-      `This changelog was copied from ${currentPageUrl}`
-    );
-
-    // Join the processed content with newlines
-    const cleanedContent = processedContent.join("\n");
-
-    // Copy the cleaned content to the clipboard
-    navigator.clipboard
-      .writeText(cleanedContent)
-      .then(() => {
-        // Show the toast notification
-        copiedChangelogToast("Changelog copied to clipboard!"); // Notify user of success
-      })
-      .catch((err) => {
-        console.error("Failed to copy changelog: ", err); // Log error if copy fails
-        alert("Failed to copy changelog. Please try again."); // Alert user of failure
-      })
-      .finally(() => {
-        // Re-enable buttons after a delay
-        setTimeout(() => {
-          mobileCopyChangelogBtn.prop("disabled", false);
-          desktopCopyChangelogBtn.prop("disabled", false); // Re-enable both buttons
-        }, 5000); // 5 seconds delay
-      });
-  }
-
-  // Attach the combined function to both copy changelog buttons
-  mobileCopyChangelogBtn.on("click", copyChangelog);
-  desktopCopyChangelogBtn.on("click", copyChangelog);
-
   // Function to open the changelog dropdown
   function openChangelogDropdown() {
     const $mobileDropdownEl = $("#mobileChangelogDropdown"); // Mobile dropdown reference
@@ -866,6 +742,7 @@ $(document).ready(function () {
 
   function processChangelogData(data) {
     changelogsData = data;
+    updateQuickStats(data);
 
     if (Array.isArray(data) && data.length > 0) {
       populateChangelogDropdown(data);
@@ -901,15 +778,6 @@ $(document).ready(function () {
             `;
 
             displayChangelog(selectedChangelog);
-
-            // Toggle button visibility based on if showing latest
-            const isLatest = selectedChangelog.id === latestData.id;
-            desktopLatestChangelogBtn.style.display = isLatest
-              ? "none"
-              : "block";
-            mobileLatestChangelogBtn.style.display = isLatest
-              ? "none"
-              : "block";
           }
         })
         .catch((error) => {
@@ -1262,14 +1130,6 @@ $(document).ready(function () {
     window.history.pushState({}, "", newPath);
 
     const isLatestChangelog = changelog.id === changelogsData[0].id;
-
-    if (isLatestChangelog) {
-      desktopLatestChangelogBtn.style.display = "none";
-      mobileLatestChangelogBtn.style.display = "none";
-    } else {
-      desktopLatestChangelogBtn.style.display = "";
-      mobileLatestChangelogBtn.style.display = "";
-    }
   }
 
   // Click event for changelog dropdown items
@@ -2167,8 +2027,46 @@ $(document).ready(function () {
         return false;
     }
   }
-});
 
+  // Function to update quick stats
+  function updateQuickStats(data) {
+    if (Array.isArray(data) && data.length > 0) {
+      // Sort data by date
+      const sortedData = [...data].sort((a, b) => {
+        const dateA = new Date(a.title.split(" ").slice(-3).join(" "));
+        const dateB = new Date(b.title.split(" ").slice(-3).join(" "));
+        return dateB - dateA;
+      });
+
+      // Update latest update date
+      const latestDate = new Date(
+        sortedData[0].title.split(" ").slice(-3).join(" ")
+      );
+      $("#latestUpdateDate").text(
+        latestDate.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      );
+
+      // Update total updates count
+      $("#totalUpdates").text(data.length);
+
+      // Count major features (sections starting with "Added" or "New")
+      let majorFeatureCount = 0;
+      data.forEach((changelog) => {
+        const sections = changelog.sections.split("\n");
+        sections.forEach((section) => {
+          if (section.includes("Added") || section.includes("New")) {
+            majorFeatureCount++;
+          }
+        });
+      });
+      $("#majorFeatures").text(majorFeatureCount);
+    }
+  }
+});
 function handleinvalidImage() {
   setTimeout(() => {
     const userId = this.id.replace("avatar-", "");
