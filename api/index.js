@@ -312,7 +312,9 @@ app.get("/item/:type/:item", async (req, res) => {
     // Enhanced SEO data
     const seoData = {
       pageTitle: `${itemName} - Jailbreak ${formattedUrlType} Value & Details | JailbreakChangelogs`,
-      metaDescription: `Get the latest value and details for ${itemName} in Roblox Jailbreak. View current price, trading history, rarity status, and market trends. Updated values and comprehensive information for ${formattedUrlType.toLowerCase()} traders.`,
+      metaDescription:
+        item.description ||
+        `Get the latest value and details for ${itemName} in Roblox Jailbreak. View current price, trading history, rarity status, and market trends.`,
       canonicalUrl: `https://testing.jailbreakchangelogs.xyz/item/${formattedUrlType.toLowerCase()}/${encodeURIComponent(
         itemName
       )}`,
