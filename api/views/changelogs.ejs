@@ -80,10 +80,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    />
+    <link rel="stylesheet" href="node_modules/bootstrap-icons/font/bootstrap-icons.css">
 
     <!-- Custom stylesheet -->
     <link rel="stylesheet" href="styles/changelogs.css" />
@@ -308,25 +305,13 @@
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#mobileMenuItems"
-                style="width: 220px"
               >
                 <i class="bi bi-list me-2"></i> More Options
               </button>
 
               <!-- Collapsible Menu -->
               <div class="collapse mt-3" id="mobileMenuItems">
-                <div
-                  class="mobile-menu-container"
-                  style="
-                    background-color: #212a31;
-                    padding: 10px;
-                    border-radius: 8px;
-                    width: 340px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 8px;
-                  "
-                >
+                <div class="mobile-menu-container">
                   <!-- Mobile menu buttons here -->
                   <!-- Date Filter -->
                   <button
@@ -402,7 +387,6 @@
                     id="sidebarImage"
                     class="card-img-top img-fluid"
                     alt=" "
-                    style="max-width: 100%; height: auto"
                   />
                 </div>
               </div>

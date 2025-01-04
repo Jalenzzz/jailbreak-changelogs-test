@@ -1,13 +1,36 @@
 User-agent: *
 Allow: /
 
-# Allow crawling of all content
-Allow: /*.js
-Allow: /*.css
-Allow: /*.png
-Allow: /*.jpg
-Allow: /*.gif
-Allow: /*.ejs
+# Important Trading Pages
+Allow: /trading
+Allow: /values
+Allow: /values/calculator
+Allow: /item/*
 
-# Location of the XML sitemap
+# Static Resources
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.gif$
+Allow: /*.webp$
+Allow: /*.svg$
+
+# Clean URLs - Prevent Parameter Indexing
+Disallow: /values?*
+Disallow: /trading?*
+Disallow: /*?*sort=
+Disallow: /*?*filter=
+Disallow: /*?*page=
+Disallow: /*?*valueSort=
+
+# Prevent duplicate content
+Disallow: /api/
+Disallow: /admin/
+Disallow: /temp/
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Location of Sitemaps
 Sitemap: https://testing.jailbreakchangelogs.xyz/sitemap.xml

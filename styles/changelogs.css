@@ -598,7 +598,38 @@ body.menu-open {
   width: 300px; /* Adjust width for logo */
   height: auto; /* Maintain aspect ratio */
 }
+/* Mobile Menu Toggle Button */
+#mobileMenuToggle {
+  width: 220px;
+}
 
+/* Mobile Menu Container */
+.mobile-menu-container {
+  background-color: #212a31;
+  padding: 10px;
+  border-radius: 8px;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Sidebar Image */
+#sidebarImage {
+  max-width: 100%;
+  height: auto;
+}
+
+/* IFrame Styles */
+.google-fc-present {
+  width: 0;
+  height: 0;
+  border: none;
+  z-index: -1000;
+  left: -1000px;
+  top: -1000px;
+  display: none;
+}
 /* Responsive Heading Styles */
 .responsive-heading {
   font-size: 2.5rem; /* Large font size for headings */
