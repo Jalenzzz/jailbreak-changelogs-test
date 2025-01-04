@@ -6,90 +6,117 @@
     <meta name="referrer" content="no-referrer" />
 
     <!-- Primary Meta Tags -->
-    <title><%= title %></title>
-    <meta name="title" content="<%= title %>" />
+    <title>
+      <%= item.name %> - Jailbreak <%= itemType %> Value & Details |
+      JailbreakChangelogs
+    </title>
+    <meta
+      name="title"
+      content="<%= item.name %> - Jailbreak <%= itemType %> Value & Details | JailbreakChangelogs"
+    />
     <meta
       name="description"
-      content="Get detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. View current value, trading history, rarity status, and market trends to make informed trading decisions."
+      content="Get the latest value and details for <%= item.name %> in Roblox Jailbreak. View current price, trading history, rarity status, and market trends. Updated values and comprehensive information for <%= itemType.toLowerCase() %> traders."
     />
     <meta
       name="keywords"
-      content="<%= title.replace(' / Changelogs', '').toLowerCase() %>, Jailbreak <%= itemType.toLowerCase() %>, Jailbreak trading value, <%= itemType.toLowerCase() %> worth, Jailbreak item details, Roblox Jailbreak trading, <%= itemType.toLowerCase() %> rarity, Jailbreak <%= itemType.toLowerCase() %> price Jailbreak <%= itemType.toLowerCase() %> value"
+      content="<%= item.name.toLowerCase() %> jailbreak, jailbreak <%= item.name.toLowerCase() %> value, <%= itemType.toLowerCase() %> worth jailbreak, jailbreak trading values, roblox jailbreak <%= itemType %>, jailbreak <%= item.name.toLowerCase() %> price, <%= item.name.toLowerCase() %> trading value"
     />
     <meta name="author" content="Jailbreak Changelogs" />
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="product" />
     <meta
       property="og:url"
-      content="https://testing.jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(itemName) %>"
+      content="https://jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(item.name) %>"
     />
     <meta
       property="og:title"
-      content="<%= title %> - Item Details | JailbreakChangelogs"
+      content="<%= item.name %> - Current Value & Details | Jailbreak <%= itemType %>"
     />
     <meta
       property="og:description"
-      content="Get detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. View current value, trading history, rarity status, and market trends to make informed trading decisions."
+      content="Get the latest trading value and details for <%= item.name %> in Roblox Jailbreak. Updated <%= itemType.toLowerCase() %> values, rarity info, and market trends."
     />
     <meta
       property="og:image"
-      content="<%= item?.image || '/assets/logos/Items_Logo.webp' %>"
+      content="<%= item.image || '/assets/logos/Items_Logo.webp' %>"
     />
-    <meta property="og:site_name" content="Jailbreak Changelogs Items Page" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:url"
-      content="https://testing.jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(itemName) %>"
+      content="https://jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(item.name) %>"
     />
     <meta
       name="twitter:title"
-      content="<%= title %> - Item Details | JailbreakChangelogs"
+      content="<%= item.name %> - Jailbreak <%= itemType %> Value & Details"
     />
     <meta
       name="twitter:description"
-      content="Get detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. View current value, trading history, rarity status, and market trends to make informed trading decisions."
+      content="Get the latest trading value and details for <%= item.name %> in Roblox Jailbreak. Updated <%= itemType.toLowerCase() %> values, rarity info, and market trends."
     />
     <meta
       name="twitter:image"
-      content="<%= item?.image || '/assets/logos/Items_Logo.webp' %>"
+      content="<%= item.image || '/assets/logos/Items_Logo.webp' %>"
     />
 
     <!-- Additional SEO tags -->
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <link
       rel="canonical"
-      href="https://testing.jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(itemName) %>"
+      href="https://testing.jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(item.name) %>"
     />
-    <meta property="og:locale" content="en_US" />
-    <meta name="language" content="English" />
-    <!-- Google Tag Manager -->
-    <script>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != "dataLayer" ? "&l=" + l : "";
-        j.async = true;
-        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, "script", "dataLayer", "GTM-KM853GJ6");
-    </script>
-    <!-- End Google Tag Manager -->
 
-    <!-- Schema.org markup for Google -->
+    <!-- Schema.org structured data for Game Item -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Product",
-        "name": "<%= title.replace(' / Changelogs', '') %>",
-        "image": "<%= item?.image || '/assets/logos/Items_Logo.webp' %>",
-        "description": "Get detailed information about <%= title.replace(' / Changelogs', '') %> in Jailbreak. View current value, trading history, rarity status, and market trends.",
-        "category": "<%= itemType %>",
-        "url": "https://testing.jailbreakchangelogs.xyz/item/<%= itemType %>/<%= encodeURIComponent(itemName) %>"
+        "name": "<%= item.name %>",
+        "description": "<%- item.description || `${item.name} is a ${itemType.toLowerCase()} item in Roblox Jailbreak.` %>",
+        "image": "<%= item.image || '/assets/logos/Items_Logo.webp' %>",
+        "category": "Roblox Jailbreak <%= itemType %>",
+        "itemCondition": "<%- item.is_limited ? 'Limited' : 'Regular' %>",
+        "game": {
+          "@type": "VideoGame",
+          "name": "Roblox Jailbreak"
+        }
+      }
+    </script>
+
+    <!-- Schema.org structured data for Breadcrumbs -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://testing.jailbreakchangelogs.xyz"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Values",
+            "item": "https://testing.jailbreakchangelogs.xyz/values"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "<%= itemType %>s",
+            "item": "https://testing.jailbreakchangelogs/values?sort=<%= itemType.toLowerCase() %>s"
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "<%= item.name %>",
+            "item": "https://testing.jailbreakchangelogs/item/<%= itemType %>/<%= encodeURIComponent(item.name) %>"
+          }
+        ]
       }
     </script>
 

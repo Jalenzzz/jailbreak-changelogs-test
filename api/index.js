@@ -309,10 +309,34 @@ app.get("/item/:type/:item", async (req, res) => {
 
     const item = await response.json();
 
-    // If item not found, return the error page but with itemName in the title
+    // Enhanced SEO data
+    const seoData = {
+      pageTitle: `${itemName} - Jailbreak ${formattedUrlType} Value & Details | JailbreakChangelogs`,
+      metaDescription: `Get the latest value and details for ${itemName} in Roblox Jailbreak. View current price, trading history, rarity status, and market trends. Updated values and comprehensive information for ${formattedUrlType.toLowerCase()} traders.`,
+      canonicalUrl: `https://testing.jailbreakchangelogs.xyz/item/${formattedUrlType.toLowerCase()}/${encodeURIComponent(
+        itemName
+      )}`,
+      breadcrumbs: [
+        { name: "Home", url: "/" },
+        { name: "Values", url: "/values" },
+        {
+          name: `${formattedUrlType}s`,
+          url: `/values?sort=${formattedUrlType.toLowerCase()}s`,
+        },
+        {
+          name: itemName,
+          url: `/item/${formattedUrlType.toLowerCase()}/${encodeURIComponent(
+            itemName
+          )}`,
+        },
+      ],
+    };
+
+    // If item not found, return error page with SEO data
     if (response.status === 404 || item.error) {
       return res.render("item", {
-        title: `${itemName} / Changelogs`, // Keep the item name in title
+        ...seoData,
+        title: seoData.pageTitle,
         logoUrl: "/assets/logos/Values_Logo.webp",
         logoAlt: "Item Page Logo",
         itemName,
@@ -321,29 +345,28 @@ app.get("/item/:type/:item", async (req, res) => {
         error: true,
         image_url: "/assets/logos/Values_Logo.webp",
         item: {
-          name: itemName, // Include the name in the item object
+          name: itemName,
           image: "/assets/logos/Values_Logo.webp",
         },
       });
     }
 
-    // For successful responses, generate image URL based on item type from API
+    // Generate image URL for the item
     let image_url;
     if (item.type === "Drift") {
-      // Special case for drifts - use thumbnails
       image_url = `/assets/items/drifts/thumbnails/${item.name}.webp`;
     } else if (item.type === "HyperChrome" && item.name === "HyperShift") {
-      // Special case for HyperShift - use video
       image_url = `/assets/items/hyperchromes/HyperShift.webm`;
     } else {
-      // For all other items, use type directly from API response
       const pluralType = `${item.type.toLowerCase()}s`;
       image_url = `/assets/items/${pluralType}/${item.name}.webp`;
     }
     item.image = image_url;
 
+    // Render page with SEO data
     res.render("item", {
-      title: `${item.name} / Changelogs`,
+      ...seoData,
+      title: seoData.pageTitle,
       logoUrl: "/assets/logos/Values_Logo.webp",
       logoAlt: "Item Page Logo",
       itemName: item.name,
@@ -354,9 +377,8 @@ app.get("/item/:type/:item", async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching item data:", error);
-    // Even in case of error, keep the item name in the title
     res.render("item", {
-      title: `${itemName} / Changelogs`,
+      title: `${itemName} - Error | JailbreakChangelogs`,
       logoUrl: "/assets/logos/Values_Logo.webp",
       logoAlt: "Item Page Logo",
       itemName,
