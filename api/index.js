@@ -313,8 +313,9 @@ app.get("/item/:type/:item", async (req, res) => {
     const seoData = {
       pageTitle: `${itemName} - Jailbreak ${formattedUrlType} Value & Details | JailbreakChangelogs`,
       metaDescription:
-        item.description ||
-        `Get the latest value and details for ${itemName} in Roblox Jailbreak. View current price, trading history, rarity status, and market trends.`,
+        item.description && item.description !== "N/A"
+          ? item.description
+          : `Get the latest value and details for ${itemName} in Roblox Jailbreak. View current price, trading history, rarity status, and market trends.`,
       canonicalUrl: `https://testing.jailbreakchangelogs.xyz/item/${formattedUrlType.toLowerCase()}/${encodeURIComponent(
         itemName
       )}`,

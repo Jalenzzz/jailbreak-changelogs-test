@@ -16,7 +16,7 @@
     />
     <meta
       name="description"
-      content="<%= item.description || `Get the latest value and details for ${item.name} in Roblox Jailbreak. View current price, trading history, rarity status, and market trends.` %>"
+      content="<%= (item.description && item.description !== 'N/A') ? item.description : `Get the latest value and details for ${item.name} in Roblox Jailbreak. View current price, trading history, rarity status, and market trends.` %>"
     />
     <meta
       name="keywords"
@@ -36,7 +36,7 @@
     />
     <meta
       property="og:description"
-      content="<%= item.description || `Get the latest trading value and details for ${item.name} in Roblox Jailbreak. Updated ${itemType.toLowerCase()} values, rarity info, and market trends.` %>"
+      content="<%= (item.description && item.description !== 'N/A') ? item.description : `Get the latest trading value and details for ${item.name} in Roblox Jailbreak. Updated ${itemType.toLowerCase()} values, rarity info, and market trends.` %>"
     />
     <meta
       property="og:image"
@@ -55,7 +55,7 @@
     />
     <meta
       name="twitter:description"
-      content="<%= item.description || `Get the latest trading value and details for ${item.name} in Roblox Jailbreak. Updated ${itemType.toLowerCase()} values, rarity info, and market trends.` %>"
+      content="<%= (item.description && item.description !== 'N/A') ? item.description : `Get the latest trading value and details for ${item.name} in Roblox Jailbreak. Updated ${itemType.toLowerCase()} values, rarity info, and market trends.` %>"
     />
     <meta
       name="twitter:image"
@@ -75,7 +75,7 @@
         "@context": "https://schema.org",
         "@type": "Product",
         "name": "<%= item.name %>",
-        "description": "<%- item.description || `${item.name} is a ${itemType.toLowerCase()} item in Roblox Jailbreak.` %>",
+        "description": "<%- (item.description && item.description !== 'N/A') ? item.description : `${item.name} is a ${itemType.toLowerCase()} item in Roblox Jailbreak.` %>",
         "image": "<%= item.image || '/assets/logos/Items_Logo.webp' %>",
         "category": "Roblox Jailbreak <%= itemType %>",
         "itemCondition": "<%- item.is_limited ? 'Limited' : 'Regular' %>",
