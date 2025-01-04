@@ -1,36 +1,28 @@
 User-agent: *
 Allow: /
 
-# Important Trading Pages
-Allow: /trading
+# Main Value Pages
 Allow: /values
 Allow: /values/calculator
-Allow: /item/*
+Allow: /item/*/
+Allow: /item/*/*
+
+// Important Trading Sections
+Allow: /trading
+Allow: /values?sort=*
+Allow: /values/calculator
 
 # Static Resources
-Allow: /*.js$
 Allow: /*.css$
-Allow: /*.png$
-Allow: /*.jpg$
-Allow: /*.gif$
+Allow: /*.js$
 Allow: /*.webp$
-Allow: /*.svg$
 
-# Clean URLs - Prevent Parameter Indexing
-Disallow: /values?*
-Disallow: /trading?*
-Disallow: /*?*sort=
-Disallow: /*?*filter=
-Disallow: /*?*page=
-Disallow: /*?*valueSort=
-
-# Prevent duplicate content
+# Clean URLs
+Disallow: /*?page=
+Disallow: /*?filter=
 Disallow: /api/
-Disallow: /admin/
-Disallow: /temp/
 
-# Crawl-delay
-Crawl-delay: 1
+# Increased crawl rate for item pages
+Crawl-delay: 0.5
 
-# Location of Sitemaps
-Sitemap: https://testing.jailbreakchangelogs.xyz/sitemap.xml
+Sitemap: https://jailbreakchangelogs.xyz/sitemap.xml
