@@ -63,6 +63,38 @@
     />
 
     <!-- Additional SEO tags -->
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta
+      property="article:modified_time"
+      content="<%= new Date().toISOString() %>"
+    />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="article" />
+
+    <!-- Additional SEO Meta Tags -->
+    <meta name="twitter:label1" content="Item Type" />
+    <meta name="twitter:data1" content="<%= itemType %>" />
+    <meta name="twitter:label2" content="Current Value" />
+    <meta name="twitter:data2" content="<%= item.cash_value %>" />
+
+    <!-- Alternative Title Tags for Better SEO -->
+    <title>
+      <%= item.name %> Value in Jailbreak - Current Price & Trading Guide
+    </title>
+    <meta
+      name="title"
+      content="<%= item.name %> Value in Jailbreak - Current Price & Trading Guide"
+    />
+
+    <!-- Enhanced Keywords -->
+    <meta
+      name="keywords"
+      content="<%= item.name.toLowerCase() %> jailbreak value, jailbreak <%= item.name.toLowerCase() %>, <%= item.name.toLowerCase() %> worth, jailbreak trading value <%= item.name.toLowerCase() %>, <%= item.name.toLowerCase() %> price jailbreak, roblox jailbreak <%= item.name.toLowerCase() %>, jailbreak <%= itemType.toLowerCase() %> values"
+    />
+
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <link
       rel="canonical"
@@ -132,6 +164,32 @@
             "position": 4,
             "name": "<%= item.name %>",
             "item": "https://testing.jailbreakchangelogs/item/<%= itemType %>/<%= encodeURIComponent(item.name) %>"
+          }
+        ]
+      }
+    </script>
+
+    <!-- Additional Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the value of <%= item.name %> in Jailbreak?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The current cash value of <%= item.name %> is <%= item.cash_value %>. <% if(item.is_limited) { %>This is a limited item, which means it is rare and potentially more valuable.<% } %>"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is <%= item.name %> a limited item in Jailbreak?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "<% if(item.is_limited) { %>Yes, <%= item.name %> is a limited item in Jailbreak, making it more valuable and harder to obtain.<% } else { %>No, <%= item.name %> is not a limited item in Jailbreak.<% } %>"
+            }
           }
         ]
       }
