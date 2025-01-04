@@ -987,6 +987,17 @@ button {
 .intro-button-trading:hover {
   background-color: #1e2226;
 }
+
+@media (max-width: 576px) {
+  .intro-buttons {
+    flex-direction: column;
+  }
+
+  .intro-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
 /* Responsive adjustments for hero section */
 @media (max-width: 768px) {
   .intro-container.hero-style {
