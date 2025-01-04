@@ -827,3 +827,232 @@ button {
   margin-top: 0.25rem;
   align-self: center;
 }
+
+/* Trading Intro Container Styles */
+.intro-container {
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.intro-container h1 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 2.5rem;
+}
+
+.intro-container .lead {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 900px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  font-size: 1.05rem;
+  margin-bottom: 0.75rem;
+}
+
+.feature-item i {
+  font-size: 1.2rem;
+  width: 24px;
+}
+
+.quick-tip {
+  font-size: 0.95rem;
+  margin-top: 1rem;
+}
+
+/* Responsive adjustments for trading intro */
+@media (max-width: 768px) {
+  .intro-container h1 {
+    font-size: 2rem;
+  }
+
+  .intro-container .lead {
+    font-size: 1rem;
+  }
+
+  .feature-item {
+    font-size: 0.95rem;
+  }
+
+  .quick-tip {
+    font-size: 0.9rem;
+  }
+}
+
+/* Hero-Style Intro Container */
+.intro-container.hero-style {
+  position: relative;
+  min-height: 400px;
+  background: url("/assets/backgrounds/background9.webp") center/cover no-repeat;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to right,
+    rgba(46, 57, 68, 0.95) 0%,
+    rgba(46, 57, 68, 0.85) 50%,
+    rgba(46, 57, 68, 0.7) 100%
+  );
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: #ffffff;
+  padding: 2rem 1rem;
+}
+
+.hero-style h1 {
+  color: #ffffff;
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero-style .lead {
+  color: #ffffff;
+  font-size: 1.2rem;
+  max-width: 800px;
+}
+
+.hero-style .feature-item {
+  color: #ffffff;
+}
+
+.hero-style .feature-item i {
+  color: var(--accent-color);
+  font-size: 1.4rem;
+  width: 32px;
+}
+
+.hero-style .quick-tip {
+  background-color: rgba(18, 78, 102, 0.8);
+  border-left: 4px solid var(--accent-color);
+  backdrop-filter: blur(5px);
+  color: #ffffff;
+}
+
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+/* Intro Buttons */
+.intro-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.intro-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.intro-button-calculator {
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+.intro-button-trading {
+  background-color: #2d3238;
+  color: var(--text-primary);
+  border: 1px solid var(--accent-color);
+}
+
+.intro-button:hover {
+  transform: translateY(-2px);
+  color: var(--text-primary);
+}
+
+.intro-button-calculator:hover {
+  background-color: #0e3d50;
+}
+
+.intro-button-trading:hover {
+  background-color: #1e2226;
+}
+/* Responsive adjustments for hero section */
+@media (max-width: 768px) {
+  .intro-container.hero-style {
+    min-height: 300px;
+  }
+
+  .hero-style h1 {
+    font-size: 2rem;
+  }
+
+  .hero-style .lead {
+    font-size: 1rem;
+  }
+
+  .hero-style .feature-item {
+    font-size: 0.9rem;
+  }
+
+  .hero-style .feature-item i {
+    font-size: 1.2rem;
+    width: 28px;
+  }
+}
+
+.hero-style .btn-calculator {
+  background-color: var(--accent-color);
+  border: none;
+  color: white;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero-style .btn-calculator:hover {
+  background-color: rgba(18, 78, 102, 0.9);
+  transform: translateY(-2px);
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .hero-style .btn-calculator {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .hero-style .d-flex.gap-3 {
+    flex-direction: column;
+  }
+
+  .hero-style .btn-calculator {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .intro-buttons {
+    flex-direction: column;
+  }
+
+  .intro-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

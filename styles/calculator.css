@@ -1,1 +1,120 @@
 @import "trading.css";
+
+/* Calculator Intro Container Styles */
+.intro-container {
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.intro-container h1 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+}
+
+.intro-container .lead {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 900px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  font-size: 1.05rem;
+  margin-bottom: 0.75rem;
+}
+
+.feature-item i {
+  font-size: 1.2rem;
+  width: 24px;
+}
+
+.quick-tip {
+  font-size: 0.95rem;
+  margin-top: 1rem;
+}
+
+/* Additional Calculator Specific Styles */
+.hero-style .feature-item i {
+  color: var(--accent-color);
+}
+
+.hero-style .quick-tip {
+  background-color: rgba(18, 78, 102, 0.8);
+  border-left: 4px solid var(--accent-color);
+  backdrop-filter: blur(5px);
+  color: #ffffff;
+}
+
+/* Ensure text colors are consistent */
+.hero-style h1,
+.hero-style .lead,
+.hero-style .feature-item span {
+  color: #ffffff;
+}
+
+/* Intro Buttons */
+.intro-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.intro-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.intro-button-trading {
+  background-color: #2d3238;
+  color: var(--text-primary);
+  border: 1px solid var(--accent-color);
+}
+
+.intro-button:hover {
+  transform: translateY(-2px);
+  color: var(--text-primary);
+}
+
+.intro-button-trading:hover {
+  background-color: #1e2226;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .intro-container h1 {
+    font-size: 2rem;
+  }
+
+  .intro-container .lead {
+    font-size: 1rem;
+  }
+
+  .feature-item {
+    font-size: 0.95rem;
+  }
+
+  .quick-tip {
+    font-size: 0.9rem;
+  }
+
+  .hero-style .quick-tip {
+    font-size: 0.85rem;
+  }
+}
+@media (max-width: 576px) {
+  .intro-buttons {
+    flex-direction: column;
+  }
+
+  .intro-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

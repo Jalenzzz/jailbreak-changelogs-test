@@ -120,7 +120,7 @@ body {
 }
 
 [data-bs-theme="dark"] .timeline::before {
-  background-color: var(--text-secondary); /* Dark theme timeline line color */
+  background-color: #a7b0b5; /* Dark theme timeline line color */
 }
 
 .timeline-entry {
@@ -209,7 +209,6 @@ body {
 .btn-primary:focus,
 .btn-primary:active,
 .btn-primary.active {
-  background-color: var(--button-primary-hover-bg) !important;
   border-color: var(--button-primary-hover-bg) !important;
 }
 
@@ -345,25 +344,11 @@ button {
   transition: background-color 0.3s, color 0.3s;
 }
 
-/* Bigger View Details text */
-.view-details-btn {
-  font-size: 1.7rem;
-  font-weight: bold;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-.timeline-entry:hover .view-details-btn {
-  background-color: var(--button-primary-bg);
-  color: var(--button-primary-text);
-}
-
 /* Dark theme adjustments */
 [data-bs-theme="dark"] .timeline-entry:hover::after {
   box-shadow: 0 0 20px #748d92; /* Stronger glow for dark theme */
 }
 
-[data-bs-theme="dark"] .timeline-entry:hover .view-details-btn {
-  background-color: #748d92 !important;
-}
 /* Accordion headers */
 .accordion-button {
   background-color: #212a31 !important; /* Dark blue-gray background */
@@ -394,7 +379,7 @@ button {
 }
 
 .info-button:hover {
-  background-color: #212a31;
+  background-color: var(--bg-secondary);
   box-shadow: 0 0 10px rgba(19, 132, 150, 0.5);
 }
 
@@ -492,6 +477,110 @@ button {
 .changelog-link:hover .changelog-image {
   transform: scale(1.02);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Intro Container Styles */
+.intro-container {
+  background-color: var(--background-dark);
+  border-radius: 12px;
+}
+
+.intro-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.intro-content h1 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.intro-content .lead {
+  color: #a7b0b5;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+}
+
+.feature-item i {
+  color: var(--accent-color);
+  font-size: 1.2rem;
+}
+
+/* Intro Buttons */
+.intro-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.intro-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+}
+
+.intro-button-calculator {
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+.intro-button-trading {
+  background-color: var(--background-light);
+  color: var(--text-primary);
+  border: 1px solid var(--accent-color);
+}
+
+.intro-button:hover {
+  transform: translateY(-2px);
+}
+
+.intro-button-calculator:hover {
+  background-color: #0e3d50;
+  color: var(--text-primary);
+}
+
+.intro-button-trading:hover {
+  background-color: #1e2226;
+  color: var(--text-primary);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .intro-content h1 {
+    font-size: 2rem;
+  }
+
+  .intro-content .lead {
+    font-size: 1rem;
+  }
+
+  .feature-item {
+    font-size: 0.95rem;
+  }
+
+  .intro-buttons {
+    flex-direction: column;
+  }
+
+  .intro-button {
+    width: 100%;
+    justify-content: center;
+    padding: 0.6rem 1rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -630,11 +719,6 @@ button {
     margin-bottom: 10px;
   }
 
-  /* Adjust view details button for mobile */
-  .view-details-btn {
-    font-size: 0.9rem;
-    padding: 5px 10px;
-  }
   #loading-overlay .loading-logo {
     width: 200px;
   }
@@ -873,4 +957,24 @@ button {
 
 .timeline-content a:hover {
   color: var(--text-secondary);
+}
+
+/* Alert Styles */
+.alert-info {
+  background-color: rgba(18, 78, 102, 0.1);
+  border: 1px solid rgba(18, 78, 102, 0.2);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.alert-info i {
+  color: var(--accent-color);
+}
+
+/* Update info button position in intro container */
+.intro-container .info-button {
+  margin-top: -0.5rem;
+  margin-right: -0.5rem;
 }

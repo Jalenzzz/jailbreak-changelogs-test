@@ -782,6 +782,81 @@
   margin: 0 auto;
 }
 
+/* Add this before the Categories Section Styles */
+
+/* Intro Content Section */
+.intro-content {
+  background-color: #212a31;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Add these new styles */
+.intro-container {
+  background-color: #2e3944;
+}
+
+.intro-content h1 {
+  color: #d3d9d4;
+}
+
+.intro-content .lead {
+  color: #a7b0b5;
+}
+
+.feature-item i {
+  color: #124e66;
+}
+
+.feature-item span {
+  color: #d3d9d4;
+}
+
+.categories-section h2 {
+  color: #d3d9d4;
+}
+
+.categories-section span {
+  color: #d3d9d4;
+}
+
+.toggle-icon {
+  color: #748d92;
+}
+.filter-controls {
+  background-color: #2e3944;
+}
+
+.input-group-text,
+.form-control,
+.form-select,
+.btn-outline-secondary {
+  background-color: #212a31;
+  color: #d3d9d4;
+  border-color: #748d92;
+}
+
+.total-items-section {
+  background-color: #212a31;
+}
+
+.total-items-info {
+  color: #d3d9d4;
+}
+
+.category-limited {
+  background-color: var(--limited-bg);
+}
+
+.category-limited i {
+  color: var(--limited-icon);
+}
+
+/* Repeat for other categories following the same pattern */
+
+/* ...existing code... */
+
 /* Add these new styles at the end of the file */
 @media (max-width: 768px) {
   .contributor-card {
@@ -901,5 +976,129 @@
 
   .category-item i {
     font-size: 0.9rem;
+  }
+}
+
+/* Category Items Styling */
+.category-limited {
+  background-color: rgba(18, 78, 102, 0.1);
+}
+.category-limited i {
+  color: #ffd700;
+}
+
+.category-vehicles {
+  background-color: rgba(200, 44, 44, 0.1);
+}
+.category-vehicles i {
+  color: #c82c2c;
+}
+
+.category-rims {
+  background-color: rgba(99, 53, 177, 0.1);
+}
+.category-rims i {
+  color: #6335b1;
+}
+
+.category-spoilers {
+  background-color: rgba(193, 136, 0, 0.1);
+}
+.category-spoilers i {
+  color: #c18800;
+}
+
+.category-body-colors {
+  background-color: rgba(138, 43, 226, 0.1);
+}
+.category-body-colors i {
+  color: #8a2be2;
+}
+
+.category-textures {
+  background-color: rgba(112, 128, 144, 0.1);
+}
+.category-textures i {
+  color: #708090;
+}
+
+.category-hyperchromes {
+  background-color: rgba(233, 30, 99, 0.1);
+}
+.category-hyperchromes i {
+  color: #e91e63;
+}
+
+.category-tire-stickers {
+  background-color: rgba(28, 161, 189, 0.1);
+}
+.category-tire-stickers i {
+  color: #1ca1bd;
+}
+
+.category-drifts {
+  background-color: rgba(255, 69, 0, 0.1);
+}
+.category-drifts i {
+  color: #ff4500;
+}
+
+.category-furniture {
+  background-color: rgba(156, 102, 68, 0.1);
+}
+.category-furniture i {
+  color: #9c6644;
+}
+
+/* Intro Buttons */
+.intro-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.intro-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.intro-button-calculator {
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+.intro-button-trading {
+  background-color: #2d3238;
+  color: var(--text-primary);
+  border: 1px solid var(--accent-color);
+}
+
+.intro-button:hover {
+  transform: translateY(-2px);
+  color: var(--text-primary);
+}
+
+.intro-button-calculator:hover {
+  background-color: #0e3d50;
+}
+
+.intro-button-trading:hover {
+  background-color: #1e2226;
+}
+
+@media (max-width: 576px) {
+  .intro-buttons {
+    flex-direction: column;
+  }
+
+  .intro-button {
+    width: 100%;
+    justify-content: center;
   }
 }
