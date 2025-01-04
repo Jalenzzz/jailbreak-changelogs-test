@@ -172,15 +172,21 @@ document.addEventListener("DOMContentLoaded", () => {
     displayItems();
   };
 
-  // Now check for saved sort
+  // Now check for saved sort and value sort
   const savedSort = sessionStorage.getItem("sortDropdown");
-  if (savedSort) {
+  const savedValueSort =
+    sessionStorage.getItem("valueSortDropdown") || "random"; // Default to random if not set
+
+  if (savedSort || savedValueSort) {
     const sortDropdown = document.getElementById("sort-dropdown");
-    if (sortDropdown) {
+    const valueSortDropdown = document.getElementById("value-sort-dropdown");
+
+    if (sortDropdown && valueSortDropdown) {
       try {
-        sortDropdown.value = savedSort;
+        if (savedSort) sortDropdown.value = savedSort;
+        if (savedValueSort) valueSortDropdown.value = savedValueSort;
         sort = savedSort; // Set global sort variable
-        // Safely call sortItems
+        // Safely call sortItems only after setting both dropdowns
         if (typeof window.sortItems === "function") {
           window.sortItems();
         } else {
@@ -238,6 +244,15 @@ document.addEventListener("DOMContentLoaded", () => {
   function restoreFilters() {
     const savedSortDropdown = sessionStorage.getItem("sortDropdown");
     const savedValueSort = sessionStorage.getItem("valueSortDropdown");
+
+    if (savedSortDropdown) {
+      document.getElementById("sort-dropdown").value = savedSortDropdown;
+    }
+    if (savedValueSort) {
+      const valueSortDropdown = document.getElementById("value-sort-dropdown");
+
+      valueSortDropdown.value = savedValueSort;
+    }
     const savedSearch = localStorage.getItem("searchTerm");
 
     if (savedSortDropdown) {
@@ -664,7 +679,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }" 
          onclick="handleCardClick('${
            item.name
-         }', '${item.type.toLowerCase()}')" 
+         }', '${item.type.toLowerCase()}', event)" 
+         onmousedown="handleCardClick('${
+           item.name
+         }', '${item.type.toLowerCase()}', event)"
          style="cursor: pointer;">
       ${mediaElement}
       ${typeBadgeHtml}
@@ -914,8 +932,11 @@ document.addEventListener("DOMContentLoaded", () => {
     <option value="duped-asc">Duped Value (Low to High)</option>
     <option value="duped-desc">Duped Value (High to Low)</option>
     `;
-    // Set default sort to random
-    valueSortDropdown.value = "random";
+
+    // Check sessionStorage first, fallback to random
+    const savedValueSort = sessionStorage.getItem("valueSortDropdown");
+
+    valueSortDropdown.value = savedValueSort || "random";
     sortItems(); // Apply initial sort
   }
 
@@ -1055,17 +1076,25 @@ function updateSearchPlaceholder() {
   searchBar.placeholder = placeholders[category] || "Search items...";
 }
 
-window.handleCardClick = function (name, type) {
+window.handleCardClick = function (name, type, event) {
+  event.preventDefault();
+
   // Always convert spaces to hyphens for consistent storage
   const formattedType = type.replace(/\s+/g, "-");
 
-  // Store the type-specific sort value before navigating
-  sessionStorage.setItem("sortDropdown", `name-${formattedType}s`);
+  // Store both dropdown values before navigating
+  const currentSort = document.getElementById("sort-dropdown").value;
+  const currentValueSort = document.getElementById("value-sort-dropdown").value;
+
+  sessionStorage.setItem("sortDropdown", currentSort);
+  sessionStorage.setItem("valueSortDropdown", currentValueSort);
 
   const formattedName = encodeURIComponent(name);
   const formattedUrlType = encodeURIComponent(type.toLowerCase());
   const url = `/item/${formattedUrlType}/${formattedName}`;
-  window.location.href = url;
+
+  // Always open in new tab by using window.open()
+  window.open(url, "_blank");
 };
 
 window.handleCategoryClick = function (event, category) {
