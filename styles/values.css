@@ -830,3 +830,76 @@
     font-size: 1rem;
   }
 }
+
+/* Intro Container Styles */
+.intro-container {
+  border-radius: 12px;
+}
+
+.intro-container h1 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 2.5rem;
+}
+
+.intro-container .lead {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  font-size: 1.05rem;
+}
+
+.feature-item i {
+  font-size: 1.2rem;
+}
+
+/* Responsive adjustments for intro section */
+@media (max-width: 768px) {
+  .intro-container h1 {
+    font-size: 2rem;
+  }
+
+  .intro-container .lead {
+    font-size: 1rem;
+  }
+
+  .feature-item {
+    font-size: 0.95rem;
+  }
+}
+
+/* Categories Section Styles */
+.categories-section {
+  border-top: 1px solid rgba(116, 141, 146, 0.2);
+  padding-top: 1.5rem;
+}
+
+.category-item {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.category-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-color);
+}
+
+.category-item i {
+  font-size: 1rem;
+}
+
+/* Responsive adjustments for categories */
+@media (max-width: 768px) {
+  .category-item {
+    font-size: 0.9rem;
+  }
+
+  .category-item i {
+    font-size: 0.9rem;
+  }
+}

@@ -259,7 +259,7 @@ app.get("/bot", (req, res) => {
   });
 });
 
-app.get("/values", (req, res) => {
+app.get("/values", async (req, res) => {
   const validSorts = [
     "vehicles",
     "spoilers",
@@ -271,12 +271,38 @@ app.get("/values", (req, res) => {
   ];
   const sortParam = req.query.sort?.toLowerCase();
 
-  res.render("values", {
-    title: "Values / Changelogs",
-    logoUrl: "/assets/logos/Values_Logo.webp",
-    logoAlt: "Values Page Logo",
-    initialSort: validSorts.includes(sortParam) ? sortParam : null,
-  });
+  try {
+    // Fetch items data
+    const response = await fetch(
+      "https://api3.jailbreakchangelogs.xyz/items/list",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    );
+
+    const allItems = await response.json();
+
+    res.render("values", {
+      title: "Values / Changelogs",
+      logoUrl: "/assets/logos/Values_Logo.webp",
+      logoAlt: "Values Page Logo",
+      initialSort: validSorts.includes(sortParam) ? sortParam : null,
+      allItems, // Pass items data to template
+    });
+  } catch (error) {
+    console.error("Error fetching items:", error);
+    res.render("values", {
+      title: "Values / Changelogs",
+      logoUrl: "/assets/logos/Values_Logo.webp",
+      logoAlt: "Values Page Logo",
+      initialSort: validSorts.includes(sortParam) ? sortParam : null,
+      allItems: [], // Pass empty array if fetch fails
+    });
+  }
 });
 
 app.get("/values/calculator", (req, res) => {
