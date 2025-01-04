@@ -105,7 +105,7 @@
                     Roblox Jailbreak Trading Hub
                   </h1>
                   <p class="lead mb-4 text-shadow">
-                    Create and share your Jailbreak trades using our value database. Ensure fair trades, avoid scams, and find the best deals for all tradeable items.
+                    Create trade advertisements for your Roblox Jailbreak items or browse existing trade ads from other players. Find the perfect trades and connect with the trading community.
                   </p>
                   <div class="features mb-4">
                     <div class="feature-item mb-2">
@@ -176,39 +176,12 @@
             id="confirm-trade-btn"
             onclick="previewTrade()"
           >
-            <i class="bi bi-check-circle me-2"></i>Confirm Trade
+            <i class="bi bi-check-circle me-2"></i>Create Trade Ad
           </button>
         </div>
 
         <div id="available-items-list">
           <!-- Available items will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Trade Preview Container -->
-      <div id="trade-preview-container" class="mt-4" style="display: none">
-        <h4 class="text-center mb-3">Trade Preview</h4>
-        <div class="card">
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-6">
-                <h5>Offering</h5>
-                <div id="preview-offering-items" class="preview-items"></div>
-              </div>
-              <div class="col-md-6">
-                <h5>Requesting</h5>
-                <div id="preview-requesting-items" class="preview-items"></div>
-              </div>
-            </div>
-            <div class="mt-3 text-center">
-              <button class="btn btn-primary me-2" onclick="editTrade()">
-                <i class="bi bi-pencil me-2"></i>Edit Trade
-              </button>
-              <button class="btn btn-success" onclick="submitTrade()">
-                <i class="bi bi-upload me-2"></i>Post Trade
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -219,6 +192,104 @@
       </div>
 
       <div id="bottom-pagination"></div>
+
+      <!-- Example Trade Ads Section -->
+      <div class="trade-ads-section">
+        <h3><i class="bi bi-clock-history me-2"></i>Recent Trade Advertisements</h3>
+        
+        <div class="trade-ad">
+          <div class="trade-ad-header">
+            <div class="trader-info">
+              <img src="/assets/avatars/Jalenzz16.webp" alt="Jalenzz16" class="trader-avatar">
+              <span class="trader-name">Jalenzz16</span>
+            </div>
+            <div class="trade-direction">
+              <i class="bi bi-arrow-left-right"></i>
+            </div>
+            <div class="trader-info">
+              <img src="/assets/avatars/Jakobiis.webp" alt="Jakobiis" class="trader-avatar">
+              <span class="trader-name">Jakobiis</span>
+            </div>
+          </div>
+      
+          <div class="trade-sides-container">
+            <div class="trade-side offering">
+              <div class="trade-side-label">Offering</div>
+              <div class="trade-items-grid">
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Brulee.webp" alt="Brulee">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Torpedo.webp" alt="Torpedo">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Ice Breaker.webp" alt="Ice Breaker">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Celsior.webp" alt="Celsior">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Agent.webp" alt="Agent">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Banana Car.webp" alt="Banana Car">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/rims/7 billion.webp" alt="7 billion">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/hyperchromes/HyperBlue Level 2.webp" alt="HyperBlue Level 2">
+                </div>
+              </div>
+              <div class="trade-side-values">
+                <div><strong>Cash Value:</strong> 489,000,000</div>
+                <div><strong>Duped Value:</strong> 412,000,000</div>
+              </div>
+            </div>
+      
+            <div class="trade-side requesting">
+              <div class="trade-side-label">Requesting</div>
+              <div class="trade-items-grid">
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Molten M12.webp" alt="Molten M12">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Beam Hybrid.webp" alt="Beam Hybrid">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Arachnid.webp" alt="Arachnid">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Beignet.webp" alt="Beignet">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Megalodon.webp" alt="Megalodon">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Macaron.webp" alt="Macaron">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Jack Rabbit.webp" alt="Jack Rabbit">
+                </div>
+                <div class="trade-item-card">
+                  <img src="/assets/items/vehicles/Challenger.webp" alt="Challenger">
+                </div>
+              </div>
+              <div class="trade-side-values">
+                <div><strong>Cash Value:</strong> 392,000,000</div>
+                <div><strong>Duped Value:</strong> 328,000,000</div>
+              </div>
+            </div>
+          </div>
+      
+          <div class="trade-ad-footer">
+            <div class="trade-timestamp">
+              <i class="bi bi-clock"></i> Posted 2 hours ago
+            </div>
+            <div class="trade-status pending">Pending</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Trade Summary Section -->

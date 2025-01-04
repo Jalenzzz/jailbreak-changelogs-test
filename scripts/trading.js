@@ -294,8 +294,8 @@ let selectedTradeType = null;
 // Function to create empty placeholder cards
 function createPlaceholderCard(index, tradeType) {
   return `
-    <div class="col-md-3 mb-3">
-      <div class="card h-100 trade-card empty-slot" 
+    <div class="col-md-3 col-6 mb-3">
+      <div class="trade-card empty-slot" 
            onclick="handlePlaceholderClick(${index}, '${tradeType}')">
         <div class="card-img-container">
           <div class="empty-slot-content">
@@ -387,8 +387,8 @@ function renderTradeItems(tradeType) {
     .map((item, index) => {
       if (item) {
         return `
-        <div class="col-md-3 mb-3">
-          <div class="card h-100 trade-card">
+        <div class="col-md-3 col-6 mb-3">
+          <div class="trade-card">
             <div class="card-img-container">
               <img src="/assets/items/${item.type.toLowerCase()}s/${
           item.name
@@ -396,18 +396,9 @@ function renderTradeItems(tradeType) {
                    class="card-img-top" 
                    alt="${item.name}"
                    onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">
-            </div>
-            <div class="card-body">
-              <h6 class="card-title">${item.name}</h6>
-              <div class="value-container cash-value">
-                Cash Value: ${formatValue(item.cash_value)}
+              <div class="remove-icon" onclick="event.stopPropagation(); removeItem(${index}, '${tradeType}')">
+                <i class="bi bi-trash"></i>
               </div>
-              <div class="value-container duped-value">
-                Duped Value: ${formatValue(item.duped_value || 0)}
-              </div>
-              <button class="btn btn-danger btn-sm remove-item" onclick="removeItem(${index}, '${tradeType}')">
-                <i class="bi bi-trash"></i> Remove
-              </button>
             </div>
           </div>
         </div>`;
@@ -588,7 +579,6 @@ function previewTrade() {
   // Hide available items container and show preview
   document.getElementById("available-items-list").style.display = "none";
   document.getElementById("confirm-trade-btn").style.display = "none";
-  document.getElementById("trade-preview-container").style.display = "block";
 
   // Render preview items
   renderPreviewItems("preview-offering-items", offeringItems);
@@ -616,17 +606,12 @@ function editTrade() {
   // Show available items container and hide preview
   document.getElementById("available-items-list").style.display = "block";
   document.getElementById("confirm-trade-btn").style.display = "block";
-  document.getElementById("trade-preview-container").style.display = "none";
 }
 
 async function submitTrade() {
   // Show a simple message when trade is submitted
   toastr.info("This is a demo version. Trade submission is disabled.");
 
-  // Reset button state after showing message
-  const submitButton = document.querySelector(
-    "#trade-preview-container .btn-success"
-  );
   if (submitButton) {
     submitButton.disabled = false;
     submitButton.innerHTML = '<i class="bi bi-upload me-2"></i>Post Trade';
@@ -650,6 +635,5 @@ function resetTrade() {
   updateTradeSummary();
 
   // Hide preview
-  document.getElementById("trade-preview-container").style.display = "none";
   document.getElementById("available-items-list").style.display = "block";
 }
