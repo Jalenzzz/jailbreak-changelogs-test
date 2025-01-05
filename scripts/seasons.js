@@ -6,6 +6,65 @@ $(document).ready(function () {
   const $seasonList = $("#seasonList"); // Reference to the season dropdown
   // let userdata = null;
 
+  let latestSeason = null;
+
+  function updateCountdown() {
+    if (!latestSeason) return; // Exit if latestSeason is not available
+
+    const countdownElement = document.querySelector(".countdown-timer");
+    const seasonNumberElement = document.getElementById("season-number");
+    const seasonTitleElement = document.getElementById("season-title");
+
+    // Update season number and title
+    seasonNumberElement.textContent = latestSeason.season;
+    seasonTitleElement.textContent = latestSeason.title;
+
+    if (!latestSeason.end_date) {
+      // If end_date is null (i.e., it was "N/A" or not provided)
+      countdownElement.innerHTML =
+        '<div class="season-ended">End Date: Not Available</div>';
+      return;
+    }
+    const now = new Date();
+    const diff = latestSeason.end_date - now;
+
+    if (diff > 0) {
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      countdownElement.innerHTML = `
+        <div class="countdown-item">
+          <span id="countdown-days">${days.toString().padStart(2, "0")}</span>
+          <span class="countdown-label">Days</span>
+        </div>
+        <div class="countdown-item">
+          <span id="countdown-hours">${hours.toString().padStart(2, "0")}</span>
+          <span class="countdown-label">Hours</span>
+        </div>
+        <div class="countdown-item">
+          <span id="countdown-minutes">${minutes
+            .toString()
+            .padStart(2, "0")}</span>
+          <span class="countdown-label">Minutes</span>
+        </div>
+        <div class="countdown-item">
+          <span id="countdown-seconds">${seconds
+            .toString()
+            .padStart(2, "0")}</span>
+          <span class="countdown-label">Seconds</span>
+        </div>
+      `;
+    } else {
+      // Season has ended
+      const seasonEndedMessage = `Season ${latestSeason.season} / ${latestSeason.title} has ended!`;
+      countdownElement.innerHTML = `<div class="season-ended">${seasonEndedMessage}</div>`;
+    }
+  }
+
   function updateBreadcrumb(season) {
     const seasonBreadcrumb = document.querySelector(".season-breadcrumb");
     if (seasonBreadcrumb) {
@@ -46,7 +105,6 @@ $(document).ready(function () {
       (response) => response.json()
     );
   }
-
   function loadAllData() {
     const latestSeasonPromise = fetch(
       "https://api3.jailbreakchangelogs.xyz/seasons/latest",
@@ -56,13 +114,32 @@ $(document).ready(function () {
           Origin: "https://jailbreakchangelogs.xyz",
         },
       }
-    ).then((response) => response.json());
+    )
+      .then((response) => response.json())
+      .then((latestSeasonData) => {
+        // Convert the end_date to a JavaScript Date object if it's a valid timestamp
+        if (latestSeasonData.end_date && latestSeasonData.end_date !== "N/A") {
+          latestSeasonData.end_date = new Date(
+            latestSeasonData.end_date * 1000
+          ); // Convert Unix timestamp to milliseconds
+        } else {
+          // If end_date is "N/A" or not provided, set it to null
+          latestSeasonData.end_date = null;
+        }
+        return latestSeasonData;
+      });
 
     return Promise.all([
       fetchAllSeasons(),
       fetchAllRewards(),
       latestSeasonPromise,
-    ]);
+    ]).then(([seasons, rewards, latest]) => {
+      latestSeason = latest; // Set the latestSeason variable
+      // Start the countdown update
+      updateCountdown();
+      setInterval(updateCountdown, 1000); // Update every second
+      return [seasons, rewards, latest];
+    });
   }
 
   // Function to populate the season dropdown menu
@@ -91,26 +168,63 @@ $(document).ready(function () {
   }
 
   function displaySeasonDetails(season, seasonData, rewardsData) {
-    localStorage.setItem("selectedSeason", season);
+    function format_season_date(startTimestamp, endTimestamp) {
+      const options = {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      };
 
-    // Check if seasonData is available
-    if (!seasonData || !seasonData.title) {
-      $seasonDetailsContainer.html(`
-        <div class="alert alert-warning" role="alert">
-          <h4 class="alert-heading">Season ${season} Details Unavailable</h4>
-          <p>We couldn't retrieve the details for this season. The information might be temporarily unavailable.</p>
-        </div>
-      `);
-      disableComments(
-        "Comments are unavailable due to an error loading season data."
-      );
-      return;
+      function formatSingleDate(timestamp) {
+        if (
+          timestamp === null ||
+          timestamp === "N/A" ||
+          timestamp === undefined
+        ) {
+          return ""; // Don't display anything if no date is provided
+        }
+        const date = new Date(timestamp * 1000);
+        let formattedDate = date.toLocaleString("en-US", options);
+        const day = date.getDate();
+        const ordinalSuffix = getOrdinalSuffix(day);
+        return formattedDate.replace(day, `${day}${ordinalSuffix}`);
+      }
+
+      const startDate = formatSingleDate(startTimestamp);
+      const endDate = formatSingleDate(endTimestamp);
+
+      return { startDate, endDate };
     }
 
-    // Populate the season details container
+    // Helper function to get ordinal suffix (assuming it's defined elsewhere in your code)
+    function getOrdinalSuffix(day) {
+      if (day > 3 && day < 21) return "th";
+      switch (day % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    }
+
+    // Update the section where you're using formatDate
     $seasonDetailsContainer.html(`
       <h2 class="season-title display-4 text-custom-header mb-3">Season ${season} / ${seasonData.title}</h2>
       <div class="season-description-container">
+        <div class="season-dates mb-3">
+          <p class="mb-1"><strong>Start Date:</strong> ${
+            format_season_date(seasonData.start_date, seasonData.end_date)
+              .startDate
+          }</p>
+          <p class="mb-1"><strong>End Date:</strong> ${
+            format_season_date(seasonData.start_date, seasonData.end_date)
+              .endDate
+          }</p>
+        </div>
         <div class="season-description-body">
           <p class="season-description-text">${
             seasonData.description || "No description available."
@@ -243,10 +357,9 @@ $(document).ready(function () {
     });
   }
 
-  // Modify the loadSeasonDetails function
   function loadSeasonDetails(season) {
-    return Promise.all([fetchAllSeasons(), fetchAllRewards()]).then(
-      ([allSeasons, allRewards]) => {
+    return Promise.all([fetchAllSeasons(), fetchAllRewards()])
+      .then(([allSeasons, allRewards]) => {
         const seasonData = allSeasons.find(
           (s) => s.season === parseInt(season)
         );
@@ -257,10 +370,61 @@ $(document).ready(function () {
         updateCarousel(seasonRewards);
         updateBreadcrumb(season);
 
-        document.title = `Season ${season} - ${seasonData.title}`;
+        if (seasonData) {
+          document.title = `Season ${season} - ${seasonData.title}`;
+        } else {
+          document.title = `Season ${season}`;
+        }
         return false; // Always return false since we're not using cache
-      }
-    );
+      })
+      .catch((error) => {
+        console.error("Error loading season details:", error);
+        displayErrorMessage(
+          "Unable to load season details. Please try again later."
+        );
+        return false;
+      });
+  }
+
+  function displayErrorMessage(message) {
+    $seasonDetailsContainer.html(`
+      <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Error</h4>
+        <p>${message}</p>
+      </div>
+    `);
+    updateCarousel([]); // Clear the carousel
+    updateBreadcrumb("Error");
+    document.title = "Error - Season Details";
+  }
+
+  // Add this new function to handle fetch errors
+  function fetchWithTimeout(url, options = {}, timeout = 10000) {
+    return Promise.race([
+      fetch(url, options),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out")), timeout)
+      ),
+    ]);
+  }
+
+  // Update these functions to use fetchWithTimeout
+  function fetchAllSeasons() {
+    return fetchWithTimeout("https://api3.jailbreakchangelogs.xyz/seasons/list")
+      .then((response) => response.json())
+      .catch((error) => {
+        console.error("Error fetching seasons:", error);
+        throw error;
+      });
+  }
+
+  function fetchAllRewards() {
+    return fetchWithTimeout("https://api3.jailbreakchangelogs.xyz/rewards/list")
+      .then((response) => response.json())
+      .catch((error) => {
+        console.error("Error fetching rewards:", error);
+        throw error;
+      });
   }
 
   // Add event listener for season selection
@@ -1059,4 +1223,10 @@ function handleinvalidImage() {
       username
     )}&bold=true&format=svg`;
   }, 0);
+
+  loadAllData().then(() => {
+    updateCountdown();
+    // Update countdown every second
+    setInterval(updateCountdown, 1000);
+  });
 }

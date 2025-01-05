@@ -202,10 +202,12 @@
                 customization items. Level up, earn XP, and unlock special
                 prizes during these time-limited events.
               </p>
-
               <!-- Add Season Countdown -->
               <div class="season-countdown text-center my-4">
-                <h3 class="countdown-title">Current Season Ends In:</h3>
+                <h3 class="countdown-title">
+                  Season <span id="season-number"></span> /
+                  <span id="season-title"></span> ends in:
+                </h3>
                 <div class="countdown-timer">
                   <div class="countdown-item">
                     <span id="countdown-days">00</span>
@@ -437,43 +439,6 @@
         signalGooglefcPresent();
       })();
     </script>
-    <script>
-      function updateCountdown() {
-        const endDate = new Date("2025-02-25T00:00:00Z");
-        const now = new Date();
-        const diff = endDate - now;
-
-        if (diff > 0) {
-          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-          const hours = Math.floor(
-            (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-          );
-          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-          document.getElementById("countdown-days").textContent = days
-            .toString()
-            .padStart(2, "0");
-          document.getElementById("countdown-hours").textContent = hours
-            .toString()
-            .padStart(2, "0");
-          document.getElementById("countdown-minutes").textContent = minutes
-            .toString()
-            .padStart(2, "0");
-          document.getElementById("countdown-seconds").textContent = seconds
-            .toString()
-            .padStart(2, "0");
-        } else {
-          // Season has ended
-          document.querySelector(".countdown-timer").innerHTML =
-            '<div class="season-ended">Season has ended!</div>';
-        }
-      }
-
-      // Update countdown every second
-      setInterval(updateCountdown, 1000);
-      // Initial update
-      updateCountdown();
-    </script>
+    <script></script>
   </body>
 </html>

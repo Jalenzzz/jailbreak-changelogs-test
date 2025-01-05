@@ -931,6 +931,36 @@ span {
   font-size: 0.9rem;
   margin-top: 0.25rem;
 }
+.season-ended {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ff6b6b;
+  text-align: center;
+  padding: 1rem;
+  background-color: rgba(255, 107, 107, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.season-ended i {
+  font-size: 2rem;
+  margin-right: 0.5rem;
+}
+.season-dates {
+  background-color: rgba(18, 78, 102, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.season-dates p {
+  margin-bottom: 0.25rem;
+  color: var(--text-secondary);
+}
+
+.season-dates strong {
+  color: var(--text-primary);
+}
 
 @media (max-width: 768px) {
   .countdown-timer {
@@ -947,5 +977,25 @@ span {
 
   .countdown-item .countdown-label {
     font-size: 0.8rem;
+  }
+  .season-ended {
+    font-size: 1.2rem;
+    padding: 0.75rem;
+  }
+
+  .season-ended i {
+    font-size: 1.5rem;
+    margin-right: 0.3rem;
+  }
+}
+@media (max-width: 480px) {
+  .season-ended {
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+
+  .season-ended i {
+    font-size: 1.2rem;
+    margin-right: 0.2rem;
   }
 }
