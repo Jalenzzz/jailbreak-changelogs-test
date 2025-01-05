@@ -168,6 +168,7 @@ $(document).ready(function () {
   }
 
   function displaySeasonDetails(season, seasonData, rewardsData) {
+    localStorage.setItem("selectedSeason", season);
     function format_season_date(startTimestamp, endTimestamp) {
       const options = {
         month: "long",
@@ -224,6 +225,9 @@ $(document).ready(function () {
             format_season_date(seasonData.start_date, seasonData.end_date)
               .endDate
           }</p>
+          <p class="mb-1"><strong>Duration:</strong> ${Math.ceil(
+            (seasonData.end_date - seasonData.start_date) / (60 * 60 * 24)
+          )} days</p>
         </div>
         <div class="season-description-body">
           <p class="season-description-text">${
