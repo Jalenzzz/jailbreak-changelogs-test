@@ -7,61 +7,111 @@ $(document).ready(function () {
   // let userdata = null;
 
   let latestSeason = null;
-
   function updateCountdown() {
     if (!latestSeason) return; // Exit if latestSeason is not available
 
     const countdownElement = document.querySelector(".countdown-timer");
     const seasonNumberElement = document.getElementById("season-number");
     const seasonTitleElement = document.getElementById("season-title");
+    const countdownModeElement = document.getElementById("countdown-mode"); // For dynamic "starts in" or "ends in"
 
     // Update season number and title
     seasonNumberElement.textContent = latestSeason.season;
     seasonTitleElement.textContent = latestSeason.title;
 
-    if (!latestSeason.end_date) {
-      // If end_date is null (i.e., it was "N/A" or not provided)
-      countdownElement.innerHTML =
-        '<div class="season-ended">End Date: Not Available</div>';
+    const now = new Date();
+
+    if (latestSeason.start_date && !latestSeason.end_date) {
+      // If only start date is available
+      countdownModeElement.textContent = "starts in:";
+      const startDate = new Date(latestSeason.start_date * 1000); // Convert UNIX timestamp to milliseconds
+      const diff = startDate - now;
+
+      if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        countdownElement.innerHTML = `
+          <div class="countdown-item">
+            <span id="countdown-days">${days.toString().padStart(2, "0")}</span>
+            <span class="countdown-label">Days</span>
+          </div>
+          <div class="countdown-item">
+            <span id="countdown-hours">${hours
+              .toString()
+              .padStart(2, "0")}</span>
+            <span class="countdown-label">Hours</span>
+          </div>
+          <div class="countdown-item">
+            <span id="countdown-minutes">${minutes
+              .toString()
+              .padStart(2, "0")}</span>
+            <span class="countdown-label">Minutes</span>
+          </div>
+          <div class="countdown-item">
+            <span id="countdown-seconds">${seconds
+              .toString()
+              .padStart(2, "0")}</span>
+            <span class="countdown-label">Seconds</span>
+          </div>
+        `;
+      } else {
+        // Season has started
+        countdownElement.innerHTML = `<div class="season-started">Season ${latestSeason.season} / ${latestSeason.title} has started!</div>`;
+      }
       return;
     }
-    const now = new Date();
-    const diff = latestSeason.end_date - now;
 
-    if (diff > 0) {
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    if (latestSeason.end_date) {
+      // If end date is available
+      countdownModeElement.textContent = "ends in:";
+      const endDate = new Date(latestSeason.end_date * 1000); // Convert UNIX timestamp to milliseconds
+      const diff = endDate - now;
 
-      countdownElement.innerHTML = `
-        <div class="countdown-item">
-          <span id="countdown-days">${days.toString().padStart(2, "0")}</span>
-          <span class="countdown-label">Days</span>
-        </div>
-        <div class="countdown-item">
-          <span id="countdown-hours">${hours.toString().padStart(2, "0")}</span>
-          <span class="countdown-label">Hours</span>
-        </div>
-        <div class="countdown-item">
-          <span id="countdown-minutes">${minutes
-            .toString()
-            .padStart(2, "0")}</span>
-          <span class="countdown-label">Minutes</span>
-        </div>
-        <div class="countdown-item">
-          <span id="countdown-seconds">${seconds
-            .toString()
-            .padStart(2, "0")}</span>
-          <span class="countdown-label">Seconds</span>
-        </div>
-      `;
+      if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        countdownElement.innerHTML = `
+          <div class="countdown-item">
+            <span id="countdown-days">${days.toString().padStart(2, "0")}</span>
+            <span class="countdown-label">Days</span>
+          </div>
+          <div class="countdown-item">
+            <span id="countdown-hours">${hours
+              .toString()
+              .padStart(2, "0")}</span>
+            <span class="countdown-label">Hours</span>
+          </div>
+          <div class="countdown-item">
+            <span id="countdown-minutes">${minutes
+              .toString()
+              .padStart(2, "0")}</span>
+            <span class="countdown-label">Minutes</span>
+          </div>
+          <div class="countdown-item">
+            <span id="countdown-seconds">${seconds
+              .toString()
+              .padStart(2, "0")}</span>
+            <span class="countdown-label">Seconds</span>
+          </div>
+        `;
+      } else {
+        // Season has ended
+        countdownElement.innerHTML = `<div class="season-ended">Season ${latestSeason.season} / ${latestSeason.title} has ended!</div>`;
+      }
     } else {
-      // Season has ended
-      const seasonEndedMessage = `Season ${latestSeason.season} / ${latestSeason.title} has ended!`;
-      countdownElement.innerHTML = `<div class="season-ended">${seasonEndedMessage}</div>`;
+      // Neither start nor end date available
+      countdownElement.innerHTML =
+        '<div class="season-ended">Date: Not Available</div>';
     }
   }
 
@@ -212,7 +262,6 @@ $(document).ready(function () {
       }
     }
 
-    // Update the section where you're using formatDate
     $seasonDetailsContainer.html(`
       <h2 class="season-title display-4 text-custom-header mb-3">Season ${season} / ${seasonData.title}</h2>
       <div class="season-description-container">
@@ -225,14 +274,31 @@ $(document).ready(function () {
             format_season_date(seasonData.start_date, seasonData.end_date)
               .endDate
           }</p>
-          <p class="mb-1"><strong>Duration:</strong> ${Math.ceil(
-            (seasonData.end_date - seasonData.start_date) / (60 * 60 * 24)
-          )} days</p>
-        </div>
-        <div class="season-description-body">
-          <p class="season-description-text">${
-            seasonData.description || "No description available."
+          <p class="mb-1"><strong>Duration:</strong> ${
+            seasonData.start_date &&
+            seasonData.end_date &&
+            seasonData.start_date !== "" &&
+            seasonData.end_date !== "" &&
+            seasonData.start_date !== "N/A" &&
+            seasonData.end_date !== "N/A" &&
+            seasonData.start_date !== null &&
+            seasonData.end_date !== null
+              ? `${Math.ceil(
+                  (seasonData.end_date - seasonData.start_date) / (60 * 60 * 24)
+                )} days`
+              : ""
           }</p>
+        </div>
+        <div class="season-description-body text-center"> 
+          ${
+            seasonData.description
+              ? `<p class="season-description-text">${seasonData.description}</p>`
+              : `
+              <div class="no-description">
+                <i class="bi bi-info-circle text-muted mb-2" style="font-size: 2rem;"></i>
+                <p class="text-muted">No description available.</p>
+              </div>`
+          }
         </div>
       </div>
     `);
