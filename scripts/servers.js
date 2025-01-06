@@ -27,6 +27,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   fetchServers();
 });
+function getAuthToken() {
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    const [name, value] = cookie.trim().split("=");
+    if (name === "token") {
+      return decodeURIComponent(value);
+    }
+  }
+  return null;
+}
 
 // Toast notification helper
 function showToast(message, type = "info") {
@@ -169,8 +179,22 @@ async function createServerCard(server) {
   const ownerName = await fetchUserInfo(server.owner);
 
   // Check if current user is the owner
-  const currentUserId = sessionStorage.getItem("userid");
-  const isOwner = currentUserId === server.owner;
+  const token = getAuthToken();
+  let isOwner = false;
+
+  if (token) {
+    try {
+      const response = await fetch(
+        `https://api3.jailbreakchangelogs.xyz/users/get/token?token=${token}`
+      );
+      if (response.ok) {
+        const userData = await response.json();
+        isOwner = userData.id === server.owner;
+      }
+    } catch (error) {
+      console.error("Error verifying ownership:", error);
+    }
+  }
   const ownerActions = isOwner
     ? `
     <button class="btn btn-outline-warning btn-sm" onclick="editServer('${server.id}')">
@@ -275,6 +299,12 @@ async function editServer(serverId) {
 async function handleEditServer(event, serverId) {
   event.preventDefault();
 
+  const token = getAuthToken();
+  if (!token) {
+    showToast("Authentication required", "error");
+    return;
+  }
+
   const form = event.target;
   const submitBtn = form.querySelector('button[type="submit"]');
   const spinner = submitBtn.querySelector(".spinner-border");
@@ -288,6 +318,7 @@ async function handleEditServer(event, serverId) {
       link: form.serverLink.value,
       rules: form.serverRules.value || "N/A",
       expires: Math.floor(expirationDate.getTime() / 1000).toString(),
+      token: token,
     };
 
     const response = await fetch(
@@ -311,10 +342,8 @@ async function handleEditServer(event, serverId) {
     );
     modal.hide();
 
-    // Reset form and event handler back to add server mode
     resetModalToAddMode(form);
-
-    await fetchServers(); // Refresh the server list
+    await fetchServers();
     showToast("Server updated successfully!", "success");
   } catch (error) {
     console.error("Error updating server:", error);
@@ -344,7 +373,12 @@ document
   });
 
 async function deleteServer(serverId) {
-  //  confirmation dialog
+  const token = getAuthToken();
+  if (!token) {
+    showToast("Authentication required", "error");
+    return;
+  }
+
   if (!confirm("Are you sure you want to delete this server?")) {
     return;
   }
@@ -353,7 +387,11 @@ async function deleteServer(serverId) {
     const response = await fetch(
       `https://api3.jailbreakchangelogs.xyz/servers/delete?id=${serverId}`,
       {
-        method: "DELETE",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: token }), // Add token to request
       }
     );
 
@@ -362,7 +400,7 @@ async function deleteServer(serverId) {
       throw new Error(data.message || "Failed to delete server");
     }
 
-    await fetchServers(); // Refresh the server list
+    await fetchServers();
     showToast("Server deleted successfully!", "success");
   } catch (error) {
     console.error("Error deleting server:", error);
@@ -388,6 +426,12 @@ function checkAuthAndShowModal() {
 async function handleAddServer(event) {
   event.preventDefault();
 
+  const token = getAuthToken();
+  if (!token) {
+    showToast("Authentication required", "error");
+    return;
+  }
+
   const form = event.target;
   const submitBtn = form.querySelector('button[type="submit"]');
   const spinner = submitBtn.querySelector(".spinner-border");
@@ -410,7 +454,8 @@ async function handleAddServer(event) {
       link: serverLink,
       owner: form.serverOwner.value,
       rules: form.serverRules.value || "N/A",
-      expires: Math.floor(expirationDate.getTime() / 1000).toString(), // Convert to string
+      expires: Math.floor(expirationDate.getTime() / 1000).toString(),
+      token: token, // Add token to request
     };
 
     console.log("Request body:", formData);
