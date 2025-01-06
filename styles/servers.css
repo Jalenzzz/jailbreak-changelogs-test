@@ -1,0 +1,84 @@
+@import "colors.css";
+[data-bs-theme="dark"] body {
+  background-color: var(--bg-secondary);
+}
+.server-card {
+  background-color: var(--bg-primary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.server-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.server-link {
+  max-width: 60%;
+  color: var(--text-primary);
+}
+
+.card-body {
+  background-color: var(--bg-primary);
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+.page-title {
+  font-family: "Bangers", cursive;
+  letter-spacing: 2px;
+  padding-bottom: 0.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+.page-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--text-muted);
+  border-radius: 2px;
+}
+
+/* Container to center the title and its border */
+.title-container {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.btn-primary {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.btn-primary:hover {
+  background-color: #1a6380;
+  border-color: #1a6380;
+}
+
+.btn-outline-primary {
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+#loading {
+  padding: 2rem;
+  color: var(--text-primary);
+}
+
+.server-info {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+.server-link small {
+  font-size: 0.95rem;
+}

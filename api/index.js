@@ -313,6 +313,14 @@ app.get("/values/calculator", (req, res) => {
   });
 });
 
+app.get("/servers", (req, res) => {
+  res.render("servers", {
+    title: "Private Servers | Changelogs",
+    logoUrl: "/assets/logos/Private_Servers_Logo.webp",
+    logoAlt: "Servers Logo",
+  });
+});
+
 app.get("/item/:type/:item", async (req, res) => {
   let itemName = decodeURIComponent(req.params.item)
     .trim()
