@@ -99,26 +99,96 @@
     <!-- prettier-ignore -->
     <%- include('partials/nav') %>
     <%- include('partials/announcement') %>
-    <div class="container my-4">
-      <div class="title-container">
-        <h1 class="page-title">Roblox Jailbreak Private Servers</h1>
-      </div>
-      <button
-        class="btn btn-primary mb-2"
-        id="addServerBtn"
-        onclick="checkAuthAndShowModal()"
-      >
-        <i class="bi bi-plus-circle me-2"></i>Submit a Server
-      </button>
-      <div id="serverList" class="row g-4">
-        <!-- Servers will be loaded here -->
-        <div class="text-center" id="loading">
-          <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
+
+    <!-- After nav and announcement -->
+    <div class="server-intro mb-4">
+      <h1 class="display-4 mb-3">Roblox Jailbreak Private Servers</h1>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="intro-text">
+            <p class="lead">
+              Welcome to our Private Servers hub! Connect with fellow Jailbreak
+              players in dedicated trading and gaming spaces. Browse through
+              community-shared servers, or share your own to build the ultimate
+              Jailbreak trading community.
+            </p>
+            <div class="auth-notice">
+              <i class="bi bi-info-circle"></i>
+              To submit, edit, or delete servers, please log in to your JBC
+              account. This helps us maintain a reliable trading environment.
+            </div>
+
+            <div class="feature-grid mt-4">
+              <div class="feature-item">
+                <i class="bi bi-people-fill text-primary"></i>
+                <h5>Trading Spaces</h5>
+                <p>
+                  Join dedicated servers for safe and efficient trading with
+                  other Jailbreak players. Find the perfect environment for your
+                  trading needs.
+                </p>
+              </div>
+
+              <div class="feature-item">
+                <i class="bi bi-shield-check text-primary"></i>
+                <h5>Verified Servers</h5>
+                <p>
+                  We verify all submitted server links to ensure they are not
+                  malicious and are safe to use. Your security is our priority.
+                </p>
+              </div>
+
+              <div class="feature-item">
+                <i class="bi bi-clock text-primary"></i>
+                <h5>24/7 Availability</h5>
+                <p>
+                  Find active servers around the clock. Join whenever you want
+                  to trade or play with the community.
+                </p>
+              </div>
+
+              <div class="feature-item">
+                <i class="bi bi-plus-circle text-primary"></i>
+                <h5>Share Your Server</h5>
+                <p>
+                  Have a great private server? Share it with the community and
+                  help build our trading network.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <!-- Replace the current server list container with this -->
+    <div class="container my-4">
+      <div class="server-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="section-title mb-0">Available Servers</h2>
+          <button
+            class="btn btn-primary"
+            id="addServerBtn"
+            onclick="checkAuthAndShowModal()"
+          >
+            <i class="bi bi-plus-circle me-2"></i>Submit a Server
+          </button>
+        </div>
+
+        <div class="server-container">
+          <div id="serverList" class="row g-4">
+            <!-- Servers will be loaded here -->
+            <div class="text-center" id="loading">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rest of the content (modals, scripts, etc.) -->
+
     <!-- Add Server Modal -->
     <div
       class="modal fade"

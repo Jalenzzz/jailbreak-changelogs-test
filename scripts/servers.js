@@ -197,13 +197,15 @@ async function createServerCard(server) {
   }
   const ownerActions = isOwner
     ? `
-    <button class="btn btn-outline-warning btn-sm" onclick="editServer('${server.id}')">
-      <i class="bi bi-pencil"></i>
-    </button>
-    <button class="btn btn-outline-danger btn-sm" onclick="deleteServer('${server.id}')">
-      <i class="bi bi-trash"></i>
-    </button>
-  `
+  <button class="btn btn-outline-warning btn-sm" onclick="editServer('${server.id}')" 
+    data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Server">
+    <i class="bi bi-pencil"></i>
+  </button>
+  <button class="btn btn-outline-danger btn-sm" onclick="deleteServer('${server.id}')"
+    data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Server">
+    <i class="bi bi-trash"></i>
+  </button>
+`
     : "";
 
   col.innerHTML = `
@@ -212,13 +214,16 @@ async function createServerCard(server) {
         <div class="d-flex flex-column gap-2">
           <div class="d-flex justify-content-between align-items-center">
             <div class="server-link text-truncate me-2">
-              <small class="text-muted">Server #${server.id}</small>
+              <small class="text-muted fw-bold">Private Server #${
+                server.id
+              }</small>
             </div>
             <div class="d-flex gap-2">
               ${ownerActions}
               <button class="btn btn-outline-primary btn-sm copy-btn" data-link="${
                 server.link
-              }">
+              }"
+                data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Link">
                 <i class="bi bi-clipboard"></i>
               </button>
               <a href="${
@@ -229,16 +234,16 @@ async function createServerCard(server) {
             </div>
           </div>
           <div class="server-info">
-            <div><small>Created: ${creationDate}</small></div>
-            <div><small>Expires in: ${daysLeft} days</small></div>
-            <div><small>Owner: <a href="/users/${
-              server.owner
-            }" class="text-decoration-none">@${ownerName}</a></small></div>
-            ${
-              server.rules !== "N/A"
-                ? `<div><small>Rules: ${server.rules}</small></div>`
-                : ""
-            }
+          <div><small><span class="fw-bold">Created on:</span> ${creationDate}</small></div>
+          <div><small><span class="fw-bold">Expires in:</span> ${daysLeft} days</small></div>
+          <div><small><span class="fw-bold">Owner:</span> <a href="/users/${
+            server.owner
+          }" class="text-decoration-none">@${ownerName}</a></small></div>
+          ${
+            server.rules !== "N/A"
+              ? `<div><small><span class="fw-bold">Rules:</span> ${server.rules}</small></div>`
+              : ""
+          }
           </div>
         </div>
       </div>
