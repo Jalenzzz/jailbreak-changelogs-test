@@ -315,7 +315,7 @@ app.get("/values/calculator", (req, res) => {
 
 app.get("/servers", (req, res) => {
   res.render("servers", {
-    title: "Private Servers | Changelogs",
+    title: "Private Servers / Changelogs",
     logoUrl: "/assets/logos/Private_Servers_Logo.webp",
     logoAlt: "Servers Logo",
   });
