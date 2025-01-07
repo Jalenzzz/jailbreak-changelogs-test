@@ -28,12 +28,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Function to check version with caching
 function checkVersionWithCache() {
-  const cachedVersion = localStorage.getItem('versionData');
-  const cachedTimestamp = localStorage.getItem('versionTimestamp');
+  const cachedVersion = localStorage.getItem("versionData");
+  const cachedTimestamp = localStorage.getItem("versionTimestamp");
   const currentTime = new Date().getTime();
 
   // Check if we have cached data and it's less than 1 hour old
-  if (cachedVersion && cachedTimestamp && (currentTime - parseInt(cachedTimestamp) < 3600000)) {
+  if (
+    cachedVersion &&
+    cachedTimestamp &&
+    currentTime - parseInt(cachedTimestamp) < 3600000
+  ) {
     // Use cached data
     const versionData = JSON.parse(cachedVersion);
     updateVersionDisplay(versionData);
@@ -43,8 +47,8 @@ function checkVersionWithCache() {
       .then((response) => response.json())
       .then((data) => {
         // Cache the new data
-        localStorage.setItem('versionData', JSON.stringify(data));
-        localStorage.setItem('versionTimestamp', currentTime.toString());
+        localStorage.setItem("versionData", JSON.stringify(data));
+        localStorage.setItem("versionTimestamp", currentTime.toString());
         updateVersionDisplay(data);
       })
       .catch((error) => {
@@ -53,8 +57,8 @@ function checkVersionWithCache() {
   }
 }
 function addCloudinaryOptimization(url) {
-  if (url.includes('res.cloudinary.com')) {
-    const parts = url.split('/upload/');
+  if (url.includes("res.cloudinary.com")) {
+    const parts = url.split("/upload/");
     if (parts.length === 2) {
       return `${parts[0]}/upload/w_1200,f_auto,q_auto/${parts[1]}`;
     }
@@ -63,17 +67,21 @@ function addCloudinaryOptimization(url) {
 }
 
 // Optimize meta tag images
-document.querySelectorAll('meta[property^="og:image"], meta[name^="twitter:image"]').forEach(meta => {
-  const originalUrl = meta.getAttribute('content');
-  meta.setAttribute('content', addCloudinaryOptimization(originalUrl));
-});
+document
+  .querySelectorAll('meta[property^="og:image"], meta[name^="twitter:image"]')
+  .forEach((meta) => {
+    const originalUrl = meta.getAttribute("content");
+    meta.setAttribute("content", addCloudinaryOptimization(originalUrl));
+  });
 
-const heroElement = document.querySelector('.hero');
-  if (heroElement) {
-    const backgroundImage = getComputedStyle(heroElement).backgroundImage;
-    const imageUrl = backgroundImage.slice(4, -1).replace(/["']/g, "");
-    heroElement.style.backgroundImage = `url('${addCloudinaryOptimization(imageUrl)}')`;
-  }
+const heroElement = document.querySelector(".hero");
+if (heroElement) {
+  const backgroundImage = getComputedStyle(heroElement).backgroundImage;
+  const imageUrl = backgroundImage.slice(4, -1).replace(/["']/g, "");
+  heroElement.style.backgroundImage = `url('${addCloudinaryOptimization(
+    imageUrl
+  )}')`;
+}
 // Function to update the version display
 function updateVersionDisplay(data) {
   const updateElement = (id, value) => {
@@ -117,27 +125,49 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const token = getCookie("token");
+  const user = sessionStorage.getItem("user");
   const userid = sessionStorage.getItem("userid");
 
-  if (token && !userid) {
+  // Function to clear session and reload
+  function clearSessionAndReload() {
+    deleteCookie("token");
+    sessionStorage.clear();
+    window.location.reload();
+  }
+
+  function checkInvalidSession() {
+    if (!token && (user || userid)) {
+      clearSessionAndReload();
+    }
+  }
+
+  checkInvalidSession();
+
+  if (token && (!user || !userid)) {
     fetch("https://api.jailbreakchangelogs.xyz/users/get/token?token=" + token)
       .then((response) => {
         if (!response.ok) {
-          console.error("Unexpected response status:", response.status);
-          return null;
+          throw new Error("Invalid response");
         }
         return response.json();
       })
       .then((userData) => {
-        if (!userData) return;
+        if (!userData) {
+          // User not found in database, sign them out
+          clearSessionAndReload();
+          return;
+        }
+
+        // Valid user, proceed with normal login
         const avatarURL = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
         sessionStorage.setItem("user", JSON.stringify(userData));
         sessionStorage.setItem("avatar", avatarURL);
         sessionStorage.setItem("userid", userData.id);
-        window.location.reload();
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
+        // On error, also sign out the user
+        clearSessionAndReload();
       });
   }
   const profilepicture = document.getElementById("profile-picture");
@@ -178,44 +208,43 @@ document.addEventListener("DOMContentLoaded", () => {
     modalHeader.className = "modal-header";
 
     const modalTitle = document.createElement("h5");
-modalTitle.className = "modal-title";
-modalTitle.innerText = "Logging in with token";
-modalTitle.style.color = "#FFFFFF"; // White text color
-modalTitle.style.fontWeight = "bold"; // Make the title bold
-modalTitle.style.fontSize = "18px"; // Slightly larger font size
+    modalTitle.className = "modal-title";
+    modalTitle.innerText = "Logging in with token";
+    modalTitle.style.color = "#FFFFFF"; // White text color
+    modalTitle.style.fontWeight = "bold"; // Make the title bold
+    modalTitle.style.fontSize = "18px"; // Slightly larger font size
 
-modalHeader.appendChild(modalTitle);
+    modalHeader.appendChild(modalTitle);
 
-const tokenInput = document.createElement("input");
-tokenInput.type = "text";
-tokenInput.placeholder = "Enter your token";
-tokenInput.style.width = "60%";
-tokenInput.style.padding = "12px"; // Slightly more padding
-tokenInput.style.border = "2px solid #4A90E2"; // Blue border
-tokenInput.style.borderRadius = "8px";
-tokenInput.style.fontSize = "16px";
-tokenInput.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)"; // Subtle shadow
-tokenInput.style.marginBottom = "15px";
-tokenInput.style.marginTop = "15px";
-tokenInput.style.marginLeft = "25px";
-tokenInput.style.backgroundColor = "#FFFFFF"; // White background
-tokenInput.style.color = "#333333"; // Dark gray text color
-tokenInput.style.outline = "none"; // Remove default focus outline
+    const tokenInput = document.createElement("input");
+    tokenInput.type = "text";
+    tokenInput.placeholder = "Enter your token";
+    tokenInput.style.width = "60%";
+    tokenInput.style.padding = "12px"; // Slightly more padding
+    tokenInput.style.border = "2px solid #4A90E2"; // Blue border
+    tokenInput.style.borderRadius = "8px";
+    tokenInput.style.fontSize = "16px";
+    tokenInput.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)"; // Subtle shadow
+    tokenInput.style.marginBottom = "15px";
+    tokenInput.style.marginTop = "15px";
+    tokenInput.style.marginLeft = "25px";
+    tokenInput.style.backgroundColor = "#FFFFFF"; // White background
+    tokenInput.style.color = "#333333"; // Dark gray text color
+    tokenInput.style.outline = "none"; // Remove default focus outline
 
-// Add focus styles
-tokenInput.addEventListener('focus', function() {
-    this.style.borderColor = "#2E5AAC"; // Darker blue on focus
-    this.style.boxShadow = "0 0 0 3px rgba(74, 144, 226, 0.3)"; // Blue glow effect
-});
+    // Add focus styles
+    tokenInput.addEventListener("focus", function () {
+      this.style.borderColor = "#2E5AAC"; // Darker blue on focus
+      this.style.boxShadow = "0 0 0 3px rgba(74, 144, 226, 0.3)"; // Blue glow effect
+    });
 
-tokenInput.addEventListener('blur', function() {
-    this.style.borderColor = "#4A90E2"; // Return to original border color
-    this.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)"; // Return to original shadow
-});
+    tokenInput.addEventListener("blur", function () {
+      this.style.borderColor = "#4A90E2"; // Return to original border color
+      this.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)"; // Return to original shadow
+    });
 
-// Style the placeholder text
-tokenInput.style.setProperty('::placeholder', 'color: #999999'); // Light gray placeholder text
-
+    // Style the placeholder text
+    tokenInput.style.setProperty("::placeholder", "color: #999999"); // Light gray placeholder text
 
     // Create a new container for the input and buttons
     const inputButtonContainer = document.createElement("div");
@@ -320,4 +349,7 @@ tokenInput.style.setProperty('::placeholder', 'color: #999999'); // Light gray p
       }
     }
   });
+  window.getAuthToken = function () {
+    return getCookie("token");
+  };
 });

@@ -27,16 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   fetchServers();
 });
-function getAuthToken() {
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    const [name, value] = cookie.trim().split("=");
-    if (name === "token") {
-      return decodeURIComponent(value);
-    }
-  }
-  return null;
-}
 
 // Toast notification helper
 function showToast(message, type = "info") {
@@ -133,7 +123,7 @@ async function fetchServers() {
     }
 
     const serverCards = await Promise.all(
-      servers.map((server) => createServerCard(server))
+      servers.map((server, index) => createServerCard(server, index + 1))
     );
     serverList.innerHTML = ""; // Clear existing content
     serverCards.forEach((card) => serverList.appendChild(card));
@@ -171,7 +161,7 @@ async function fetchUserInfo(userId) {
 }
 
 // server card element
-async function createServerCard(server) {
+async function createServerCard(server, number) {
   const col = document.createElement("div");
   col.className = "col-12 col-md-6 col-lg-4";
 
@@ -191,16 +181,23 @@ async function createServerCard(server) {
   if (token) {
     try {
       const response = await fetch(
-        `https://api3.jailbreakchangelogs.xyz/users/get/token?token=${token}`
+        `https://api3.jailbreakchangelogs.xyz/users/get/token?token=${encodeURIComponent(
+          token
+        )}` // token as query parameter
       );
       if (response.ok) {
         const userData = await response.json();
-        isOwner = userData.id === server.owner;
+        if (userData) {
+          // Add null check
+          isOwner = userData.id === server.owner;
+        }
       }
     } catch (error) {
       console.error("Error verifying ownership:", error);
+      isOwner = false; // Explicitly set to false on error
     }
   }
+
   const ownerActions = isOwner
     ? `
   <button class="btn btn-outline-warning btn-sm" onclick="editServer('${server.id}')" 
@@ -220,9 +217,7 @@ async function createServerCard(server) {
         <div class="d-flex flex-column gap-2">
           <div class="d-flex justify-content-between align-items-center">
             <div class="server-link text-truncate me-2">
-              <small class="text-muted fw-bold">Private Server #${
-                server.id
-              }</small>
+              <small class="text-muted fw-bold">Private Server #${number}</small>
             </div>
             <div class="d-flex gap-2">
               ${ownerActions}
@@ -306,7 +301,6 @@ async function editServer(serverId) {
     showToast(error.message || "Failed to load server details", "error");
   }
 }
-
 async function handleEditServer(event, serverId) {
   event.preventDefault();
 
@@ -320,43 +314,56 @@ async function handleEditServer(event, serverId) {
   const submitBtn = form.querySelector('button[type="submit"]');
   const spinner = submitBtn.querySelector(".spinner-border");
 
-  const serverLink = form.serverLink.value;
-  // Check for duplicate link (excluding current server)
-  const isDuplicate = await isDuplicateLink(serverLink, serverId);
-  if (isDuplicate) {
-    showToast(
-      "This server link already exists. Please use a different link.",
-      "error"
-    );
-    return;
-  }
-
   submitBtn.disabled = true;
   if (spinner) spinner.classList.remove("d-none");
 
   try {
+    const serverLink = form.serverLink.value.trim();
+
+    // Get current server details to compare link
+    const currentServerResponse = await fetch(
+      `https://api3.jailbreakchangelogs.xyz/servers/get?id=${serverId}`
+    );
+    const currentServer = await currentServerResponse.json();
+
+    // Only check for duplicate if the link is being changed
+    if (serverLink !== currentServer.link) {
+      const isDuplicate = await isDuplicateLink(serverLink, serverId);
+      if (isDuplicate) {
+        throw new Error(
+          "This server link already exists. Please submit a different link."
+        );
+      }
+    }
+
     const expirationDate = new Date(form.expiresAt.value);
     const formData = {
-      link: form.serverLink.value,
+      link: serverLink,
       rules: form.serverRules.value || "N/A",
       expires: Math.floor(expirationDate.getTime() / 1000).toString(),
-      token: token,
     };
 
     const response = await fetch(
-      `https://api3.jailbreakchangelogs.xyz/servers/update?id=${serverId}`,
+      `https://api3.jailbreakchangelogs.xyz/servers/update?id=${serverId}&token=${encodeURIComponent(
+        token
+      )}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify(formData),
       }
     );
 
     const data = await response.json();
+
     if (!response.ok) {
-      throw new Error(data.message || "Failed to update server");
+      throw new Error(
+        data.message ||
+          `Server returned ${response.status}: ${response.statusText}`
+      );
     }
 
     const modal = bootstrap.Modal.getInstance(
@@ -369,7 +376,10 @@ async function handleEditServer(event, serverId) {
     showToast("Server updated successfully!", "success");
   } catch (error) {
     console.error("Error updating server:", error);
-    showToast(error.message || "Failed to update server", "error");
+    showToast(
+      `Failed to update server: ${error.message || "Unknown error"}`,
+      "error"
+    );
   } finally {
     submitBtn.disabled = false;
     if (spinner) spinner.classList.add("d-none");
@@ -407,13 +417,14 @@ async function deleteServer(serverId) {
 
   try {
     const response = await fetch(
-      `https://api3.jailbreakchangelogs.xyz/servers/delete?id=${serverId}`,
+      `https://api3.jailbreakchangelogs.xyz/servers/delete?id=${serverId}&token=${encodeURIComponent(
+        token
+      )}`,
       {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ token: token }), // Add token to request
       }
     );
 
@@ -432,17 +443,17 @@ async function deleteServer(serverId) {
 
 // Check authentication and show modal
 function checkAuthAndShowModal() {
-  const userid = sessionStorage.getItem("userid");
-  if (!userid) {
+  const token = getAuthToken();
+  if (!token) {
     sessionStorage.setItem("redirectUrl", window.location.href);
     window.location.href = "/login";
     return;
   }
 
   const modal = new bootstrap.Modal(document.getElementById("addServerModal"));
-  document.getElementById("serverOwner").value = userid;
   modal.show();
 }
+
 // handle duplicates
 async function isDuplicateLink(link, excludeId = null) {
   try {
@@ -513,7 +524,6 @@ async function handleAddServer(event) {
   try {
     const formData = {
       link: serverLink,
-      owner: form.serverOwner.value,
       rules: form.serverRules.value || "N/A",
       expires: Math.floor(expirationDate.getTime() / 1000).toString(),
       token: token,
