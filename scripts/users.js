@@ -84,14 +84,49 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   };
 
+  async function fetchBanner(userId, bannerHash, format) {
+    const url = `https://cdn.discordapp.com/banners/${userId}/${bannerHash}.${format}`;
+    const response = await fetch(url, { method: "HEAD" });
+    return response.ok ? url : null;
+  }
+
+  // Add this helper function to handle banner URL resolution
+  async function getBannerUrl(userId, bannerHash) {
+    if (!bannerHash) {
+      return null;
+    }
+
+    try {
+      // Try GIF first
+      const gifUrl = await fetchBanner(userId, bannerHash, "gif");
+      if (gifUrl) {
+        return gifUrl;
+      }
+      // Fallback to PNG if GIF doesn't exist
+      const pngUrl = await fetchBanner(userId, bannerHash, "png");
+      if (pngUrl) {
+        return pngUrl;
+      }
+    } catch (error) {
+      console.error("Error fetching banner:", error);
+    }
+
+    return null;
+  }
+
   async function fetchUserBanner(userId) {
     try {
       let image;
       if (permissions.banner_discord === true) {
-        image = `https://cdn.discordapp.com/banners/${userId}/${udata.banner}.png`;
+        // Try to get animated banner first
+        image = await getBannerUrl(userId, udata.banner);
+        if (!image) {
+          // Fallback to PNG if no animated banner exists
+          image = `https://cdn.discordapp.com/banners/${userId}/${udata.banner}.png`;
+        }
       } else {
         const response = await fetch(
-          `https://api.jailbreakchangelogs.xyz/users/background/get?user=${userId}`
+          `https://api3.jailbreakchangelogs.xyz/users/background/get?user=${userId}`
         );
 
         if (!response.ok) {
@@ -104,12 +139,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       userBanner.src = image;
       banner = image;
-      // Process and display the banner data here, e.g.:
-      // document.getElementById('banner').src = bannerData.image_url;
     } catch (error) {
       console.error("Error fetching banner:", error);
     }
   }
+
   async function fetchUserBio(userId) {
     try {
       const response = await fetch(
@@ -222,25 +256,6 @@ document.addEventListener("DOMContentLoaded", function () {
     formattedDate = formattedDate.replace(day, `${day}${ordinalSuffix}`);
 
     return formattedDate;
-  }
-  async function fetchSeasonRewards(season) {
-    try {
-      const response = await fetch(
-        `https://api.jailbreakchangelogs.xyz/rewards/get?season=${season}`
-      );
-      if (!response.ok) {
-        if (response.status === 404) {
-          return "No rewards found for this season.";
-        } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-      }
-      const rewards = await response.json();
-      return rewards;
-    } catch (error) {
-      console.error("Error:", error);
-      return "Error fetching season rewards.";
-    }
   }
 
   async function fetchCommentItem(comment) {
@@ -474,17 +489,12 @@ document.addEventListener("DOMContentLoaded", function () {
         // Get the correct image URL
         let imageUrl;
         if (comment.item_type === "season") {
-          const rewards = await fetchSeasonRewards(comment.item_id);
           const level10Reward = rewards?.find?.(
             (reward) => reward.requirement === "Level 10"
           );
-          imageUrl =
-            level10Reward?.link ||
-            "https://cdn2.jailbreakchangelogs.xyz/images/changelogs/347.webp";
+          imageUrl = level10Reward?.link || "assets/images/changelogs/347.webp";
         } else {
-          imageUrl =
-            item.image_url ||
-            "https://cdn2.jailbreakchangelogs.xyz/images/changelogs/347.webp";
+          imageUrl = item.image_url || "assets/images/changelogs/347.webp";
         }
 
         commentElement.className = "list-group-item";
@@ -961,7 +971,7 @@ document.addEventListener("DOMContentLoaded", function () {
   async function loadProfileSettings() {
     try {
       const response = await fetch(
-        `https://api.jailbreakchangelogs.xyz/users/settings?user=${loggedinuserId}`,
+        `https://api3.jailbreakchangelogs.xyz/users/settings?user=${loggedinuserId}`,
         {
           method: "GET",
           headers: {
@@ -1212,7 +1222,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Send the request to the server
     try {
       const response = await fetch(
-        `https://api.jailbreakchangelogs.xyz/users/settings/update?user=${token}`,
+        `https://api3.jailbreakchangelogs.xyz/users/settings/update?user=${token}`,
         {
           method: "POST",
           headers: {
@@ -1252,7 +1262,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return; // Exit if the image is invalid
       }
 
-      const url = `https://api.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=${image}`;
+      const url = `https://api3.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=${image}`;
 
       const backgroundResponse = await fetch(url, {
         method: "POST",

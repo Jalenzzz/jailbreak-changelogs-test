@@ -709,7 +709,7 @@ app.get("/users/:user", async (req, res) => {
 
   try {
     // Fetch user settings and user data concurrently
-    const [settings1, userData] = await Promise.all([
+    const [settings, userData] = await Promise.all([
       fetch(`https://api.jailbreakchangelogs.xyz/users/settings?user=${user}`, {
         headers: {
           "Content-Type": "application/json",
@@ -723,24 +723,6 @@ app.get("/users/:user", async (req, res) => {
         },
       }).then((response) => response.json()),
     ]);
-
-    const booleanSettings = {
-      ...settings1,
-      profile_public: Boolean(settings1.profile_public),
-      show_recent_comments: Boolean(settings1.show_recent_comments),
-      hide_following: Boolean(settings1.hide_following),
-      hide_followers: Boolean(settings1.hide_followers),
-      banner_discord: Boolean(settings1.banner_discord),
-    };
-
-    const settings = {
-      ...booleanSettings,
-      profile_public: !booleanSettings.profile_public,
-      show_recent_comments: !booleanSettings.show_recent_comments,
-      hide_following: !booleanSettings.hide_following,
-      hide_followers: !booleanSettings.hide_followers,
-      banner_discord: !booleanSettings.banner_discord,
-    };
 
     if (userData.error) {
       const defaultUserID = "659865209741246514";

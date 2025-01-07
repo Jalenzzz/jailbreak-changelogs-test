@@ -175,13 +175,13 @@
 }
 
 .btn-primary {
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
 }
 
 .btn-primary:hover {
-  background-color: #1a6380;
-  border-color: #1a6380;
+  background-color: #1a6380 !important;
+  border-color: #1a6380 !important;
 }
 
 .btn-outline-primary {
