@@ -12,6 +12,15 @@
   letter-spacing: 1px;
   border-bottom: 2px solid var(--text-primary);
 }
+.intro-container.hero-style {
+  position: relative;
+  min-height: 400px;
+  background: url("/assets/backgrounds/background12.webp") center/cover
+    no-repeat;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
 
 .intro-container .lead {
   font-size: 1.1rem;

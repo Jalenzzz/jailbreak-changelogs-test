@@ -17,7 +17,7 @@ const messages = {
   minLength: `
     <div class="col-12 text-center py-5">
       <div class="search-message text-muted">
-        <i class="bi bi-info-circle me-2"></i>
+        <i class="bi bi-info-circle me-2" style="color: var(--accent-color-light);"></i>
         Please enter at least ${MIN_SEARCH_LENGTH} character to search
       </div>
     </div>

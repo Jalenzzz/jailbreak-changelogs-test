@@ -6,6 +6,9 @@ body {
   color: var(--text-body);
 }
 
+.accent-icon {
+  color: var(--text-primary) !important;
+}
 .results-container {
   background-color: var(--background-dark);
 }
@@ -152,8 +155,8 @@ h1.display-5 {
   color: var(--text-body);
 }
 
-h1 .bi {
-  color: var(--button-primary);
+.bi {
+  color: var(--accent-color-light);
 }
 
 /* Animations */

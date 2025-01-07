@@ -249,7 +249,7 @@ app.get("/dashboard", (req, res) => {
 });
 
 app.get("/bot", (req, res) => {
-  const randomNumber = Math.floor(Math.random() * 10) + 1;
+  const randomNumber = Math.floor(Math.random() * 12) + 1;
   const image = `/assets/backgrounds/background${randomNumber}.webp`;
   res.render("bot", {
     title: "Discord Bot / Changelogs",
@@ -767,7 +767,7 @@ app.get("/tradetracker", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  const randomNumber = Math.floor(Math.random() * 10) + 1;
+  const randomNumber = Math.floor(Math.random() * 12) + 1;
   const image = `/assets/backgrounds/background${randomNumber}.webp`;
   res.render("index", {
     title: "Home / Changelogs",

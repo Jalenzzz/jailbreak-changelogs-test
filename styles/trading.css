@@ -911,7 +911,8 @@ button {
 .intro-container.hero-style {
   position: relative;
   min-height: 400px;
-  background: url("/assets/backgrounds/background9.webp") center/cover no-repeat;
+  background: url("/assets/backgrounds/background11.webp") center/cover
+    no-repeat;
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 2rem;

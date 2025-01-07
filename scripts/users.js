@@ -269,9 +269,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Set the URL based on item type
       if (comment.item_type === "changelog") {
-        url = `https://api.jailbreakchangelogs.xyz/changelogs/get?id=${comment.item_id}`;
+        url = `https://api3.jailbreakchangelogs.xyz/changelogs/get?id=${comment.item_id}`;
       } else if (comment.item_type === "season") {
-        url = `https://api.jailbreakchangelogs.xyz/seasons/get?season=${comment.item_id}`;
+        url = `https://api3.jailbreakchangelogs.xyz/seasons/get?season=${comment.item_id}`;
       } else {
         console.error("Unknown item type:", comment.item_type);
         return null;
