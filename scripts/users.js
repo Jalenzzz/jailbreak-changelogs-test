@@ -282,8 +282,71 @@ document.addEventListener("DOMContentLoaded", function () {
 
       try {
         // Set the URL and fetch data based on item type
-        if (comment.item_type === "changelog") {
-          url = `https://api3.jailbreakchangelogs.xyz/changelogs/get?id=${comment.item_id}`;
+        switch (comment.item_type) {
+          case "changelog":
+            url = `https://api3.jailbreakchangelogs.xyz/changelogs/get?id=${comment.item_id}`;
+            break;
+          case "season":
+            // Handle season case separately due to rewards
+            const [seasonResponse, rewardsResponse] = await Promise.all([
+              fetch(
+                `https://api3.jailbreakchangelogs.xyz/seasons/get?season=${comment.item_id}`,
+                {
+                  signal: controller.signal,
+                  headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                  },
+                }
+              ),
+              fetch(
+                `https://api3.jailbreakchangelogs.xyz/rewards/get?season=${comment.item_id}`,
+                {
+                  signal: controller.signal,
+                  headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                  },
+                }
+              ),
+            ]);
+
+            if (!seasonResponse.ok || !rewardsResponse.ok) {
+              throw new Error(
+                `HTTP error! status: ${
+                  seasonResponse.status || rewardsResponse.status
+                }`
+              );
+            }
+
+            item = await seasonResponse.json();
+            rewards = await rewardsResponse.json();
+            item.rewards = rewards;
+
+            // Add image URL for season
+            const level10Reward = item.rewards?.find?.(
+              (reward) => reward.requirement === "Level 10"
+            );
+            item.image_url =
+              level10Reward?.link || "assets/images/changelogs/347.webp";
+
+            return item;
+
+          // New item types
+          case "Vehicle":
+          case "spoiler":
+          case "color":
+          case "furniture":
+            url = `https://api3.jailbreakchangelogs.xyz/items/get?type=${comment.item_type}&id=${comment.item_id}`;
+            break;
+
+          default:
+            console.error("Unknown item type:", comment.item_type);
+            return null;
+        }
+
+        // For non-season items, fetch the data
+        if (comment.item_type !== "season") {
           const response = await fetch(url, {
             signal: controller.signal,
             headers: {
@@ -297,60 +360,10 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           item = await response.json();
-        } else if (comment.item_type === "season") {
-          // Fetch both season data and rewards concurrently
-          const [seasonResponse, rewardsResponse] = await Promise.all([
-            fetch(
-              `https://api3.jailbreakchangelogs.xyz/seasons/get?season=${comment.item_id}`,
-              {
-                signal: controller.signal,
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json",
-                },
-              }
-            ),
-            fetch(
-              `https://api3.jailbreakchangelogs.xyz/rewards/get?season=${comment.item_id}`,
-              {
-                signal: controller.signal,
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json",
-                },
-              }
-            ),
-          ]);
-
-          if (!seasonResponse.ok || !rewardsResponse.ok) {
-            throw new Error(
-              `HTTP error! status: ${
-                seasonResponse.status || rewardsResponse.status
-              }`
-            );
-          }
-
-          item = await seasonResponse.json();
-          rewards = await rewardsResponse.json();
-
-          // Add rewards to the item object
-          item.rewards = rewards;
-        } else {
-          console.error("Unknown item type:", comment.item_type);
-          return null;
         }
 
         // Clear timeout since request completed
         clearTimeout(timeoutId);
-
-        // Add the image URL logic
-        if (comment.item_type === "season") {
-          const level10Reward = item.rewards?.find?.(
-            (reward) => reward.requirement === "Level 10"
-          );
-          item.image_url =
-            level10Reward?.link || "assets/images/changelogs/347.webp";
-        }
 
         return item;
       } finally {
@@ -535,6 +548,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const comments_to_add = [];
 
       // Process each comment
+      // In the fetchUserComments function, modify the comment card creation section:
+
+      // Process each comment
       for (const comment of paginatedComments) {
         const item = await fetchCommentItem(comment);
 
@@ -547,51 +563,66 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Get the correct image URL
         let imageUrl;
+        let displayTitle = item.title; // Default for changelogs/seasons
+        let displayType = comment.item_type;
+        let displayId = comment.item_id;
+        let viewPath = `/${comment.item_type}s/${comment.item_id}`; // Default path
+
+        // Handle different item types
         if (comment.item_type === "season") {
           const level10Reward = item.rewards?.find?.(
             (reward) => reward.requirement === "Level 10"
           );
           imageUrl = level10Reward?.link || "assets/images/changelogs/347.webp";
+        } else if (
+          ["Vehicle", "Spoiler", "Color", "Furniture", "Rim"].includes(
+            comment.item_type
+          )
+        ) {
+          // Updated image URL structure to match the correct path
+          const itemType = comment.item_type.toLowerCase() + "s"; // Add 's' to pluralize
+          imageUrl = item.name
+            ? `/assets/items/${itemType}/${item.name}.webp` // Added /assets/items/ and .webp extension
+            : "assets/images/changelogs/347.webp";
+          displayTitle = item.name || "Unknown Item";
+          displayType = item.type || comment.item_type;
+          viewPath = `/item/${comment.item_type.toLowerCase()}/${encodeURIComponent(
+            displayTitle.toLowerCase()
+          )}`;
         } else {
-          imageUrl = item.image_url || "assets/images/changelogs/347.webp";
+          imageUrl = "assets/images/changelogs/347.webp";
         }
 
         commentElement.className = "list-group-item";
-        // Create the comment card with the correct image URL
+        // Create the comment card with the updated display values
         commentElement.innerHTML = `
-                  <div class="card mb-3 comment-card shadow-lg" style="background-color: #212A31; color: #D3D9D4;">
-                    <div class="card-body">
-                        <div class="row">
-                            <!-- Image Section -->
-                            <div class="col-md-4 d-none d-md-block">
-                                <img src="${imageUrl}" alt="Comment Image" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
-                            </div>
-                            
-                            <!-- Content Section -->
-                            <div class="col-md-8">
-                                <div class="comment-header mb-2">
-                                    <h6 class="card-title" style="color: #748D92;">${capitalizeFirstLetter(
-                                      comment.item_type
-                                    )} ${comment.item_id}</h6>
-                                    <small class="text-muted" style="color: #748D92;">${formattedDate}</small>
-                                </div>
-                                <h5 class="card-subtitle mb-2" style="color: #748D92;">${
-                                  item.title
-                                }</h5>
-                                <p class="card-text" style="color: #D3D9D4;">${
-                                  comment.content
-                                }</p>
-                                <a href="/${comment.item_type}s/${
-          comment.item_id
-        }" class="btn btn-sm mt-3 view-item-btn">
-                                    View ${capitalizeFirstLetter(
-                                      comment.item_type
-                                    )}
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
+    <div class="card mb-3 comment-card shadow-lg" style="background-color: #212A31; color: #D3D9D4;">
+      <div class="card-body">
+        <div class="row">
+          <!-- Image Section -->
+          <div class="col-md-4 d-none d-md-block">
+            <img src="${imageUrl}" alt="Comment Image" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
+          </div>
+          
+          <!-- Content Section -->
+          <div class="col-md-8">
+            <div class="comment-header mb-2">
+              <h6 class="card-title" style="color: #748D92;">
+                ${displayTitle} [${capitalizeFirstLetter(displayType)}]
+              </h6>
+              <small class="text-muted" style="color: #748D92;">${formattedDate}</small>
+            </div>
+            <h5 class="card-subtitle mb-2" style="color: #748D92;">
+              ${displayTitle}
+            </h5>
+            <p class="card-text" style="color: #D3D9D4;">${comment.content}</p>
+            <a href="${viewPath}" class="btn btn-sm mt-3 view-item-btn">
+              View ${capitalizeFirstLetter(displayType)}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>`;
 
         comments_to_add.push(commentElement);
       }
