@@ -320,6 +320,17 @@ async function handleEditServer(event, serverId) {
   const submitBtn = form.querySelector('button[type="submit"]');
   const spinner = submitBtn.querySelector(".spinner-border");
 
+  const serverLink = form.serverLink.value;
+  // Check for duplicate link (excluding current server)
+  const isDuplicate = await isDuplicateLink(serverLink, serverId);
+  if (isDuplicate) {
+    showToast(
+      "This server link already exists. Please use a different link.",
+      "error"
+    );
+    return;
+  }
+
   submitBtn.disabled = true;
   if (spinner) spinner.classList.remove("d-none");
 
@@ -432,6 +443,24 @@ function checkAuthAndShowModal() {
   document.getElementById("serverOwner").value = userid;
   modal.show();
 }
+// handle duplicates
+async function isDuplicateLink(link, excludeId = null) {
+  try {
+    const response = await fetch(
+      "https://api3.jailbreakchangelogs.xyz/servers/list"
+    );
+    if (!response.ok) throw new Error("Failed to fetch servers");
+
+    const servers = await response.json();
+    return servers.some(
+      (server) =>
+        server.link === link && (excludeId === null || server.id !== excludeId)
+    );
+  } catch (error) {
+    console.error("Error checking duplicate link:", error);
+    return false;
+  }
+}
 
 // Handle server addition
 async function handleAddServer(event) {
@@ -456,17 +485,38 @@ async function handleAddServer(event) {
     return;
   }
 
+  // Check for duplicate link
+  const isDuplicate = await isDuplicateLink(serverLink);
+  if (isDuplicate) {
+    showToast(
+      "This server link already exists. Please submit a different link.",
+      "error"
+    );
+    return;
+  }
+
+  // Add expiration date validation
+  const expirationDate = new Date(form.expiresAt.value);
+  const now = new Date();
+  const daysDifference = Math.ceil(
+    (expirationDate - now) / (1000 * 60 * 60 * 24)
+  );
+
+  if (daysDifference < 5) {
+    showToast("Server expiration must be at least 5 days from now", "error");
+    return;
+  }
+
   submitBtn.disabled = true;
   if (spinner) spinner.classList.remove("d-none");
 
   try {
-    const expirationDate = new Date(form.expiresAt.value);
     const formData = {
       link: serverLink,
       owner: form.serverOwner.value,
       rules: form.serverRules.value || "N/A",
       expires: Math.floor(expirationDate.getTime() / 1000).toString(),
-      token: token, // Add token to request
+      token: token,
     };
 
     console.log("Request body:", formData);
