@@ -7,6 +7,12 @@ $(document).ready(function () {
   // let userdata = null;
   let latestSeason = null;
 
+  function getCountdownColor(days) {
+    if (days <= 7) return "#FF4444"; // Red for 7 days or less
+    if (days <= 14) return "#e4c61d"; // Yellow for 14 days or less
+    return "#D3D9D4"; // Default color
+  }
+
   function updateCountdown() {
     if (!latestSeason) return; // Exit if latestSeason is not available
 
@@ -50,30 +56,34 @@ $(document).ready(function () {
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
+        const countdownColor = getCountdownColor(days);
+
         countdownElement.innerHTML = `
-          <div class="countdown-item">
-            <span id="countdown-days">${days.toString().padStart(2, "0")}</span>
-            <span class="countdown-label">Days</span>
-          </div>
-          <div class="countdown-item">
-            <span id="countdown-hours">${hours
-              .toString()
-              .padStart(2, "0")}</span>
-            <span class="countdown-label">Hours</span>
-          </div>
-          <div class="countdown-item">
-            <span id="countdown-minutes">${minutes
-              .toString()
-              .padStart(2, "0")}</span>
-            <span class="countdown-label">Minutes</span>
-          </div>
-          <div class="countdown-item">
-            <span id="countdown-seconds">${seconds
-              .toString()
-              .padStart(2, "0")}</span>
-            <span class="countdown-label">Seconds</span>
-          </div>
-        `;
+        <div class="countdown-item">
+          <span id="countdown-days" style="color: ${countdownColor}">${days
+          .toString()
+          .padStart(2, "0")}</span>
+          <span class="countdown-label">Days</span>
+        </div>
+        <div class="countdown-item">
+          <span id="countdown-hours" style="color: ${countdownColor}">${hours
+          .toString()
+          .padStart(2, "0")}</span>
+          <span class="countdown-label">Hours</span>
+        </div>
+        <div class="countdown-item">
+          <span id="countdown-minutes" style="color: ${countdownColor}">${minutes
+          .toString()
+          .padStart(2, "0")}</span>
+          <span class="countdown-label">Minutes</span>
+        </div>
+        <div class="countdown-item">
+          <span id="countdown-seconds" style="color: ${countdownColor}">${seconds
+          .toString()
+          .padStart(2, "0")}</span>
+          <span class="countdown-label">Seconds</span>
+        </div>
+      `;
       } else {
         // Season has started
         countdownElement.innerHTML = `<div class="season-started">Season ${latestSeason.season} / ${latestSeason.title} has started!</div>`;
@@ -94,28 +104,34 @@ $(document).ready(function () {
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
+      const countdownColor = getCountdownColor(days);
+
       countdownElement.innerHTML = `
-        <div class="countdown-item">
-          <span id="countdown-days">${days.toString().padStart(2, "0")}</span>
-          <span class="countdown-label">Days</span>
-        </div>
-        <div class="countdown-item">
-          <span id="countdown-hours">${hours.toString().padStart(2, "0")}</span>
-          <span class="countdown-label">Hours</span>
-        </div>
-        <div class="countdown-item">
-          <span id="countdown-minutes">${minutes
-            .toString()
-            .padStart(2, "0")}</span>
-          <span class="countdown-label">Minutes</span>
-        </div>
-        <div class="countdown-item">
-          <span id="countdown-seconds">${seconds
-            .toString()
-            .padStart(2, "0")}</span>
-          <span class="countdown-label">Seconds</span>
-        </div>
-      `;
+      <div class="countdown-item">
+        <span id="countdown-days" style="color: ${countdownColor}">${days
+        .toString()
+        .padStart(2, "0")}</span>
+        <span class="countdown-label">Days</span>
+      </div>
+      <div class="countdown-item">
+        <span id="countdown-hours" style="color: ${countdownColor}">${hours
+        .toString()
+        .padStart(2, "0")}</span>
+        <span class="countdown-label">Hours</span>
+      </div>
+      <div class="countdown-item">
+        <span id="countdown-minutes" style="color: ${countdownColor}">${minutes
+        .toString()
+        .padStart(2, "0")}</span>
+        <span class="countdown-label">Minutes</span>
+      </div>
+      <div class="countdown-item">
+        <span id="countdown-seconds" style="color: ${countdownColor}">${seconds
+        .toString()
+        .padStart(2, "0")}</span>
+        <span class="countdown-label">Seconds</span>
+      </div>
+    `;
     } else {
       // Season has ended
       countdownElement.innerHTML = `<div class="season-ended">Season ${latestSeason.season} / ${latestSeason.title} has ended!</div>`;
@@ -152,19 +168,26 @@ $(document).ready(function () {
   const debouncedReloadComments = debounce(reloadcomments, 300);
 
   function fetchAllSeasons() {
-    return fetch("https://api3.jailbreakchangelogs.xyz/seasons/list").then(
-      (response) => response.json()
-    );
+    return fetch("https://jbc-api.vercel.app/seasons/list")
+      .then((response) => response.json())
+      .catch((error) => {
+        console.error("Error fetching seasons:", error);
+        throw error;
+      });
   }
 
   function fetchAllRewards() {
-    return fetch("https://api3.jailbreakchangelogs.xyz/rewards/list").then(
-      (response) => response.json()
-    );
+    return fetch("https://api3.jailbreakchangelogs.xyz/rewards/list")
+      .then((response) => response.json())
+      .catch((error) => {
+        console.error("Error fetching rewards:", error);
+        throw error;
+      });
   }
+
   function loadAllData() {
     const latestSeasonPromise = fetch(
-      "https://api3.jailbreakchangelogs.xyz/seasons/latest",
+      "https://jbc-api.vercel.app/seasons/latest",
       {
         headers: {
           "Content-Type": "application/json",
@@ -473,35 +496,6 @@ $(document).ready(function () {
     updateCarousel([]); // Clear the carousel
     updateBreadcrumb("Error");
     document.title = "Error - Season Details";
-  }
-
-  // Add this new function to handle fetch errors
-  function fetchWithTimeout(url, options = {}, timeout = 10000) {
-    return Promise.race([
-      fetch(url, options),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Request timed out")), timeout)
-      ),
-    ]);
-  }
-
-  // Update these functions to use fetchWithTimeout
-  function fetchAllSeasons() {
-    return fetchWithTimeout("https://api3.jailbreakchangelogs.xyz/seasons/list")
-      .then((response) => response.json())
-      .catch((error) => {
-        console.error("Error fetching seasons:", error);
-        throw error;
-      });
-  }
-
-  function fetchAllRewards() {
-    return fetchWithTimeout("https://api3.jailbreakchangelogs.xyz/rewards/list")
-      .then((response) => response.json())
-      .catch((error) => {
-        console.error("Error fetching rewards:", error);
-        throw error;
-      });
   }
 
   // Add event listener for season selection

@@ -491,9 +491,12 @@ button {
 }
 
 .intro-content h1 {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Luckiest Guy", sans-serif;
   font-weight: 700;
   color: var(--text-primary);
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--text-primary);
+  text-align: center;
 }
 
 .intro-content .lead {
@@ -510,7 +513,7 @@ button {
 }
 
 .feature-item i {
-  color: var(--accent-color);
+  color: var(--accent-color-light);
   font-size: 1.2rem;
 }
 
@@ -970,7 +973,7 @@ button {
 }
 
 .alert-info i {
-  color: var(--accent-color);
+  color: var(--accent-color-light);
 }
 
 /* Update info button position in intro container */
