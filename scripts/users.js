@@ -1,12 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const permissions = JSON.parse(settings);
   const udata = JSON.parse(userData);
-  console.log("DOM Loaded");
-  console.log("Permissions:", permissions);
-  console.log(
-    "Show recent comments setting:",
-    permissions.show_recent_comments
-  );
   const userDateBio = document.getElementById("description-updated-date");
   const recent_comments_button = document.getElementById(
     "recent-comments-button"
@@ -119,16 +113,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     return null;
   }
-
   async function fetchUserBanner(userId) {
     try {
       let image;
+      const fallbackBanner =
+        "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
+
       if (permissions.banner_discord === true) {
         // Try to get animated banner first
         image = await getBannerUrl(userId, udata.banner);
         if (!image) {
-          // Fallback to PNG if no animated banner exists
-          image = `https://cdn.discordapp.com/banners/${userId}/${udata.banner}.png?size=4096`;
+          // If no banner exists at all, use fallback
+          image = fallbackBanner;
         }
       } else {
         const response = await fetch(
@@ -140,13 +136,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const bannerData = await response.json();
-        image = bannerData.image_url;
+        image = bannerData.image_url || fallbackBanner; // Use fallback if no image_url
       }
 
       userBanner.src = image;
       banner = image;
     } catch (error) {
       console.error("Error fetching banner:", error);
+      // Use fallback banner in case of any error
+      userBanner.src =
+        "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
+      banner = userBanner.src;
     }
   }
 
@@ -267,55 +267,98 @@ document.addEventListener("DOMContentLoaded", function () {
   async function fetchCommentItem(comment) {
     try {
       let url;
+      let item;
+      let rewards;
+
       // Check if comment and item_type exist before accessing
       if (!comment || !comment.item_type) {
         console.error("Invalid comment data:", comment);
         return null;
       }
 
-      // Set the URL based on item type
-      if (comment.item_type === "changelog") {
-        url = `https://api3.jailbreakchangelogs.xyz/changelogs/get?id=${comment.item_id}`;
-      } else if (comment.item_type === "season") {
-        url = `https://api3.jailbreakchangelogs.xyz/seasons/get?season=${comment.item_id}`;
-      } else {
-        console.error("Unknown item type:", comment.item_type);
-        return null;
-      }
-
-      console.log("Fetching item URL:", url);
-      console.log("Comment type:", comment.item_type);
-      console.log("Comment ID:", comment.item_id);
-
-      // Add timeout to fetch request
+      // Add timeout controller
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-      const response = await fetch(url, {
-        signal: controller.signal,
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      });
+      try {
+        // Set the URL and fetch data based on item type
+        if (comment.item_type === "changelog") {
+          url = `https://api3.jailbreakchangelogs.xyz/changelogs/get?id=${comment.item_id}`;
+          const response = await fetch(url, {
+            signal: controller.signal,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+          });
 
-      clearTimeout(timeoutId);
-      console.log("Item API Response Status:", response.status);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
 
-      if (!response.ok) {
-        if (response.status === 404) {
-          console.warn(`Item not found for comment:`, comment);
+          item = await response.json();
+        } else if (comment.item_type === "season") {
+          // Fetch both season data and rewards concurrently
+          const [seasonResponse, rewardsResponse] = await Promise.all([
+            fetch(
+              `https://api3.jailbreakchangelogs.xyz/seasons/get?season=${comment.item_id}`,
+              {
+                signal: controller.signal,
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+              }
+            ),
+            fetch(
+              `https://api3.jailbreakchangelogs.xyz/rewards/get?season=${comment.item_id}`,
+              {
+                signal: controller.signal,
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+              }
+            ),
+          ]);
+
+          if (!seasonResponse.ok || !rewardsResponse.ok) {
+            throw new Error(
+              `HTTP error! status: ${
+                seasonResponse.status || rewardsResponse.status
+              }`
+            );
+          }
+
+          item = await seasonResponse.json();
+          rewards = await rewardsResponse.json();
+
+          // Add rewards to the item object
+          item.rewards = rewards;
+        } else {
+          console.error("Unknown item type:", comment.item_type);
           return null;
         }
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
 
-      const result = await response.json();
-      console.log("Fetched item result:", result);
-      return result;
+        // Clear timeout since request completed
+        clearTimeout(timeoutId);
+
+        // Add the image URL logic
+        if (comment.item_type === "season") {
+          const level10Reward = item.rewards?.find?.(
+            (reward) => reward.requirement === "Level 10"
+          );
+          item.image_url =
+            level10Reward?.link || "assets/images/changelogs/347.webp";
+        }
+
+        return item;
+      } finally {
+        clearTimeout(timeoutId);
+      }
     } catch (error) {
       if (error.name === "AbortError") {
-        console.error("Request timed out:", url);
+        console.error("Request timed out");
       } else {
         console.error("Error fetching comment item:", error);
       }
@@ -442,7 +485,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const commentsPerPage = 3;
 
   async function fetchUserComments(userId) {
-    console.log("fetchUserComments started for user:", userId);
     const recentComments = document.getElementById("comments-list");
     let loadingSpinner = document.getElementById("loading-spinner");
 
@@ -452,25 +494,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
-      console.log("Setting loading state");
       recentComments.innerHTML = `
             <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 200px;">
                 <span class="text-light mb-2">Loading comments...</span>
                 <span id="loading-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             </div>`;
 
-      console.log("Fetching comments from API");
       const response = await fetch(
         `https://api3.jailbreakchangelogs.xyz/comments/get/user?author=${userId}`
       );
-      console.log("API Response status:", response.status);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const comments = await response.json();
-      console.log("Comments received:", comments);
 
       if (!Array.isArray(comments)) {
         console.error("Invalid comments format:", comments);
@@ -498,9 +536,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Process each comment
       for (const comment of paginatedComments) {
-        console.log("Processing comment:", comment);
         const item = await fetchCommentItem(comment);
-        console.log("Fetched item details:", item);
 
         if (!item) {
           continue; // Skip this comment if we couldn't fetch its details
@@ -512,7 +548,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Get the correct image URL
         let imageUrl;
         if (comment.item_type === "season") {
-          const level10Reward = rewards?.find?.(
+          const level10Reward = item.rewards?.find?.(
             (reward) => reward.requirement === "Level 10"
           );
           imageUrl = level10Reward?.link || "assets/images/changelogs/347.webp";
@@ -573,8 +609,14 @@ document.addEventListener("DOMContentLoaded", function () {
       recentComments.append(...comments_to_add);
     } catch (error) {
       console.error("Error fetching comments:", error);
-      recentComments.innerHTML =
-        "<div>Error loading comments. Please try again later.</div>";
+      // Replace this line in the catch block of fetchUserComments function:
+      recentComments.innerHTML = `
+        <div class="alert alert-danger d-flex align-items-center gap-2 m-3" role="alert">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <div>
+            Error loading comments. Please try again later.
+          </div>
+        </div>`;
     } finally {
       if (loadingSpinner) {
         loadingSpinner.remove();
@@ -697,11 +739,9 @@ document.addEventListener("DOMContentLoaded", function () {
   fetchUserBio(userId);
   // Find this section in the code (around line 704)
   if (permissions.show_recent_comments === 1) {
-    console.log("Showing comments - user enabled");
     card_pagination.style.display = "block";
     fetchUserComments(userId);
   } else {
-    console.log("Comments hidden - user disabled");
     card_pagination.style.display = "none";
     // Add a message to inform users why comments aren't showing
     const recentComments = document.getElementById("comments-list");
@@ -782,10 +822,10 @@ document.addEventListener("DOMContentLoaded", function () {
           AlertToast("Bio cannot exceed 500 characters. Please try again.");
           return;
         }
-        console.log("Updating bio:", description);
+
         const user = getCookie("token");
         const body = JSON.stringify({ user, description });
-        console.log("body:", body);
+
         const response = await fetch(
           `https://api.jailbreakchangelogs.xyz/users/description/update`,
           {
@@ -1084,26 +1124,30 @@ document.addEventListener("DOMContentLoaded", function () {
             show_comments_button.innerHTML = recentCommentsIcon.outerHTML; // Update button with the icon
             break;
           case "banner_discord":
-            // Logic for banner_discord
             const bannerDiscordIcon = document.createElement("i");
-            const BannerInputHeader =
-              document.createElement("BannerInputHeader");
             bannerDiscordIcon.classList.add(
               "bi",
               value ? "bi-check-lg" : "bi-x-lg"
-            ); // Set icon based on the value
-            bannerInput.style.display = value ? "none" : "block"; // Show or hide the input field based on the value
-            input.value = banner;
+            );
+
+            // Show/hide input field based on the value
+            bannerInput.style.display = value ? "none" : "block";
+
+            // Only set banner input value if there's a valid banner
+            if (banner && banner !== "NONE") {
+              bannerInput.value = banner;
+            } else {
+              bannerInput.value = ""; // Clear the input if no valid banner
+            }
 
             use_discord_banner_button.classList.remove(
               "btn-danger",
               "btn-success"
-            ); // Clear previous button classes
+            );
             use_discord_banner_button.classList.add(
-              "btn",
               value ? "btn-success" : "btn-danger"
-            ); // Update button class based on value
-            use_discord_banner_button.innerHTML = bannerDiscordIcon.outerHTML; // Update button with the icon
+            );
+            use_discord_banner_button.innerHTML = bannerDiscordIcon.outerHTML;
             break;
 
           default:
@@ -1132,11 +1176,13 @@ document.addEventListener("DOMContentLoaded", function () {
       profilePublicIcon.classList.add("bi-x-lg");
     }
   });
+
   use_discord_banner_button.addEventListener("click", function (event) {
     event.preventDefault();
     const bannerDiscordIcon = use_discord_banner_button.querySelector("i");
-    console.log("Banner Discord Button Clicked");
-    console.log("Current Icon Class:", bannerDiscordIcon.classList);
+    console.log("Banner Discord Button clicked");
+    console.log("Current banner input value:", bannerInput.value);
+    console.log("Current banner input display:", bannerInput.style.display);
 
     if (bannerDiscordIcon.classList.contains("bi-check-lg")) {
       console.log("Switching to custom banner mode");
@@ -1155,6 +1201,28 @@ document.addEventListener("DOMContentLoaded", function () {
       bannerDiscordIcon.classList.add("bi-check-lg");
     }
   });
+
+  async function validateImageURL(url) {
+    if (!url || url.trim() === "" || url === "NONE") {
+      return "None";
+    }
+
+    try {
+      console.log("Validating URL:", url);
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Origin: "",
+        },
+      });
+
+      console.log("Validation response status:", response.status);
+      return response.ok ? url : "None";
+    } catch (error) {
+      console.log("Error validating URL:", error);
+      return "None";
+    }
+  }
 
   hide_followers_button.addEventListener("click", function (event) {
     event.preventDefault(); // Prevent form submission or button's default behavior
@@ -1207,58 +1275,40 @@ document.addEventListener("DOMContentLoaded", function () {
       recentCommentsIcon.classList.add("bi-x-lg");
     }
   });
-  async function validateImageURL(url) {
-    try {
-      const proxyUrl = url;
-      // Make the fetch request to the proxy with 'HEAD' method
-      const response = await fetch(proxyUrl, {
-        method: "GET",
-        headers: {
-          Origin: "", // This may be optional, depending on your proxy configuration
-        },
-      });
-
-      if (response.ok) {
-        return url; // The URL is valid
-      } else {
-        return "None"; // The URL is invalid
-      }
-    } catch (error) {
-      console.log("Error fetching the URL:", error);
-      return "None"; // Error or invalid URL
-    }
-  }
 
   const save_settings_button = document.getElementById("settings-submit");
   const save_settings_loading = document.getElementById("settings-loading");
+
   save_settings_button.addEventListener("click", async function (event) {
-    event.preventDefault(); // Prevent form submission
+    event.preventDefault();
+    console.log("Save settings clicked");
+
     save_settings_loading.style.display = "block";
     save_settings_button.disabled = true;
 
-    // Assemble the request body with boolean values
-    const settingsBody = {
-      profile_public: profile_public_button
-        .querySelector("i")
-        .classList.contains("bi-check-lg"), // true or false
-      hide_followers: !hide_followers_button
-        .querySelector("i")
-        .classList.contains("bi-check-lg"), // true or false
-      hide_following: !hide_following_button
-        .querySelector("i")
-        .classList.contains("bi-check-lg"), // true or false
-      show_recent_comments: show_comments_button
-        .querySelector("i")
-        .classList.contains("bi-check-lg"), // true or false
-      banner_discord: use_discord_banner_button
-        .querySelector("i")
-        .classList.contains("bi-check-lg"), // true or false
-    };
-
-    const token = getCookie("token");
-
-    // Send the request to the server
     try {
+      // First update settings
+      const settingsBody = {
+        profile_public: profile_public_button
+          .querySelector("i")
+          .classList.contains("bi-check-lg"),
+        hide_followers: !hide_followers_button
+          .querySelector("i")
+          .classList.contains("bi-check-lg"),
+        hide_following: !hide_following_button
+          .querySelector("i")
+          .classList.contains("bi-check-lg"),
+        show_recent_comments: show_comments_button
+          .querySelector("i")
+          .classList.contains("bi-check-lg"),
+        banner_discord: use_discord_banner_button
+          .querySelector("i")
+          .classList.contains("bi-check-lg"),
+      };
+
+      const token = getCookie("token");
+
+      // Update settings first
       const response = await fetch(
         `https://api3.jailbreakchangelogs.xyz/users/settings/update?user=${token}`,
         {
@@ -1274,50 +1324,58 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      // Then handle banner update
+      const isDiscordBanner = settingsBody.banner_discord;
+      let image;
 
-      let image = String(input.value);
-      let validImage;
-      if (image) {
-        validImage = await validateImageURL(image);
-      }
-
-      if (validImage !== "None") {
-        image = validImage;
-      } else {
-        const discord_banner_button = use_discord_banner_button
-          .querySelector("i")
-          .classList.contains("bi-check-lg");
-        if (discord_banner_button) {
-          image = "NONE";
+      if (isDiscordBanner) {
+        // Check if user has a Discord banner
+        if (udata.banner) {
+          image = "NONE"; // Use Discord banner system
         } else {
-          image = "INVALID";
-          AlertToast("Invalid image URL. Please enter a valid image URL.");
+          // No Discord banner available, use placeholder
+          image =
+            "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
+        }
+      } else {
+        // Handle custom banner
+        const inputValue = bannerInput.value;
+        if (!inputValue || inputValue.trim() === "") {
+          image =
+            "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
+          AlertToast("No image URL provided. Using default banner.");
+        } else {
+          const validImage = await validateImageURL(inputValue.trim());
+          if (validImage !== "None") {
+            image = validImage;
+          } else {
+            image =
+              "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
+            AlertToast("Invalid image URL. Using default banner.");
+          }
         }
       }
 
-      if (image === "INVALID") {
-        return; // Exit if the image is invalid
-      }
-
-      const url = `https://api3.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=${image}`;
-
-      const backgroundResponse = await fetch(url, {
+      const bannerUrl = `https://api3.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=${encodeURIComponent(
+        image
+      )}`;
+      const bannerResponse = await fetch(bannerUrl, {
         method: "POST",
       });
 
-      if (!backgroundResponse.ok) {
-        throw new Error(`HTTP error! status: ${backgroundResponse.status}`);
+      if (!bannerResponse.ok) {
+        throw new Error(`HTTP error! status: ${bannerResponse.status}`);
       }
 
-      const backgroundData = await backgroundResponse.json();
-      save_settings_loading.style.display = "none";
-      save_settings_button.disabled = false;
-      settings_modal.style.display = "none";
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Ensure toast shows
       SuccessToast("Settings saved successfully!");
-      window.location.reload(); // Refresh the page to reflect the new settings
+      window.location.reload();
     } catch (error) {
       console.error("Error saving settings:", error);
+      AlertToast("Error saving settings. Please try again.");
+    } finally {
+      save_settings_loading.style.display = "none";
+      save_settings_button.disabled = false;
     }
   });
 
