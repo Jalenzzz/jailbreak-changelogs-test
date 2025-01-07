@@ -1,6 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
   const permissions = JSON.parse(settings);
   const udata = JSON.parse(userData);
+  console.log("DOM Loaded");
+  console.log("Permissions:", permissions);
+  console.log(
+    "Show recent comments setting:",
+    permissions.show_recent_comments
+  );
   const userDateBio = document.getElementById("description-updated-date");
   const recent_comments_button = document.getElementById(
     "recent-comments-button"
@@ -85,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   async function fetchBanner(userId, bannerHash, format) {
-    const url = `https://cdn.discordapp.com/banners/${userId}/${bannerHash}.${format}`;
+    const url = `https://cdn.discordapp.com/banners/${userId}/${bannerHash}.${format}?size=4096`;
     const response = await fetch(url, { method: "HEAD" });
     return response.ok ? url : null;
   }
@@ -122,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
         image = await getBannerUrl(userId, udata.banner);
         if (!image) {
           // Fallback to PNG if no animated banner exists
-          image = `https://cdn.discordapp.com/banners/${userId}/${udata.banner}.png`;
+          image = `https://cdn.discordapp.com/banners/${userId}/${udata.banner}.png?size=4096`;
         }
       } else {
         const response = await fetch(
@@ -277,6 +283,10 @@ document.addEventListener("DOMContentLoaded", function () {
         return null;
       }
 
+      console.log("Fetching item URL:", url);
+      console.log("Comment type:", comment.item_type);
+      console.log("Comment ID:", comment.item_id);
+
       // Add timeout to fetch request
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
@@ -290,6 +300,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       clearTimeout(timeoutId);
+      console.log("Item API Response Status:", response.status);
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -300,6 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       const result = await response.json();
+      console.log("Fetched item result:", result);
       return result;
     } catch (error) {
       if (error.name === "AbortError") {
@@ -430,29 +442,38 @@ document.addEventListener("DOMContentLoaded", function () {
   const commentsPerPage = 3;
 
   async function fetchUserComments(userId) {
+    console.log("fetchUserComments started for user:", userId);
     const recentComments = document.getElementById("comments-list");
     let loadingSpinner = document.getElementById("loading-spinner");
 
+    if (!recentComments) {
+      console.error("comments-list element not found");
+      return;
+    }
+
     try {
+      console.log("Setting loading state");
       recentComments.innerHTML = `
             <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 200px;">
                 <span class="text-light mb-2">Loading comments...</span>
                 <span id="loading-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             </div>`;
 
+      console.log("Fetching comments from API");
       const response = await fetch(
         `https://api3.jailbreakchangelogs.xyz/comments/get/user?author=${userId}`
       );
+      console.log("API Response status:", response.status);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const comments = await response.json();
+      console.log("Comments received:", comments);
 
-      // Validate that comments is an array
       if (!Array.isArray(comments)) {
-        console.error("Received invalid comments data:", comments);
+        console.error("Invalid comments format:", comments);
         recentComments.innerHTML = "<div>No recent comments.</div>";
         return;
       }
@@ -477,7 +498,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Process each comment
       for (const comment of paginatedComments) {
+        console.log("Processing comment:", comment);
         const item = await fetchCommentItem(comment);
+        console.log("Fetched item details:", item);
 
         if (!item) {
           continue; // Skip this comment if we couldn't fetch its details
@@ -672,11 +695,23 @@ document.addEventListener("DOMContentLoaded", function () {
   const userBio = document.getElementById("userBio");
   const character_count = document.getElementById("character-count");
   fetchUserBio(userId);
-
-  if (permissions.show_recent_comments === false) {
+  // Find this section in the code (around line 704)
+  if (permissions.show_recent_comments === 1) {
+    console.log("Showing comments - user enabled");
     card_pagination.style.display = "block";
-
     fetchUserComments(userId);
+  } else {
+    console.log("Comments hidden - user disabled");
+    card_pagination.style.display = "none";
+    // Add a message to inform users why comments aren't showing
+    const recentComments = document.getElementById("comments-list");
+    if (recentComments) {
+      recentComments.innerHTML = `
+      <div class="text-center p-3" style="color: #748D92;">
+        <i class="bi bi-eye-slash me-2"></i>
+        This user has disabled the display of their comments
+      </div>`;
+    }
   }
 
   function setAvatarWithFallback(username) {
@@ -1055,9 +1090,9 @@ document.addEventListener("DOMContentLoaded", function () {
               document.createElement("BannerInputHeader");
             bannerDiscordIcon.classList.add(
               "bi",
-              value ? "bi-x-lg" : "bi-check-lg"
+              value ? "bi-check-lg" : "bi-x-lg"
             ); // Set icon based on the value
-            bannerInput.style.display = value ? "block" : "none"; // Show or hide the input field based on the value
+            bannerInput.style.display = value ? "none" : "block"; // Show or hide the input field based on the value
             input.value = banner;
 
             use_discord_banner_button.classList.remove(
@@ -1066,7 +1101,7 @@ document.addEventListener("DOMContentLoaded", function () {
             ); // Clear previous button classes
             use_discord_banner_button.classList.add(
               "btn",
-              value ? "btn-danger" : "btn-success"
+              value ? "btn-success" : "btn-danger"
             ); // Update button class based on value
             use_discord_banner_button.innerHTML = bannerDiscordIcon.outerHTML; // Update button with the icon
             break;
@@ -1098,17 +1133,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
   use_discord_banner_button.addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent form submission or button's default behavior
+    event.preventDefault();
     const bannerDiscordIcon = use_discord_banner_button.querySelector("i");
+    console.log("Banner Discord Button Clicked");
+    console.log("Current Icon Class:", bannerDiscordIcon.classList);
 
-    // Toggle the icon class
     if (bannerDiscordIcon.classList.contains("bi-check-lg")) {
+      console.log("Switching to custom banner mode");
       bannerInput.style.display = "block";
       use_discord_banner_button.classList.remove("btn-success");
       bannerDiscordIcon.classList.remove("bi-check-lg");
       use_discord_banner_button.classList.add("btn-danger");
       bannerDiscordIcon.classList.add("bi-x-lg");
     } else {
+      console.log("Switching to Discord banner mode");
       bannerInput.style.display = "none";
       bannerInput.value = "";
       bannerDiscordIcon.classList.remove("bi-x-lg");
@@ -1171,7 +1209,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   async function validateImageURL(url) {
     try {
-      const proxyUrl = `https://proxy.wyzie.ru/${url}`;
+      const proxyUrl = url;
       // Make the fetch request to the proxy with 'HEAD' method
       const response = await fetch(proxyUrl, {
         method: "GET",
@@ -1212,7 +1250,7 @@ document.addEventListener("DOMContentLoaded", function () {
       show_recent_comments: show_comments_button
         .querySelector("i")
         .classList.contains("bi-check-lg"), // true or false
-      banner_discord: !use_discord_banner_button
+      banner_discord: use_discord_banner_button
         .querySelector("i")
         .classList.contains("bi-check-lg"), // true or false
     };

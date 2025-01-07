@@ -7,7 +7,7 @@ body {
 }
 
 .accent-icon {
-  color: var(--text-primary) !important;
+  color: var(--text-primary);
 }
 .results-container {
   background-color: var(--background-dark);
