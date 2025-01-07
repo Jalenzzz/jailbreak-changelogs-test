@@ -663,22 +663,41 @@ app.get("/users", (req, res) => {
   });
 });
 
-const getAvatar = async (url, username) => {
-  try {
+// Route to render a specific user profile
+const getAvatar = async (userId, avatarHash, username) => {
+  const defaultAvatarUrl = `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${username}&bold=true&format=svg`;
+
+  if (!avatarHash) {
+    return defaultAvatarUrl;
+  }
+
+  const fetchAvatar = async (format) => {
+    const url = `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.${format}`;
     const response = await fetch(url, { method: "HEAD" });
-    if (response.status === 404) {
-      return `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${username}&bold=true&format=svg`;
+    return response.ok ? url : null;
+  };
+
+  try {
+    const gifUrl = await fetchAvatar("gif");
+    if (gifUrl) {
+      return gifUrl;
     }
-    return url;
+
+    const pngUrl = await fetchAvatar("png");
+    if (pngUrl) {
+      return pngUrl;
+    }
+
+    return defaultAvatarUrl;
   } catch (error) {
     console.error("Error fetching avatar:", error);
-    return `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${username}&bold=true&format=svg`;
+    return defaultAvatarUrl;
   }
 };
 
-// Route to render a specific user profile
+// Then update the users route to use the new getAvatar function
 app.get("/users/:user", async (req, res) => {
-  const user = req.params.user; // Get the user from the URL params
+  const user = req.params.user;
 
   if (!user) {
     return res.render("usersearch", {
@@ -688,30 +707,22 @@ app.get("/users/:user", async (req, res) => {
     });
   }
 
-  // Fetch user settings and user data concurrently
-  const settingsFetch = fetch(
-    `https://api.jailbreakchangelogs.xyz/users/settings?user=${user}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Origin: "https://jailbreakchangelogs.xyz",
-      },
-    }
-  ).then((response) => response.json());
-
-  const userFetch = fetch(
-    `https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Origin: "https://jailbreakchangelogs.xyz",
-      },
-    }
-  ).then((response) => response.json());
-
   try {
-    // Use Promise.all to wait for both fetch requests to resolve
-    const [settings1, userData] = await Promise.all([settingsFetch, userFetch]);
+    // Fetch user settings and user data concurrently
+    const [settings1, userData] = await Promise.all([
+      fetch(`https://api.jailbreakchangelogs.xyz/users/settings?user=${user}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }).then((response) => response.json()),
+      fetch(`https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }).then((response) => response.json()),
+    ]);
 
     const booleanSettings = {
       ...settings1,
@@ -736,13 +747,13 @@ app.get("/users/:user", async (req, res) => {
       return res.redirect(`/users/${defaultUserID}`);
     }
 
-    // Assemble avatar URL
-    const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+    // Get avatar with the new function
+    const avatar = await getAvatar(
+      userData.id,
+      userData.avatar,
+      userData.username
+    );
 
-    // Check if avatar exists and get the correct URL (or placeholder)
-    const avatar = await getAvatar(avatarUrl, userData.username);
-
-    // Render the page only after both data sets are fetched
     res.render("users", {
       userData,
       avatar,

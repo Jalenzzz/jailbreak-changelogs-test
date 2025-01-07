@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         const response = await fetch(
           `https://api.jailbreakchangelogs.xyz/users/background/get?user=${userId}`
-        ); // Replace with actual URL
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -426,7 +426,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>`;
 
       const response = await fetch(
-        `https://api.jailbreakchangelogs.xyz/comments/get/user?author=${userId}`
+        `https://api3.jailbreakchangelogs.xyz/comments/get/user?author=${userId}`
       );
 
       if (!response.ok) {

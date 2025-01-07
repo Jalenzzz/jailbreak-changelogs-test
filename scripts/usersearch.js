@@ -1,5 +1,5 @@
 // Constants
-const API_BASE_URL = "https://api.jailbreakchangelogs.xyz";
+const API_BASE_URL = "https://api3.jailbreakchangelogs.xyz";
 const DISCORD_CDN = "https://cdn.discordapp.com";
 const MIN_SEARCH_LENGTH = 1;
 
@@ -32,16 +32,41 @@ const messages = {
   `,
 };
 
+const fetchAvatar = async (userId, avatarHash, format) => {
+  const url = `${DISCORD_CDN}/avatars/${userId}/${avatarHash}.${format}`;
+  const response = await fetch(url, { method: "HEAD" });
+  return response.ok ? url : null;
+};
+
 // User Card Template
-const createUserCard = (user) => {
-  const avatar = `${DISCORD_CDN}/avatars/${user.id}/${user.avatar}.png`;
+const createUserCard = async (user) => {
+  let avatarUrl = `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${user.username}&bold=true&format=svg`;
+
+  if (user.avatar) {
+    try {
+      // Try GIF first
+      const gifUrl = await fetchAvatar(user.id, user.avatar, "gif");
+      if (gifUrl) {
+        avatarUrl = gifUrl;
+      } else {
+        // Fallback to PNG if GIF doesn't exist
+        const pngUrl = await fetchAvatar(user.id, user.avatar, "png");
+        if (pngUrl) {
+          avatarUrl = pngUrl;
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching avatar:", error);
+    }
+  }
+
   return `
    <div class="col-12 col-md-6 col-lg-4">
     <div class="card user-card border-0 shadow-sm h-100">
       <div class="card-body p-3">
         <div class="d-flex align-items-center gap-2">
           <img 
-            src="${avatar}"
+            src="${avatarUrl}"
             class="user-avatar rounded-circle flex-shrink-0" 
             alt="${user.username}"
             width="60"
@@ -82,11 +107,13 @@ const showMessage = (message) => {
 };
 
 // User Display Logic
-const displayUsers = (users) => {
-  // Display user grid
+const displayUsers = async (users) => {
+  const userCards = await Promise.all(
+    users.map((user) => createUserCard(user))
+  );
   elements.usersGrid.innerHTML = `
     <div class="row g-4">
-      ${users.map((user) => createUserCard(user)).join("")}
+      ${userCards.join("")}
     </div>
   `;
 };
@@ -113,20 +140,18 @@ const searchUsers = async (searchTerm) => {
 const handleSearch = async () => {
   const searchTerm = elements.searchInput.value.trim();
 
-  // Show minimum character message without loading spinner
   if (searchTerm.length < MIN_SEARCH_LENGTH) {
     showMessage(messages.minLength);
     return;
   }
 
-  // Only show loading spinner for actual searches
   showLoading();
   const users = await searchUsers(searchTerm);
 
   if (users.length === 0) {
     showMessage(messages.noResults);
   } else {
-    displayUsers(users);
+    await displayUsers(users);
     hideLoading();
   }
 };
