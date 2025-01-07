@@ -7,8 +7,10 @@
 }
 
 .intro-container h1 {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Luckiest Guy", sans-serif;
   font-weight: 700;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--text-primary);
 }
 
 .intro-container .lead {
@@ -36,7 +38,7 @@
 
 /* Additional Calculator Specific Styles */
 .hero-style .feature-item i {
-  color: var(--accent-color);
+  color: var(--accent-color-light);
 }
 
 .hero-style .quick-tip {

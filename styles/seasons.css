@@ -809,6 +809,8 @@ span {
   font-size: 2.5rem;
   text-align: center;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--text-primary); /* Bottom border for h1 */
 }
 
 .seasons-intro .lead {
@@ -820,6 +822,10 @@ span {
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.feature-grid .feature-item i {
+  color: var(--accent-color-light) !important;
 }
 
 .seasons-intro .feature-grid {

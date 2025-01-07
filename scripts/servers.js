@@ -141,8 +141,14 @@ async function fetchServers() {
     console.error("Error fetching servers:", error);
     const serverList = document.getElementById("serverList");
     serverList.innerHTML = `
-      <div class="col-12 text-center">
-        <p class="text-danger">Failed to load servers. Please try again later.</p>
+      <div class="col-12">
+        <div class="alert alert-danger d-flex flex-column align-items-center justify-content-center gap-2 py-4">
+          <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+          <div class="d-flex flex-column align-items-center">
+            <h5 class="mb-1">Couldn't fetch private servers</h5>
+            <p class="mb-0">Please try again or <a href="mailto:support@jailbreakchangelogs.xyz" class="alert-link">contact us</a> if the problem persists.</p>
+          </div>
+        </div>
       </div>
     `;
   }

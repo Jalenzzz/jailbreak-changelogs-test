@@ -892,10 +892,6 @@
   color: #d3d9d4;
 }
 
-.categories-section h2 {
-  color: #d3d9d4;
-}
-
 .categories-section span {
   color: #d3d9d4;
 }
@@ -991,9 +987,11 @@
 }
 
 .intro-container h1 {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Luckiest Guy", Arial, Helvetica, sans-serif;
   font-weight: 700;
   font-size: 2.5rem;
+  border-bottom: 2px solid var(--text-primary); /* Bottom border for h1 */
+  letter-spacing: 1px;
 }
 
 .intro-container .lead {

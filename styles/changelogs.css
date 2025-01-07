@@ -663,6 +663,7 @@ body.menu-open {
   margin-bottom: 20px;
   font-family: "Luckiest Guy", Arial, sans-serif; /* Applying the desired font */
   text-align: center;
+  letter-spacing: 1px;
 }
 
 /* Comment Input Field */
@@ -947,6 +948,7 @@ body.menu-open {
 h1 {
   color: var(--content-h1); /* Color for h1 headings */
   font-family: "Luckiest Guy", Arial, Helvetica, sans-serif; /* Font family for h1 */
+  letter-spacing: 1px;
   border-bottom: 2px solid var(--content-h1); /* Bottom border for h1 */
   font-size: 0.25rem;
 }
@@ -955,12 +957,14 @@ h1 {
 #content h1 {
   color: var(--content-h1); /* Color for h1 headings */
   font-family: "Luckiest Guy", Arial, Helvetica, sans-serif; /* Font family for h1 */
+  letter-spacing: 1px;
   border-bottom: 2px solid var(--content-h1); /* Bottom border for h1 */
 }
 
 #content h2 {
   color: var(--content-h2); /* Color for h2 headings */
   font-family: "Luckiest Guy", Arial, Helvetica, sans-serif; /* Font family for h2 */
+  letter-spacing: 1px;
 }
 
 #content h3 {
@@ -1267,6 +1271,7 @@ button {
 .changelog-intro .display-4 {
   color: var(--text-primary);
   font-family: "Luckiest Guy", sans-serif;
+  letter-spacing: 1px;
   margin-bottom: 1.5rem;
   font-size: 2.5rem;
   text-align: center;
@@ -1278,6 +1283,10 @@ button {
   line-height: 1.7;
   margin-bottom: 2rem;
   text-align: center;
+}
+
+.feature-grid .feature-item i {
+  color: var(--accent-color-light) !important;
 }
 
 .feature-grid {
@@ -1355,6 +1364,7 @@ button {
 .changelog-intro .display-4 {
   color: var(--text-primary);
   font-family: "Luckiest Guy", sans-serif;
+  letter-spacing: 1px;
   margin-bottom: 1.5rem;
 }
 

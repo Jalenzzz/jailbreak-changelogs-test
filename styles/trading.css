@@ -154,13 +154,6 @@ body[data-bs-theme="dark"] {
   height: auto; /* Maintain aspect ratio */
 }
 
-h1 {
-  color: var(--content-h1); /* Color for h1 headings */
-  font-family: "Luckiest Guy", Arial, Helvetica, sans-serif; /* Font family for h1 */
-  border-bottom: 2px solid var(--content-h1); /* Bottom border for h1 */
-  font-size: 0.25rem;
-}
-
 /* Row Styles */
 .row {
   margin-left: 0; /* Reset left margin */
@@ -865,9 +858,11 @@ button {
 }
 
 .intro-container h1 {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Luckiest Guy", Arial, Helvetica, sans-serif; /* Font family for h1 */
   font-weight: 700;
   font-size: 2.5rem;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--text-primary);
 }
 
 .intro-container .lead {
@@ -961,7 +956,7 @@ button {
 }
 
 .hero-style .feature-item i {
-  color: var(--accent-color);
+  color: var(--accent-color-light);
   font-size: 1.4rem;
   width: 32px;
 }

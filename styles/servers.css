@@ -1,4 +1,5 @@
 @import "colors.css";
+
 [data-bs-theme="dark"] body {
   background-color: var(--bg-secondary);
 }
@@ -21,6 +22,8 @@
   margin-bottom: 1.5rem;
   font-size: 2.5rem;
   text-align: center;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--text-primary);
 }
 
 .server-intro .lead {
@@ -29,6 +32,28 @@
   line-height: 1.7;
   margin-bottom: 2rem;
   text-align: center;
+}
+.custom-spinner {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.25em;
+  border-style: solid;
+  border-radius: 50%;
+  border-top-color: #31b1ff;
+  border-right-color: #31b1ff;
+  border-bottom-color: #ff341c;
+  border-left-color: #ff341c;
+  animation: spinner-rotation 1s linear infinite;
+}
+
+@keyframes spinner-rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .auth-notice {
@@ -48,6 +73,10 @@
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
   margin-top: 3rem;
+}
+
+.feature-grid .feature-item i {
+  color: var(--accent-color-light) !important;
 }
 
 .feature-item {
@@ -93,6 +122,7 @@
   color: var(--text-primary);
   font-family: "Luckiest Guy", sans-serif;
   font-size: 1.75rem;
+  letter-spacing: 1px;
 }
 
 .server-container {
