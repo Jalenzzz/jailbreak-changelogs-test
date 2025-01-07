@@ -509,7 +509,7 @@ app.get("/login", (req, res) => {
 app.get("/users/:user/followers", async (req, res) => {
   const user = req.params.user;
   const response = await fetch(
-    `https://api.jailbreakchangelogs.xyz/users/settings?user=${user}`,
+    `https://api3.jailbreakchangelogs.xyz/users/settings?user=${user}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -523,13 +523,13 @@ app.get("/users/:user/followers", async (req, res) => {
   }
 
   const data = await response.json();
-  const showfollowers = data.hide_followers !== 0;
+  const showfollowers = data.hide_followers === 0;
   const isPrivate = !showfollowers; // Add this line to define isPrivate
 
   if (!showfollowers) {
     // User has hidden their followers
     const userData = await fetch(
-      `https://api.jailbreakchangelogs.xyz/users/get?id=${user}`,
+      `https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -552,7 +552,7 @@ app.get("/users/:user/followers", async (req, res) => {
   }
 
   const userData = await fetch(
-    `https://api.jailbreakchangelogs.xyz/users/get?id=${user}`,
+    `https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -583,7 +583,7 @@ app.get("/users/:user/followers", async (req, res) => {
 app.get("/users/:user/following", async (req, res) => {
   const user = req.params.user;
   const response = await fetch(
-    `https://api.jailbreakchangelogs.xyz/users/settings?user=${user}`,
+    `https://api3.jailbreakchangelogs.xyz/users/settings?user=${user}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -597,13 +597,13 @@ app.get("/users/:user/following", async (req, res) => {
   }
 
   const data = await response.json();
-  const showfollowing = data.hide_following !== 0;
+  const showfollowing = data.hide_following === 0;
   const isPrivate = !showfollowing; // Add this line to define isPrivate
 
   if (!showfollowing) {
     // User has hidden who they follow
     const userData = await fetch(
-      `https://api.jailbreakchangelogs.xyz/users/get?id=${user}`,
+      `https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -626,7 +626,7 @@ app.get("/users/:user/following", async (req, res) => {
   }
 
   const userData = await fetch(
-    `https://api.jailbreakchangelogs.xyz/users/get?id=${user}`,
+    `https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -710,12 +710,15 @@ app.get("/users/:user", async (req, res) => {
   try {
     // Fetch user settings and user data concurrently
     const [settings, userData] = await Promise.all([
-      fetch(`https://api.jailbreakchangelogs.xyz/users/settings?user=${user}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Origin: "https://jailbreakchangelogs.xyz",
-        },
-      }).then((response) => response.json()),
+      fetch(
+        `https://api3.jailbreakchangelogs.xyz/users/settings?user=${user}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "https://jailbreakchangelogs.xyz",
+          },
+        }
+      ).then((response) => response.json()),
       fetch(`https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`, {
         headers: {
           "Content-Type": "application/json",

@@ -894,7 +894,7 @@ document.addEventListener("DOMContentLoaded", function () {
   async function fetchUserFollowers(userId) {
     try {
       const response = await fetch(
-        `https://api.jailbreakchangelogs.xyz/users/followers/get?user=${userId}`
+        `https://api3.jailbreakchangelogs.xyz/users/followers/get?user=${userId}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -908,7 +908,7 @@ document.addEventListener("DOMContentLoaded", function () {
   async function fetchUserFollowing(userId) {
     try {
       const response = await fetch(
-        `https://api.jailbreakchangelogs.xyz/users/following/get?user=${userId}`
+        `https://api3.jailbreakchangelogs.xyz/users/following/get?user=${userId}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -932,7 +932,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const user = getCookie("token");
       const response = await fetch(
-        `https://api.jailbreakchangelogs.xyz/users/followers/add`,
+        `https://api3.jailbreakchangelogs.xyz/users/followers/add`,
         {
           method: "POST", // Specify the method, e.g., POST
           headers: {
@@ -956,7 +956,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const user = getCookie("token");
       const response = await fetch(
-        `https://api.jailbreakchangelogs.xyz/users/followers/remove`,
+        `https://api3.jailbreakchangelogs.xyz/users/followers/remove`,
         {
           method: "DELETE", // Specify the method, e.g., POST
           headers: {

@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function fetchFollowers(userId) {
     try {
       const response = await fetch(
-        `https://api.jailbreakchangelogs.xyz/users/following/get?user=${userId}`
+        `https://api3.jailbreakchangelogs.xyz/users/following/get?user=${userId}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
   } else {
-    usersGrid.textContent = "This user isn't following anyone";
+    usersGrid.textContent = "";
   }
 });
 
