@@ -40,13 +40,41 @@ document.addEventListener("DOMContentLoaded", function () {
   const save_settings_button = document.getElementById("settings-submit");
   const save_settings_loading = document.getElementById("settings-loading");
 
+  // Near the top of the DOMContentLoaded event handler
+  if (permissions.profile_public === 0 && loggedinuserId !== userId) {
+    // If profile is private and viewer is not the owner
+    const mainContent = document.querySelector(".user-content");
+    const userStats = document.querySelector(".user-stats");
+
+    // Hide the main content
+    if (mainContent) {
+      mainContent.innerHTML = `
+          <div class="alert alert-info text-center" role="alert">
+              <i class="bi bi-lock-fill me-2"></i>
+              This profile is private
+          </div>`;
+    }
+
+    // Hide the stats
+    if (userStats) {
+      userStats.style.display = "none";
+    }
+
+    // Hide the follow button if it exists
+    if (follow_button) {
+      follow_button.style.display = "none";
+    }
+
+    return; // Stop further execution of profile loading
+  }
+
   // Helper function to update button state
   function updateButtonState(button, value) {
     const icon = document.createElement("i");
-    icon.classList.add("bi", value ? "bi-check-lg" : "bi-x-lg");
+    icon.classList.add("bi", value === 1 ? "bi-check-lg" : "bi-x-lg");
 
     button.classList.remove("btn-danger", "btn-success", "btn-secondary");
-    button.classList.add("btn", value ? "btn-success" : "btn-danger");
+    button.classList.add("btn", value === 1 ? "btn-success" : "btn-danger");
     button.innerHTML = icon.outerHTML;
   }
 
@@ -130,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
       event.preventDefault();
       const icon = button.querySelector("i");
       const isCurrentlyEnabled = icon.classList.contains("bi-check-lg");
-      updateButtonState(button, !isCurrentlyEnabled);
+      updateButtonState(button, isCurrentlyEnabled ? 0 : 1); // Convert to 0/1
 
       // Special handling for discord banner button
       if (button === use_discord_banner_button) {
@@ -153,19 +181,29 @@ document.addEventListener("DOMContentLoaded", function () {
       const settingsBody = {
         profile_public: profile_public_button
           .querySelector("i")
-          .classList.contains("bi-check-lg"),
+          .classList.contains("bi-check-lg")
+          ? 1
+          : 0,
         hide_followers: hide_followers_button
           .querySelector("i")
-          .classList.contains("bi-check-lg"),
+          .classList.contains("bi-check-lg")
+          ? 1
+          : 0,
         hide_following: hide_following_button
           .querySelector("i")
-          .classList.contains("bi-check-lg"),
+          .classList.contains("bi-check-lg")
+          ? 1
+          : 0,
         show_recent_comments: show_comments_button
           .querySelector("i")
-          .classList.contains("bi-check-lg"),
+          .classList.contains("bi-check-lg")
+          ? 1
+          : 0,
         banner_discord: use_discord_banner_button
           .querySelector("i")
-          .classList.contains("bi-check-lg"),
+          .classList.contains("bi-check-lg")
+          ? 1
+          : 0,
       };
 
       const token = getCookie("token");
@@ -1408,13 +1446,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const profilePublicIcon = document.createElement("i");
             profilePublicIcon.classList.add(
               "bi",
-              value ? "bi-check-lg" : "bi-x-lg"
+              value === 1 ? "bi-check-lg" : "bi-x-lg"
             ); // Set icon based on public/private status
 
             profile_public_button.classList.remove("btn-danger", "btn-success"); // Clear previous button classes
             profile_public_button.classList.add(
               "btn",
-              value ? "btn-success" : "btn-danger"
+              value === 1 ? "btn-success" : "btn-danger"
             ); // Update button class based on value
             profile_public_button.innerHTML = profilePublicIcon.outerHTML; // Update button with the icon
             break;
@@ -1437,11 +1475,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const bannerDiscordIcon = document.createElement("i");
             bannerDiscordIcon.classList.add(
               "bi",
-              value ? "bi-check-lg" : "bi-x-lg"
+              value === 1 ? "bi-check-lg" : "bi-x-lg"
             );
 
             // Show/hide input field based on the value
-            bannerInput.style.display = value ? "none" : "block";
+            bannerInput.style.display = value === 1 ? "none" : "block";
 
             // Only set banner input value if there's a valid banner
             if (banner && banner !== "NONE") {
@@ -1455,7 +1493,7 @@ document.addEventListener("DOMContentLoaded", function () {
               "btn-success"
             );
             use_discord_banner_button.classList.add(
-              value ? "btn-success" : "btn-danger"
+              value === 1 ? "btn-success" : "btn-danger"
             );
             use_discord_banner_button.innerHTML = bannerDiscordIcon.outerHTML;
             break;
@@ -1498,19 +1536,29 @@ document.addEventListener("DOMContentLoaded", function () {
       const settingsBody = {
         profile_public: profile_public_button
           .querySelector("i")
-          .classList.contains("bi-check-lg"),
+          .classList.contains("bi-check-lg")
+          ? 1
+          : 0, // Convert to 0/1
         hide_followers: hide_followers_button
           .querySelector("i")
-          .classList.contains("bi-check-lg"),
+          .classList.contains("bi-check-lg")
+          ? 1
+          : 0,
         hide_following: hide_following_button
           .querySelector("i")
-          .classList.contains("bi-check-lg"),
+          .classList.contains("bi-check-lg")
+          ? 1
+          : 0,
         show_recent_comments: show_comments_button
           .querySelector("i")
-          .classList.contains("bi-check-lg"),
+          .classList.contains("bi-check-lg")
+          ? 1
+          : 0,
         banner_discord: use_discord_banner_button
           .querySelector("i")
-          .classList.contains("bi-check-lg"),
+          .classList.contains("bi-check-lg")
+          ? 1
+          : 0,
       };
 
       const token = getCookie("token");
