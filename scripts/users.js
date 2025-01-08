@@ -11,6 +11,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const userId = pathSegments[pathSegments.length - 1];
   const card_pagination = document.getElementById("card-pagination");
   const userBanner = document.getElementById("banner");
+
+  // bio buttons
+  const follow_button = document.getElementById("follow-button");
+  const settings_button = document.getElementById("settings-button");
+  const editbio_button = document.getElementById("edit-bio-button");
+  const savebio_button = document.getElementById("save-bio-button");
+  const cancel_button = document.getElementById("canceledit");
   if (permissions.profile_public === true && loggedinuserId !== userId) {
     window.location.href = "/users";
   }
@@ -150,6 +157,49 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // In the updateUIForUser function, add more detailed logging
+  function updateUIForUser() {
+    console.log("UpdateUIForUser called with:", {
+      loggedinuserId,
+      currentUserId: userId,
+      isLoggedIn: !!loggedinuserId,
+      isOwnProfile: loggedinuserId === userId,
+    });
+
+    // Log initial button states - Fix the syntax error here
+    console.log("Initial button states:", {
+      followButtonDisplay: follow_button.style.display,
+      settingsButtonDisplay: settings_button.style.display,
+      editBioButtonDisplay: editbio_button.style.display,
+    });
+
+    // First, set default states
+    follow_button.classList.remove("d-none");
+    settings_button.classList.add("d-none");
+    editbio_button.classList.add("d-none");
+
+    // Log after setting defaults
+    console.log("After setting defaults:", {
+      followButtonDisplay: follow_button.style.display,
+      settingsButtonDisplay: settings_button.style.display,
+      editBioButtonDisplay: editbio_button.style.display,
+    });
+
+    if (!loggedinuserId) {
+      console.log("User is not logged in - showing only follow button");
+      settings_button.classList.add("d-none");
+      editbio_button.classList.add("d-none");
+      return;
+    }
+
+    if (loggedinuserId === userId) {
+      console.log("Viewing own profile - showing edit controls");
+      follow_button.classList.add("d-none");
+      settings_button.classList.remove("d-none");
+      editbio_button.classList.remove("d-none");
+    }
+  }
+
   async function fetchUserBio(userId) {
     try {
       const response = await fetch(
@@ -214,9 +264,6 @@ document.addEventListener("DOMContentLoaded", function () {
       editbio_button.innerHTML = '<i class="bi bi-pencil-fill"></i>';
       savebio_button.style.display = "none";
       savebio_button.innerHTML = '<i class="bi bi-save"></i>';
-      if (loggedinuserId === userId) {
-        editbio_button.style.display = "inline-block";
-      }
       userDateBio.textContent = `${date}`;
       userBio.innerHTML = resultHtml.trim();
       savebio_button.disabled = false;
@@ -665,7 +712,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     return null;
   }
-  const follow_button = document.getElementById("follow-button");
+
   async function updateUserCounts(userId) {
     try {
       // Show 0 initially instead of loading spinners
@@ -750,21 +797,12 @@ document.addEventListener("DOMContentLoaded", function () {
       followers.innerHTML = "Error loading";
     }
   }
+  updateUIForUser();
 
-  const settings_button = document.getElementById("settings-button");
-  const editbio_button = document.getElementById("edit-bio-button");
   editbio_button.innerHTML =
     '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>';
   editbio_button.disabled = true;
 
-  if (loggedinuserId === userId) {
-    follow_button.style.display = "none";
-    settings_button.style.display = "inline-block";
-    editbio_button.style.display = "inline-block";
-  } else {
-    settings_button.style.display = "none";
-    editbio_button.style.display = "none";
-  }
   const userBio = document.getElementById("userBio");
   const character_count = document.getElementById("character-count");
   fetchUserBio(userId);
@@ -805,8 +843,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   setAvatarWithFallback(udata.username);
 
-  const savebio_button = document.getElementById("save-bio-button");
-  const cancel_button = document.getElementById("canceledit");
   updateUserCounts(userId);
   editbio_button.addEventListener("click", function () {
     editbio_button.style.display = "none";
@@ -860,11 +896,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const response = await fetch(
           `https://api.jailbreakchangelogs.xyz/users/description/update`,
           {
-            method: "POST", // Specify the method, e.g., POST
+            method: "POST",
             headers: {
-              "Content-Type": "application/json", // Set content type to JSON
+              "Content-Type": "application/json",
             },
-            body: body, // Pass the body here
+            body: body,
           }
         );
 
@@ -897,82 +933,108 @@ document.addEventListener("DOMContentLoaded", function () {
         `https://api3.jailbreakchangelogs.xyz/users/followers/get?user=${userId}`
       );
       if (!response.ok) {
+        if (response.status === 404) {
+          toastControl.showToast("error", "User not found", "Error");
+          return [];
+        }
+        toastControl.showToast("error", "Failed to fetch followers", "Error");
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const followers = await response.json();
-      return followers;
+      return Array.isArray(followers) ? followers : [];
     } catch (error) {
       console.error("Error fetching followers:", error);
+      toastControl.showToast("error", "Error loading followers data", "Error");
+      return []; // Always return an array, even on error
     }
   }
+
   async function fetchUserFollowing(userId) {
     try {
       const response = await fetch(
         `https://api3.jailbreakchangelogs.xyz/users/following/get?user=${userId}`
       );
       if (!response.ok) {
+        if (response.status === 404) {
+          toastControl.showToast("error", "User not found", "Error");
+          return [];
+        }
+        toastControl.showToast("error", "Failed to fetch following", "Error");
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const following = await response.json();
-      return following;
+      return Array.isArray(following) ? following : [];
     } catch (error) {
       console.error("Error fetching following:", error);
+      toastControl.showToast("error", "Error loading following data", "Error");
+      return []; // Always return an array, even on error
     }
   }
-  function alreadyFollowingToast(message) {
-    toastControl.showToast("error", message, "Follow");
-  }
-  function FollowToast(message) {
-    toastControl.showToast("success", message, "Follow");
-  }
-  function NotFollowingToast(message) {
-    toastControl.showToast("error", message, "Error");
-  }
+
   async function addFollow(userId) {
     try {
       const user = getCookie("token");
       const response = await fetch(
         `https://api3.jailbreakchangelogs.xyz/users/followers/add`,
         {
-          method: "POST", // Specify the method, e.g., POST
+          method: "POST",
           headers: {
-            "Content-Type": "application/json", // Set content type to JSON
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ follower: user, following: userId }), // Pass the body here
+          body: JSON.stringify({ follower: user, following: userId }),
         }
       );
+
       if (!response.ok) {
         if (response.status === 409) {
           alreadyFollowingToast("You are already following this user.");
+          return false;
         }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      updateUserCounts(userId); // Update user counts after adding follow
+
+      FollowToast("Successfully followed user!");
+      await updateUserCounts(userId);
+      return true;
     } catch (error) {
       console.error("Error adding follow:", error);
+      NotFollowingToast("Failed to follow user. Please try again.");
+      return false;
     }
   }
+
   async function removeFollow(userId) {
     try {
       const user = getCookie("token");
       const response = await fetch(
         `https://api3.jailbreakchangelogs.xyz/users/followers/remove`,
         {
-          method: "DELETE", // Specify the method, e.g., POST
+          method: "DELETE",
           headers: {
-            "Content-Type": "application/json", // Set content type to JSON
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ follower: user, following: userId }), // Pass the body here
+          body: JSON.stringify({ follower: user, following: userId }),
         }
       );
+
       if (!response.ok) {
+        if (response.status === 404) {
+          NotFollowingToast("You are not following this user.");
+          return false;
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      updateUserCounts(userId); // Update user counts after removing follow
+
+      FollowToast("Successfully unfollowed user!");
+      await updateUserCounts(userId);
+      return true;
     } catch (error) {
       console.error("Error removing follow:", error);
+      NotFollowingToast("Failed to unfollow user. Please try again.");
+      return false;
     }
   }
+
   follow_button.addEventListener("click", function () {
     if (follow_button.disabled) return;
     follow_button.disabled = true;

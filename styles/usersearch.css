@@ -155,10 +155,6 @@ h1.display-5 {
   color: var(--text-body);
 }
 
-.bi {
-  color: var(--accent-color-light);
-}
-
 /* Animations */
 .fade-in {
   animation: fadeIn 0.3s ease-in-out;
