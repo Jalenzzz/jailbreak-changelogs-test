@@ -1,16 +1,4 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api" }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=300, must-revalidate"
-        }
-      ]
-    }
-  ]
-}
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+  }
+  
