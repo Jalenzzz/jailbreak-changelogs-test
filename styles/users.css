@@ -16,6 +16,148 @@
 .fs-7 {
   font-size: 0.75rem !important;
 }
+/* Custom toggle button states */
+.btn-success {
+  background-color: #124e66 !important; /* --accent-color */
+  border-color: #124e66 !important; /* --accent-color */
+  color: #d3d9d4 !important; /* --text-primary */
+}
+
+.btn-danger {
+  background-color: #212a31 !important; /* --bg-primary */
+  border-color: #748d92 !important; /* --text-muted */
+  color: #d3d9d4 !important; /* --text-primary */
+}
+
+/* Hover states */
+.btn-success:hover {
+  background-color: #1d7da3 !important; /* --accent-color-light */
+  border-color: #1d7da3 !important; /* --accent-color-light */
+}
+
+.btn-danger:hover {
+  background-color: #2e3944 !important; /* --bg-secondary */
+  border-color: #748d92 !important; /* --text-muted */
+}
+
+/* Banner Input Field */
+#bannerInput {
+  background-color: #212a31; /* --bg-primary */
+  color: #d3d9d4; /* --text-primary */
+  border: 1px solid #748d92; /* --text-muted */
+  transition: all 0.2s ease;
+}
+
+#bannerInput:focus {
+  border-color: #1d7da3; /* --accent-color-light */
+  box-shadow: 0 0 0 0.2rem rgba(29, 125, 163, 0.25); /* --accent-color-light with opacity */
+  background-color: #2e3944; /* --bg-secondary */
+  outline: none;
+}
+
+#bannerInput:hover {
+  border-color: #1d7da3; /* --accent-color-light */
+}
+
+#bannerInput::placeholder {
+  color: #748d92; /* --text-muted */
+}
+
+/* Form Label */
+.form-label {
+  color: #d3d9d4; /* --text-primary */
+}
+
+/* For disabled state */
+#bannerInput:disabled {
+  background-color: #2e3944; /* --bg-secondary */
+  color: #748d92; /* --text-muted */
+  border-color: #748d92; /* --text-muted */
+}
+
+/* Settings Modal Styles */
+#settingsModal {
+  background-color: rgba(33, 42, 49, 0.8); /* --bg-primary with opacity */
+}
+
+#settingsModal .modal-content {
+  background-color: #212a31; /* --bg-primary */
+  border: 1px solid #748d92; /* --text-muted */
+  color: #d3d9d4; /* --text-primary */
+}
+
+#settingsModal .modal-header {
+  border-bottom: 1px solid #2e3944; /* --bg-secondary */
+}
+
+#settingsModal .modal-footer {
+  border-top: 1px solid #2e3944; /* --bg-secondary */
+}
+
+#settingsModal .close {
+  color: #748d92; /* --text-muted */
+}
+
+#settingsModal .close:hover {
+  color: #d3d9d4; /* --text-primary */
+}
+
+/* Banner Input Styles */
+#input-for-banner {
+  background-color: #2e3944; /* --bg-secondary */
+  border: 1px solid #748d92; /* --text-muted */
+  color: #d3d9d4; /* --text-primary */
+  transition: all 0.2s ease;
+}
+
+#input-for-banner:focus {
+  background-color: #2e3944; /* --bg-secondary */
+  border-color: #1d7da3; /* --accent-color-light */
+  box-shadow: 0 0 0 0.2rem rgba(29, 125, 163, 0.25); /* --accent-color-light with opacity */
+  color: #d3d9d4; /* --text-primary */
+}
+
+#input-for-banner::placeholder {
+  color: #748d92; /* --text-muted */
+}
+
+/* Settings Button Styles */
+#settings-submit {
+  background-color: #124e66; /* --accent-color */
+  border-color: #124e66; /* --accent-color */
+  color: #d3d9d4; /* --text-primary */
+}
+
+#settings-submit:hover {
+  background-color: #2e3944 !important; /* --accent-color-light */
+  border-color: #748d92 !important; /* --accent-color-light */
+}
+
+#settings-submit:focus {
+  box-shadow: 0 0 0 0.2rem rgba(29, 125, 163, 0.25); /* --accent-color-light with opacity */
+}
+
+/* Settings Toggle Buttons */
+.settings-toggle-btn {
+  background-color: #2e3944; /* --bg-secondary */
+  border: 1px solid #748d92; /* --text-muted */
+  color: #d3d9d4; /* --text-primary */
+}
+
+.settings-toggle-btn.btn-success {
+  background-color: #124e66; /* --accent-color */
+  border-color: #124e66; /* --accent-color */
+}
+
+.settings-toggle-btn.btn-danger {
+  background-color: #212a31; /* --bg-primary */
+  border-color: #748d92; /* --text-muted */
+}
+
+/* Loading Spinner */
+.spinner-border {
+  color: #d3d9d4; /* --text-primary */
+}
 
 .view-item-btn {
   color: var(--text-body) !important;

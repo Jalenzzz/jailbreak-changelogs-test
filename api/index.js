@@ -513,10 +513,6 @@ app.get("/users/:user/followers", async (req, res) => {
   const requestedUser = req.params.user;
   const token = req.cookies?.token;
 
-  console.log("=== Followers Route Access ===");
-  console.log(`Requested User: ${requestedUser}`);
-  console.log(`Token: ${token}`);
-
   try {
     // Step 1: Get the logged-in user's ID from token
     let loggedInUserId;
@@ -535,7 +531,6 @@ app.get("/users/:user/followers", async (req, res) => {
         if (userDataResponse.ok) {
           const userData = await userDataResponse.json();
           loggedInUserId = userData.id;
-          console.log("Logged in user ID from token:", loggedInUserId);
         }
       } catch (error) {
         console.error("Error fetching user data from token:", error);
@@ -554,24 +549,15 @@ app.get("/users/:user/followers", async (req, res) => {
     );
 
     if (!settingsResponse.ok) {
-      console.log(
-        `Settings fetch failed with status: ${settingsResponse.status}`
-      );
       return res
         .status(settingsResponse.status)
         .send("Error fetching user settings");
     }
 
     const settings = await settingsResponse.json();
-    console.log("User settings:", settings);
 
     // Step 3: Check access permissions
     const isProfileOwner = requestedUser === loggedInUserId;
-    console.log("Profile ownership check:", {
-      isProfileOwner,
-      requestedUser,
-      loggedInUserId,
-    });
 
     const isPrivateAndNotLoggedIn =
       settings.profile_public === 0 && !loggedInUserId;
@@ -580,22 +566,11 @@ app.get("/users/:user/followers", async (req, res) => {
     const isHiddenAndNotOwner =
       settings.hide_followers === 1 && !isProfileOwner;
 
-    console.log("Access conditions:", {
-      isPrivateAndNotLoggedIn,
-      isPrivateAndNotOwner,
-      isHiddenAndNotOwner,
-    });
-
     if (
       isPrivateAndNotLoggedIn ||
       isPrivateAndNotOwner ||
       isHiddenAndNotOwner
     ) {
-      console.log("Access denied. Redirecting due to:", {
-        privateProfile: isPrivateAndNotLoggedIn || isPrivateAndNotOwner,
-        hiddenFollowers: isHiddenAndNotOwner,
-        isOwner: isProfileOwner,
-      });
       return res.redirect(`/users/${requestedUser}`);
     }
 
@@ -613,15 +588,12 @@ app.get("/users/:user/followers", async (req, res) => {
     const userData = await userResponse.json();
 
     if (userData.error) {
-      console.log("User data fetch error:", userData.error);
       const defaultUserID = "659865209741246514";
       return res.redirect(`/users/${defaultUserID}/followers`);
     }
 
     // Step 5: Get avatar URL
     const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-
-    console.log("Successfully fetched user data, rendering page");
 
     // Step 6: Render the followers page
     res.render("followers", {
@@ -648,10 +620,6 @@ app.get("/users/:user/following", async (req, res) => {
   const requestedUser = req.params.user;
   const token = req.cookies?.token;
 
-  console.log("=== Following Route Access ===");
-  console.log(`Requested User: ${requestedUser}`);
-  console.log(`Token: ${token}`);
-
   try {
     // Step 1: Get the logged-in user's ID from token
     let loggedInUserId;
@@ -670,7 +638,6 @@ app.get("/users/:user/following", async (req, res) => {
         if (userDataResponse.ok) {
           const userData = await userDataResponse.json();
           loggedInUserId = userData.id;
-          console.log("Logged in user ID from token:", loggedInUserId);
         }
       } catch (error) {
         console.error("Error fetching user data from token:", error);
@@ -689,24 +656,15 @@ app.get("/users/:user/following", async (req, res) => {
     );
 
     if (!settingsResponse.ok) {
-      console.log(
-        `Settings fetch failed with status: ${settingsResponse.status}`
-      );
       return res
         .status(settingsResponse.status)
         .send("Error fetching user settings");
     }
 
     const settings = await settingsResponse.json();
-    console.log("User settings:", settings);
 
     // Step 3: Check access permissions
     const isProfileOwner = requestedUser === loggedInUserId;
-    console.log("Profile ownership check:", {
-      isProfileOwner,
-      requestedUser,
-      loggedInUserId,
-    });
 
     const isPrivateAndNotLoggedIn =
       settings.profile_public === 0 && !loggedInUserId;
@@ -715,22 +673,11 @@ app.get("/users/:user/following", async (req, res) => {
     const isHiddenAndNotOwner =
       settings.hide_following === 1 && !isProfileOwner;
 
-    console.log("Access conditions:", {
-      isPrivateAndNotLoggedIn,
-      isPrivateAndNotOwner,
-      isHiddenAndNotOwner,
-    });
-
     if (
       isPrivateAndNotLoggedIn ||
       isPrivateAndNotOwner ||
       isHiddenAndNotOwner
     ) {
-      console.log("Access denied. Redirecting due to:", {
-        privateProfile: isPrivateAndNotLoggedIn || isPrivateAndNotOwner,
-        hiddenFollowing: isHiddenAndNotOwner,
-        isOwner: isProfileOwner,
-      });
       return res.redirect(`/users/${requestedUser}`);
     }
 
@@ -748,15 +695,12 @@ app.get("/users/:user/following", async (req, res) => {
     const userData = await userResponse.json();
 
     if (userData.error) {
-      console.log("User data fetch error:", userData.error);
       const defaultUserID = "659865209741246514";
       return res.redirect(`/users/${defaultUserID}/following`);
     }
 
     // Step 5: Get avatar URL
     const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-
-    console.log("Successfully fetched user data, rendering page");
 
     // Step 6: Render the following page
     res.render("following", {
@@ -824,11 +768,6 @@ const getAvatar = async (userId, avatarHash, username) => {
 app.get("/users/:user", async (req, res) => {
   const user = req.params.user;
   const token = req.cookies?.token;
-
-  console.log("=== User Profile Access ===");
-  console.log(`Requested User: ${user}`);
-  console.log(`Token: ${token}`);
-
   if (!user) {
     return res.render("usersearch", {
       title: "Users / Changelogs",
@@ -874,7 +813,6 @@ app.get("/users/:user", async (req, res) => {
         if (tokenResponse.ok) {
           const tokenData = await tokenResponse.json();
           loggedInUserId = tokenData.id;
-          console.log("Token verified. Logged in user:", loggedInUserId);
         } else {
           console.log("Invalid token");
         }
@@ -887,13 +825,6 @@ app.get("/users/:user", async (req, res) => {
     const isProfileOwner = loggedInUserId === user;
     const isPrivateProfile = settings.profile_public === 0;
     const canAccessProfile = !isPrivateProfile || isProfileOwner;
-
-    console.log("Access check:", {
-      isProfileOwner,
-      isPrivateProfile,
-      canAccessProfile,
-      loggedInUserId,
-    });
 
     // Get avatar
     const avatar = await getAvatar(
@@ -987,7 +918,15 @@ app.get("*", (req, res) => {
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+  const timestamp = new Date().toLocaleString();
+  console.log(`
+\x1b[34m┌────────────────────────────────────────────────┐
+\x1b[34m│\x1b[32m  🚀 Server launched and ready for action! 🚀    \x1b[34m│
+\x1b[34m│                                                │
+\x1b[34m│\x1b[33m  🌍 Listening at: \x1b[36mhttp://localhost:${PORT}        \x1b[34m│
+\x1b[34m│\x1b[35m  ⚡ Environment: Testing                        \x1b[34m│
+\x1b[34m│\x1b[32m  🕒 Started at: ${timestamp}      \x1b[34m│
+\x1b[34m└────────────────────────────────────────────────┘\x1b[0m`);
 });
 
 // Export the app for Vercel's serverless functions
