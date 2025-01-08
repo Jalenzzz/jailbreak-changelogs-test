@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
   checkInvalidSession();
 
   if (token && (!user || !userid)) {
-    fetch("https://api.jailbreakchangelogs.xyz/users/get/token?token=" + token)
+    fetch("https://api3.jailbreakchangelogs.xyz/users/get/token?token=" + token)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Invalid response");
