@@ -1010,9 +1010,14 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // Fetch data
-      const [followingArray, followersArray] = await Promise.all([
+      const [followingArray, followersArray, userSettings] = await Promise.all([
         fetchUserFollowing(userId),
         fetchUserFollowers(userId),
+        fetch(
+          `https://api3.jailbreakchangelogs.xyz/users/settings?user=${userId}`
+        )
+          .then((res) => res.json())
+          .catch(() => ({})),
       ]);
 
       // Update follow button state
@@ -1031,8 +1036,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Create following link
       const followingLink = document.createElement("a");
-      followingLink.href = `/users/${userId}/following`; // Always set the href
+      // CHANGE THIS PART - Always show links for profile owner
+      followingLink.href = `/users/${userId}/following`; // Remove the conditional
+
       const followingCount_span = document.createElement("span");
+      // Always show count for profile owner
       followingCount_span.textContent = followingCount;
       followingCount_span.classList.add("fw-bold");
       followingCount_span.style.color = "#748D92";
@@ -1050,8 +1058,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Create followers link
       const followersLink = document.createElement("a");
-      followersLink.href = `/users/${userId}/followers`; // Always set the href
+      // CHANGE THIS PART - Always show links for profile owner
+      followersLink.href = `/users/${userId}/followers`; // Remove the conditional
+
       const followersCount_span = document.createElement("span");
+      // Always show count for profile owner
       followersCount_span.textContent = followersCount;
       followersCount_span.classList.add("fw-bold");
       followersCount_span.style.color = "#748D92";
@@ -1079,6 +1090,7 @@ document.addEventListener("DOMContentLoaded", function () {
       followers.innerHTML = "Error loading";
     }
   }
+
   updateUIForUser();
 
   // Find this section in the code (around line 704)

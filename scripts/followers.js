@@ -29,6 +29,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const showfollowers = JSON.parse(showingfollowers);
 
+  if (!document.getElementById("usersGrid")) {
+    return; // Exit if the grid doesn't exist (means we're showing the private message)
+  }
+
   async function fetchFollowers(userId) {
     try {
       const response = await fetch(
@@ -74,13 +78,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${user.username}&bold=true&format=svg`;
   };
 
-  if (!showfollowers) {
-    usersGrid.textContent = "This user has their followers hidden.";
-    if (followerCountElement) {
-      followerCountElement.textContent = "(0)";
-    }
-    return;
-  }
   const followers = await fetchFollowers(userId);
 
   // Update the count immediately when we get the data

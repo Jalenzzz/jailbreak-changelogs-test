@@ -14,6 +14,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const showFollowing = JSON.parse(showingfollowing);
   const userId = segments[2];
 
+  if (!document.getElementById("usersGrid")) {
+    return; // Exit if the grid doesn't exist (means we're showing the private message)
+  }
+
   const fetchAvatar = async (userId, avatarHash, format) => {
     const url = `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.${format}`;
     const response = await fetch(url, { method: "HEAD" });

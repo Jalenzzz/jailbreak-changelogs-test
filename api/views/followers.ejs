@@ -33,10 +33,7 @@
       property="og:description"
       content="Connect with <%= userData.global_name %> and other Jailbreak players. View their followers and join the community discussing Roblox Jailbreak updates."
     />
-    <meta
-      property="og:image"
-      content="/assets/logos/Users_Logo.webp"
-    />
+    <meta property="og:image" content="/assets/logos/Users_Logo.webp" />
     <meta property="og:site_name" content="Jailbreak Changelogs Users" />
 
     <meta property="og:image:width" content="2328" />
@@ -56,10 +53,7 @@
       name="twitter:description"
       content="Connect with <%= userData.global_name %> and other Jailbreak players. View their followers and join the community discussing Roblox Jailbreak updates."
     />
-    <meta
-      name="twitter:image"
-      content="/assets/logos/Users_Logo.webp"
-    />
+    <meta name="twitter:image" content="/assets/logos/Users_Logo.webp" />
 
     <!-- Canonical URL -->
     <link
@@ -83,9 +77,9 @@
     />
 
     <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-  />
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
     <link rel="stylesheet" href="styles/usersearch.css" />
     <link rel="stylesheet" href="styles/main.css" />
 
@@ -154,7 +148,7 @@
         </a>
       </div>
 
-      <% if (isPrivate) { %>
+      <% if (isPrivate && (!user || userData.id !== user.id)) { %>
       <div class="alert alert-info text-center">
         <i class="bi bi-lock-fill me-2"></i>
         This user has set their followers list to private
