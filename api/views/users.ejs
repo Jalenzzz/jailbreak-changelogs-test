@@ -152,7 +152,21 @@
       </nav>
     </div>
 
-    <!-- User Profile Section -->
+  <!-- Private Profile Alert -->
+  <% if (isPrivateProfile && !isProfileOwner) { %>
+    <div class="container mt-4">
+      <div class="alert alert-info text-center" role="alert">
+        <i class="bi bi-lock-fill me-2"></i>
+        This profile is private
+      </div>
+      <!-- Basic Profile Info -->
+      <div class="text-center mb-4">
+        <img src="<%= avatar %>" alt="User Avatar" class="rounded-circle mb-3" style="width: 128px; height: 128px;">
+        <h4><%= userData.username %></h4>
+      </div>
+    </div>
+    </div>
+    <% } else { %>
     <div class="user-profile">
       <!-- Banner Section - Full Width -->
       <div class="banner-container">
@@ -353,7 +367,7 @@
         </div>
       </div>
     </div>
-
+    <% } %>
     <!-- Settings Modal -->
     <div class="modal" id="settingsModal">
       <div class="modal-dialog modal-lg">

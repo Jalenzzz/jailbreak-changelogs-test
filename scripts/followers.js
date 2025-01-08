@@ -36,7 +36,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function fetchFollowers(userId) {
     try {
       const response = await fetch(
-        `https://api3.jailbreakchangelogs.xyz/users/followers/get?user=${userId}`
+        `https://api3.jailbreakchangelogs.xyz/users/followers/get?user=${userId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "https://jailbreakchangelogs.xyz",
+          },
+        }
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -47,6 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return [];
     }
   }
+
   const fetchAvatar = async (userId, avatarHash, format) => {
     const url = `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.${format}`;
     const response = await fetch(url, { method: "HEAD" });

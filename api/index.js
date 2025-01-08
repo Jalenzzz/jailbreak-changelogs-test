@@ -5,6 +5,7 @@ const axios = require("axios");
 const app = express();
 const PORT = process.env.PORT || 5500; // Set the port
 const fs = require("fs");
+const cookieParser = require("cookie-parser");
 
 // Serve your static HTML, CSS, and JS files
 const DATA_SOURCE_URL =
@@ -26,6 +27,8 @@ app.use(
     origin: "https://jailbreakchangelogs.xyz",
   })
 );
+
+app.use(cookieParser());
 
 // Serve the changelogs.html file
 app.get("/trade-data", async (req, res) => {
@@ -507,151 +510,274 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/users/:user/followers", async (req, res) => {
-  const user = req.params.user;
-  const response = await fetch(
-    `https://api3.jailbreakchangelogs.xyz/users/settings?user=${user}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Origin: "https://jailbreakchangelogs.xyz",
-      },
+  const requestedUser = req.params.user;
+  const token = req.cookies?.token;
+
+  console.log("=== Followers Route Access ===");
+  console.log(`Requested User: ${requestedUser}`);
+  console.log(`Token: ${token}`);
+
+  try {
+    // Step 1: Get the logged-in user's ID from token
+    let loggedInUserId;
+    if (token) {
+      try {
+        const userDataResponse = await fetch(
+          `https://api3.jailbreakchangelogs.xyz/users/get/token?token=${token}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Origin: "https://jailbreakchangelogs.xyz",
+            },
+          }
+        );
+
+        if (userDataResponse.ok) {
+          const userData = await userDataResponse.json();
+          loggedInUserId = userData.id;
+          console.log("Logged in user ID from token:", loggedInUserId);
+        }
+      } catch (error) {
+        console.error("Error fetching user data from token:", error);
+      }
     }
-  );
 
-  if (!response.ok) {
-    return res.status(response.status).send("Error fetching user settings");
-  }
-
-  const data = await response.json();
-  const showfollowers = data.hide_followers !== 1;
-  const isPrivate = !showfollowers; // Add this line to define isPrivate
-
-  if (!showfollowers) {
-    // User has hidden their followers
-    const userData = await fetch(
-      `https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`,
+    // Step 2: Get user settings
+    const settingsResponse = await fetch(
+      `https://api3.jailbreakchangelogs.xyz/users/settings?user=${requestedUser}`,
       {
         headers: {
           "Content-Type": "application/json",
           Origin: "https://jailbreakchangelogs.xyz",
         },
       }
-    ).then((res) => res.json());
+    );
 
-    return res.render("followers", {
+    if (!settingsResponse.ok) {
+      console.log(
+        `Settings fetch failed with status: ${settingsResponse.status}`
+      );
+      return res
+        .status(settingsResponse.status)
+        .send("Error fetching user settings");
+    }
+
+    const settings = await settingsResponse.json();
+    console.log("User settings:", settings);
+
+    // Step 3: Check access permissions
+    const isProfileOwner = requestedUser === loggedInUserId;
+    console.log("Profile ownership check:", {
+      isProfileOwner,
+      requestedUser,
+      loggedInUserId,
+    });
+
+    const isPrivateAndNotLoggedIn =
+      settings.profile_public === 0 && !loggedInUserId;
+    const isPrivateAndNotOwner =
+      settings.profile_public === 0 && !isProfileOwner;
+    const isHiddenAndNotOwner =
+      settings.hide_followers === 1 && !isProfileOwner;
+
+    console.log("Access conditions:", {
+      isPrivateAndNotLoggedIn,
+      isPrivateAndNotOwner,
+      isHiddenAndNotOwner,
+    });
+
+    if (
+      isPrivateAndNotLoggedIn ||
+      isPrivateAndNotOwner ||
+      isHiddenAndNotOwner
+    ) {
+      console.log("Access denied. Redirecting due to:", {
+        privateProfile: isPrivateAndNotLoggedIn || isPrivateAndNotOwner,
+        hiddenFollowers: isHiddenAndNotOwner,
+        isOwner: isProfileOwner,
+      });
+      return res.redirect(`/users/${requestedUser}`);
+    }
+
+    // Step 4: Fetch user data
+    const userResponse = await fetch(
+      `https://api3.jailbreakchangelogs.xyz/users/get?id=${requestedUser}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    );
+
+    const userData = await userResponse.json();
+
+    if (userData.error) {
+      console.log("User data fetch error:", userData.error);
+      const defaultUserID = "659865209741246514";
+      return res.redirect(`/users/${defaultUserID}/followers`);
+    }
+
+    // Step 5: Get avatar URL
+    const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+
+    console.log("Successfully fetched user data, rendering page");
+
+    // Step 6: Render the followers page
+    res.render("followers", {
       userData,
-      avatar: `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`,
-      showfollowers,
-      isPrivate: true, // Ensure isPrivate is set for private profiles
-      path: req.path, // Add this line
+      avatar,
+      showfollowers: true,
+      isPrivate: false,
+      path: req.path,
       title: "Followers / Changelogs",
       logoUrl: "/assets/logos/Users_Logo.webp",
       logoAlt: "Users Page Logo",
-      user: req.user || null, // Add this line - passes the logged in user or null if not logged in
+      user: req.user || null,
+      settings,
+      isProfileOwner, // Pass this to the template
+      loggedInUserId, // Pass this to the template if needed
     });
+  } catch (error) {
+    console.error("Error in followers route:", error);
+    console.error(error.stack);
+    res.status(500).send("Internal Server Error");
   }
-
-  const userData = await fetch(
-    `https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Origin: "https://jailbreakchangelogs.xyz",
-      },
-    }
-  ).then((res) => res.json());
-
-  if (userData.error) {
-    const defaultUserID = "659865209741246514"; // Set your default changelog ID here
-    return res.redirect(`/users/${defaultUserID}/followers`);
-  }
-  // Render the page only after the data is fetched
-  const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-  res.render("followers", {
-    userData,
-    avatar,
-    showfollowers,
-    isPrivate: false, // Add this line to define isPrivate for public profiles
-    path: req.path, // Add this line
-    title: "Followers / Changelogs",
-    logoUrl: "/assets/logos/Users_Logo.webp",
-    logoAlt: "Users Page Logo",
-    user: req.user || null, // Add this line - passes the logged in user or null if not logged in
-  });
 });
-
 app.get("/users/:user/following", async (req, res) => {
-  const user = req.params.user;
-  const response = await fetch(
-    `https://api3.jailbreakchangelogs.xyz/users/settings?user=${user}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Origin: "https://jailbreakchangelogs.xyz",
-      },
+  const requestedUser = req.params.user;
+  const token = req.cookies?.token;
+
+  console.log("=== Following Route Access ===");
+  console.log(`Requested User: ${requestedUser}`);
+  console.log(`Token: ${token}`);
+
+  try {
+    // Step 1: Get the logged-in user's ID from token
+    let loggedInUserId;
+    if (token) {
+      try {
+        const userDataResponse = await fetch(
+          `https://api3.jailbreakchangelogs.xyz/users/get/token?token=${token}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Origin: "https://jailbreakchangelogs.xyz",
+            },
+          }
+        );
+
+        if (userDataResponse.ok) {
+          const userData = await userDataResponse.json();
+          loggedInUserId = userData.id;
+          console.log("Logged in user ID from token:", loggedInUserId);
+        }
+      } catch (error) {
+        console.error("Error fetching user data from token:", error);
+      }
     }
-  );
 
-  if (!response.ok) {
-    return res.status(response.status).send("Error fetching user settings");
-  }
-
-  const data = await response.json();
-  const showfollowing = data.hide_following !== 1;
-  const isPrivate = !showfollowing;
-
-  if (!showfollowing) {
-    // User has hidden who they follow
-    const userData = await fetch(
-      `https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`,
+    // Step 2: Get user settings
+    const settingsResponse = await fetch(
+      `https://api3.jailbreakchangelogs.xyz/users/settings?user=${requestedUser}`,
       {
         headers: {
           "Content-Type": "application/json",
           Origin: "https://jailbreakchangelogs.xyz",
         },
       }
-    ).then((res) => res.json());
+    );
 
-    return res.render("following", {
+    if (!settingsResponse.ok) {
+      console.log(
+        `Settings fetch failed with status: ${settingsResponse.status}`
+      );
+      return res
+        .status(settingsResponse.status)
+        .send("Error fetching user settings");
+    }
+
+    const settings = await settingsResponse.json();
+    console.log("User settings:", settings);
+
+    // Step 3: Check access permissions
+    const isProfileOwner = requestedUser === loggedInUserId;
+    console.log("Profile ownership check:", {
+      isProfileOwner,
+      requestedUser,
+      loggedInUserId,
+    });
+
+    const isPrivateAndNotLoggedIn =
+      settings.profile_public === 0 && !loggedInUserId;
+    const isPrivateAndNotOwner =
+      settings.profile_public === 0 && !isProfileOwner;
+    const isHiddenAndNotOwner =
+      settings.hide_following === 1 && !isProfileOwner;
+
+    console.log("Access conditions:", {
+      isPrivateAndNotLoggedIn,
+      isPrivateAndNotOwner,
+      isHiddenAndNotOwner,
+    });
+
+    if (
+      isPrivateAndNotLoggedIn ||
+      isPrivateAndNotOwner ||
+      isHiddenAndNotOwner
+    ) {
+      console.log("Access denied. Redirecting due to:", {
+        privateProfile: isPrivateAndNotLoggedIn || isPrivateAndNotOwner,
+        hiddenFollowing: isHiddenAndNotOwner,
+        isOwner: isProfileOwner,
+      });
+      return res.redirect(`/users/${requestedUser}`);
+    }
+
+    // Step 4: Fetch user data
+    const userResponse = await fetch(
+      `https://api3.jailbreakchangelogs.xyz/users/get?id=${requestedUser}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://jailbreakchangelogs.xyz",
+        },
+      }
+    );
+
+    const userData = await userResponse.json();
+
+    if (userData.error) {
+      console.log("User data fetch error:", userData.error);
+      const defaultUserID = "659865209741246514";
+      return res.redirect(`/users/${defaultUserID}/following`);
+    }
+
+    // Step 5: Get avatar URL
+    const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+
+    console.log("Successfully fetched user data, rendering page");
+
+    // Step 6: Render the following page
+    res.render("following", {
       userData,
-      avatar: `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`,
-      showfollowing,
-      isPrivate: true, // Ensure isPrivate is set for private profiles
-      path: req.path, // Add this line
+      avatar,
+      showfollowing: true,
+      isPrivate: false,
+      path: req.path,
       title: "Following / Changelogs",
       logoUrl: "/assets/logos/Users_Logo.webp",
       logoAlt: "Users Page Logo",
-      user: req.user || null, // Add this line - passes the logged in user or null if not logged in
+      user: req.user || null,
+      settings,
+      isProfileOwner, // Pass this to the template
+      loggedInUserId, // Pass this to the template if needed
     });
+  } catch (error) {
+    console.error("Error in following route:", error);
+    console.error(error.stack);
+    res.status(500).send("Internal Server Error");
   }
-
-  const userData = await fetch(
-    `https://api3.jailbreakchangelogs.xyz/users/get?id=${user}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Origin: "https://jailbreakchangelogs.xyz",
-      },
-    }
-  ).then((res) => res.json());
-
-  if (userData.error) {
-    const defaultUserID = "659865209741246514"; // Set your default changelog ID here
-    return res.redirect(`/users/${defaultUserID}/following`);
-  }
-  // Render the page only after the data is fetched
-  const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-  res.render("following", {
-    userData,
-    avatar,
-    showfollowing,
-    isPrivate: false, // Add this line to define isPrivate for public profiles
-    path: req.path, // Add this line
-    title: "Users - Following",
-    logoUrl: "/assets/logos/Users_Logo.webp",
-    logoAlt: "Users Page Logo",
-    user: req.user || null, // Add this line - passes the logged in user or null if not logged in
-  });
 });
 
 // Render search page
@@ -695,9 +821,13 @@ const getAvatar = async (userId, avatarHash, username) => {
   }
 };
 
-// Then update the users route to use the new getAvatar function
 app.get("/users/:user", async (req, res) => {
   const user = req.params.user;
+  const token = req.cookies?.token;
+
+  console.log("=== User Profile Access ===");
+  console.log(`Requested User: ${user}`);
+  console.log(`Token: ${token}`);
 
   if (!user) {
     return res.render("usersearch", {
@@ -708,7 +838,7 @@ app.get("/users/:user", async (req, res) => {
   }
 
   try {
-    // Fetch user settings and user data concurrently
+    // Step 1: Get user data and settings first
     const [settings, userData] = await Promise.all([
       fetch(
         `https://api3.jailbreakchangelogs.xyz/users/settings?user=${user}`,
@@ -727,18 +857,70 @@ app.get("/users/:user", async (req, res) => {
       }).then((response) => response.json()),
     ]);
 
-    if (userData.error) {
-      const defaultUserID = "659865209741246514";
-      return res.redirect(`/users/${defaultUserID}`);
+    // Step 2: Verify token and get logged-in user's ID
+    let loggedInUserId = null;
+    if (token) {
+      try {
+        const tokenResponse = await fetch(
+          `https://api3.jailbreakchangelogs.xyz/users/get/token?token=${token}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Origin: "https://jailbreakchangelogs.xyz",
+            },
+          }
+        );
+
+        if (tokenResponse.ok) {
+          const tokenData = await tokenResponse.json();
+          loggedInUserId = tokenData.id;
+          console.log("Token verified. Logged in user:", loggedInUserId);
+        } else {
+          console.log("Invalid token");
+        }
+      } catch (error) {
+        console.error("Token verification error:", error);
+      }
     }
 
-    // Get avatar with the new function
+    // Step 3: Check profile access
+    const isProfileOwner = loggedInUserId === user;
+    const isPrivateProfile = settings.profile_public === 0;
+    const canAccessProfile = !isPrivateProfile || isProfileOwner;
+
+    console.log("Access check:", {
+      isProfileOwner,
+      isPrivateProfile,
+      canAccessProfile,
+      loggedInUserId,
+    });
+
+    // Get avatar
     const avatar = await getAvatar(
       userData.id,
       userData.avatar,
       userData.username
     );
 
+    if (!canAccessProfile) {
+      // Render private profile view
+      return res.render("users", {
+        userData: {
+          ...userData,
+          username: userData.username,
+          id: userData.id,
+        },
+        avatar,
+        settings,
+        title: "Private Profile / Changelogs",
+        logoUrl: "/assets/logos/Users_Logo.webp",
+        logoAlt: "User Profile Logo",
+        isPrivateProfile: true,
+        isProfileOwner: false,
+      });
+    }
+
+    // Render full profile for authorized access
     res.render("users", {
       userData,
       avatar,
@@ -746,9 +928,11 @@ app.get("/users/:user", async (req, res) => {
       title: "User Profile / Changelogs",
       logoUrl: "/assets/logos/Users_Logo.webp",
       logoAlt: "User Profile Logo",
+      isPrivateProfile: false,
+      isProfileOwner,
     });
   } catch (error) {
-    console.error("Error fetching user data or settings:", error);
+    console.error("Error in profile route:", error);
     res.status(500).send("Error fetching user data");
   }
 });

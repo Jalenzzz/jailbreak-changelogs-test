@@ -4,13 +4,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const follow_button = document.getElementById("follow-button");
   const settings_button = document.getElementById("settings-button");
+  const pathSegments = window.location.pathname.split("/");
+
+  // Get if we're in private profile view
+  const isPrivateView =
+    permissions.profile_public === 0 &&
+    sessionStorage.getItem("userid") !== pathSegments[pathSegments.length - 1];
+
+  // If we're in private view, don't proceed with button-related code
+  if (isPrivateView) {
+    return; // Exit early for private profiles
+  }
   const recent_comments_button = document.getElementById(
     "recent-comments-button"
   );
 
   const input = document.getElementById("bannerInput");
   const loggedinuserId = sessionStorage.getItem("userid");
-  const pathSegments = window.location.pathname.split("/");
   const userId = pathSegments[pathSegments.length - 1];
   const card_pagination = document.getElementById("card-pagination");
   const userBanner = document.getElementById("banner");
@@ -46,15 +56,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const mainContent = document.querySelector(".user-content");
     const userStats = document.querySelector(".user-stats");
 
-    // Hide the main content
-    if (mainContent) {
-      mainContent.innerHTML = `
-          <div class="alert alert-info text-center" role="alert">
-              <i class="bi bi-lock-fill me-2"></i>
-              This profile is private
-          </div>`;
-    }
-
     // Hide the stats
     if (userStats) {
       userStats.style.display = "none";
@@ -64,8 +65,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (follow_button) {
       follow_button.style.display = "none";
     }
-
-    return; // Stop further execution of profile loading
   }
 
   // Helper function to update button state
@@ -1176,7 +1175,14 @@ document.addEventListener("DOMContentLoaded", function () {
   async function fetchUserFollowers(userId) {
     try {
       const response = await fetch(
-        `https://api3.jailbreakchangelogs.xyz/users/followers/get?user=${userId}`
+        `https://api3.jailbreakchangelogs.xyz/users/followers/get?user=${userId}`,
+        {
+          headers: {
+            Authorization: sessionStorage.getItem("userid"),
+            "Content-Type": "application/json",
+            Origin: "https://jailbreakchangelogs.xyz",
+          },
+        }
       );
       if (!response.ok) {
         if (response.status === 404) {
@@ -1525,96 +1531,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return "None";
     }
   }
-
-  save_settings_button.addEventListener("click", async function (event) {
-    event.preventDefault();
-
-    save_settings_loading.style.display = "block";
-    save_settings_button.disabled = true;
-
-    try {
-      const settingsBody = {
-        profile_public: profile_public_button
-          .querySelector("i")
-          .classList.contains("bi-check-lg")
-          ? 1
-          : 0, // Convert to 0/1
-        hide_followers: hide_followers_button
-          .querySelector("i")
-          .classList.contains("bi-check-lg")
-          ? 1
-          : 0,
-        hide_following: hide_following_button
-          .querySelector("i")
-          .classList.contains("bi-check-lg")
-          ? 1
-          : 0,
-        show_recent_comments: show_comments_button
-          .querySelector("i")
-          .classList.contains("bi-check-lg")
-          ? 1
-          : 0,
-        banner_discord: use_discord_banner_button
-          .querySelector("i")
-          .classList.contains("bi-check-lg")
-          ? 1
-          : 0,
-      };
-
-      const token = getCookie("token");
-
-      // Update settings
-      const settingsResponse = await fetch(
-        `https://api3.jailbreakchangelogs.xyz/users/settings/update?user=${token}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(settingsBody),
-        }
-      );
-
-      if (!settingsResponse.ok) {
-        throw new Error(`HTTP error! status: ${settingsResponse.status}`);
-      }
-
-      // Update banner if custom banner is enabled
-      if (!settingsBody.banner_discord) {
-        const image = bannerInput.value.trim() || "NONE";
-        const bannerUrl = `https://api3.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=${encodeURIComponent(
-          image
-        )}`;
-
-        const bannerResponse = await fetch(bannerUrl, {
-          method: "POST",
-        });
-
-        if (!bannerResponse.ok) {
-          throw new Error(
-            `Banner update failed! status: ${bannerResponse.status}`
-          );
-        }
-      }
-
-      // Show success message
-      toastControl.showToast(
-        "success",
-        "Settings updated successfully",
-        "Success"
-      );
-
-      // Reload settings and banner
-      await loadProfileSettings();
-      await fetchUserBanner(userId);
-    } catch (error) {
-      console.error("Error saving settings:", error);
-      toastControl.showToast("error", "Failed to update settings", "Error");
-    } finally {
-      save_settings_loading.style.display = "none";
-      save_settings_button.disabled = false;
-    }
-  });
 
   const close_settings_button = document.getElementById("close-settings");
   const settings_modal = document.getElementById("settingsModal");
