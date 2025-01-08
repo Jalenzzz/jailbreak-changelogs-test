@@ -523,7 +523,7 @@ app.get("/users/:user/followers", async (req, res) => {
   }
 
   const data = await response.json();
-  const showfollowers = data.hide_followers === 0;
+  const showfollowers = data.hide_followers !== 1;
   const isPrivate = !showfollowers; // Add this line to define isPrivate
 
   if (!showfollowers) {
@@ -597,8 +597,8 @@ app.get("/users/:user/following", async (req, res) => {
   }
 
   const data = await response.json();
-  const showfollowing = data.hide_following === 0;
-  const isPrivate = !showfollowing; // Add this line to define isPrivate
+  const showfollowing = data.hide_following !== 1;
+  const isPrivate = !showfollowing;
 
   if (!showfollowing) {
     // User has hidden who they follow

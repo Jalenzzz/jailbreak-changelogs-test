@@ -1,9 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
   const permissions = JSON.parse(settings);
   const udata = JSON.parse(userData);
+
+  const follow_button = document.getElementById("follow-button");
+  const settings_button = document.getElementById("settings-button");
   const recent_comments_button = document.getElementById(
     "recent-comments-button"
   );
+
   const input = document.getElementById("bannerInput");
   const loggedinuserId = sessionStorage.getItem("userid");
   const pathSegments = window.location.pathname.split("/");
@@ -18,6 +22,207 @@ document.addEventListener("DOMContentLoaded", function () {
   const userBio = document.getElementById("userBio");
   const characterCount = document.getElementById("character-count");
   const userDateBio = document.getElementById("description-updated-date");
+
+  // Settings modal related elements
+  const settingsModal = document.getElementById("settingsModal");
+  const profile_public_button = document.getElementById(
+    "profile-public-button"
+  );
+  const show_comments_button = document.getElementById("show-comments-button");
+  const hide_following_button = document.getElementById(
+    "hide-following-button"
+  );
+  const hide_followers_button = document.getElementById(
+    "hide-followers-button"
+  );
+  const use_discord_banner_button = document.getElementById("usediscordBanner");
+  const bannerInput = document.getElementById("input-for-banner");
+  const save_settings_button = document.getElementById("settings-submit");
+  const save_settings_loading = document.getElementById("settings-loading");
+
+  // Helper function to update button state
+  function updateButtonState(button, value) {
+    const icon = document.createElement("i");
+    icon.classList.add("bi", value ? "bi-check-lg" : "bi-x-lg");
+
+    button.classList.remove("btn-danger", "btn-success", "btn-secondary");
+    button.classList.add("btn", value ? "btn-success" : "btn-danger");
+    button.innerHTML = icon.outerHTML;
+  }
+
+  // Handle settings button click
+  settings_button.addEventListener("click", async function () {
+    settingsModal.style.display = "block";
+
+    // Show loading state for all buttons
+    const buttons = [
+      profile_public_button,
+      show_comments_button,
+      hide_following_button,
+      hide_followers_button,
+      use_discord_banner_button,
+    ];
+
+    buttons.forEach((button) => {
+      button.classList.remove("btn-danger", "btn-success");
+      button.classList.add("btn-secondary");
+      button.innerHTML =
+        '<span class="spinner-border spinner-border-sm" role="status"></span>';
+    });
+
+    await loadProfileSettings();
+  });
+
+  // Load settings from API
+  async function loadProfileSettings() {
+    try {
+      const response = await fetch(
+        `https://api3.jailbreakchangelogs.xyz/users/settings?user=${loggedinuserId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const settings = await response.json();
+
+      // Update button states based on settings
+      updateButtonState(profile_public_button, settings.profile_public);
+      updateButtonState(show_comments_button, settings.show_recent_comments);
+
+      // Only hide following/followers for other users' profiles
+      if (loggedinuserId !== userId) {
+        updateButtonState(hide_following_button, settings.hide_following);
+        updateButtonState(hide_followers_button, settings.hide_followers);
+      } else {
+        // For own profile, always show following/followers
+        hide_following_button.style.display = "none";
+        hide_followers_button.style.display = "none";
+      }
+
+      // Handle banner settings
+      updateButtonState(use_discord_banner_button, settings.banner_discord);
+      bannerInput.style.display = settings.banner_discord ? "none" : "block";
+      if (!settings.banner_discord && banner && banner !== "NONE") {
+        bannerInput.value = banner;
+      }
+    } catch (error) {
+      console.error("Error loading profile settings:", error);
+      toastControl.showToast("error", "Failed to load settings", "Error");
+    }
+  }
+
+  // Toggle button handlers
+  [
+    profile_public_button,
+    show_comments_button,
+    hide_following_button,
+    hide_followers_button,
+    use_discord_banner_button,
+  ].forEach((button) => {
+    button.addEventListener("click", function (event) {
+      event.preventDefault();
+      const icon = button.querySelector("i");
+      const isCurrentlyEnabled = icon.classList.contains("bi-check-lg");
+      updateButtonState(button, !isCurrentlyEnabled);
+
+      // Special handling for discord banner button
+      if (button === use_discord_banner_button) {
+        bannerInput.style.display = isCurrentlyEnabled ? "block" : "none";
+        if (isCurrentlyEnabled) {
+          bannerInput.value = banner || "";
+        }
+      }
+    });
+  });
+
+  // Save settings handler
+  save_settings_button.addEventListener("click", async function (event) {
+    event.preventDefault();
+
+    save_settings_loading.style.display = "block";
+    save_settings_button.disabled = true;
+
+    try {
+      const settingsBody = {
+        profile_public: profile_public_button
+          .querySelector("i")
+          .classList.contains("bi-check-lg"),
+        hide_followers: hide_followers_button
+          .querySelector("i")
+          .classList.contains("bi-check-lg"),
+        hide_following: hide_following_button
+          .querySelector("i")
+          .classList.contains("bi-check-lg"),
+        show_recent_comments: show_comments_button
+          .querySelector("i")
+          .classList.contains("bi-check-lg"),
+        banner_discord: use_discord_banner_button
+          .querySelector("i")
+          .classList.contains("bi-check-lg"),
+      };
+
+      const token = getCookie("token");
+
+      // Update settings
+      const settingsResponse = await fetch(
+        `https://api3.jailbreakchangelogs.xyz/users/settings/update?user=${token}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(settingsBody),
+        }
+      );
+
+      if (!settingsResponse.ok) {
+        throw new Error(`HTTP error! status: ${settingsResponse.status}`);
+      }
+
+      // Update banner if custom banner is enabled
+      if (!settingsBody.banner_discord) {
+        const image = bannerInput.value.trim() || "NONE";
+        const bannerUrl = `https://api3.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=${encodeURIComponent(
+          image
+        )}`;
+
+        const bannerResponse = await fetch(bannerUrl, {
+          method: "POST",
+        });
+
+        if (!bannerResponse.ok) {
+          throw new Error(
+            `Banner update failed! status: ${bannerResponse.status}`
+          );
+        }
+      }
+
+      // Show success message
+      toastControl.showToast(
+        "success",
+        "Settings updated successfully",
+        "Success"
+      );
+
+      // Add a small delay before reloading to ensure the toast is visible
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      toastControl.showToast("error", "Failed to update settings", "Error");
+    } finally {
+      save_settings_loading.style.display = "none";
+      save_settings_button.disabled = false;
+    }
+  });
 
   // Show edit button only for logged in user viewing their own profile
   function updateBioButtonsVisibility() {
@@ -148,12 +353,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Initialize buttons visibility
   updateBioButtonsVisibility();
-
-  // bio buttons
-  const follow_button = document.getElementById("follow-button");
-  const settings_button = document.getElementById("settings-button");
-  // Add these logs
-  console.log("Initial button states:");
 
   if (permissions.profile_public === true && loggedinuserId !== userId) {
     window.location.href = "/users";
@@ -295,23 +494,15 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function updateUIForUser() {
-    console.log("Updating UI for user:");
-    console.log("Logged in user ID:", loggedinuserId);
-    console.log("Profile user ID:", userId);
-
     follow_button.classList.remove("d-none");
     settings_button.classList.add("d-none");
 
-    console.log("After initial class updates:");
-
     if (!loggedinuserId) {
-      console.log("No logged in user - hiding all edit buttons");
       settings_button.classList.add("d-none");
       return;
     }
 
     if (loggedinuserId === userId) {
-      console.log("User viewing own profile - showing edit controls");
       follow_button.classList.add("d-none");
       settings_button.classList.remove("d-none");
     }
@@ -319,14 +510,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function fetchUserBio(userId) {
     try {
+      console.log("Fetching bio for user:", userId);
       const response = await fetch(
         `https://api3.jailbreakchangelogs.xyz/users/description/get?user=${userId}`
       );
 
+      console.log("Bio API response status:", response.status);
+
       if (!response.ok) {
         if (response.status === 404) {
+          console.log("No bio found (404)");
           userBio.textContent = "";
         } else {
+          console.log("Error fetching bio:", response.status);
           userBio.textContent = "Error fetching description.";
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -334,54 +530,31 @@ document.addEventListener("DOMContentLoaded", function () {
       await fetchUserBanner(userId);
 
       const user = await response.json();
+      console.log("Received bio data:", user);
+
       const timestamp = user.last_updated || 0;
       const date = formatDate(timestamp);
-      const description = user.description || "No description available."; // Fallback message
+      console.log("Formatted date:", date);
 
-      // Regular expression to match URLs starting with "https://"
-      const urlRegex = /https:\/\/[^\s]+/g;
-      let resultHtml = "";
-      let lastIndex = 0;
+      const description = user.description || "No description available.";
+      console.log("Description to display:", description);
 
-      // Split the description by newlines
-      const lines = description.split("\n");
+      // Update the bio text
+      userBio.innerHTML = description;
 
-      lines.forEach((line) => {
-        const matches = line.match(urlRegex);
-        if (matches) {
-          // Iterate through the matches to build the result
-          matches.forEach((url) => {
-            // Find the start index of the current URL
-            const urlIndex = line.indexOf(url);
-            // Extract text before the current URL
-            const textBeforeLink = line.slice(0, urlIndex).trim();
+      // Update the date
+      userDateBio.textContent = date;
 
-            // Add the text before the URL to the result
-            if (textBeforeLink) {
-              resultHtml += `${textBeforeLink} `;
-            }
-
-            // Add the link element
-            resultHtml += `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a> `;
-
-            // Remove the processed part of the line for the next loop
-            line = line.slice(urlIndex + url.length);
-          });
-        }
-        // Add any remaining text after the last URL
-        if (line.trim()) {
-          resultHtml += line.trim(); // Add the remaining text from the line
-        }
-        resultHtml += "<br>"; // Add a line break after each line
+      console.log("Bio elements updated:", {
+        bioContent: userBio.innerHTML,
+        dateContent: userDateBio.textContent,
       });
-
-      resultHtml = resultHtml.replace(/(<br\s*\/?>\s*){2,}$/, "<br>");
-      console.log("Setting up bio buttons after fetch:");
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error in fetchUserBio:", error);
       userBio.textContent = "Error fetching user bio.";
     }
   }
+
   function getOrdinalSuffix(day) {
     if (day > 3 && day < 21) return "th"; // Covers 11th to 19th
     switch (day % 10) {
@@ -946,6 +1119,7 @@ document.addEventListener("DOMContentLoaded", function () {
   setAvatarWithFallback(udata.username);
 
   updateUserCounts(userId);
+  fetchUserBio(userId);
 
   const description_tab = document.getElementById("description-tab");
 
@@ -1139,18 +1313,7 @@ document.addEventListener("DOMContentLoaded", function () {
         AlertToast("There was an error checking the owner's status.");
       });
   });
-  const profile_public_button = document.getElementById(
-    "profile-public-button"
-  );
-  const show_comments_button = document.getElementById("show-comments-button");
-  const hide_following_button = document.getElementById(
-    "hide-following-button"
-  );
-  const hide_followers_button = document.getElementById(
-    "hide-followers-button"
-  );
-  const use_discord_banner_button = document.getElementById("usediscordBanner");
-  const bannerInput = document.getElementById("input-for-banner");
+
   settings_button.addEventListener("click", function () {
     const settingsModal = document.getElementById("settingsModal");
     settingsModal.style.display = "block";
@@ -1203,13 +1366,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const hideFollowersIcon = document.createElement("i");
             hideFollowersIcon.classList.add(
               "bi",
-              value ? "bi-x-lg" : "bi-check-lg"
+              value === 1 ? "bi-check-lg" : "bi-x-lg"
             );
 
             hide_followers_button.classList.remove("btn-danger", "btn-success"); // Clear previous button classes
             hide_followers_button.classList.add(
               "btn",
-              value ? "btn-danger" : "btn-success"
+              value === 1 ? "btn-success" : "btn-danger"
             );
             hide_followers_button.innerHTML = hideFollowersIcon.outerHTML; // Update button with the icon
             break;
@@ -1218,13 +1381,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const hideFollowingIcon = document.createElement("i");
             hideFollowingIcon.classList.add(
               "bi",
-              value ? "bi-x-lg" : "bi-check-lg"
+              value === 1 ? "bi-check-lg" : "bi-x-lg"
             ); // Set the icon based on the value
 
             hide_following_button.classList.remove("btn-danger", "btn-success"); // Clear previous button classes
             hide_following_button.classList.add(
               "btn",
-              value ? "btn-danger" : "btn-success"
+              value === 1 ? "btn-success" : "btn-danger"
             ); // Update button class based on value
             hide_following_button.innerHTML = hideFollowingIcon.outerHTML; // Update button with the icon
             break;
@@ -1294,44 +1457,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  profile_public_button.addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent form submission or button's default behavior
-    const profilePublicIcon = profile_public_button.querySelector("i");
-
-    // Toggle the icon class
-    if (profilePublicIcon.classList.contains("bi-x-lg")) {
-      profile_public_button.classList.remove("btn-danger");
-      profilePublicIcon.classList.remove("bi-x-lg");
-      profile_public_button.classList.add("btn-success");
-      profilePublicIcon.classList.add("bi-check-lg");
-    } else {
-      profilePublicIcon.classList.remove("bi-check-lg");
-      profile_public_button.classList.remove("btn-success");
-      profile_public_button.classList.add("btn-danger");
-      profilePublicIcon.classList.add("bi-x-lg");
-    }
-  });
-
-  use_discord_banner_button.addEventListener("click", function (event) {
-    event.preventDefault();
-    const bannerDiscordIcon = use_discord_banner_button.querySelector("i");
-
-    if (bannerDiscordIcon.classList.contains("bi-check-lg")) {
-      bannerInput.style.display = "block";
-      use_discord_banner_button.classList.remove("btn-success");
-      bannerDiscordIcon.classList.remove("bi-check-lg");
-      use_discord_banner_button.classList.add("btn-danger");
-      bannerDiscordIcon.classList.add("bi-x-lg");
-    } else {
-      bannerInput.style.display = "none";
-      bannerInput.value = "";
-      bannerDiscordIcon.classList.remove("bi-x-lg");
-      use_discord_banner_button.classList.remove("btn-danger");
-      use_discord_banner_button.classList.add("btn-success");
-      bannerDiscordIcon.classList.add("bi-check-lg");
-    }
-  });
-
   async function validateImageURL(url) {
     if (!url || url.trim() === "" || url === "NONE") {
       return "None";
@@ -1351,61 +1476,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  hide_followers_button.addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent form submission or button's default behavior
-    const hideFollowersIcon = hide_followers_button.querySelector("i");
-
-    // Toggle the icon class
-    if (hideFollowersIcon.classList.contains("bi-check-lg")) {
-      hide_followers_button.classList.remove("btn-success");
-      hideFollowersIcon.classList.remove("bi-check-lg");
-      hide_followers_button.classList.add("btn-danger");
-      hideFollowersIcon.classList.add("bi-x-lg");
-    } else {
-      hideFollowersIcon.classList.remove("bi-x-lg");
-      hide_followers_button.classList.remove("btn-danger");
-      hide_followers_button.classList.add("btn-success");
-      hideFollowersIcon.classList.add("bi-check-lg");
-    }
-  });
-  hide_following_button.addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent form submission or button's default behavior
-    const hideFollowingIcon = hide_following_button.querySelector("i");
-
-    // Toggle the icon class
-    if (hideFollowingIcon.classList.contains("bi-check-lg")) {
-      hide_following_button.classList.remove("btn-success");
-      hideFollowingIcon.classList.remove("bi-check-lg");
-      hide_following_button.classList.add("btn-danger");
-      hideFollowingIcon.classList.add("bi-x-lg");
-    } else {
-      hideFollowingIcon.classList.remove("bi-x-lg");
-      hide_following_button.classList.remove("btn-danger");
-      hide_following_button.classList.add("btn-success");
-      hideFollowingIcon.classList.add("bi-check-lg");
-    }
-  });
-  show_comments_button.addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent form submission or button's default behavior
-    const recentCommentsIcon = show_comments_button.querySelector("i");
-
-    // Toggle the icon class
-    if (recentCommentsIcon.classList.contains("bi-x-lg")) {
-      show_comments_button.classList.remove("btn-danger");
-      recentCommentsIcon.classList.remove("bi-x-lg");
-      show_comments_button.classList.add("btn-success");
-      recentCommentsIcon.classList.add("bi-check-lg");
-    } else {
-      recentCommentsIcon.classList.remove("bi-check-lg");
-      show_comments_button.classList.remove("btn-success");
-      show_comments_button.classList.add("btn-danger");
-      recentCommentsIcon.classList.add("bi-x-lg");
-    }
-  });
-
-  const save_settings_button = document.getElementById("settings-submit");
-  const save_settings_loading = document.getElementById("settings-loading");
-
   save_settings_button.addEventListener("click", async function (event) {
     event.preventDefault();
 
@@ -1413,15 +1483,14 @@ document.addEventListener("DOMContentLoaded", function () {
     save_settings_button.disabled = true;
 
     try {
-      // First update settings
       const settingsBody = {
         profile_public: profile_public_button
           .querySelector("i")
           .classList.contains("bi-check-lg"),
-        hide_followers: !hide_followers_button
+        hide_followers: hide_followers_button
           .querySelector("i")
           .classList.contains("bi-check-lg"),
-        hide_following: !hide_following_button
+        hide_following: hide_following_button
           .querySelector("i")
           .classList.contains("bi-check-lg"),
         show_recent_comments: show_comments_button
@@ -1434,8 +1503,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const token = getCookie("token");
 
-      // Update settings first
-      const response = await fetch(
+      // Update settings
+      const settingsResponse = await fetch(
         `https://api3.jailbreakchangelogs.xyz/users/settings/update?user=${token}`,
         {
           method: "POST",
@@ -1446,59 +1515,41 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!settingsResponse.ok) {
+        throw new Error(`HTTP error! status: ${settingsResponse.status}`);
       }
 
-      // Then handle banner update
-      const isDiscordBanner = settingsBody.banner_discord;
-      let image;
+      // Update banner if custom banner is enabled
+      if (!settingsBody.banner_discord) {
+        const image = bannerInput.value.trim() || "NONE";
+        const bannerUrl = `https://api3.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=${encodeURIComponent(
+          image
+        )}`;
 
-      if (isDiscordBanner) {
-        // Check if user has a Discord banner
-        if (udata.banner) {
-          image = "NONE"; // Use Discord banner system
-        } else {
-          // No Discord banner available, use placeholder
-          image =
-            "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
-        }
-      } else {
-        // Handle custom banner
-        const inputValue = bannerInput.value;
-        if (!inputValue || inputValue.trim() === "") {
-          image =
-            "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
-          AlertToast("No image URL provided. Using default banner.");
-        } else {
-          const validImage = await validateImageURL(inputValue.trim());
-          if (validImage !== "None") {
-            image = validImage;
-          } else {
-            image =
-              "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
-            AlertToast("Invalid image URL. Using default banner.");
-          }
+        const bannerResponse = await fetch(bannerUrl, {
+          method: "POST",
+        });
+
+        if (!bannerResponse.ok) {
+          throw new Error(
+            `Banner update failed! status: ${bannerResponse.status}`
+          );
         }
       }
 
-      const bannerUrl = `https://api3.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=${encodeURIComponent(
-        image
-      )}`;
-      const bannerResponse = await fetch(bannerUrl, {
-        method: "POST",
-      });
+      // Show success message
+      toastControl.showToast(
+        "success",
+        "Settings updated successfully",
+        "Success"
+      );
 
-      if (!bannerResponse.ok) {
-        throw new Error(`HTTP error! status: ${bannerResponse.status}`);
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 100)); // Ensure toast shows
-      SuccessToast("Settings saved successfully!");
-      window.location.reload();
+      // Reload settings and banner
+      await loadProfileSettings();
+      await fetchUserBanner(userId);
     } catch (error) {
       console.error("Error saving settings:", error);
-      AlertToast("Error saving settings. Please try again.");
+      toastControl.showToast("error", "Failed to update settings", "Error");
     } finally {
       save_settings_loading.style.display = "none";
       save_settings_button.disabled = false;
