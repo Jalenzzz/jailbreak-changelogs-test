@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const permissions = JSON.parse(settings);
   const udata = JSON.parse(userData);
-  const userDateBio = document.getElementById("description-updated-date");
   const recent_comments_button = document.getElementById(
     "recent-comments-button"
   );
@@ -12,12 +11,150 @@ document.addEventListener("DOMContentLoaded", function () {
   const card_pagination = document.getElementById("card-pagination");
   const userBanner = document.getElementById("banner");
 
+  // Get button elements
+  const editBioButton = document.getElementById("edit-bio-button");
+  const saveBioButton = document.getElementById("save-bio-button");
+  const cancelBioButton = document.getElementById("cancel-bio-button");
+  const userBio = document.getElementById("userBio");
+  const characterCount = document.getElementById("character-count");
+  const userDateBio = document.getElementById("description-updated-date");
+
+  // Show edit button only for logged in user viewing their own profile
+  function updateBioButtonsVisibility() {
+    if (loggedinuserId && loggedinuserId === userId) {
+      editBioButton.classList.remove("d-none");
+    } else {
+      editBioButton.classList.add("d-none");
+    }
+    saveBioButton.classList.add("d-none");
+    cancelBioButton.classList.add("d-none");
+  }
+
+  // Handle edit button click
+  editBioButton.addEventListener("click", function () {
+    // Hide edit button, show save and cancel
+    editBioButton.classList.add("d-none");
+    saveBioButton.classList.remove("d-none");
+    cancelBioButton.classList.remove("d-none");
+
+    // Create textarea
+    const textarea = document.createElement("textarea");
+    textarea.className = "form-control";
+    textarea.id = "bio-textarea";
+    textarea.style.minHeight = "150px";
+    textarea.style.resize = "none";
+    textarea.maxLength = 500;
+    textarea.value = userBio.innerText;
+
+    // custom styling
+    textarea.style.backgroundColor = "#212a31"; // --bg-primary
+    textarea.style.color = "#d3d9d4"; // --text-primary
+    textarea.style.border = "1px solid #748d92"; // --text-muted for border
+    textarea.style.transition = "border-color 0.2s ease";
+
+    //  focus styles
+    textarea.addEventListener("focus", function () {
+      this.style.borderColor = "#1d7da3"; // --accent-color-light
+      this.style.boxShadow = "0 0 0 0.2rem rgba(29, 125, 163, 0.25)"; // --accent-color-light with opacity
+      this.style.backgroundColor = "#2e3944"; // --bg-secondary
+    });
+
+    // Reset styles on blur
+    textarea.addEventListener("blur", function () {
+      this.style.borderColor = "#748d92"; // --text-muted
+      this.style.boxShadow = "none";
+      this.style.backgroundColor = "#212a31"; // --bg-primary
+    });
+
+    // Store original content
+    const originalContent = userBio.innerHTML;
+    const originalDate = userDateBio.textContent;
+
+    // Replace bio with textarea
+    userBio.style.display = "none";
+    userBio.insertAdjacentElement("afterend", textarea);
+
+    // Update character count
+    characterCount.textContent = `${textarea.value.length}/500`;
+    textarea.addEventListener("input", function () {
+      characterCount.textContent = `${this.value.length}/500`;
+    });
+
+    // Handle cancel
+    cancelBioButton.addEventListener("click", function () {
+      textarea.remove();
+      userBio.style.display = "";
+      userBio.innerHTML = originalContent;
+      userDateBio.textContent = originalDate;
+      characterCount.textContent = "";
+      updateBioButtonsVisibility();
+    });
+
+    // Handle save
+    saveBioButton.addEventListener("click", async function () {
+      const description = textarea.value;
+      if (description.length > 500) {
+        toastControl.showToast(
+          "error",
+          "Bio cannot exceed 500 characters",
+          "Error"
+        );
+        return;
+      }
+
+      try {
+        const user = getCookie("token");
+        if (!user) {
+          toastControl.showToast("error", "You must be logged in", "Error");
+          return;
+        }
+
+        const response = await fetch(
+          "https://api3.jailbreakchangelogs.xyz/users/description/update",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user, description }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to update bio");
+        }
+
+        // Update successful
+        toastControl.showToast(
+          "success",
+          "Bio updated successfully",
+          "Success"
+        );
+
+        // Refresh bio content
+        fetchUserBio(userId);
+
+        // Reset UI
+        textarea.remove();
+        userBio.style.display = "";
+        characterCount.textContent = "";
+        updateBioButtonsVisibility();
+      } catch (error) {
+        console.error("Error updating bio:", error);
+        toastControl.showToast("error", "Failed to update bio", "Error");
+      }
+    });
+  });
+
+  // Initialize buttons visibility
+  updateBioButtonsVisibility();
+
   // bio buttons
   const follow_button = document.getElementById("follow-button");
   const settings_button = document.getElementById("settings-button");
-  const editbio_button = document.getElementById("edit-bio-button");
-  const savebio_button = document.getElementById("save-bio-button");
-  const cancel_button = document.getElementById("canceledit");
+  // Add these logs
+  console.log("Initial button states:");
+
   if (permissions.profile_public === true && loggedinuserId !== userId) {
     window.location.href = "/users";
   }
@@ -157,53 +294,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // In the updateUIForUser function, add more detailed logging
   function updateUIForUser() {
-    console.log("UpdateUIForUser called with:", {
-      loggedinuserId,
-      currentUserId: userId,
-      isLoggedIn: !!loggedinuserId,
-      isOwnProfile: loggedinuserId === userId,
-    });
+    console.log("Updating UI for user:");
+    console.log("Logged in user ID:", loggedinuserId);
+    console.log("Profile user ID:", userId);
 
-    // Log initial button states - Fix the syntax error here
-    console.log("Initial button states:", {
-      followButtonDisplay: follow_button.style.display,
-      settingsButtonDisplay: settings_button.style.display,
-      editBioButtonDisplay: editbio_button.style.display,
-    });
-
-    // First, set default states
     follow_button.classList.remove("d-none");
     settings_button.classList.add("d-none");
-    editbio_button.classList.add("d-none");
 
-    // Log after setting defaults
-    console.log("After setting defaults:", {
-      followButtonDisplay: follow_button.style.display,
-      settingsButtonDisplay: settings_button.style.display,
-      editBioButtonDisplay: editbio_button.style.display,
-    });
+    console.log("After initial class updates:");
 
     if (!loggedinuserId) {
-      console.log("User is not logged in - showing only follow button");
+      console.log("No logged in user - hiding all edit buttons");
       settings_button.classList.add("d-none");
-      editbio_button.classList.add("d-none");
       return;
     }
 
     if (loggedinuserId === userId) {
-      console.log("Viewing own profile - showing edit controls");
+      console.log("User viewing own profile - showing edit controls");
       follow_button.classList.add("d-none");
-      settings_button.classList.remove("d-none");
-      editbio_button.classList.remove("d-none");
     }
   }
 
   async function fetchUserBio(userId) {
     try {
       const response = await fetch(
-        `https://api.jailbreakchangelogs.xyz/users/description/get?user=${userId}`
+        `https://api3.jailbreakchangelogs.xyz/users/description/get?user=${userId}`
       );
 
       if (!response.ok) {
@@ -259,15 +375,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       resultHtml = resultHtml.replace(/(<br\s*\/?>\s*){2,}$/, "<br>");
-
-      // Set the user bio with the cleaned-up result
-      editbio_button.innerHTML = '<i class="bi bi-pencil-fill"></i>';
-      savebio_button.style.display = "none";
-      savebio_button.innerHTML = '<i class="bi bi-save"></i>';
-      userDateBio.textContent = `${date}`;
-      userBio.innerHTML = resultHtml.trim();
-      savebio_button.disabled = false;
-      editbio_button.disabled = false;
+      console.log("Setting up bio buttons after fetch:");
     } catch (error) {
       console.error("Error:", error);
       userBio.textContent = "Error fetching user bio.";
@@ -799,13 +907,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   updateUIForUser();
 
-  editbio_button.innerHTML =
-    '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>';
-  editbio_button.disabled = true;
-
-  const userBio = document.getElementById("userBio");
-  const character_count = document.getElementById("character-count");
-  fetchUserBio(userId);
   // Find this section in the code (around line 704)
   if (permissions.show_recent_comments === 1) {
     card_pagination.style.display = "block";
@@ -844,87 +945,7 @@ document.addEventListener("DOMContentLoaded", function () {
   setAvatarWithFallback(udata.username);
 
   updateUserCounts(userId);
-  editbio_button.addEventListener("click", function () {
-    editbio_button.style.display = "none";
-    savebio_button.style.display = "inline-block";
-    cancel_button.style.display = "inline-block";
-    const descriptionBox = document.getElementById("description-box");
-    userDateBio.textContent = "";
-    character_count.textContent = "0/500"; // Reset character count
 
-    // Clear previous content
-    userBio.style.display = "none";
-    const icon = editbio_button.querySelector("i"); // Get the icon element
-
-    // Create a text input
-    const textInput = document.createElement("textarea");
-    textInput.style.marginTop = "0px";
-    textInput.placeholder = "Enter your bio here..."; // Placeholder text
-    textInput.style.minHeight = "150px";
-    textInput.style.resize = "none";
-    textInput.style.width = "100%";
-    textInput.value = userBio.innerHTML
-      .replace(/<br>/g, "\n")
-      .replace(/<a href="([^"]+)"[^>]*>([^<]+)<\/a>/g, "$1"); // Set the value of the text input to the current bio with newlines
-    textInput.className = "form-control"; // Bootstrap class for styling
-    const space = document.createElement("br"); // Line break for better formatting
-    textInput.addEventListener("input", function () {
-      const characterCount = document.getElementById("character-count");
-      characterCount.textContent = `${textInput.value.length}/500`; // Update character count
-    });
-
-    // Append the input to the description box
-    descriptionBox.appendChild(space);
-    descriptionBox.appendChild(textInput);
-    savebio_button.addEventListener("click", async function () {
-      try {
-        savebio_button.innerHTML =
-          '<span class="loading-icon" id="followers-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>';
-        savebio_button.disabled = true;
-        const characterCount = document.getElementById("character-count");
-        characterCount.textContent = "";
-
-        const description = textInput.value;
-        if (description.length > 500) {
-          AlertToast("Bio cannot exceed 500 characters. Please try again.");
-          return;
-        }
-
-        const user = getCookie("token");
-        const body = JSON.stringify({ user, description });
-
-        const response = await fetch(
-          `https://api.jailbreakchangelogs.xyz/users/description/update`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: body,
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        userBio.style.display = "block";
-        textInput.remove();
-        space.remove();
-        alert("Failed to update bio. Please try again.");
-        window.location.reload();
-      } finally {
-        userBio.style.display = "block";
-        textInput.remove();
-        space.remove();
-        window.location.reload(); // Refresh the page to reflect the updated bio
-      }
-    });
-    cancel_button.addEventListener("click", function () {
-      window.location.reload();
-    });
-  });
   const description_tab = document.getElementById("description-tab");
 
   async function fetchUserFollowers(userId) {
@@ -993,12 +1014,20 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      FollowToast("Successfully followed user!");
+      toastControl.showToast(
+        "success",
+        "Successfully followed user!",
+        "Success"
+      );
       await updateUserCounts(userId);
       return true;
     } catch (error) {
       console.error("Error adding follow:", error);
-      NotFollowingToast("Failed to follow user. Please try again.");
+      toastControl.showToast(
+        "error",
+        "Failed to follow user. Please try again.",
+        "Error"
+      );
       return false;
     }
   }
@@ -1042,14 +1071,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const user = getCookie("token");
     if (!user) {
       // User is not logged in
-      NotFollowingToast("You are not logged in to perform this action.");
+      toastControl.showToast(
+        "error",
+        "You are not logged in to perform this action.",
+        "Error"
+      );
       follow_button.disabled = false;
       return;
     }
     if (follow_button.textContent === "Follow") {
       addFollow(userId)
         .then(() => {
-          FollowToast("User followed successfully.");
+          toastControl.showToast(
+            "success",
+            "User followed successfully.",
+            "Success"
+          );
           follow_button.textContent = "Unfollow";
         })
         .finally(() => {
@@ -1058,7 +1095,11 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       removeFollow(userId)
         .then(() => {
-          FollowToast("User unfollowed successfully.");
+          toastControl.showToast(
+            "success",
+            "User unfollowed successfully.",
+            "Success"
+          );
           follow_button.textContent = "Follow";
         })
         .finally(() => {
@@ -1273,19 +1314,14 @@ document.addEventListener("DOMContentLoaded", function () {
   use_discord_banner_button.addEventListener("click", function (event) {
     event.preventDefault();
     const bannerDiscordIcon = use_discord_banner_button.querySelector("i");
-    console.log("Banner Discord Button clicked");
-    console.log("Current banner input value:", bannerInput.value);
-    console.log("Current banner input display:", bannerInput.style.display);
 
     if (bannerDiscordIcon.classList.contains("bi-check-lg")) {
-      console.log("Switching to custom banner mode");
       bannerInput.style.display = "block";
       use_discord_banner_button.classList.remove("btn-success");
       bannerDiscordIcon.classList.remove("bi-check-lg");
       use_discord_banner_button.classList.add("btn-danger");
       bannerDiscordIcon.classList.add("bi-x-lg");
     } else {
-      console.log("Switching to Discord banner mode");
       bannerInput.style.display = "none";
       bannerInput.value = "";
       bannerDiscordIcon.classList.remove("bi-x-lg");
@@ -1301,7 +1337,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
-      console.log("Validating URL:", url);
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -1309,10 +1344,8 @@ document.addEventListener("DOMContentLoaded", function () {
         },
       });
 
-      console.log("Validation response status:", response.status);
       return response.ok ? url : "None";
     } catch (error) {
-      console.log("Error validating URL:", error);
       return "None";
     }
   }
@@ -1374,7 +1407,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   save_settings_button.addEventListener("click", async function (event) {
     event.preventDefault();
-    console.log("Save settings clicked");
 
     save_settings_loading.style.display = "block";
     save_settings_button.disabled = true;

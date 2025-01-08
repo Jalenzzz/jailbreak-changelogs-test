@@ -240,12 +240,11 @@
                     class="d-flex justify-content-between align-items-start mb-2"
                   >
                     <h5 class="card-title fs-6 fs-md-5">About</h5>
-                    <div class="btn-group">
+                    <div class="btn-group gap-2">
                       <!-- Cancel Button -->
                       <button
-                        class="btn btn-danger btn-sm py-1 px-2"
-                        id="canceledit"
-                        style="display: none"
+                        class="btn btn-danger btn-sm py-1 px-2 d-none"
+                        id="cancel-bio-button"
                       >
                         <i class="bi bi-x-lg"></i>
                         <span class="d-none d-sm-inline ms-1">Cancel</span>
@@ -253,21 +252,19 @@
 
                       <!-- Edit Button -->
                       <button
-                        class="btn btn-outline-light btn-sm py-1 px-2"
+                        class="btn btn-outline-light btn-sm py-1 px-2 d-none"
                         id="edit-bio-button"
-                        style="display: none"
                         data-bs-toggle="tooltip"
                         data-bs-placement="top"
-                        title="Edit About"
+                        title="Edit Bio"
                       >
                         <i class="bi bi-pencil-fill"></i>
                       </button>
 
                       <!-- Save Button -->
                       <button
-                        class="btn btn-success btn-sm py-1 px-2"
+                        class="btn btn-success btn-sm py-1 px-2 d-none"
                         id="save-bio-button"
-                        style="display: none"
                       >
                         <i class="bi bi-save"></i>
                         <span class="d-none d-sm-inline ms-1">Save</span>
