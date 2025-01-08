@@ -13,7 +13,7 @@
 
 # Roblox Jailbreak Changelogs
 
-Welcome to our Roblox Jailbreak Changelogs repository. Discover the latest updates, changes, and patches for the game in one convenient place.
+Welcome to the Roblox Jailbreak Changelogs repository. Discover the latest updates, changes, and patches for the game in one convenient place.
 
 ## Website Features
 
