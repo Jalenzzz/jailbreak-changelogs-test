@@ -313,6 +313,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (loggedinuserId === userId) {
       console.log("User viewing own profile - showing edit controls");
       follow_button.classList.add("d-none");
+      settings_button.classList.remove("d-none");
     }
   }
 
