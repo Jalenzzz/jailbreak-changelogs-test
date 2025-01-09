@@ -18,7 +18,7 @@
     "express": "^4.21.0"
   },
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
