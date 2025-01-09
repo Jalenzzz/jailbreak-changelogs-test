@@ -548,25 +548,35 @@ document.addEventListener("DOMContentLoaded", function () {
   async function fetchUserBio(userId) {
     try {
       console.log("Fetching bio for user:", userId);
-      const response = await fetch(
-        `https://api3.jailbreakchangelogs.xyz/users/description/get?user=${userId}`
-      );
 
-      console.log("Bio API response status:", response.status);
+      // Fetch both bio and user data in parallel
+      const [bioResponse, userResponse] = await Promise.all([
+        fetch(
+          `https://api3.jailbreakchangelogs.xyz/users/description/get?user=${userId}`
+        ),
+        fetch(`https://api3.jailbreakchangelogs.xyz/users/get/?id=${userId}`),
+      ]);
 
-      if (!response.ok) {
-        if (response.status === 404) {
+      console.log("Bio API response status:", bioResponse.status);
+
+      if (!bioResponse.ok || !userResponse.ok) {
+        if (bioResponse.status === 404) {
           console.log("No bio found (404)");
           userBio.textContent = "";
         } else {
-          console.log("Error fetching bio:", response.status);
+          console.log("Error fetching bio:", bioResponse.status);
           userBio.textContent = "Error fetching description.";
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`HTTP error! status: ${bioResponse.status}`);
         }
       }
+
       await fetchUserBanner(userId);
 
-      const user = await response.json();
+      const [user, userData] = await Promise.all([
+        bioResponse.json(),
+        userResponse.json(),
+      ]);
+
       console.log("Received bio data:", user);
 
       const timestamp = user.last_updated || 0;
@@ -576,11 +586,27 @@ document.addEventListener("DOMContentLoaded", function () {
       const description = user.description || "No description available.";
       console.log("Description to display:", description);
 
+      // Format the created_at date using the Unix timestamp
+      const createdTimestamp = parseInt(userData.created_at) * 1000; // Convert to milliseconds
+      const memberSince = new Date(createdTimestamp).toLocaleDateString(
+        "en-GB",
+        {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }
+      );
+
       // Update the bio text
       userBio.innerHTML = description;
 
       // Update the date
-      userDateBio.textContent = date;
+      // Update the date in userDateBio
+      userDateBio.innerHTML = `
+      <div class="mb-2">Last updated: ${date}</div>
+      <hr class="my-2" style="border-color: #748D92; opacity: 0.2;">
+      <div style="color: #748D92;">Member since: ${memberSince}</div>
+      `;
 
       console.log("Bio elements updated:", {
         bioContent: userBio.innerHTML,
@@ -613,21 +639,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const date = new Date(timestamp);
 
-    const options = {
-      month: "long",
-      day: "numeric",
+    // Format the date in the desired format "8 Jan 2025 at 09:27 AM"
+    const day = date.getDate();
+    const month = date.toLocaleString("en-GB", { month: "short" });
+    const year = date.getFullYear();
+    const time = date.toLocaleString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
-    };
+      hour12: true,
+    });
 
-    let formattedDate = date.toLocaleString("en-US", options);
-
-    // Get the day of the month with the appropriate ordinal suffix
-    const day = date.getDate();
-    const ordinalSuffix = getOrdinalSuffix(day);
-    formattedDate = formattedDate.replace(day, `${day}${ordinalSuffix}`);
-
-    return formattedDate;
+    return `${day} ${month} ${year} at ${time}`;
   }
 
   async function fetchCommentItem(comment) {
