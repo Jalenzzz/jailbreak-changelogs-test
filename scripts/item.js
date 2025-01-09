@@ -254,33 +254,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     let element;
     if (item.type === "Drift") {
       element = `
-            <div class="media-container ${
-              item.is_limited ? "limited-item" : ""
-            }">
-                <img 
-                    src="/assets/items/drifts/thumbnails/${item.name}.webp"
-                    class="img-fluid rounded thumbnail"
-                    alt="${item.name}"
-                    onerror="handleimage(this)"
-                >
-                <video 
-                  src="/assets/items/drifts/${item.name}.webm"
-                  class="img-fluid rounded video-player"
-                  playsinline 
-                  muted 
-                  loop
-                  preload="metadata"
-                  defaultMuted
-                ></video>
-                ${item.is_limited ? specialBadgeHtml : ""}
-            </div>
-            `;
+      <div class="media-container ${item.is_limited ? "limited-item" : ""}">
+          <img 
+              src="/assets/images/items/drifts/thumbnails/${item.name}.webp"
+              class="img-fluid rounded thumbnail"
+              alt="${item.name}"
+              onerror="handleimage(this)"
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"
+          >
+          <video 
+            src="/assets/images/items/drifts/${item.name}.webm"
+            class="img-fluid rounded video-player"
+            playsinline 
+            muted 
+            loop
+            preload="metadata"
+            defaultMuted
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"
+          ></video>
+          ${item.is_limited ? specialBadgeHtml : ""}
+      </div>
+    `;
     } else if (item.type === "HyperChrome" && item.name === "HyperShift") {
       element = `
       <div class="media-container ${item.is_limited ? "limited-item" : ""}">
           <div class="skeleton-loader"></div>
           <video 
-              src="/assets/items/hyperchromes/HyperShift.webm"
+              src="/assets/images/items/hyperchromes/HyperShift.webm"
               class="video-player card-img-top"
               playsinline 
               muted 
@@ -297,7 +297,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       element = `
         <div class="media-container ${item.is_limited ? "limited-item" : ""}">
           <img 
-            src="/assets/items/${encodeURIComponent(image_type)}/${
+            src="/assets/images/items/${encodeURIComponent(image_type)}/${
         item.name
       }s.webp"
             class="img-fluid rounded thumbnail"
@@ -564,7 +564,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             item.is_limited ? "limited-item" : ""
                           }">
                               <img 
-                                  src="/assets/items/${encodeURIComponent(
+                                  src="/assets/images/items/${encodeURIComponent(
                                     image_type
                                   )}s/${item.name}.webp"
                                   class="img-fluid rounded thumbnail"
@@ -745,25 +745,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     setTimeout(() => {
       const mediaContainer = document.querySelector(".media-container");
       const mediaElement = mediaContainer.querySelector("img, video");
+      const video = mediaContainer.querySelector("video");
 
-      // Initial log of dimensions
-      logDimensions(mediaContainer, mediaElement);
+      if (video) {
+        // check to ensure video exists before adding listeners
+        mediaContainer.addEventListener("mouseenter", () => {
+          video.style.opacity = "1";
+          video.play().catch((err) => console.log("Video play failed:", err));
+        });
 
-      // Create resize observer
-      const resizeObserver = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-          logDimensions(mediaContainer, mediaElement);
-        }
-      });
-
-      // Observe both container and media element
-      resizeObserver.observe(mediaContainer);
-      resizeObserver.observe(mediaElement);
-
-      // Add zoom event listener
-      window.addEventListener("resize", () => {
-        logDimensions(mediaContainer, mediaElement);
-      });
+        mediaContainer.addEventListener("mouseleave", () => {
+          video.style.opacity = "0";
+          video.pause();
+        });
+      }
     }, 100);
 
     // After loading the main item content, update the comments section
@@ -1206,11 +1201,6 @@ function handleinvalidImage() {
       username
     )}&bold=true&format=svg`;
   }, 0);
-}
-
-function logDimensions(container, mediaElement) {
-  const containerRect = container.getBoundingClientRect();
-  const mediaRect = mediaElement.getBoundingClientRect();
 }
 
 //  modal for editing comments
