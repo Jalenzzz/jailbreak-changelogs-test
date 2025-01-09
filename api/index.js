@@ -632,7 +632,7 @@ app.get("/users/:user/followers", async (req, res) => {
     }
 
     // Step 5: Get avatar URL
-    const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+    const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.webp?size=4096`;
 
     // Step 6: Render the followers page
     res.render("followers", {
@@ -790,20 +790,22 @@ const getAvatar = async (userId, avatarHash, username) => {
   }
 
   const fetchAvatar = async (format) => {
-    const url = `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.${format}`;
+    const url = `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.${format}?size=4096`;
     const response = await fetch(url, { method: "HEAD" });
     return response.ok ? url : null;
   };
 
   try {
+    // Try GIF first for animated avatars
     const gifUrl = await fetchAvatar("gif");
     if (gifUrl) {
       return gifUrl;
     }
 
-    const pngUrl = await fetchAvatar("png");
-    if (pngUrl) {
-      return pngUrl;
+    // Then try WebP for static avatars
+    const webpUrl = await fetchAvatar("webp");
+    if (webpUrl) {
+      return webpUrl;
     }
 
     return defaultAvatarUrl;
