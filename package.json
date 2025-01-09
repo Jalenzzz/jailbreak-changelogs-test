@@ -2,7 +2,6 @@
   "name": "@jbchangelogs/jailbreak-changelogs",
   "version": "2.9.2",
   "scripts": {
-    "build": "node api/index.js",
     "start": "node api/index.js",
     "dev": "nodemon api/index.js",
     "test": "echo \"No test specified\" && exit 0",
