@@ -215,21 +215,29 @@
         </div>
         <form id="reportIssueForm">
           <div class="mb-3">
-            <label for="issueTitle" class="form-label">Title</label>
+            <label for="issueTitle" class="form-label"
+              >Title (minimum <%= MIN_TITLE_LENGTH %> characters)</label
+            >
             <input
               type="text"
               class="form-control bg-dark text-light"
               id="issueTitle"
               required
+              minlength="<%= MIN_TITLE_LENGTH %>"
             />
           </div>
           <div class="mb-3">
-            <label for="issueDescription" class="form-label">Description</label>
+            <label for="issueDescription" class="form-label"
+              >Description (minimum <%= MIN_DESCRIPTION_LENGTH %>
+              characters)</label
+            >
+
             <textarea
               class="form-control bg-dark text-light"
               id="issueDescription"
               rows="3"
               required
+              minlength="<%= MIN_DESCRIPTION_LENGTH %>"
             ></textarea>
           </div>
         </form>
@@ -292,14 +300,21 @@
     // Check if either userId directly or user object exists
     const hasValidUser = userId || (userData && JSON.parse(userData).id);
 
+    // Replace the existing disabled button code with this
     if (!token || !hasValidUser) {
       // User is not authenticated
       reportIssueBtn.classList.add("disabled");
+      reportIssueBtn.setAttribute("data-bs-toggle", "tooltip"); // Change to bootstrap tooltip
+      reportIssueBtn.setAttribute("data-bs-placement", "top");
       reportIssueBtn.setAttribute("title", "Please sign in to report issues");
-      reportIssueBtn.style.cursor = "not-allowed";
+
+      // Initialize the tooltip
+      new bootstrap.Tooltip(reportIssueBtn);
+
+      // Remove the modal trigger
+      reportIssueBtn.removeAttribute("data-bs-target");
       reportIssueBtn.onclick = (e) => {
         e.preventDefault();
-        alert("Please sign in to report issues");
       };
     } else {
       // Remove disabled state if it was previously set
@@ -322,12 +337,46 @@
         document.getElementById("submitIssue").disabled = false;
       });
 
+      const MIN_TITLE_LENGTH = 10;
+      const MIN_DESCRIPTION_LENGTH = 25;
+
       // Handle issue submission
       document
         .getElementById("submitIssue")
         .addEventListener("click", async () => {
           const title = document.getElementById("issueTitle").value;
           const description = document.getElementById("issueDescription").value;
+
+          document
+            .querySelectorAll(".invalid-feedback")
+            .forEach((el) => el.remove());
+          document.getElementById("issueTitle").classList.remove("is-invalid");
+          document
+            .getElementById("issueDescription")
+            .classList.remove("is-invalid");
+
+          let hasError = false;
+
+          if (title.length < MIN_TITLE_LENGTH) {
+            const titleInput = document.getElementById("issueTitle");
+            titleInput.classList.add("is-invalid");
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "invalid-feedback";
+            errorDiv.textContent = `Title must be at least ${MIN_TITLE_LENGTH} characters long`;
+            titleInput.parentNode.appendChild(errorDiv);
+            hasError = true;
+          }
+
+          if (description.length < MIN_DESCRIPTION_LENGTH) {
+            const descriptionInput =
+              document.getElementById("issueDescription");
+            descriptionInput.classList.add("is-invalid");
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "invalid-feedback";
+            errorDiv.textContent = `Description must be at least ${MIN_DESCRIPTION_LENGTH} characters long`;
+            descriptionInput.parentNode.appendChild(errorDiv);
+            hasError = true;
+          }
 
           if (title && description) {
             try {
@@ -401,3 +450,13 @@
     }
   });
 </script>
+<!-- Add this style section in the head or your CSS file -->
+<style>
+  .tooltip {
+    pointer-events: none;
+  }
+
+  .btn.disabled {
+    pointer-events: auto !important;
+  }
+</style>

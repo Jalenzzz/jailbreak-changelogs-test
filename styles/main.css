@@ -1,3 +1,146 @@
+/* Report Issue Modal Specific Styling */
+#reportIssueModal .modal-content {
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--bg-secondary) !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+#reportIssueModal .modal-header {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--accent-color) !important;
+  padding: 1rem 1.5rem !important;
+}
+
+#reportIssueModal .modal-footer {
+  background-color: var(--bg-secondary) !important;
+  border-top: 1px solid var(--accent-color) !important;
+  padding: 1rem 1.5rem !important;
+}
+
+#reportIssueModal .modal-title {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+}
+
+/* Form Controls */
+#reportIssueModal .form-control {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--accent-color) !important;
+  color: var(--text-primary) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+#reportIssueModal .form-control:focus {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--accent-color-light) !important;
+  box-shadow: 0 0 0 0.25rem rgba(29, 125, 163, 0.25) !important;
+  color: var(--text-primary) !important;
+}
+
+#reportIssueModal .form-control::placeholder {
+  color: var(--text-muted) !important;
+}
+
+#reportIssueModal .form-label {
+  color: var(--text-primary) !important;
+  font-weight: 500 !important;
+}
+
+/* Buttons */
+#reportIssueModal .btn-primary {
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+  color: var(--text-primary) !important;
+  transition: all 0.2s ease !important;
+}
+
+#reportIssueModal .btn-primary:hover,
+#reportIssueModal .btn-primary:focus {
+  background-color: var(--accent-color-light) !important;
+  border-color: var(--accent-color-light) !important;
+}
+
+#reportIssueModal .btn-secondary {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--text-muted) !important;
+  color: var(--text-primary) !important;
+}
+
+#reportIssueModal .btn-secondary:hover,
+#reportIssueModal .btn-secondary:focus {
+  background-color: var(--text-muted) !important;
+  border-color: var(--text-muted) !important;
+}
+
+/* Success Alert */
+#reportIssueModal .alert-success {
+  background-color: rgba(25, 135, 84, 0.2) !important;
+  border-color: rgba(25, 135, 84, 0.3) !important;
+  color: #75b798 !important;
+}
+
+/* Validation Feedback */
+#reportIssueModal .invalid-feedback {
+  color: #dc3545 !important;
+  font-size: 0.875rem !important;
+  margin-top: 0.25rem !important;
+}
+
+#reportIssueModal .form-control.is-invalid {
+  border-color: #dc3545 !important;
+  background-image: none !important;
+}
+
+/* Close Button */
+#reportIssueModal .btn-close-white {
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.75 !important;
+}
+
+#reportIssueModal .btn-close-white:hover {
+  opacity: 1 !important;
+}
+
+/* Disabled State */
+#reportIssueModal .form-control:disabled {
+  background-color: var(--bg-primary) !important;
+  opacity: 0.75 !important;
+}
+
+/* Scrollbar Styling */
+#reportIssueModal textarea::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+#reportIssueModal textarea::-webkit-scrollbar-track {
+  background: var(--bg-primary) !important;
+}
+
+#reportIssueModal textarea::-webkit-scrollbar-thumb {
+  background: var(--accent-color) !important;
+  border-radius: 4px !important;
+}
+
+#reportIssueModal textarea::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color-light) !important;
+}
+
+/* Modal Backdrop */
+.modal-backdrop {
+  background-color: rgba(33, 42, 49, 0.8) !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+  #reportIssueModal .modal-dialog {
+    margin: 0.5rem !important;
+  }
+
+  #reportIssueModal .modal-content {
+    border-radius: 0.5rem !important;
+  }
+}
+
 /* Custom properties for the footer namespace */
 .jb-footer {
   --jb-footer-bg-primary: #212a31;

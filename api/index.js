@@ -6,6 +6,8 @@ const app = express();
 const PORT = process.env.PORT || 5500; // Set the port
 const fs = require("fs");
 const cookieParser = require("cookie-parser");
+const MIN_TITLE_LENGTH = 10;
+const MIN_DESCRIPTION_LENGTH = 25;
 
 // Serve your static HTML, CSS, and JS files
 const DATA_SOURCE_URL =
@@ -141,6 +143,8 @@ app.get("/changelogs/:changelog", async (req, res) => {
       isLatest: changelogId === latestId,
       canonicalUrl: "https://testing.jailbreakchangelogs.xyz/changelogs",
       metaDescription: `View detailed changelog information for Jailbreak update ${title}. Track new features, vehicles, and game improvements.`,
+      MIN_TITLE_LENGTH,
+      MIN_DESCRIPTION_LENGTH,
     };
 
     // Handle different response types
@@ -203,6 +207,8 @@ app.get("/seasons/:season", async (req, res) => {
         logoUrl: "/assets/logos/Seasons_Logo.webpg",
         logoAlt: "Jailbreak Seasons Logo",
         seasonId,
+        MIN_TITLE_LENGTH,
+        MIN_DESCRIPTION_LENGTH,
       });
     }
 
@@ -228,6 +234,8 @@ app.get("/seasons/:season", async (req, res) => {
       logoUrl: "/assets/logos/Seasons_Logo.webp",
       logoAlt: "Jailbreak Seasons Logo",
       seasonId,
+      MIN_TITLE_LENGTH,
+      MIN_DESCRIPTION_LENGTH,
     }); // Render the seasons page with the retrieved data
   } catch (error) {
     console.error("Error fetching season data:", error);
@@ -240,6 +248,8 @@ app.get("/trading", (req, res) => {
     title: "Trading / Changelogs",
     logoUrl: "/assets/logos/Trade_Ads_Logo.webp",
     logoAlt: "Trading Page Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 
@@ -248,6 +258,8 @@ app.get("/dashboard", (req, res) => {
     title: "Admin Control Panel / Changelogs",
     logoUrl: "/assets/logos/Admin_Logo.webp", //TODO: Add logo for trading page
     logoAlt: "Admin Page Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 
@@ -259,6 +271,8 @@ app.get("/bot", (req, res) => {
     logoUrl: "/assets/logos/Discord_Bot_Logo.webp",
     logoAlt: "Bot Page Logo",
     image,
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 
@@ -295,6 +309,8 @@ app.get("/values", async (req, res) => {
       logoAlt: "Values Page Logo",
       initialSort: validSorts.includes(sortParam) ? sortParam : null,
       allItems, // Pass items data to template
+      MIN_TITLE_LENGTH,
+      MIN_DESCRIPTION_LENGTH,
     });
   } catch (error) {
     console.error("Error fetching items:", error);
@@ -304,6 +320,8 @@ app.get("/values", async (req, res) => {
       logoAlt: "Values Page Logo",
       initialSort: validSorts.includes(sortParam) ? sortParam : null,
       allItems: [], // Pass empty array if fetch fails
+      MIN_TITLE_LENGTH,
+      MIN_DESCRIPTION_LENGTH,
     });
   }
 });
@@ -313,6 +331,8 @@ app.get("/values/calculator", (req, res) => {
     title: "Value Calculator / Changelogs",
     logoUrl: "/assets/logos/Values_Logo.webp",
     logoAlt: "Values Calculator Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 
@@ -321,6 +341,8 @@ app.get("/servers", (req, res) => {
     title: "Private Servers / Changelogs",
     logoUrl: "/assets/logos/Private_Servers_Logo.webp",
     logoAlt: "Servers Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 
@@ -388,6 +410,8 @@ app.get("/item/:type/:item", async (req, res) => {
           name: itemName,
           image: "/assets/logos/Values_Logo.webp",
         },
+        MIN_TITLE_LENGTH,
+        MIN_DESCRIPTION_LENGTH,
       });
     }
 
@@ -414,6 +438,8 @@ app.get("/item/:type/:item", async (req, res) => {
       formattedUrlType,
       item,
       image_url,
+      MIN_TITLE_LENGTH,
+      MIN_DESCRIPTION_LENGTH,
     });
   } catch (error) {
     console.error("Error fetching item data:", error);
@@ -431,6 +457,8 @@ app.get("/item/:type/:item", async (req, res) => {
         name: itemName,
         image: "/assets/logos/Values_Logo.webp",
       },
+      MIN_TITLE_LENGTH,
+      MIN_DESCRIPTION_LENGTH,
     });
   }
 });
@@ -471,6 +499,8 @@ app.get("/faq", (req, res) => {
     title: "User FAQ",
     logoUrl: "/assets/logos/FAQ_Logo.webp",
     logoAlt: "FAQ Page Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 
@@ -479,6 +509,8 @@ app.get("/privacy", (req, res) => {
     title: "Privacy Policy / Changelogs",
     logoUrl: "/assets/logos/Privacy_Logo.webp",
     logoAlt: "Privacy Policy Page Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 
@@ -487,6 +519,8 @@ app.get("/tos", (req, res) => {
     title: "Terms Of Service / Changelogs",
     logoUrl: "/assets/logos/Tos_Logo.webp",
     logoAlt: "TOS Page Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 
@@ -499,6 +533,8 @@ app.get("/keys", (req, res) => {
     title: "API / Changelogs",
     logoUrl: "/assets/logos/Api_Logo.webp",
     logoAlt: "API Page Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 app.get("/roblox", (req, res) => {
@@ -609,6 +645,8 @@ app.get("/users/:user/followers", async (req, res) => {
       settings,
       isProfileOwner, // Pass this to the template
       loggedInUserId, // Pass this to the template if needed
+      MIN_TITLE_LENGTH,
+      MIN_DESCRIPTION_LENGTH,
     });
   } catch (error) {
     console.error("Error in followers route:", error);
@@ -716,6 +754,8 @@ app.get("/users/:user/following", async (req, res) => {
       settings,
       isProfileOwner, // Pass this to the template
       loggedInUserId, // Pass this to the template if needed
+      MIN_TITLE_LENGTH,
+      MIN_DESCRIPTION_LENGTH,
     });
   } catch (error) {
     console.error("Error in following route:", error);
@@ -730,6 +770,8 @@ app.get("/users", (req, res) => {
     title: "Users / Changelogs",
     logoUrl: "/assets/logos/Users_Logo.webp",
     logoAlt: "Users Page Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 
@@ -773,6 +815,8 @@ app.get("/users/:user", async (req, res) => {
       title: "Users / Changelogs",
       logoUrl: "/assets/logos/Users_Logo.webp",
       logoAlt: "Users Page Logo",
+      MIN_TITLE_LENGTH,
+      MIN_DESCRIPTION_LENGTH,
     });
   }
 
@@ -848,6 +892,8 @@ app.get("/users/:user", async (req, res) => {
         logoAlt: "User Profile Logo",
         isPrivateProfile: true,
         isProfileOwner: false,
+        MIN_TITLE_LENGTH,
+        MIN_DESCRIPTION_LENGTH,
       });
     }
 
@@ -861,6 +907,8 @@ app.get("/users/:user", async (req, res) => {
       logoAlt: "User Profile Logo",
       isPrivateProfile: false,
       isProfileOwner,
+      MIN_TITLE_LENGTH,
+      MIN_DESCRIPTION_LENGTH,
     });
   } catch (error) {
     console.error("Error in profile route:", error);
@@ -873,6 +921,8 @@ app.get("/timeline", (req, res) => {
     title: "Timeline / Changelogs",
     logoUrl: "/assets/logos/Timeline_Logo.webp",
     logoAlt: "Timeline Page Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 
@@ -881,6 +931,8 @@ app.get("/tradetracker", (req, res) => {
     title: "Trade Tracker / Changelogs",
     logoUrl: "/assets/logos/Trade_Tracker_Logo.webp",
     logoAlt: "Trade Tracker Page Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 
@@ -892,6 +944,8 @@ app.get("/", (req, res) => {
     logoUrl: "/assets/logos/Homepage_Logo.webp",
     logoAlt: "Home Page Logo",
     image,
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
   });
 });
 
