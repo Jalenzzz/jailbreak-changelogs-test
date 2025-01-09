@@ -909,6 +909,8 @@ app.get("/users/:user", async (req, res) => {
     }
 
     // Render full profile for authorized access
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    
     res.render("users", {
       userData,
       avatar,
