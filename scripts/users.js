@@ -109,6 +109,9 @@ document.addEventListener("DOMContentLoaded", function () {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
           },
         }
       );
@@ -214,6 +217,9 @@ document.addEventListener("DOMContentLoaded", function () {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
           },
           body: JSON.stringify(settingsBody),
         }
@@ -357,6 +363,10 @@ document.addEventListener("DOMContentLoaded", function () {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "Content-Type": "application/json",
+              "Cache-Control": "no-cache, no-store, must-revalidate",
+              Pragma: "no-cache",
+              Expires: "0",
             },
             body: JSON.stringify({ user, description }),
           }
@@ -552,7 +562,15 @@ document.addEventListener("DOMContentLoaded", function () {
       // Fetch both bio and user data in parallel
       const [bioResponse, userResponse] = await Promise.all([
         fetch(
-          `https://api3.jailbreakchangelogs.xyz/users/description/get?user=${userId}`
+          `https://api3.jailbreakchangelogs.xyz/users/description/get?user=${userId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Cache-Control": "no-cache, no-store, must-revalidate",
+              Pragma: "no-cache",
+              Expires: "0",
+            },
+          }
         ),
         fetch(`https://api3.jailbreakchangelogs.xyz/users/get/?id=${userId}`),
       ]);
@@ -1073,7 +1091,15 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchUserFollowing(userId),
         fetchUserFollowers(userId),
         fetch(
-          `https://api3.jailbreakchangelogs.xyz/users/settings?user=${userId}`
+          `https://api3.jailbreakchangelogs.xyz/users/settings?user=${userId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Cache-Control": "no-cache, no-store, must-revalidate",
+              Pragma: "no-cache",
+              Expires: "0",
+            },
+          }
         )
           .then((res) => res.json())
           .catch(() => ({})),
@@ -1427,6 +1453,10 @@ document.addEventListener("DOMContentLoaded", function () {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
           },
         }
       );

@@ -579,6 +579,9 @@ app.get("/users/:user/followers", async (req, res) => {
       {
         headers: {
           "Content-Type": "application/json",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
           Origin: "https://jailbreakchangelogs.xyz",
         },
       }
@@ -688,6 +691,9 @@ app.get("/users/:user/following", async (req, res) => {
       {
         headers: {
           "Content-Type": "application/json",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
           Origin: "https://jailbreakchangelogs.xyz",
         },
       }
@@ -828,6 +834,9 @@ app.get("/users/:user", async (req, res) => {
         {
           headers: {
             "Content-Type": "application/json",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
             Origin: "https://jailbreakchangelogs.xyz",
           },
         }
