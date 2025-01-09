@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   navbarToggler.addEventListener("click", toggleMenu);
+  // check url params
 
   // Conditional check for mobileViewUpdates
   if (mobileViewUpdates) {
@@ -352,4 +353,20 @@ document.addEventListener("DOMContentLoaded", () => {
   window.getAuthToken = function () {
     return getCookie("token");
   };
+  const params = new URLSearchParams(window.location.search);
+  const campaign = params.get("campaign") || sessionStorage.getItem("campaign");
+  if (campaign) {
+    const token = getCookie("token");
+    if (token) {
+      fetch('https://api3.jailbreakchangelogs.xyz/campaigns/count?campaign=' + campaign + '&token=' + token, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+    }
+    else {
+      sessionStorage.setItem("campaign", campaign);
+    }
+  }
 });
