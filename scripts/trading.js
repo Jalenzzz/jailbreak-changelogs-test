@@ -460,8 +460,8 @@ function updateTradeSummary() {
     0
   );
 
-  const cashDifference = offerCashValue - requestCashValue;
-  const dupedDifference = offerDupedValue - requestDupedValue;
+  const cashDifference = requestCashValue - offerCashValue;
+  const dupedDifference = requestDupedValue - offerDupedValue;
 
   document.getElementById("trade-summary").innerHTML = `
     <div class="card">

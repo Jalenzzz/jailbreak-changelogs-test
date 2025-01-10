@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sortDropdown = document.getElementById("sort-dropdown");
     const valueSortDropdown = document.getElementById("value-sort-dropdown");
     const sortValue = sortDropdown?.value || "name-all-items"; // Provide default value and handle null
-    const valueSortType = valueSortDropdown?.value || "alpha-asc"; // Default to alpha-asc
+    const valueSortType = valueSortDropdown?.value || "cash-desc";
     const currentSort = sortValue.split("-").slice(1).join("-");
 
     // Save current filter states before updating anything else
