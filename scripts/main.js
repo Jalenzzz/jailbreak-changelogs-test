@@ -358,14 +358,19 @@ document.addEventListener("DOMContentLoaded", () => {
   if (campaign) {
     const token = getCookie("token");
     if (token) {
-      fetch('https://api3.jailbreakchangelogs.xyz/campaigns/count?campaign=' + campaign + '&token=' + token, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
+      fetch(
+        "https://api3.jailbreakchangelogs.xyz/campaigns/count?campaign=" +
+          campaign +
+          "&token=" +
+          token,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      })
-    }
-    else {
+      );
+    } else {
       sessionStorage.setItem("campaign", campaign);
     }
   }

@@ -166,7 +166,7 @@ $(document).ready(function () {
   }
 
   function fetchAllSeasons() {
-    return fetch("https://jbc-api.vercel.app/seasons/list")
+    return fetch("https://api.jailbreakchangelogs.xyz/seasons/list")
       .then((response) => response.json())
       .catch((error) => {
         console.error("Error fetching seasons:", error);
@@ -185,7 +185,7 @@ $(document).ready(function () {
 
   function loadAllData() {
     const latestSeasonPromise = fetch(
-      "https://jbc-api.vercel.app/seasons/latest",
+      "https://api.jailbreakchangelogs.xyz/seasons/latest",
       {
         headers: {
           "Content-Type": "application/json",
