@@ -2,6 +2,18 @@ document.addEventListener("DOMContentLoaded", function () {
   const permissions = JSON.parse(settings);
   const udata = JSON.parse(userData);
 
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
   const follow_button = document.getElementById("follow-button");
   const settings_button = document.getElementById("settings-button");
   const pathSegments = window.location.pathname.split("/");
@@ -1316,15 +1328,9 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      await updateUserCounts(userId);
       return true;
     } catch (error) {
       console.error("Error adding follow:", error);
-      toastControl.showToast(
-        "error",
-        "Failed to follow user. Please try again.",
-        "Error"
-      );
       return false;
     }
   }
@@ -1355,62 +1361,86 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      await updateUserCounts(userId);
       return true;
     } catch (error) {
       console.error("Error removing follow:", error);
-      toastControl.showToast(
-        "error",
-        "Failed to unfollow user. Please try again.",
-        "Error"
-      );
       return false;
     }
   }
 
-  follow_button.addEventListener("click", function () {
-    if (follow_button.disabled) return;
-    follow_button.disabled = true;
+  follow_button.addEventListener(
+    "click",
+    debounce(async function () {
+      if (follow_button.disabled) return;
 
-    const user = getCookie("token");
-    if (!user) {
-      // User is not logged in
-      toastControl.showToast(
-        "error",
-        "You are not logged in to perform this action.",
-        "Error"
-      );
-      follow_button.disabled = false;
-      return;
-    }
-    if (follow_button.textContent === "Follow") {
-      addFollow(userId)
-        .then(() => {
-          toastControl.showToast(
-            "success",
-            "User followed successfully.",
-            "Success"
+      const user = getCookie("token");
+      if (!user) {
+        toastControl.showToast(
+          "error",
+          "You are not logged in to perform this action.",
+          "Error"
+        );
+        return;
+      }
+
+      follow_button.disabled = true;
+      const isFollowing = follow_button.textContent === "Unfollow";
+
+      try {
+        // Get the followers count element correctly
+        const followersElement = document.querySelector(
+          "#followers span.fw-bold"
+        );
+        if (!followersElement) {
+          throw new Error("Followers count element not found");
+        }
+
+        //  update UI
+        const currentCount = parseInt(followersElement.textContent) || 0;
+        followersElement.textContent = isFollowing
+          ? currentCount - 1
+          : currentCount + 1;
+        follow_button.textContent = isFollowing ? "Follow" : "Unfollow";
+
+        const success = await (isFollowing
+          ? removeFollow(userId)
+          : addFollow(userId));
+
+        if (!success) {
+          // Revert UI changes if API call failed
+          followersElement.textContent = currentCount;
+          follow_button.textContent = isFollowing ? "Unfollow" : "Follow";
+          throw new Error("API call failed");
+        }
+
+        // Update tooltip if it exists
+        if (followersElement.hasAttribute("title")) {
+          followersElement.setAttribute(
+            "title",
+            followersElement.textContent.toLocaleString()
           );
-          follow_button.textContent = "Unfollow";
-        })
-        .finally(() => {
-          follow_button.disabled = false;
-        });
-    } else {
-      removeFollow(userId)
-        .then(() => {
-          toastControl.showToast(
-            "success",
-            "User unfollowed successfully.",
-            "Success"
-          );
-          follow_button.textContent = "Follow";
-        })
-        .finally(() => {
-          follow_button.disabled = false;
-        });
-    }
-  });
+        }
+
+        toastControl.showToast(
+          "success",
+          `User ${isFollowing ? "unfollowed" : "followed"} successfully.`,
+          "Success"
+        );
+      } catch (error) {
+        console.error("Follow/unfollow error:", error);
+        toastControl.showToast(
+          "error",
+          `Failed to ${
+            isFollowing ? "unfollow" : "follow"
+          } user. Please try again.`,
+          "Error"
+        );
+      } finally {
+        follow_button.disabled = false;
+      }
+    }, 500)
+  ); // 500ms debounce
+
   function AlertToast(message) {
     toastControl.showToast("info", message, "Alert");
   }
