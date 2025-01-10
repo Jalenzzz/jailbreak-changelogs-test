@@ -145,6 +145,8 @@ app.get("/changelogs/:changelog", async (req, res) => {
       metaDescription: `View detailed changelog information for Jailbreak update ${title}. Track new features, vehicles, and game improvements.`,
       MIN_TITLE_LENGTH,
       MIN_DESCRIPTION_LENGTH,
+      type: "changelog",
+      itemId: changelogId,
     };
 
     // Handle different response types
@@ -209,6 +211,8 @@ app.get("/seasons/:season", async (req, res) => {
         seasonId,
         MIN_TITLE_LENGTH,
         MIN_DESCRIPTION_LENGTH,
+        type: "season",
+        itemId: seasonId,
       });
     }
 
@@ -909,8 +913,8 @@ app.get("/users/:user", async (req, res) => {
     }
 
     // Render full profile for authorized access
-    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
-    
+    res.set("Cache-Control", "no-store, no-cache, must-revalidate");
+
     res.render("users", {
       userData,
       avatar,

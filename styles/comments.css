@@ -1,0 +1,193 @@
+.comment-container {
+  color: var(--text-primary) !important;
+  margin: 2rem 0 !important;
+  padding: 1.5rem !important;
+  background-color: var(--bg-primary) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid var(--accent-color) !important;
+}
+
+.comment-header {
+  color: var(--text-primary) !important;
+  margin-bottom: 1.5rem !important;
+  font-family: "Luckiest Guy", cursive !important;
+  font-size: 1.75rem !important;
+  letter-spacing: 0.5px !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+#comment-form .form-control {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--accent-color) !important;
+  color: var(--text-primary) !important;
+  padding: 0.75rem 1rem !important;
+}
+
+#comment-form .form-control:focus {
+  box-shadow: 0 0 0 0.2rem rgba(18, 78, 102, 0.25) !important;
+}
+
+#comment-form .btn-primary {
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+}
+
+#comment-form .btn-primary:hover {
+  background-color: var(--accent-color-light) !important;
+}
+
+.comment-item {
+  background-color: var(--bg-secondary) !important;
+  padding: 1.25rem !important;
+  border-radius: 8px !important;
+  margin-bottom: 0.75rem !important;
+  position: relative !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.comment-item:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.comment-author {
+  color: var(--accent-color-light) !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  transition: color 0.2s !important;
+  cursor: pointer !important;
+}
+
+.comment-author:hover {
+  color: var(--text-primary) !important;
+  text-decoration: underline !important;
+}
+
+.comment-author + small {
+  display: block !important;
+  margin-top: 0.25rem !important;
+  font-size: 0.85rem !important;
+}
+
+.comment-text {
+  color: var(--text-primary) !important;
+  margin-top: 0.5rem !important;
+  word-break: break-word !important;
+}
+
+.comment-actions {
+  position: absolute !important;
+  top: 0.5rem !important;
+  right: 0.5rem !important;
+  z-index: 10 !important;
+}
+
+.comment-actions-toggle {
+  background: none !important;
+  border: none !important;
+  color: var(--text-muted) !important;
+  padding: 0.25rem 0.5rem !important;
+  cursor: pointer !important;
+}
+
+.comment-actions-toggle:hover {
+  color: var(--text-primary) !important;
+}
+
+.comment-actions-menu {
+  position: absolute !important;
+  right: 0 !important;
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--accent-color) !important;
+  border-radius: 4px !important;
+  z-index: 1000 !important;
+  min-width: 120px !important;
+}
+
+.comment-action-item {
+  display: block !important;
+  width: 100% !important;
+  padding: 0.5rem 1rem !important;
+  border: none !important;
+  background: none !important;
+  color: var(--text-primary) !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+
+.comment-action-item:hover {
+  background-color: var(--accent-color) !important;
+}
+
+.comment-action-item.delete:hover {
+  background-color: #dc3545 !important;
+}
+
+/* Pagination styles */
+.pagination-btn {
+  background-color: var(--accent-color) !important;
+  border: none !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.pagination-btn:disabled {
+  background-color: var(--text-muted) !important;
+  cursor: not-allowed !important;
+}
+
+.pagination-input {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--accent-color) !important;
+  color: var(--text-primary) !important;
+  max-width: 70px !important;
+}
+.input-group {
+  display: flex !important;
+  align-items: stretch !important; /* Change to stretch */
+  gap: 0 !important; /* Remove the gap */
+  width: 100% !important;
+}
+
+/* specific styling for the input and button */
+.input-group input {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  height: 100% !important;
+}
+
+.input-group button {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  padding: 0.75rem 1rem !important; /* Match input padding */
+}
+
+.comments-loading {
+  text-align: center !important;
+  padding: 2rem !important;
+  color: var(--text-muted) !important;
+  background-color: #212a31 !important;
+  border-radius: 8px !important;
+}
+
+.spinner {
+  display: inline-block !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  border: 3px solid var(--accent-color) !important;
+  border-radius: 50% !important;
+  border-top-color: transparent !important;
+  animation: spin 1s linear infinite !important;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg) !important;
+  }
+}

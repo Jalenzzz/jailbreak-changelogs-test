@@ -208,29 +208,6 @@ document.addEventListener("DOMContentLoaded", function () {
           : 0,
       };
 
-      // In the settings button event handlers section
-      use_discord_banner_button.addEventListener("click", function (event) {
-        event.preventDefault();
-        const icon = button.querySelector("i");
-        const isCurrentlyEnabled = icon.classList.contains("bi-check-lg");
-        updateButtonState(button, isCurrentlyEnabled ? 0 : 1);
-
-        // Store the current custom banner value before toggling
-        if (!isCurrentlyEnabled) {
-          // Switching to Discord banner
-          if (bannerInput.value && bannerInput.value !== "NONE") {
-            bannerInput.dataset.previousValue = bannerInput.value;
-          }
-          bannerInput.style.display = "none";
-        } else {
-          // Switching back to custom banner
-          bannerInput.style.display = "block";
-          if (bannerInput.dataset.previousValue) {
-            bannerInput.value = bannerInput.dataset.previousValue;
-          }
-        }
-      });
-
       const token = getCookie("token");
 
       // Update settings
@@ -252,9 +229,9 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error(`HTTP error! status: ${settingsResponse.status}`);
       }
 
-      // Only update custom banner if it's enabled and has a value
-      if (!settingsBody.banner_discord && bannerInput.value.trim()) {
-        const image = bannerInput.value.trim();
+      // Update banner if custom banner is enabled
+      if (!settingsBody.banner_discord) {
+        const image = bannerInput.value.trim() || "NONE";
         const bannerUrl = `https://api3.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=${encodeURIComponent(
           image
         )}`;
@@ -515,10 +492,10 @@ document.addEventListener("DOMContentLoaded", function () {
       if (gifUrl) {
         return gifUrl;
       }
-      // Fallback to WebP if GIF doesn't exist
-      const webpUrl = await fetchBanner(userId, bannerHash, "webp");
-      if (webpUrl) {
-        return webpUrl;
+      // Fallback to PNG if GIF doesn't exist
+      const pngUrl = await fetchBanner(userId, bannerHash, "png");
+      if (pngUrl) {
+        return pngUrl;
       }
     } catch (error) {
       console.error("Error fetching banner:", error);
@@ -532,42 +509,14 @@ document.addEventListener("DOMContentLoaded", function () {
       const fallbackBanner =
         "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
 
-      // Add check for userBanner element
-      if (!userBanner) {
-        console.error("userBanner element not found in DOM");
-        return;
-      }
-
-      if (permissions.banner_discord === 1) {
-        if (udata.banner) {
-          // Try GIF first, then fallback to WEBP
-          const gifUrl = `https://cdn.discordapp.com/banners/${userId}/${udata.banner}.gif?size=4096`;
-          const webpUrl = `https://cdn.discordapp.com/banners/${userId}/${udata.banner}.webp?size=4096`;
-
-          try {
-            // Try formats in order: GIF, then WebP
-            const gifResponse = await fetch(gifUrl, { method: "HEAD" });
-
-            if (gifResponse.ok) {
-              image = gifUrl;
-            } else {
-              const webpResponse = await fetch(webpUrl, { method: "HEAD" });
-
-              if (webpResponse.ok) {
-                image = webpUrl;
-              } else {
-                image = fallbackBanner;
-              }
-            }
-          } catch (error) {
-            console.error("Error checking banner formats:", error);
-            image = fallbackBanner;
-          }
-        } else {
+      if (permissions.banner_discord === true) {
+        // Try to get animated banner first
+        image = await getBannerUrl(userId, udata.banner);
+        if (!image) {
+          // If no banner exists at all, use fallback
           image = fallbackBanner;
         }
       } else {
-        // Handle custom banner
         const response = await fetch(
           `https://api3.jailbreakchangelogs.xyz/users/background/get?user=${userId}`
         );
@@ -577,24 +526,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const bannerData = await response.json();
-
-        userBanner.onerror = (error) => {
-          console.error("Error loading banner image:", error);
-          userBanner.src = fallbackBanner;
-        };
-
-        image =
-          bannerData.image_url === "NONE"
-            ? fallbackBanner
-            : bannerData.image_url;
+        image = bannerData.image_url || fallbackBanner; // Use fallback if no image_url
       }
 
       userBanner.src = image;
-      banner = image; // Store the current banner URL
+      banner = image;
     } catch (error) {
-      console.error("Error in fetchUserBanner:", error);
-      userBanner.src = fallbackBanner;
-      banner = fallbackBanner;
+      console.error("Error fetching banner:", error);
+      // Use fallback banner in case of any error
+      userBanner.src =
+        "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
+      banner = userBanner.src;
     }
   }
 
@@ -615,6 +557,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function fetchUserBio(userId) {
     try {
+      console.log("Fetching bio for user:", userId);
+
       // Fetch both bio and user data in parallel
       const [bioResponse, userResponse] = await Promise.all([
         fetch(
@@ -631,10 +575,14 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(`https://api3.jailbreakchangelogs.xyz/users/get/?id=${userId}`),
       ]);
 
+      console.log("Bio API response status:", bioResponse.status);
+
       if (!bioResponse.ok || !userResponse.ok) {
         if (bioResponse.status === 404) {
+          console.log("No bio found (404)");
           userBio.textContent = "";
         } else {
+          console.log("Error fetching bio:", bioResponse.status);
           userBio.textContent = "Error fetching description.";
           throw new Error(`HTTP error! status: ${bioResponse.status}`);
         }
@@ -647,10 +595,14 @@ document.addEventListener("DOMContentLoaded", function () {
         userResponse.json(),
       ]);
 
+      console.log("Received bio data:", user);
+
       const timestamp = user.last_updated || 0;
       const date = formatDate(timestamp);
+      console.log("Formatted date:", date);
 
       const description = user.description || "No description available.";
+      console.log("Description to display:", description);
 
       // Format the created_at date using the Unix timestamp
       const createdTimestamp = parseInt(userData.created_at) * 1000; // Convert to milliseconds
@@ -673,6 +625,11 @@ document.addEventListener("DOMContentLoaded", function () {
       <hr class="my-2" style="border-color: #748D92; opacity: 0.2;">
       <div style="color: #748D92;">Member since: ${memberSince}</div>
       `;
+
+      console.log("Bio elements updated:", {
+        bioContent: userBio.innerHTML,
+        dateContent: userDateBio.textContent,
+      });
     } catch (error) {
       console.error("Error in fetchUserBio:", error);
       userBio.textContent = "Error fetching user bio.";

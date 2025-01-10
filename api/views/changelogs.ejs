@@ -88,6 +88,7 @@
     <!-- Custom stylesheet -->
     <link rel="stylesheet" href="styles/changelogs.css" />
     <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="/styles/comments.css" />
 
     <!-- Google Tag Manager -->
     <script>
@@ -541,43 +542,9 @@
                 </div>
               </div>
             </div>
-            <div class="comment-container my-5 container-fluid px-3 px-sm-auto">
-              <h2 class="comment-header" id="comment-header">Comments</h2>
-              <div class="row justify-content-center">
-                <div class="col-md-12">
-                  <!-- Comment submission form -->
-                  <form id="comment-form" class="mb-4">
-                    <div class="input-group">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="commenter-text"
-                        disabled
-                        placeholder="Login to comment"
-                        required
-                      />
-                      <button
-                        type="submit"
-                        class="btn btn-primary"
-                        id="submit-comment"
-                        disabled
-                      >
-                        <i class="bi bi-send-fill me-1"></i> Submit
-                      </button>
-                    </div>
-                  </form>
 
-                  <!-- Comment List -->
-                  <ul id="comments-list" class="list-group shadow-sm">
-                    <!-- Comments will be dynamically added here -->
-                  </ul>
-                  <div
-                    id="paginationControls"
-                    class="pagination d-flex align-items-center"
-                  ></div>
-                </div>
-              </div>
-            </div>
+            <%- include('partials/comments', { type: 'changelog', itemId:
+            changelogId }) %>
           </div>
         </div>
       </div>
@@ -692,6 +659,7 @@
     <!-- Custom Scripts -->
     <script src="scripts/changelogs.js"></script>
     <script src="scripts/main.js"></script>
+    <script src="/scripts/comments.js"></script>
 
     <script
       async

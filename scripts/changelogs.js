@@ -5,7 +5,6 @@ $(document).ready(function () {
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
   const titleElement = document.getElementById("changelogTitle");
-  const CommentHeader = document.getElementById("comment-header");
   const startDateBtn = document.getElementById("startDateBtn");
   const endDateBtn = document.getElementById("endDateBtn");
   const startDateInput = document.getElementById("startDate");
@@ -778,6 +777,15 @@ $(document).ready(function () {
             `;
 
             displayChangelog(selectedChangelog);
+
+            // Initialize comments manager with correct type and ID
+            if (!window.commentsManagerInstance) {
+              window.commentsManagerInstance = new CommentsManager(
+                "changelog",
+                changelogId
+              );
+              window.commentsManagerInstance.loadComments();
+            }
           }
         })
         .catch((error) => {
@@ -994,9 +1002,19 @@ $(document).ready(function () {
           // Clear search when clicking a result
           clearSearch();
 
-          displayChangelog(changelog); // Display the selected changelog
-          updateChangelogBreadcrumb(changelog.id); // Update the breadcrumb
-          dismissKeyboard(); // Dismiss the keyboard
+          // Display the selected changelog
+          displayChangelog(changelog);
+          updateChangelogBreadcrumb(changelog.id);
+
+          // Update comments section
+          if (window.commentsManagerInstance) {
+            window.commentsManagerInstance.clearComments();
+            window.commentsManagerInstance.type = "changelog";
+            window.commentsManagerInstance.itemId = changelog.id;
+            window.commentsManagerInstance.loadComments();
+          }
+
+          dismissKeyboard();
         });
 
         $resultsList.append($listItem); // Append the list item to the results list
@@ -1083,10 +1101,13 @@ $(document).ready(function () {
   // Function to display the selected changelog
   function displayChangelog(changelog) {
     localStorage.setItem("selectedChangelogId", changelog.id);
-
     document.title = changelog.title;
-    commentsList.innerHTML = ""; // Clear the comments list
-    reloadcomments();
+
+    // Update comments header
+    const commentsHeader = document.querySelector(".comment-header");
+    if (commentsHeader) {
+      commentsHeader.textContent = `Comments for ${changelog.title}`;
+    }
 
     if (titleElement) {
       titleElement.textContent = changelog.title;
@@ -1133,206 +1154,38 @@ $(document).ready(function () {
   }
 
   // Click event for changelog dropdown items
+  // In changelogs.js - Update the dropdown click handler
   $(document).on("click", ".changelog-dropdown-item", function (e) {
-    e.preventDefault(); // Prevent default action
-    const changelogId = $(this).data("changelog-id"); // Get changelog ID from data attribute
-    const selectedChangelog = changelogsData.find((cl) => cl.id == changelogId); // Find selected changelog
+    e.preventDefault();
+    const changelogId = $(this).data("changelog-id");
+    const selectedChangelog = changelogsData.find((cl) => cl.id == changelogId);
 
     if (selectedChangelog) {
-      displayChangelog(selectedChangelog); // Display the selected changelog
+      // Update the URL without reloading the page
+      const newUrl = `/changelogs/${changelogId}`;
+      history.pushState({}, "", newUrl);
 
-      // Close the dropdown after selection
+      // Display the changelog
+      displayChangelog(selectedChangelog);
+      updateChangelogBreadcrumb(changelogId);
+
+      // Update comments section
+      if (window.commentsManagerInstance) {
+        window.commentsManagerInstance.clearComments();
+        window.commentsManagerInstance.type = "changelog";
+        window.commentsManagerInstance.itemId = changelogId;
+        window.commentsManagerInstance.loadComments();
+      }
+
+      // Close the dropdown
       const dropdown = bootstrap.Dropdown.getInstance(
         this.closest(".dropdown-menu").previousElementSibling
       );
       if (dropdown) {
         dropdown.hide();
       }
-    } else {
-      console.error("Selected changelog not found!");
     }
   });
-
-  const CommentForm = document.getElementById("comment-form");
-  const commentinput = document.getElementById("commenter-text");
-  const commentbutton = document.getElementById("submit-comment");
-  const avatarUrl = sessionStorage.getItem("avatar");
-  const userdata = JSON.parse(sessionStorage.getItem("user"));
-  const commentsList = document.getElementById("comments-list");
-  const userid = sessionStorage.getItem("userid");
-
-  if (userid) {
-    const displayName = userdata.global_name || userdata.username;
-    commentinput.placeholder = "Comment as " + displayName;
-    commentbutton.disabled = false;
-    commentinput.disabled = false;
-  } else {
-    commentinput.disabled = true;
-    commentinput.placeholder = "Login to comment";
-    commentbutton.disabled = false;
-    commentbutton.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Login';
-
-    // Remove any existing event listeners from the form
-    const newForm = CommentForm.cloneNode(true);
-    CommentForm.parentNode.replaceChild(newForm, CommentForm);
-
-    // Add click event to the button for login redirect
-    newForm
-      .querySelector("#submit-comment")
-      .addEventListener("click", function (event) {
-        event.preventDefault();
-        localStorage.setItem(
-          "redirectAfterLogin",
-          "/changelogs/" + localStorage.getItem("selectedChangelogId")
-        );
-        window.location.href = "/login";
-      });
-  }
-
-  function getCookie(name) {
-    let cookieArr = document.cookie.split(";");
-    for (let i = 0; i < cookieArr.length; i++) {
-      let cookiePair = cookieArr[i].split("=");
-      if (name === cookiePair[0].trim()) {
-        return decodeURIComponent(cookiePair[1]);
-      }
-    }
-    return null;
-  }
-  function throw_error(message) {
-    toastr.error(message, "Error creating comment.", {
-      positionClass: "toast-bottom-right", // Position at the bottom right
-      timeOut: 3000, // Toast will disappear after 3 seconds
-      closeButton: true, // Add a close button
-      progressBar: true, // Show a progress bar
-    });
-  }
-  function addComment(comment) {
-    if (!userdata) {
-      throw_error("Please login to comment");
-      return;
-    }
-
-    // Add check for null global_name and use username as fallback
-    const authorName = userdata.global_name || userdata.username;
-    if (!authorName) {
-      throw_error("Unable to determine username. Please try logging in again.");
-      return;
-    }
-
-    const listItem = document.createElement("li");
-    listItem.classList.add(
-      "list-group-item",
-      "d-flex",
-      "align-items-start",
-      "mb-3"
-    );
-
-    const avatarElement = document.createElement("img");
-    const defaultAvatarUrl =
-      "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
-    avatarElement.src = avatarUrl.endsWith("null.png")
-      ? defaultAvatarUrl
-      : avatarUrl;
-    avatarElement.classList.add("rounded-circle", "m-1");
-    avatarElement.width = 32;
-    avatarElement.id = `avatar-${userdata.id}`;
-    avatarElement.height = 32;
-    avatarElement.onerror = handleinvalidImage;
-
-    const commentContainer = document.createElement("div");
-    commentContainer.classList.add("ms-2", "comment-item", "w-100");
-    commentContainer.style.backgroundColor = "#2E3944";
-    commentContainer.style.padding = "12px";
-    commentContainer.style.borderRadius = "8px";
-    commentContainer.style.marginBottom = "8px";
-
-    const headerContainer = document.createElement("div");
-    headerContainer.classList.add("d-flex", "align-items-center", "flex-wrap");
-
-    const usernameElement = document.createElement("a");
-    usernameElement.href = `/users/${userdata.id}`; // Set the href to redirect to the user's page
-    usernameElement.textContent = authorName; // Use fallback name
-    usernameElement.style.fontWeight = "bold"; // Make the text bold
-    usernameElement.style.color = "#748D92";
-    usernameElement.style.textDecoration = "none";
-    usernameElement.style.transition = "color 0.2s ease";
-    usernameElement.style.fontWeight = "bold";
-
-    usernameElement.addEventListener("mouseenter", () => {
-      usernameElement.style.color = "#D3D9D4";
-      usernameElement.style.textDecoration = "underline";
-    });
-    usernameElement.addEventListener("mouseleave", () => {
-      usernameElement.style.color = "#748D92";
-      usernameElement.style.textDecoration = "none";
-    });
-
-    const date = Math.floor(Date.now() / 1000);
-    const formattedDate = formatDate(date); // Assuming comment.date contains the date string
-    const dateElement = document.createElement("small");
-    dateElement.textContent = ` · ${formattedDate}`; // Add the formatted date
-    dateElement.classList.add("text-muted"); // Optional: Add a class for styling
-
-    // Append elements to the comment container
-    commentContainer.appendChild(usernameElement);
-    commentContainer.appendChild(dateElement);
-
-    const commentTextElement = document.createElement("p");
-    commentTextElement.textContent = comment.value;
-    commentTextElement.classList.add("mb-0", "comment-text");
-    commentTextElement.style.color = "#D3D9D4";
-    commentTextElement.style.marginTop = "4px";
-
-    commentContainer.appendChild(headerContainer);
-    commentContainer.appendChild(commentTextElement);
-
-    // Append avatar and comment container to the list item
-    listItem.appendChild(avatarElement);
-    listItem.appendChild(commentContainer);
-
-    // Prepend the new comment to the comments list
-
-    const token = getCookie("token");
-
-    // Post the comment to the server
-    fetch("https://api3.jailbreakchangelogs.xyz/comments/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        author: authorName, // Use fallback name here too
-        content: comment.value,
-        item_id: localStorage.getItem("selectedChangelogId"),
-        item_type: "changelog",
-        user_id: userdata.id,
-        owner: token,
-      }),
-    })
-      .then(async (response) => {
-        const data = await response.json(); // Parse JSON response
-
-        if (response.status === 429) {
-          const cooldown = data.remaining;
-          throw_error("Wait " + cooldown + " seconds before commenting again.");
-          return; // Stop further execution
-        }
-
-        if (response.ok) {
-          commentsList.prepend(listItem);
-          // im going to kill you
-          // DO NOT MAKE UNNECESSARY REQUESTS
-        } else {
-          // Handle other non-429 errors (e.g., validation)
-          throw_error(data.error || "An error occurred.");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        throw_error("An unexpected error occurred.");
-      });
-  }
 
   function formatDate(unixTimestamp) {
     // Check if timestamp is in seconds or milliseconds
@@ -1372,536 +1225,9 @@ $(document).ready(function () {
     }
   }
 
-  let currentPage = 1; // Track the current page
-  const commentsPerPage = 7; // Number of comments per page
-  let comments = []; // Declare the comments array globally
-
-  // Function to load comments
-  function loadComments(commentsData) {
-    if (!commentsData || !Array.isArray(commentsData)) {
-      console.error("Invalid comments data received");
-      return;
-    }
-
-    comments = commentsData; // Assign the fetched comments to the global variable
-    commentsList.innerHTML = ""; // Clear existing comments
-    comments.sort((a, b) => b.date - a.date);
-
-    // Calculate the total number of pages
-    const totalPages = Math.ceil(comments.length / commentsPerPage);
-
-    // Get the comments for the current page
-    const startIndex = (currentPage - 1) * commentsPerPage;
-    const endIndex = startIndex + commentsPerPage;
-    const commentsToDisplay = comments.slice(startIndex, endIndex);
-
-    const userDataPromises = commentsToDisplay.map((comment) => {
-      if (!comment.user_id) {
-        console.error("Comment missing user_id:", comment);
-        return null;
-      }
-
-      return fetch(
-        `https://api3.jailbreakchangelogs.xyz/users/get?id=${comment.user_id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Origin: "https://jailbreakchangelogs.xyz",
-          },
-          credentials: "omit", // Changed from "include" to "omit"
-          mode: "cors",
-        }
-      )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((userdata) => ({ comment, userdata }))
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          return null;
-        });
-    });
-
-    Promise.all(userDataPromises)
-      .then((results) => {
-        const validResults = results.filter((result) => result !== null);
-
-        validResults.forEach(({ comment, userdata }) => {
-          if (!userdata || !userdata.id) {
-            console.error("Invalid user data:", userdata);
-            return;
-          }
-
-          const avatarUrl = userdata.avatar
-            ? `https://cdn.discordapp.com/avatars/${userdata.id}/${userdata.avatar}.png`
-            : "assets/profile-pic-placeholder.png";
-
-          const listItem = document.createElement("li");
-          const commentel = document.getElementById(`comment-${comment.id}`); // Fixed: comment instead of comment
-          if (commentel) {
-            commentel.remove();
-          }
-          listItem.id = `comment-${comment.id}`; // Fixed: comment instead of comment
-          listItem.classList.add(
-            "list-group-item",
-            "d-flex",
-            "align-items-start",
-            "mb-3"
-          );
-
-          const avatarElement = document.createElement("img");
-          avatarElement.src = avatarUrl;
-          avatarElement.classList.add("rounded-circle", "m-1");
-          avatarElement.width = 32;
-          avatarElement.height = 32;
-          avatarElement.id = `avatar-${userdata.id}`; // Fixed: userData instead of userdata
-          avatarElement.onerror = handleinvalidImage;
-
-          const commentContainer = document.createElement("div");
-          commentContainer.classList.add("ms-2", "comment-item", "w-100");
-          commentContainer.style.cssText = `
-        background-color: #2E3944;
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 8px;
-      `;
-
-          // Create a container for the username and date
-          const headerContainer = document.createElement("div");
-          headerContainer.classList.add(
-            "d-flex",
-            "align-items-center",
-            "flex-wrap"
-          );
-
-          const usernameElement = document.createElement("a");
-          usernameElement.href = `/users/${userdata.id}`;
-          usernameElement.textContent = userdata.global_name || "Unknown User";
-          usernameElement.style.cssText = `
-        font-weight: bold;
-        color: #748D92;
-        text-decoration: none;
-        transition: color 0.2s ease;
-      `;
-
-          usernameElement.addEventListener("mouseenter", () => {
-            usernameElement.style.color = "#D3D9D4";
-            usernameElement.style.textDecoration = "underline";
-          });
-
-          usernameElement.addEventListener("mouseleave", () => {
-            usernameElement.style.color = "#748D92";
-            usernameElement.style.textDecoration = "none";
-          });
-
-          const dateContainer = document.createElement("div");
-          dateContainer.classList.add("date-container");
-
-          const dateElement = document.createElement("small");
-          const formattedDate = formatDate(comment.date);
-
-          if (comment.edited_at) {
-            const formattedEditDate = formatDate(comment.edited_at);
-            dateElement.textContent = ` · ${formattedEditDate} (Edited)`;
-            dateElement.classList.add("text-muted");
-          } else {
-            dateElement.textContent = ` · ${formattedDate}`;
-            dateElement.classList.add("text-muted");
-          }
-          dateContainer.appendChild(dateElement);
-
-          headerContainer.appendChild(usernameElement);
-          headerContainer.appendChild(dateContainer);
-
-          const commentTextElement = document.createElement("p");
-          commentTextElement.textContent = comment.content;
-          commentTextElement.classList.add("mb-0", "comment-text");
-          commentTextElement.style.cssText = `
-        color: #D3D9D4;
-        margin-top: 4px;
-      `;
-
-          // Add action buttons container
-          const actionsContainer = document.createElement("div");
-          actionsContainer.classList.add("comment-actions");
-
-          // Inside the loadComments function, replace the actions container code with this:
-          if (userdata.id === sessionStorage.getItem("userid")) {
-            // Create dropdown toggle button
-            const actionsToggle = document.createElement("button");
-            actionsToggle.classList.add("comment-actions-toggle");
-            actionsToggle.innerHTML =
-              '<i class="bi bi-three-dots-vertical"></i>';
-
-            // Create dropdown menu
-            const actionsMenu = document.createElement("div");
-            actionsMenu.classList.add("comment-actions-menu");
-            actionsMenu.style.display = "none";
-
-            // Create menu items
-            const editButton = document.createElement("button");
-            editButton.classList.add("comment-action-item");
-            editButton.innerHTML = '<i class="bi bi-pencil"></i> Edit';
-            editButton.setAttribute("data-comment-id", comment.id);
-
-            editButton.addEventListener("click", (e) => {
-              e.stopPropagation();
-              const id = e.target.getAttribute("data-comment-id");
-              const commentText = e.target
-                .closest(".comment-item")
-                .querySelector(".comment-text").textContent;
-
-              // Set the current comment text in the modal
-              document.getElementById("editCommentText").value = commentText;
-
-              // Store the comment ID for later use
-              document
-                .getElementById("editCommentText")
-                .setAttribute("data-comment-id", id);
-
-              // Show the modal
-              editCommentModal.show();
-
-              // Hide the actions menu
-              e.target.closest(".comment-actions-menu").style.display = "none";
-            });
-
-            const deleteButton = document.createElement("button");
-            deleteButton.classList.add("comment-action-item", "delete");
-            deleteButton.innerHTML = '<i class="bi bi-trash"></i> Delete';
-            deleteButton.setAttribute("data-comment-id", comment.id);
-            deleteButton.addEventListener("click", (e) => {
-              const id = e.target.getAttribute("data-comment-id");
-
-              // make an http request to delete the comment
-              fetch("https://api3.jailbreakchangelogs.xyz/comments/delete", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  id: id,
-                  author: getCookie("token"),
-                }),
-              })
-                .then((response) => {
-                  if (!response.ok) {
-                    throw new Error("Failed to delete comment");
-                  }
-                  return response.json();
-                })
-                .then((data) => {
-                  const commentElement = document.getElementById(
-                    `comment-${id}`
-                  );
-                  if (commentElement) {
-                    commentElement.remove();
-                  }
-                  // Add toast notification for successful deletion
-                  toastr.success("Comment deleted successfully!", "Success", {
-                    positionClass: "toast-bottom-right",
-                    timeOut: 3000,
-                    closeButton: true,
-                    progressBar: true,
-                  });
-                })
-                .catch((error) => {
-                  console.error("Error deleting comment:", error);
-                  // Add toast notification for deletion error
-                  toastr.error("Failed to delete comment", "Error", {
-                    positionClass: "toast-bottom-right",
-                    timeOut: 3000,
-                    closeButton: true,
-                    progressBar: true,
-                  });
-                });
-            });
-
-            // Add items to menu
-            actionsMenu.appendChild(editButton);
-            actionsMenu.appendChild(deleteButton);
-
-            // Add toggle and menu to container
-            actionsContainer.appendChild(actionsToggle);
-            actionsContainer.appendChild(actionsMenu);
-
-            // Toggle menu on click
-            actionsToggle.addEventListener("click", (e) => {
-              e.stopPropagation();
-              actionsMenu.style.display =
-                actionsMenu.style.display === "none" ? "block" : "none";
-            });
-
-            // Close menu when clicking outside
-            document.addEventListener("click", () => {
-              actionsMenu.style.display = "none";
-            });
-          }
-
-          commentContainer.appendChild(headerContainer);
-          commentContainer.appendChild(commentTextElement);
-          commentContainer.appendChild(actionsContainer);
-          listItem.appendChild(avatarElement);
-          listItem.appendChild(commentContainer);
-          commentsList.appendChild(listItem);
-        });
-
-        // Render pagination controls
-        renderPaginationControls(totalPages);
-      })
-      .catch((error) => {
-        console.error("Error processing comments:", error);
-      });
-  }
-
-  // Function to render modern pagination controls
-  function renderPaginationControls(totalPages) {
-    const paginationContainer = document.getElementById("paginationControls");
-    paginationContainer.innerHTML = ""; // Clear existing controls
-
-    // Add container styling to keep everything in a single row
-    paginationContainer.classList.add(
-      "d-flex",
-      "align-items-center",
-      "justify-content-center",
-      "gap-2",
-      "flex-nowrap"
-    );
-
-    // Create left arrow button
-    const leftArrow = document.createElement("button");
-    leftArrow.innerHTML = `<i class="bi bi-chevron-left"></i>`; // Use an icon (Bootstrap Icons)
-    leftArrow.classList.add(
-      "btn",
-      "btn-primary",
-      "rounded-circle",
-      "pagination-btn"
-    );
-    leftArrow.disabled = currentPage === 1; // Disable if on the first page
-    leftArrow.addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        loadComments(comments); // Reload comments for the current page
-        renderPaginationControls(totalPages); // Update pagination controls
-      }
-    });
-    paginationContainer.appendChild(leftArrow);
-
-    // Page number input with label
-    const pageInputGroup = document.createElement("div");
-    pageInputGroup.classList.add("input-group", "mx-1", "align-items-center");
-
-    const pageLabel = document.createElement("span");
-    pageLabel.textContent = `Page `;
-    pageLabel.classList.add("text-muted", "fw-semibold");
-    pageInputGroup.appendChild(pageLabel);
-
-    const pageInput = document.createElement("input");
-    pageInput.type = "number";
-    pageInput.value = currentPage;
-    pageInput.min = 1;
-    pageInput.max = totalPages;
-    pageInput.classList.add("form-control", "text-center", "pagination-input");
-    pageInput.style.maxWidth = "70px"; // Compact size for mobile
-    pageInput.addEventListener("change", () => {
-      const newPage = parseInt(pageInput.value, 10);
-      if (newPage >= 1 && newPage <= totalPages) {
-        currentPage = newPage;
-        loadComments(comments); // Reload comments for the new page
-        renderPaginationControls(totalPages); // Update pagination controls
-      } else {
-        pageInput.value = currentPage; // Reset input if invalid
-      }
-    });
-    pageInputGroup.appendChild(pageInput);
-
-    const totalPageSpan = document.createElement("span");
-    totalPageSpan.textContent = ` / ${totalPages}`;
-    totalPageSpan.classList.add("text-muted");
-    pageInputGroup.appendChild(totalPageSpan);
-
-    paginationContainer.appendChild(pageInputGroup);
-
-    // Create right arrow button
-    const rightArrow = document.createElement("button");
-    rightArrow.innerHTML = `<i class="bi bi-chevron-right"></i>`; // Use an icon
-    rightArrow.classList.add(
-      "btn",
-      "btn-primary",
-      "rounded-circle",
-      "pagination-btn"
-    );
-    rightArrow.disabled = currentPage === totalPages; // Disable if on the last page
-    rightArrow.addEventListener("click", () => {
-      if (currentPage < totalPages) {
-        currentPage++;
-        loadComments(comments); // Reload comments for the current page
-        renderPaginationControls(totalPages); // Update pagination controls
-      }
-    });
-    paginationContainer.appendChild(rightArrow);
-  }
-
-  function reloadcomments() {
-    CommentHeader.textContent =
-      "Comments For Changelog " + localStorage.getItem("selectedChangelogId");
-    const paginationControls = document.getElementById("paginationControls");
-
-    // Reset pagination controls visibility and styling
-    paginationControls.style.cssText =
-      "display: none !important; visibility: hidden;";
-
-    fetch(
-      "https://api3.jailbreakchangelogs.xyz/comments/get?type=changelog&id=" +
-        localStorage.getItem("selectedChangelogId"),
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Origin: "https://jailbreakchangelogs.xyz",
-        },
-        credentials: "omit",
-        mode: "cors",
-      }
-    )
-      .then((response) => {
-        if (!response.ok) {
-          console.error("Unexpected response status:", response.status);
-          return null;
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (!data) return;
-
-        if (
-          (data.message && data.message === "No comments found") ||
-          (Array.isArray(data) && data.length === 0)
-        ) {
-          commentsList.innerHTML = `
-            <div class="text-muted text-center d-flex flex-column align-items-center justify-content-center p-4">
-              <i class="bi bi-chat-square mb-2 fs-4"></i>
-              <p class="mb-0">No comments yet. Be the first to comment!</p>
-            </div>
-          `;
-          // Keep pagination controls hidden
-          return;
-        }
-
-        // Only show pagination if we have comments
-        paginationControls.style.cssText =
-          "display: flex !important; visibility: visible;";
-
-        if (Array.isArray(data)) {
-          loadComments(data);
-        } else if (data.comments && Array.isArray(data.comments)) {
-          loadComments(data.comments);
-        } else {
-          console.error("Unexpected response format:", data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching comments:", error);
-      });
-  }
-
-  CommentForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-    const comment = document.getElementById("commenter-text");
-    addComment(comment);
-    comment.value = ""; // Clear the comment input field
-  });
-
   // Initialize Bootstrap dropdowns
   bootstrap.Dropdown.getOrCreateInstance($("#mobileChangelogDropdown")[0]);
   bootstrap.Dropdown.getOrCreateInstance($("#desktopChangelogDropdown")[0]);
-
-  // Add this modal HTML structure to your document body using jQuery
-  $("body").append(`
-    <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <textarea class="form-control" id="editCommentText" rows="3"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="saveCommentEdit">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-`);
-
-  // Initialize the modal
-  const editCommentModal = new bootstrap.Modal(
-    document.getElementById("editCommentModal")
-  );
-
-  // Add event listener for saving edited comment
-  document
-    .getElementById("saveCommentEdit")
-    .addEventListener("click", function () {
-      const commentId = document
-        .getElementById("editCommentText")
-        .getAttribute("data-comment-id");
-      const newContent = document
-        .getElementById("editCommentText")
-        .value.trim();
-      const token = getCookie("token");
-
-      if (newContent) {
-        fetch("https://api3.jailbreakchangelogs.xyz/comments/edit", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: commentId,
-            content: newContent,
-            author: token,
-          }),
-        })
-          .then((response) => {
-            return response.json().then((data) => {
-              if (!response.ok) throw new Error("Failed to edit comment");
-              return data;
-            });
-          })
-          .then((data) => {
-            editCommentModal.hide();
-
-            toastr.success("Comment updated successfully!", "Success", {
-              positionClass: "toast-bottom-right",
-              timeOut: 3000,
-              closeButton: true,
-              progressBar: true,
-            });
-
-            // Reload comments with a slight delay to ensure server has processed the edit
-            setTimeout(() => {
-              reloadcomments();
-            }, 100);
-          })
-          .catch((error) => {
-            console.error("Error editing comment:", error);
-            toastr.error("Failed to update comment", "Error", {
-              positionClass: "toast-bottom-right",
-              timeOut: 3000,
-              closeButton: true,
-              progressBar: true,
-            });
-          });
-      }
-    });
 
   // State machine for error handling
   const ErrorState = {
@@ -1954,21 +1280,6 @@ $(document).ready(function () {
       case "mention":
         return /@\w+/.test(changelog.sections);
       default:
-        return false;
-    }
-  }
-
-  // Switch statement for comment actions
-  function handleCommentAction(action, commentId) {
-    switch (action) {
-      case "edit":
-        return editComment(commentId);
-      case "delete":
-        return deleteComment(commentId);
-      case "report":
-        return reportComment(commentId);
-      default:
-        console.warn("Unknown comment action:", action);
         return false;
     }
   }
