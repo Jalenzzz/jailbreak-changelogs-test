@@ -35,10 +35,10 @@
 .custom-spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid var(--bg-primary);
-  border-top-color: var(--accent-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+  border-top-color: #31b1ff; /* Blue color for top border */
+  border-right-color: #31b1ff; /* Blue color for right border */
+  border-bottom-color: #ff341c; /* Orange color for bottom border */
+  border-left-color: #ff341c; /* Orange color for left border */
 }
 
 /* Content Layout */
