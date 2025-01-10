@@ -1238,45 +1238,55 @@ document.addEventListener("DOMContentLoaded", function () {
             Authorization: sessionStorage.getItem("userid"),
             "Content-Type": "application/json",
             Origin: "https://jailbreakchangelogs.xyz",
+            // Add any other required headers
           },
         }
       );
+
+      // Handle 404 as a valid "no followers" response
+      if (response.status === 404) {
+        return [];
+      }
+
       if (!response.ok) {
-        if (response.status === 404) {
-          toastControl.showToast("error", "User not found", "Error");
-          return [];
-        }
-        toastControl.showToast("error", "Failed to fetch followers", "Error");
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const followers = await response.json();
       return Array.isArray(followers) ? followers : [];
     } catch (error) {
       console.error("Error fetching followers:", error);
-      toastControl.showToast("error", "Error loading followers data", "Error");
-      return []; // Always return an array, even on error
+      return []; // Return empty array on error
     }
   }
 
+  // Similarly modify the fetchUserFollowing function (around line 1277)
   async function fetchUserFollowing(userId) {
     try {
       const response = await fetch(
-        `https://api3.jailbreakchangelogs.xyz/users/following/get?user=${userId}`
-      );
-      if (!response.ok) {
-        if (response.status === 404) {
-          toastControl.showToast("error", "User not found", "Error");
-          return [];
+        `https://api3.jailbreakchangelogs.xyz/users/following/get?user=${userId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "https://jailbreakchangelogs.xyz",
+          },
         }
-        toastControl.showToast("error", "Failed to fetch following", "Error");
+      );
+
+      // Handle 404 as a valid "no following" response
+      if (response.status === 404) {
+        return [];
+      }
+
+      if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const following = await response.json();
       return Array.isArray(following) ? following : [];
     } catch (error) {
       console.error("Error fetching following:", error);
-      toastControl.showToast("error", "Error loading following data", "Error");
-      return []; // Always return an array, even on error
+      return []; // Return empty array on error
     }
   }
 
@@ -1296,17 +1306,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!response.ok) {
         if (response.status === 409) {
-          alreadyFollowingToast("You are already following this user.");
+          toastControl.showToast(
+            "error",
+            "You are already following this user.",
+            "Error"
+          );
           return false;
         }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      toastControl.showToast(
-        "success",
-        "Successfully followed user!",
-        "Success"
-      );
       await updateUserCounts(userId);
       return true;
     } catch (error) {
@@ -1336,18 +1345,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!response.ok) {
         if (response.status === 404) {
-          NotFollowingToast("You are not following this user.");
+          toastControl.showToast(
+            "error",
+            "You are not following this user.",
+            "Error"
+          );
           return false;
         }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      FollowToast("Successfully unfollowed user!");
+      // Remove this success toast since it's handled in the click handler
       await updateUserCounts(userId);
       return true;
     } catch (error) {
       console.error("Error removing follow:", error);
-      NotFollowingToast("Failed to unfollow user. Please try again.");
+      toastControl.showToast(
+        "error",
+        "Failed to unfollow user. Please try again.",
+        "Error"
+      );
       return false;
     }
   }
