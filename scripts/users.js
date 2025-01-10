@@ -496,14 +496,30 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   async function fetchBanner(userId, bannerHash, format) {
-    const url = `https://cdn.discordapp.com/banners/${userId}/${bannerHash}.${format}?size=4096`;
-    const response = await fetch(url, { method: "HEAD" });
-    return response.ok ? url : null;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+    try {
+      const url = `https://cdn.discordapp.com/banners/${userId}/${bannerHash}.${format}?size=4096`;
+      const response = await fetch(url, {
+        method: "HEAD",
+        signal: controller.signal,
+      });
+
+      return response.ok ? url : null;
+    } catch (error) {
+      if (error.name === "AbortError") {
+        console.log("Banner fetch timed out");
+      }
+      return null;
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
   // Add this helper function to handle banner URL resolution
   async function getBannerUrl(userId, bannerHash) {
-    if (!bannerHash) {
+    if (!userId || !bannerHash) {
       return null;
     }
 
@@ -513,51 +529,81 @@ document.addEventListener("DOMContentLoaded", function () {
       if (gifUrl) {
         return gifUrl;
       }
-      // Fallback to PNG if GIF doesn't exist
+
+      // Fallback to PNG
       const pngUrl = await fetchBanner(userId, bannerHash, "png");
       if (pngUrl) {
         return pngUrl;
       }
-    } catch (error) {
-      console.error("Error fetching banner:", error);
-    }
 
-    return null;
+      // If neither format works, return null
+      return null;
+    } catch (error) {
+      console.error("Error fetching Discord banner:", error);
+      return null;
+    }
   }
+
   async function fetchUserBanner(userId) {
     try {
       let image;
       const fallbackBanner =
         "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
 
-      if (permissions.banner_discord === true) {
+      // Check if banner_discord permission exists and is true
+      if (permissions && permissions.banner_discord === 1) {
         // Try to get animated banner first
         image = await getBannerUrl(userId, udata.banner);
+
+        // If no Discord banner found, try custom banner
         if (!image) {
-          // If no banner exists at all, use fallback
-          image = fallbackBanner;
+          const response = await fetch(
+            `https://api3.jailbreakchangelogs.xyz/users/background/get?user=${userId}`
+          );
+
+          if (response.ok) {
+            const bannerData = await response.json();
+            image = bannerData.image_url;
+          }
         }
       } else {
+        // Try to get custom banner
         const response = await fetch(
           `https://api3.jailbreakchangelogs.xyz/users/background/get?user=${userId}`
         );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (response.ok) {
+          const bannerData = await response.json();
+          image = bannerData.image_url;
         }
-
-        const bannerData = await response.json();
-        image = bannerData.image_url || fallbackBanner; // Use fallback if no image_url
       }
 
-      userBanner.src = image;
-      banner = image;
+      // If no valid banner found, use fallback
+      if (!image || image === "NONE") {
+        image = fallbackBanner;
+      }
+
+      // Update banner image and store reference
+      const userBanner = document.getElementById("banner");
+      if (userBanner) {
+        userBanner.src = image;
+        banner = image;
+
+        // Add error handling for image load
+        userBanner.onerror = () => {
+          console.error("Failed to load banner image:", image);
+          userBanner.src = fallbackBanner;
+          banner = fallbackBanner;
+        };
+      }
     } catch (error) {
       console.error("Error fetching banner:", error);
       // Use fallback banner in case of any error
-      userBanner.src =
-        "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
-      banner = userBanner.src;
+      const userBanner = document.getElementById("banner");
+      if (userBanner) {
+        userBanner.src = fallbackBanner;
+        banner = fallbackBanner;
+      }
     }
   }
 
