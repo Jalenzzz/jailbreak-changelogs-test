@@ -305,15 +305,32 @@ class CommentsManager {
     const token = getCookie("token");
     let isOwner = false;
 
+    // First, get user details before creating any HTML
+    let userDetails = null;
+    if (comment.user_id) {
+      try {
+        userDetails = await this.fetchUserDetails(comment.user_id);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    }
+
+    // Determine display name from user details
+    const displayName =
+      userDetails && userDetails.global_name !== "None"
+        ? userDetails.global_name
+        : userDetails
+        ? userDetails.username
+        : comment.author;
+
+    // Check ownership
     if (token) {
       try {
         const response = await fetch(
           `https://api3.jailbreakchangelogs.xyz/users/get/token?token=${token}`
         );
-
         if (response.ok) {
           const userData = await response.json();
-
           isOwner = userData.id === comment.user_id;
         }
       } catch (error) {
@@ -336,69 +353,77 @@ class CommentsManager {
       ? `Last edited ${formatDate(comment.edited_at)}`
       : formatDate(comment.date);
 
+    // Use displayName for the fallback avatar
     const fallbackAvatar = `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${encodeURIComponent(
-      comment.author
+      displayName
     )}&bold=true&format=svg`;
 
     const li = document.createElement("li");
     li.className = "list-group-item comment-item";
     li.dataset.commentId = comment.id;
 
-    // In renderCommentItem, modify the HTML template:
+    // Use the avatar from user details if available
+    const avatarUrl =
+      userDetails && userDetails.avatar
+        ? `https://cdn.discordapp.com/avatars/${userDetails.id}/${userDetails.avatar}.webp?size=128`
+        : fallbackAvatar;
+
     li.innerHTML = `
     <div class="d-flex align-items-start">
-      <img src="${fallbackAvatar}" 
-          class="rounded-circle me-2" 
-          width="40" 
-          height="40"
-          onerror="this.src='${fallbackAvatar}'"
-          alt="${comment.author}'s avatar">
-      <div class="flex-grow-1">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <h6 class="mb-0">
-              <a href="/users/${comment.user_id}" class="comment-author">${
-      comment.author
-    }</a>
-            </h6>
-            <small class="text-muted">
-             ${displayDate}
-            </small>
-          </div>
-          ${
-            isOwner
-              ? `
-            <div class="comment-actions">
-              <button class="comment-actions-toggle" aria-label="Comment actions">
-                <i class="bi bi-three-dots-vertical"></i>
-              </button>
-              <div class="comment-actions-menu d-none">
-                <button class="comment-action-item edit-comment">
-                  <i class="bi bi-pencil me-2"></i>Edit
-                </button>
-                <button class="comment-action-item delete-comment delete">
-                  <i class="bi bi-trash me-2"></i>Delete
-                </button>
-              </div>
+        <img src="${avatarUrl}" 
+            class="rounded-circle me-2" 
+            width="40" 
+            height="40"
+            onerror="this.src='${fallbackAvatar}'"
+            alt="${displayName}'s avatar">
+        <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-0">
+                        <a href="/users/${
+                          comment.user_id
+                        }" class="comment-author">${displayName}</a>
+                    </h6>
+                    <small class="text-muted">
+                        ${displayDate}
+                    </small>
+                </div>
+                ${
+                  isOwner
+                    ? `
+                    <div class="comment-actions">
+                        <button class="comment-actions-toggle" aria-label="Comment actions">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <div class="comment-actions-menu d-none">
+                            <button class="comment-action-item edit-comment">
+                                <i class="bi bi-pencil me-2"></i>Edit
+                            </button>
+                            <button class="comment-action-item delete-comment delete">
+                                <i class="bi bi-trash me-2"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+                `
+                    : ""
+                }
             </div>
-          `
-              : ""
-          }
+            <div class="comment-content">
+                <p class="comment-text mb-0">${this.escapeHtml(
+                  comment.content
+                )}</p>
+                <button class="show-more-btn">Show more</button>
+            </div>
         </div>
-        <div class="comment-content">
-          <p class="comment-text mb-0">${this.escapeHtml(comment.content)}</p>
-          <button class="show-more-btn">Show more</button>
-        </div>
-      </div>
     </div>
     `;
 
+    // Rest of the code for comment text and show more button...
     const commentText = li.querySelector(".comment-text");
     const showMoreBtn = li.querySelector(".show-more-btn");
 
     setTimeout(() => {
       if (commentText.scrollHeight > 300) {
-        // 300px matches our CSS max-height
         commentText.classList.add("truncated");
         showMoreBtn.classList.add("visible");
       }
@@ -411,27 +436,25 @@ class CommentsManager {
       showMoreBtn.textContent = isExpanded ? "Show more" : "Show less";
     });
 
-    if (comment.user_id) {
-      this.fetchUserDetails(comment.user_id)
-        .then((userDetails) => {
-          if (userDetails && userDetails.avatar) {
-            const avatarImg = li.querySelector("img");
-            const gifUrl = `https://cdn.discordapp.com/avatars/${userDetails.id}/${userDetails.avatar}.gif?size=128`;
-            fetch(gifUrl, { method: "HEAD" })
-              .then((response) => {
-                if (response.ok) {
-                  avatarImg.src = gifUrl;
-                } else {
-                  avatarImg.src = `https://cdn.discordapp.com/avatars/${userDetails.id}/${userDetails.avatar}.webp?size=128`;
-                }
-              })
-              .catch(() => {
-                avatarImg.src = `https://cdn.discordapp.com/avatars/${userDetails.id}/${userDetails.avatar}.webp?size=128`;
-              });
+    // Check if avatar is animated (GIF)
+    // In comments.js, around line 441, replace the problematic section with:
+
+    // Check if avatar is animated (GIF)
+    if (userDetails && userDetails.avatar) {
+      const avatarImg = li.querySelector("img");
+      const gifUrl = `https://cdn.discordapp.com/avatars/${userDetails.id}/${userDetails.avatar}.gif?size=128`;
+      fetch(gifUrl, { method: "HEAD" })
+        .then((response) => {
+          if (response.ok) {
+            avatarImg.src = gifUrl;
+          } else {
+            avatarImg.src = `https://cdn.discordapp.com/avatars/${userDetails.id}/${userDetails.avatar}.webp?size=128`;
           }
         })
         .catch((error) => {
           console.error("Error setting avatar:", error);
+          // Fallback to webp format if gif fails
+          avatarImg.src = `https://cdn.discordapp.com/avatars/${userDetails.id}/${userDetails.avatar}.webp?size=128`;
         });
     }
 

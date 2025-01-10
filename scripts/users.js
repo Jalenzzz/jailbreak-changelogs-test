@@ -66,6 +66,15 @@ document.addEventListener("DOMContentLoaded", function () {
       follow_button.style.display = "none";
     }
   }
+  function linkifyText(text) {
+    // Regular expression to match URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+    return text.replace(urlRegex, function (url) {
+      // Create a safe link with proper attributes
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: #1d7da3; text-decoration: underline;">${url}</a>`;
+    });
+  }
 
   // Helper function to update button state
   function updateButtonState(button, value) {
@@ -616,7 +625,7 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
       // Update the bio text
-      userBio.innerHTML = description;
+      userBio.innerHTML = linkifyText(description);
 
       // Update the date
       // Update the date in userDateBio
