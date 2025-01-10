@@ -365,10 +365,31 @@ class CommentsManager {
               : ""
           }
         </div>
-        <p class="comment-text mb-0">${this.escapeHtml(comment.content)}</p>
+        <div class="comment-content">
+          <p class="comment-text mb-0">${this.escapeHtml(comment.content)}</p>
+          <button class="show-more-btn">Show more</button>
+        </div>
       </div>
     </div>
     `;
+
+    const commentText = li.querySelector(".comment-text");
+    const showMoreBtn = li.querySelector(".show-more-btn");
+
+    setTimeout(() => {
+      if (commentText.scrollHeight > 300) {
+        // 300px matches our CSS max-height
+        commentText.classList.add("truncated");
+        showMoreBtn.classList.add("visible");
+      }
+    }, 10);
+
+    showMoreBtn.addEventListener("click", () => {
+      const isExpanded = commentText.classList.contains("expanded");
+      commentText.classList.toggle("expanded");
+      commentText.classList.toggle("truncated");
+      showMoreBtn.textContent = isExpanded ? "Show more" : "Show less";
+    });
 
     if (comment.user_id) {
       this.fetchUserDetails(comment.user_id)

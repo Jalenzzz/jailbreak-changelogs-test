@@ -1034,6 +1034,14 @@ $(document).ready(function () {
 
       displayChangelog(randomChangelog);
       updateChangelogBreadcrumb(randomChangelog.id); // Update the breadcrumb
+
+      if (window.commentsManagerInstance) {
+        window.commentsManagerInstance.clearComments();
+        window.commentsManagerInstance.type = "changelog";
+        window.commentsManagerInstance.itemId = randomChangelog.id;
+        window.commentsManagerInstance.loadComments();
+      }
+
       changelogToast("Showing a random changelog");
     } else {
       console.warn("No changelog data available to display a random entry.");
