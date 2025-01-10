@@ -6,7 +6,7 @@ function getCookie(name) {
 }
 
 class CommentsManager {
-  constructor(type, itemId) {
+  constructor(type, itemId, itemName = null) {
     if (window.commentsManagerInstance) {
       return window.commentsManagerInstance;
     }
@@ -19,6 +19,7 @@ class CommentsManager {
 
     this.type = type;
     this.itemId = itemId;
+    this.itemName = itemName;
     this.currentPage = 1;
     this.commentsPerPage = 7;
     this.comments = [];
@@ -138,12 +139,31 @@ class CommentsManager {
     this.checkLoginStatus();
   }
 
+  // In comments.js
   updateCommentsHeader() {
-    if (this.commentsHeader) {
-      const typeDisplay =
-        this.type.charAt(0).toUpperCase() + this.type.slice(1);
-      this.commentsHeader.textContent = `Comments for ${typeDisplay} ${this.itemId}`;
+    if (!this.commentsHeader) return;
+
+    let headerText;
+    switch (this.type) {
+      case "changelog":
+        headerText = `Comments for Changelog #${this.itemId}`;
+        break;
+      case "season":
+        headerText = `Comments for Season ${this.itemId}`;
+        break;
+      default:
+        // For items (vehicles, rims, etc.)
+        if (this.itemName) {
+          headerText = `Comments for ${this.itemName} [${
+            this.type.charAt(0).toUpperCase() + this.type.slice(1)
+          }]`;
+        } else {
+          headerText = `Comments for ${
+            this.type.charAt(0).toUpperCase() + this.type.slice(1)
+          } #${this.itemId}`;
+        }
     }
+    this.commentsHeader.textContent = headerText;
   }
 
   clearComments() {
@@ -151,7 +171,6 @@ class CommentsManager {
     this.currentPage = 1;
     this.commentsList.innerHTML = "";
     this.paginationControls.style.display = "none";
-    this.updateCommentsHeader();
   }
 
   async loadComments() {
@@ -160,7 +179,6 @@ class CommentsManager {
 
     // Clear existing comments and update header first
     this.clearComments();
-    this.updateCommentsHeader();
 
     // Show loading state
     this.commentsList.innerHTML = `

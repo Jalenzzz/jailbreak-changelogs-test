@@ -295,10 +295,6 @@ body {
     opacity: 1;
   }
 }
-#comment-header {
-  color: #d3d9d4;
-  letter-spacing: 1px;
-}
 
 /* Limited item styling */
 .limited-item {
@@ -466,25 +462,6 @@ body {
   .input-group-text {
     padding: 8px 12px;
   }
-}
-
-.comment-item a,
-.comment-item a:link,
-.comment-item a:visited {
-  font-weight: bold !important;
-  color: #748d92 !important;
-  text-decoration: none !important;
-  transition: color 0.2s ease, text-decoration 0.2s ease !important;
-}
-
-.comment-item a:hover,
-.comment-item a:active {
-  color: #d3d9d4 !important;
-  text-decoration: underline !important;
-}
-
-.comments-wrapper {
-  transition: opacity 0.3s ease;
 }
 
 /* Values Section Styling */

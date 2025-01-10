@@ -212,6 +212,7 @@
     />
 
     <link rel="stylesheet" href="styles/item.css" />
+    <link rel="stylesheet" href="styles/comments.css" />
     <link rel="stylesheet" href="styles/main.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
@@ -258,22 +259,9 @@
       </div>
     </div>
 
-    <div class="comment-container my-5 container-fluid px-3 px-sm-auto">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-10 col-lg-8">
-          <!-- Comment List Container -->
-          <div
-            class="comments-wrapper p-4"
-            style="
-              background-color: #212a31;
-              border-radius: 8px;
-              border: 2px solid #748d92;
-            "
-          >
-            <!-- Comments will be loaded dynamically -->
-          </div>
-        </div>
-      </div>
+    <div class="container-fluid">
+      <%- include('partials/comments', { type: itemType.toLowerCase(), itemId:
+      item.id, itemName: item.name }) %>
     </div>
 
     <%- include('partials/footer') %>
@@ -295,7 +283,9 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+
     <script src="scripts/main.js"></script>
+    <script src="/scripts/comments.js"></script>
     <script src="scripts/item.js" defer></script>
   </body>
 </html>

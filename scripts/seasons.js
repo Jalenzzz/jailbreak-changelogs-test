@@ -217,6 +217,11 @@ $(document).ready(function () {
         </div>
     `);
 
+    // Update comments header
+    if (window.commentsManagerInstance) {
+      window.commentsManagerInstance.updateCommentsHeader();
+    }
+
     // Check if rewardsData is available and not empty
     if (rewardsData && rewardsData.length > 0) {
       // Filter rewards for the current season
