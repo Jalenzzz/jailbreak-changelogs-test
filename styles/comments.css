@@ -191,3 +191,118 @@
     transform: rotate(360deg) !important;
   }
 }
+/* Add these styles to your comments.css file */
+
+/* Edit Comment Modal Styling */
+#editCommentModal .modal-content {
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--bg-secondary) !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+#editCommentModal .modal-header {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--accent-color) !important;
+  padding: 1rem 1.5rem !important;
+}
+
+#editCommentModal .modal-footer {
+  background-color: var(--bg-secondary) !important;
+  border-top: 1px solid var(--accent-color) !important;
+  padding: 1rem 1.5rem !important;
+}
+
+#editCommentModal .modal-title {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+}
+
+/* Form Controls */
+#editCommentModal .form-control {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--accent-color) !important;
+  color: var(--text-primary) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+#editCommentModal .form-control:focus {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--accent-color-light) !important;
+  box-shadow: 0 0 0 0.25rem rgba(29, 125, 163, 0.25) !important;
+  color: var(--text-primary) !important;
+}
+
+#editCommentModal .form-control::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Buttons */
+#editCommentModal .btn-primary {
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+  color: var(--text-primary) !important;
+  transition: all 0.2s ease !important;
+}
+
+#editCommentModal .btn-primary:hover,
+#editCommentModal .btn-primary:focus {
+  background-color: var(--accent-color-light) !important;
+  border-color: var(--accent-color-light) !important;
+}
+
+#editCommentModal .btn-secondary {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--text-muted) !important;
+  color: var(--text-primary) !important;
+}
+
+#editCommentModal .btn-secondary:hover,
+#editCommentModal .btn-secondary:focus {
+  background-color: var(--text-muted) !important;
+  border-color: var(--text-muted) !important;
+}
+
+/* Close Button */
+#editCommentModal .btn-close-white {
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.75 !important;
+}
+
+#editCommentModal .btn-close-white:hover {
+  opacity: 1 !important;
+}
+
+/* Disabled State */
+#editCommentModal .form-control:disabled {
+  background-color: var(--bg-primary) !important;
+  opacity: 0.75 !important;
+}
+
+/* Scrollbar Styling */
+#editCommentModal textarea::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+#editCommentModal textarea::-webkit-scrollbar-track {
+  background: var(--bg-primary) !important;
+}
+
+#editCommentModal textarea::-webkit-scrollbar-thumb {
+  background: var(--accent-color) !important;
+  border-radius: 4px !important;
+}
+
+#editCommentModal textarea::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color-light) !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+  #editCommentModal .modal-dialog {
+    margin: 0.5rem !important;
+  }
+
+  #editCommentModal .modal-content {
+    border-radius: 0.5rem !important;
+  }
+}

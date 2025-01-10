@@ -77,17 +77,22 @@ class CommentsManager {
     this.paginationControls = document.getElementById("paginationControls");
     this.commentsHeader = document.getElementById("comment-header");
 
+    const editModalElement = document.getElementById("editCommentModal");
+
     if (
       !this.form ||
       !this.input ||
       !this.submitBtn ||
       !this.commentsList ||
       !this.paginationControls ||
-      !this.commentsHeader
+      !this.commentsHeader ||
+      !editModalElement
     ) {
       console.error("[Debug] Required comment elements not found!");
       return false;
     }
+
+    this.editModal = new bootstrap.Modal(editModalElement);
 
     // Initialize input state
     this.input.disabled = !this.checkLoginStatus();
@@ -197,7 +202,7 @@ class CommentsManager {
       if (!response.ok) throw new Error("Failed to fetch comments");
 
       const data = await response.json();
-      this.comments = Array.isArray(data) ? data : [];
+      this.comments = data;
 
       this.renderComments();
     } catch (error) {
@@ -238,11 +243,14 @@ class CommentsManager {
         return;
       }
 
+      // Calculate pagination but maintain original order
       const startIndex = (this.currentPage - 1) * this.commentsPerPage;
       const endIndex = startIndex + this.commentsPerPage;
       const commentsToShow = this.comments.slice(startIndex, endIndex);
 
-      commentsToShow.forEach((comment) => this.renderCommentItem(comment));
+      for (let i = 0; i < commentsToShow.length; i++) {
+        this.renderCommentItem(commentsToShow[i]);
+      }
 
       // Only show pagination if there are enough comments
       const totalPages = Math.ceil(this.comments.length / this.commentsPerPage);
@@ -568,8 +576,10 @@ class CommentsManager {
 
       if (!response.ok) throw new Error("Failed to delete comment");
 
-      await this.loadComments();
       toastr.success("Comment deleted successfully");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000); // Wait for toastr to show before refresh
     } catch (error) {
       console.error("Error deleting comment:", error);
       toastr.error("Failed to delete comment. Please try again.");
@@ -577,16 +587,37 @@ class CommentsManager {
   }
 
   editComment(comment) {
+    if (!this.editModal) {
+      console.error("[Debug] Edit modal not initialized");
+      return;
+    }
+
+    const editCommentText = document.getElementById("editCommentText");
+    if (!editCommentText) {
+      console.error("[Debug] Edit comment text area not found");
+      return;
+    }
+
     this.currentEditingComment = comment;
-    document.getElementById("editCommentText").value = comment.content;
+    editCommentText.value = comment.content;
     this.editModal.show();
   }
 
   async saveEditedComment() {
     if (!this.currentEditingComment) return;
+    if (!this.editModal) {
+      console.error("[Debug] Edit modal not initialized");
+      return;
+    }
 
     const token = getCookie("token");
     if (!token) return;
+
+    const editCommentText = document.getElementById("editCommentText");
+    if (!editCommentText) {
+      console.error("[Debug] Edit comment text area not found");
+      return;
+    }
 
     const newContent = document.getElementById("editCommentText").value.trim();
     if (!newContent) return;
@@ -611,8 +642,10 @@ class CommentsManager {
       if (!response.ok) throw new Error("Failed to edit comment");
 
       this.editModal.hide();
-      await this.loadComments();
       toastr.success("Comment edited successfully");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000); // Wait for toastr to show before refresh
     } catch (error) {
       console.error("Error editing comment:", error);
       toastr.error("Failed to edit comment. Please try again.");
