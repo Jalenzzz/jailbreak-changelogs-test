@@ -615,9 +615,7 @@ class CommentsManager {
       if (!response.ok) throw new Error("Failed to delete comment");
 
       toastr.success("Comment deleted successfully");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000); // Wait for toastr to show before refresh
+      await this.loadComments();
     } catch (error) {
       console.error("Error deleting comment:", error);
       toastr.error("Failed to delete comment. Please try again.");
@@ -681,9 +679,7 @@ class CommentsManager {
 
       this.editModal.hide();
       toastr.success("Comment edited successfully");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000); // Wait for toastr to show before refresh
+      await this.loadComments();
     } catch (error) {
       console.error("Error editing comment:", error);
       toastr.error("Failed to edit comment. Please try again.");

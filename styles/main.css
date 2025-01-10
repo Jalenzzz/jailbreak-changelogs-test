@@ -299,100 +299,79 @@
   color: var(--jb-footer-text-primary);
 }
 .jbcl-announcement-banner {
-  background: linear-gradient(90deg, #212a31, #124e66);
-  padding: 0.75rem 0;
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  transition: height 0.3s ease-out;
-  display: none; /* Hidden by default */
+  background: linear-gradient(90deg, #212a31, #124e66) !important;
+  padding: 0.75rem 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  transition: height 0.3s ease-out !important;
+  display: block !important; /* Hidden by default */
 }
 
 .jbcl-announcement-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  gap: 1rem;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  gap: 1rem !important;
 }
 
 .jbcl-announcement-close {
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  padding: 0.25rem;
-  font-size: 1.25rem;
-  line-height: 1;
-  transition: color 0.2s ease;
-  display: flex;
-  align-items: center;
+  background: transparent !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  cursor: pointer !important;
+  padding: 0.25rem !important;
+  font-size: 1.25rem !important;
+  line-height: 1 !important;
+  transition: color 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .jbcl-announcement-close:hover {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
-/* Update existing announcement styles */
 .jbcl-announcement-text {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #ffffff;
-  font-size: 0.95rem;
-  text-align: center;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  color: #ffffff !important;
+  font-size: 0.95rem !important;
+  text-align: center !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
 }
 
 .jbcl-announcement-icon {
-  color: #ffd700;
-  display: inline-flex;
-  align-items: center;
-  animation: pulse 2s infinite;
+  color: #ffd700 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  animation: pulse 2s infinite !important;
 }
 
 .jbcl-announcement-highlight {
-  font-weight: 600;
-  color: #ffd700;
+  font-weight: 600 !important;
+  color: #ffd700 !important;
 }
 
 .jbcl-announcement-message {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .jbcl-announcement-link {
-  color: #5ea2ff;
-  text-decoration: none;
-  position: relative;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  margin: 0 0.25rem;
+  color: #5ea2ff !important;
+  text-decoration: none !important;
+  position: relative !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+  margin: 0 0.25rem !important;
 }
 
 .jbcl-announcement-link:hover {
-  color: #90c1ff;
-}
-
-.jbcl-announcement-link::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 1px;
-  bottom: -1px;
-  left: 0;
-  background-color: currentColor;
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.jbcl-announcement-link:hover::after {
-  transform: scaleX(1);
-}
-
-.jbcl-announcement-cta {
-  color: rgba(255, 255, 255, 0.8);
+  color: #90c1ff !important;
 }
 
 @keyframes pulse {
@@ -730,23 +709,23 @@ body.menu-open {
     gap: var(--jb-footer-spacing-sm);
   }
   .jbcl-announcement-banner {
-    padding: 0.75rem;
+    padding: 0.75rem !important;
   }
 
   .jbcl-announcement-content {
-    flex-direction: row;
-    padding: 0 1rem;
+    flex-direction: row !important;
+    padding: 0 1rem !important;
   }
 
   .jbcl-announcement-text {
-    font-size: 0.875rem;
-    gap: 0.35rem;
+    font-size: 0.875rem !important;
+    gap: 0.35rem !important;
   }
 
   .jbcl-announcement-close {
-    position: relative;
-    padding: 0.5rem;
-    margin-left: auto;
+    position: relative !important;
+    padding: 0.5rem !important;
+    margin-left: auto !important;
   }
 }
 
@@ -761,10 +740,10 @@ body.menu-open {
     height: 27px; /* Adjusted height for extra small screens */
   }
   .jbcl-announcement-banner {
-    padding: 0.625rem;
+    padding: 0.625rem !important;
   }
 
   .jbcl-announcement-text {
-    font-size: 0.8125rem;
+    font-size: 0.8125rem !important;
   }
 }
