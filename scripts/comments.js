@@ -200,7 +200,6 @@ class CommentsManager {
       );
 
       // Handle 404 (no comments) separately
-      // In loadComments method, update the 404 handler:
       if (response.status === 404) {
         this.commentsList.innerHTML = `
           <li class="list-group-item text-center" style="background-color: #212a31;">
@@ -225,50 +224,71 @@ class CommentsManager {
       this.renderComments();
     } catch (error) {
       console.error("[CommentsManager] Error loading comments:", error);
-      this.commentsList.innerHTML = `
-        <li class="list-group-item text-center text-danger">
-          <i class="bi bi-exclamation-circle me-2"></i>
-          Failed to load comments. Please try again.
-        </li>
-      `;
-      if (!error.message.includes("404")) {
-        toastr.error("Failed to load comments. Please try again.");
+
+      if (error.message === "rate_limit" || response?.status === 429) {
+        this.commentsList.innerHTML = `
+          <li class="list-group-item text-center text-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            You're being rate limited. Please wait a moment before trying again.
+          </li>
+        `;
+        toastr.warning(
+          "You're being rate limited. Please wait a moment before trying again.",
+          "Rate Limit",
+          {
+            timeOut: 5000,
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-bottom-right",
+          }
+        );
+      } else {
+        this.commentsList.innerHTML = `
+          <li class="list-group-item text-center text-danger">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            Failed to load comments. Please try again.
+          </li>
+        `;
+        if (!error.message.includes("404")) {
+          toastr.error("Failed to load comments. Please try again.");
+        }
       }
     } finally {
       this._isLoading = false;
     }
   }
+
   renderComments() {
     if (this._renderTimeout) {
       clearTimeout(this._renderTimeout);
     }
 
-    this._renderTimeout = setTimeout(() => {
+    this._renderTimeout = setTimeout(async () => {
+      // Make this an async function
       this.commentsList.innerHTML = "";
 
       if (this.comments.length === 0) {
         this.commentsList.innerHTML = `
-          <li class="list-group-item text-center" style="background-color: #212a31;">
-            <div class="py-3">
-              <i class="bi bi-chat-left-dots mb-2" style="font-size: 1.5rem; color: #6c757d;"></i>
-              <p class="mb-0 text-muted">No comments yet</p>
-              <p class="small text-muted mb-0">Be the first to share your thoughts!</p>
-            </div>
-          </li>
-        `;
-        // Hide pagination when there are no comments
+                <li class="list-group-item text-center" style="background-color: #212a31;">
+                    <div class="py-3">
+                        <i class="bi bi-chat-left-dots mb-2" style="font-size: 1.5rem; color: #6c757d;"></i>
+                        <p class="mb-0 text-muted">No comments yet</p>
+                        <p class="small text-muted mb-0">Be the first to share your thoughts!</p>
+                    </div>
+                </li>
+            `;
         this.paginationControls.style.display = "none";
         return;
       }
 
-      // Calculate pagination but maintain original order
       const startIndex = (this.currentPage - 1) * this.commentsPerPage;
       const endIndex = startIndex + this.commentsPerPage;
       const commentsToShow = this.comments.slice(startIndex, endIndex);
 
-      for (let i = 0; i < commentsToShow.length; i++) {
-        this.renderCommentItem(commentsToShow[i]);
-      }
+      // Wait for all comments to render
+      await Promise.all(
+        commentsToShow.map((comment) => this.renderCommentItem(comment))
+      );
 
       // Only show pagination if there are enough comments
       const totalPages = Math.ceil(this.comments.length / this.commentsPerPage);
@@ -278,7 +298,7 @@ class CommentsManager {
       } else {
         this.paginationControls.style.display = "none";
       }
-    }, 50); // Small delay to prevent multiple renders
+    }, 50);
   }
 
   async renderCommentItem(comment) {
@@ -473,7 +493,6 @@ class CommentsManager {
     this.currentPage = newPage;
     this.renderComments();
   }
-
   setupCommentActions(commentElement, comment) {
     const toggleBtn = commentElement.querySelector(".comment-actions-toggle");
     const menu = commentElement.querySelector(".comment-actions-menu");
@@ -488,11 +507,24 @@ class CommentsManager {
       return;
     }
 
+    // Close all other menus when clicking a toggle button
     toggleBtn.addEventListener("click", (e) => {
       e.stopPropagation();
+
+      // First close all other menus
+      document
+        .querySelectorAll(".comment-actions-menu")
+        .forEach((otherMenu) => {
+          if (otherMenu !== menu) {
+            otherMenu.classList.add("d-none");
+          }
+        });
+
+      // Then toggle this menu
       menu.classList.toggle("d-none");
     });
 
+    // Close menu when clicking anywhere else
     document.addEventListener("click", () => {
       menu.classList.add("d-none");
     });
@@ -566,7 +598,10 @@ class CommentsManager {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to post comment");
+        if (response.status === 429) {
+          throw new Error("rate_limit");
+        }
+        throw new Error("Failed to submit comment");
       }
 
       this.input.value = "";
@@ -574,7 +609,21 @@ class CommentsManager {
       toastr.success("Comment added successfully");
     } catch (error) {
       console.error("[Debug] Error in submitComment:", error);
-      toastr.error("Failed to post comment. Please try again.");
+
+      if (error.message === "rate_limit" || error.response?.status === 429) {
+        toastr.warning(
+          "You're being rate limited. Please wait a moment before trying again.",
+          "Rate Limit",
+          {
+            timeOut: 5000,
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-bottom-right",
+          }
+        );
+      } else {
+        toastr.error("Failed to post comment. Please try again.");
+      }
     }
   }
 
