@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     for (const follower of followers) {
       try {
         const response = await fetch(
-          `https://api.jailbreakchangelogs.xyz/users/get?id=${follower.following_id}`
+          `https://api3.jailbreakchangelogs.xyz/users/get?id=${follower.following_id}`
         );
         const user = await response.json();
         const avatarUrl = await getAvatarUrl(user);

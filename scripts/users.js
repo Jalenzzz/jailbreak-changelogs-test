@@ -1355,7 +1355,6 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Remove this success toast since it's handled in the click handler
       await updateUserCounts(userId);
       return true;
     } catch (error) {
