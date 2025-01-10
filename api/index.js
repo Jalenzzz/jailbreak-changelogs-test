@@ -89,9 +89,9 @@ app.get("/owner/check/:user", (req, res) => {
 
 app.get("/changelogs/:changelog", async (req, res) => {
   let changelogId = req.params.changelog || 1;
-  const apiUrl = `https://api3.jailbreakchangelogs.xyz/changelogs/get?id=${changelogId}`;
 
   try {
+    // Only fetch the latest changelog data
     const latestResponse = await fetch(
       "https://api3.jailbreakchangelogs.xyz/changelogs/latest",
       {
@@ -109,47 +109,30 @@ app.get("/changelogs/:changelog", async (req, res) => {
     const latestData = await latestResponse.json();
     const latestId = latestData.id;
 
-    // Fetch the requested changelog
-    const response = await fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: "https://jailbreakchangelogs.xyz",
-      },
-    });
-
-    if (response.status === 404) {
+    // If no changelog ID is provided or invalid, redirect to latest
+    if (!changelogId || changelogId > latestId) {
       return res.redirect(`/changelogs/${latestId}`);
     }
 
-    if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}`);
-    }
-
-    const data = await response.json();
-    const { title, image_url } = data;
-
-    // Include additional SEO metadata
+    // Prepare response data
     const responseData = {
-      title,
-      image_url,
+      changelogId, // Pass the requested changelog ID to client
+      latestId, // Pass latest ID for comparison
+      title: latestData.title,
+      image_url: latestData.image_url,
       logoUrl: "/assets/logos/Changelogs_Logo.webp",
       logoAlt: "Changelogs Page Logo",
-      changelogId,
       embed_color: 0x134d64,
       isLatest: changelogId === latestId,
       canonicalUrl: "https://testing.jailbreakchangelogs.xyz/changelogs",
-      metaDescription: `View detailed changelog information for Jailbreak update ${title}. Track new features, vehicles, and game improvements.`,
-      isLatest: changelogId === latestId,
-      canonicalUrl: "https://testing.jailbreakchangelogs.xyz/changelogs",
-      metaDescription: `View detailed changelog information for Jailbreak update ${title}. Track new features, vehicles, and game improvements.`,
+      metaDescription: `View detailed changelog information for Jailbreak update ${latestData.title}. Track new features, vehicles, and game improvements.`,
       MIN_TITLE_LENGTH,
       MIN_DESCRIPTION_LENGTH,
       type: "changelog",
       itemId: changelogId,
     };
 
-    // Handle different response types
+    // Handle Discord bot requests differently
     if (
       req.headers["user-agent"]?.includes("DiscordBot") ||
       req.query.format === "discord"
