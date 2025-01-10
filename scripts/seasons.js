@@ -13,131 +13,6 @@ $(document).ready(function () {
     return "#D3D9D4"; // Default color
   }
 
-  function updateCountdown() {
-    if (!latestSeason) return; // Exit if latestSeason is not available
-
-    const countdownElement = document.querySelector(".countdown-timer");
-    const seasonNumberElement = document.getElementById("season-number");
-    const seasonTitleElement = document.getElementById("season-title");
-    const countdownModeElement = document.getElementById("countdown-mode"); // For dynamic "starts in" or "ends in"
-
-    // Update season number and title
-    seasonNumberElement.textContent = latestSeason.season;
-    seasonTitleElement.textContent = latestSeason.title;
-
-    const now = new Date();
-    let endDateTimestamp = latestSeason.end_date;
-
-    if (!latestSeason.end_date && !latestSeason.start_date) {
-      // Neither start nor end date available
-      countdownElement.innerHTML =
-        '<div class="season-ended">Date: Not Available</div>';
-      return;
-    }
-
-    if (!latestSeason.end_date) {
-      // If end_date is null (i.e., it was "N/A" or not provided)
-      countdownElement.innerHTML =
-        '<div class="season-ended">End Date: Not Available</div>';
-      return;
-    }
-
-    if (latestSeason.start_date && !latestSeason.end_date) {
-      // If only start date is available
-      countdownModeElement.textContent = "starts in:";
-      const startDate = new Date(latestSeason.start_date * 1000); // Convert UNIX timestamp to milliseconds
-      const diff = startDate - now;
-
-      if (diff > 0) {
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-          (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        const countdownColor = getCountdownColor(days);
-
-        countdownElement.innerHTML = `
-        <div class="countdown-item">
-          <span id="countdown-days" style="color: ${countdownColor}">${days
-          .toString()
-          .padStart(2, "0")}</span>
-          <span class="countdown-label">Days</span>
-        </div>
-        <div class="countdown-item">
-          <span id="countdown-hours" style="color: ${countdownColor}">${hours
-          .toString()
-          .padStart(2, "0")}</span>
-          <span class="countdown-label">Hours</span>
-        </div>
-        <div class="countdown-item">
-          <span id="countdown-minutes" style="color: ${countdownColor}">${minutes
-          .toString()
-          .padStart(2, "0")}</span>
-          <span class="countdown-label">Minutes</span>
-        </div>
-        <div class="countdown-item">
-          <span id="countdown-seconds" style="color: ${countdownColor}">${seconds
-          .toString()
-          .padStart(2, "0")}</span>
-          <span class="countdown-label">Seconds</span>
-        </div>
-      `;
-      } else {
-        // Season has started
-        countdownElement.innerHTML = `<div class="season-started">Season ${latestSeason.season} / ${latestSeason.title} has started!</div>`;
-      }
-      return;
-    }
-
-    // If end date is available
-    countdownModeElement.textContent = "ends in:";
-    const endDate = new Date(endDateTimestamp); // Convert timestamp to milliseconds
-    const diff = endDate - now;
-
-    if (diff > 0) {
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-      const countdownColor = getCountdownColor(days);
-
-      countdownElement.innerHTML = `
-      <div class="countdown-item">
-        <span id="countdown-days" style="color: ${countdownColor}">${days
-        .toString()
-        .padStart(2, "0")}</span>
-        <span class="countdown-label">Days</span>
-      </div>
-      <div class="countdown-item">
-        <span id="countdown-hours" style="color: ${countdownColor}">${hours
-        .toString()
-        .padStart(2, "0")}</span>
-        <span class="countdown-label">Hours</span>
-      </div>
-      <div class="countdown-item">
-        <span id="countdown-minutes" style="color: ${countdownColor}">${minutes
-        .toString()
-        .padStart(2, "0")}</span>
-        <span class="countdown-label">Minutes</span>
-      </div>
-      <div class="countdown-item">
-        <span id="countdown-seconds" style="color: ${countdownColor}">${seconds
-        .toString()
-        .padStart(2, "0")}</span>
-        <span class="countdown-label">Seconds</span>
-      </div>
-    `;
-    } else {
-      // Season has ended
-      countdownElement.innerHTML = `<div class="season-ended">Season ${latestSeason.season} / ${latestSeason.title} has ended!</div>`;
-    }
-  }
-
   function updateBreadcrumb(season) {
     const seasonBreadcrumb = document.querySelector(".season-breadcrumb");
     if (seasonBreadcrumb) {
@@ -166,8 +41,16 @@ $(document).ready(function () {
   }
 
   function fetchAllSeasons() {
-    return fetch("https://api.jailbreakchangelogs.xyz/seasons/list")
-      .then((response) => response.json())
+    console.log("Fetching all seasons");
+    return fetch("https://api3.jailbreakchangelogs.xyz/seasons/list")
+      .then((response) => {
+        console.log("Seasons API response status:", response.status);
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Seasons data received:", data);
+        return data;
+      })
       .catch((error) => {
         console.error("Error fetching seasons:", error);
         throw error;
@@ -175,8 +58,16 @@ $(document).ready(function () {
   }
 
   function fetchAllRewards() {
+    console.log("Fetching all rewards");
     return fetch("https://api3.jailbreakchangelogs.xyz/rewards/list")
-      .then((response) => response.json())
+      .then((response) => {
+        console.log("Rewards API response status:", response.status);
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Rewards data received:", data);
+        return data;
+      })
       .catch((error) => {
         console.error("Error fetching rewards:", error);
         throw error;
@@ -184,8 +75,10 @@ $(document).ready(function () {
   }
 
   function loadAllData() {
+    console.log("Starting loadAllData function");
+
     const latestSeasonPromise = fetch(
-      "https://api.jailbreakchangelogs.xyz/seasons/latest",
+      "https://api3.jailbreakchangelogs.xyz/seasons/latest",
       {
         headers: {
           "Content-Type": "application/json",
@@ -193,31 +86,59 @@ $(document).ready(function () {
         },
       }
     )
-      .then((response) => response.json())
+      .then((response) => {
+        console.log("Latest season API response status:", response.status);
+        return response.json();
+      })
       .then((latestSeasonData) => {
-        // Convert the end_date to a JavaScript Date object if it's a valid timestamp
-        if (latestSeasonData.end_date && latestSeasonData.end_date !== "N/A") {
-          latestSeasonData.end_date = new Date(
-            latestSeasonData.end_date * 1000
-          ); // Convert Unix timestamp to milliseconds
-        } else {
-          // If end_date is "N/A" or not provided, set it to null
-          latestSeasonData.end_date = null;
+        console.log("Latest season data received:", latestSeasonData);
+        console.log("Start date:", latestSeasonData.start_date);
+        console.log("End date:", latestSeasonData.end_date);
+        console.log("Season:", latestSeasonData.season);
+        console.log("Title:", latestSeasonData.title);
+
+        if (!latestSeasonData.start_date || !latestSeasonData.end_date) {
+          console.error("Missing date information in latest season data");
         }
+
+        if (window.countdownInterval) {
+          console.log("Clearing existing countdown interval");
+          clearInterval(window.countdownInterval);
+        }
+
+        window.countdownInterval = updateCountdown(
+          latestSeasonData.start_date,
+          latestSeasonData.end_date,
+          latestSeasonData.season,
+          latestSeasonData.title
+        );
         return latestSeasonData;
+      })
+      .catch((error) => {
+        console.error("Error fetching latest season:", error);
+        return null;
       });
 
     return Promise.all([
-      fetchAllSeasons(),
-      fetchAllRewards(),
+      fetchAllSeasons().then((seasons) => {
+        console.log("All seasons data received:", seasons);
+        return seasons;
+      }),
+      fetchAllRewards().then((rewards) => {
+        console.log("All rewards data received:", rewards);
+        return rewards;
+      }),
       latestSeasonPromise,
-    ]).then(([seasons, rewards, latest]) => {
-      latestSeason = latest; // Set the latestSeason variable
-      // Start the countdown update
-      updateCountdown();
-      setInterval(updateCountdown, 1000); // Update every second
-      return [seasons, rewards, latest];
-    });
+    ])
+      .then(([seasons, rewards, latest]) => {
+        console.log("All data loaded successfully");
+        latestSeason = latest;
+        return [seasons, rewards, latest];
+      })
+      .catch((error) => {
+        console.error("Error in Promise.all:", error);
+        throw error;
+      });
   }
 
   // Function to populate the season dropdown menu
@@ -247,88 +168,53 @@ $(document).ready(function () {
 
   function displaySeasonDetails(season, seasonData, rewardsData) {
     localStorage.setItem("selectedSeason", season);
-    function format_season_date(startTimestamp, endTimestamp) {
-      const options = {
-        month: "long",
+
+    // Calculate duration and format dates
+    const startDate = new Date(parseInt(seasonData.start_date) * 1000);
+    const endDate = new Date(parseInt(seasonData.end_date) * 1000);
+    const durationDays = Math.ceil(
+      (endDate - startDate) / (1000 * 60 * 60 * 24)
+    );
+
+    // Format dates to "Jan 10, 2025" style
+    const formatDate = (date) => {
+      return date.toLocaleDateString("en-US", {
+        month: "short",
         day: "numeric",
         year: "numeric",
-      };
+      });
+    };
 
-      function formatSingleDate(timestamp) {
-        if (
-          timestamp === null ||
-          timestamp === "N/A" ||
-          timestamp === undefined
-        ) {
-          return ""; // Don't display anything if no date is provided
-        }
-        const date = new Date(timestamp * 1000);
-        let formattedDate = date.toLocaleString("en-US", options);
-        const day = date.getDate();
-        const ordinalSuffix = getOrdinalSuffix(day);
-        return formattedDate.replace(day, `${day}${ordinalSuffix}`);
-      }
-
-      const startDate = formatSingleDate(startTimestamp);
-      const endDate = formatSingleDate(endTimestamp);
-
-      return { startDate, endDate };
-    }
-
-    // Helper function to get ordinal suffix (assuming it's defined elsewhere in your code)
-    function getOrdinalSuffix(day) {
-      if (day > 3 && day < 21) return "th";
-      switch (day % 10) {
-        case 1:
-          return "st";
-        case 2:
-          return "nd";
-        case 3:
-          return "rd";
-        default:
-          return "th";
-      }
-    }
+    // Get color based on remaining days
+    const now = new Date();
+    const remainingDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+    const countdownColor = getCountdownColor(remainingDays);
 
     $seasonDetailsContainer.html(`
-      <h2 class="season-title display-4 text-custom-header mb-3">Season ${season} / ${seasonData.title}</h2>
-      <div class="season-description-container">
-        <div class="season-dates mb-3">
-          <p class="mb-1"><strong>Start Date:</strong> ${
-            format_season_date(seasonData.start_date, seasonData.end_date)
-              .startDate
-          }</p>
-          <p class="mb-1"><strong>End Date:</strong> ${
-            format_season_date(seasonData.start_date, seasonData.end_date)
-              .endDate
-          }</p>
-          <p class="mb-1"><strong>Duration:</strong> ${
-            seasonData.start_date &&
-            seasonData.end_date &&
-            seasonData.start_date !== "" &&
-            seasonData.end_date !== "" &&
-            seasonData.start_date !== "N/A" &&
-            seasonData.end_date !== "N/A" &&
-            seasonData.start_date !== null &&
-            seasonData.end_date !== null
-              ? `${Math.ceil(
-                  (seasonData.end_date - seasonData.start_date) / (60 * 60 * 24)
-                )} days`
-              : ""
-          }</p>
+        <h2 class="season-title display-4 text-custom-header mb-3">Season ${season} / ${seasonData.title}</h2>
+        <div class="season-description-container">
+            <div class="season-dates mb-3">
+               <p class="mb-1"><strong>Start Date:</strong> ${formatDate(
+                 startDate
+               )}</p>
+              <p class="mb-1"><strong>End Date:</strong> ${formatDate(
+                endDate
+              )}</p>
+              <p class="mb-1"><strong>Duration:</strong> ${durationDays} days</p>
+
+            </div>
+            <div class="season-description-body text-center"> 
+                ${
+                  seasonData.description
+                    ? `<p class="season-description-text">${seasonData.description}</p>`
+                    : `
+                        <div class="no-description">
+                            <i class="bi bi-info-circle text-muted mb-2" style="font-size: 2rem;"></i>
+                            <p class="text-muted">No description available.</p>
+                        </div>`
+                }
+            </div>
         </div>
-        <div class="season-description-body text-center"> 
-          ${
-            seasonData.description
-              ? `<p class="season-description-text">${seasonData.description}</p>`
-              : `
-              <div class="no-description">
-                <i class="bi bi-info-circle text-muted mb-2" style="font-size: 2rem;"></i>
-                <p class="text-muted">No description available.</p>
-              </div>`
-          }
-        </div>
-      </div>
     `);
 
     // Check if rewardsData is available and not empty
@@ -439,6 +325,106 @@ $(document).ready(function () {
       `);
       $carouselInner.append(carouselItem);
     });
+  }
+  function updateCountdown(startDate, endDate, seasonNumber, seasonTitle) {
+    console.log("Countdown initialized with:", {
+      startDate,
+      endDate,
+      seasonNumber,
+      seasonTitle,
+    });
+
+    const startTimestamp = parseInt(startDate);
+    const endTimestamp = parseInt(endDate);
+
+    console.log("Parsed timestamps:", {
+      startTimestamp,
+      endTimestamp,
+      currentTime: Math.floor(Date.now() / 1000),
+    });
+
+    const $countdownDays = $("#countdown-days");
+    const $countdownHours = $("#countdown-hours");
+    const $countdownMinutes = $("#countdown-minutes");
+    const $countdownSeconds = $("#countdown-seconds");
+    const $countdownMode = $("#countdown-mode");
+    const $seasonNumber = $("#season-number");
+    const $seasonTitle = $("#season-title");
+
+    $seasonNumber.text(seasonNumber);
+    $seasonTitle.text(seasonTitle);
+
+    function calculateTimeRemaining(targetDate) {
+      const now = Math.floor(Date.now() / 1000);
+      const difference = targetDate - now;
+
+      console.log("Time calculation:", {
+        now,
+        targetDate,
+        difference,
+      });
+
+      if (difference <= 0) return null;
+
+      const days = Math.floor(difference / 86400);
+      const hours = Math.floor((difference % 86400) / 3600);
+      const minutes = Math.floor((difference % 3600) / 60);
+      const seconds = Math.floor(difference % 60);
+
+      return { days, hours, minutes, seconds };
+    }
+
+    function updateTimer() {
+      const currentTime = Math.floor(Date.now() / 1000);
+      let timeRemaining;
+
+      // Before season starts
+      if (currentTime < startTimestamp) {
+        timeRemaining = calculateTimeRemaining(startTimestamp);
+        $countdownMode.text("Starts in");
+      }
+      // During season
+      else if (currentTime < endTimestamp) {
+        timeRemaining = calculateTimeRemaining(endTimestamp);
+        $countdownMode.text("Ends in");
+      }
+      // After season ended
+      else {
+        console.log("Season ended condition triggered");
+        $countdownMode.text("Season Ended");
+        $countdownDays.text("00");
+        $countdownHours.text("00");
+        $countdownMinutes.text("00");
+        $countdownSeconds.text("00");
+        return;
+      }
+
+      if (timeRemaining) {
+        const countdownColor = getCountdownColor(timeRemaining.days);
+
+        // Apply the color to the countdown numbers
+        $countdownDays.css("color", countdownColor);
+        $countdownHours.css("color", countdownColor);
+        $countdownMinutes.css("color", countdownColor);
+        $countdownSeconds.css("color", countdownColor);
+
+        // Update the countdown numbers
+        $countdownDays.text(timeRemaining.days.toString().padStart(2, "0"));
+        $countdownHours.text(timeRemaining.hours.toString().padStart(2, "0"));
+        $countdownMinutes.text(
+          timeRemaining.minutes.toString().padStart(2, "0")
+        );
+        $countdownSeconds.text(
+          timeRemaining.seconds.toString().padStart(2, "0")
+        );
+      }
+    }
+
+    // Initial update
+    updateTimer();
+
+    // Update every second
+    return setInterval(updateTimer, 1000);
   }
 
   function loadSeasonDetails(season) {
@@ -604,10 +590,4 @@ $(document).ready(function () {
       )}&bold=true&format=svg`;
     }, 0);
   }
-
-  loadAllData().then(() => {
-    updateCountdown();
-    // Update countdown every second
-    setInterval(updateCountdown, 1000);
-  });
 });
