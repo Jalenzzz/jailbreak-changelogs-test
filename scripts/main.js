@@ -187,147 +187,222 @@ document.addEventListener("DOMContentLoaded", () => {
   let escapePressCount = 0;
   let escapePressTimeout;
 
-  // Function to create and show the modal
+  // secret modal shhhhhhhhhhhhhhhhhhhh
   function showModal() {
-    // Create modal elements
     const modal = document.createElement("div");
     modal.className = "modal fade show";
-    modal.style.display = "inline-block"; // Make the modal visible
-    modal.style.minWidth = "100%"; // Set the width to 100%
-    modal.style.justifyContent = "center"; // Center the modal vertically
-    modal.style.alignItems = "center"; // Center the modal horizontally
+    modal.style.cssText = `
+      display: inline-block !important;
+      min-width: 100% !important;
+      justify-content: center !important;
+      align-items: center !important;
+      background-color: rgba(0, 0, 0, 0.5) !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      z-index: 1050 !important;
+      height: 100vh !important;
+    `;
 
     const modalDialog = document.createElement("div");
     modalDialog.className = "modal-dialog";
+    modalDialog.style.cssText = `
+      margin: 1.75rem auto !important;
+      max-width: 500px !important;
+    `;
 
     const modalContent = document.createElement("div");
-    modalContent.className = "modal-content";
-    modalContent.style.backgroundColor = "#2e3944"; // Darker text color
-    modalContent.style.minWidth = "100%"; // Set the width to 100%
+    modalContent.className = "modal-content bg-dark";
+    modalContent.style.cssText = `
+      background-color: #212529 !important;
+      color: #fff !important;
+      border: 1px solid rgba(255, 255, 255, 0.125) !important;
+    `;
 
     const modalHeader = document.createElement("div");
     modalHeader.className = "modal-header";
+    modalHeader.style.cssText = `
+      border-bottom: 1px solid rgba(255, 255, 255, 0.125) !important;
+      padding: 1rem !important;
+    `;
 
     const modalTitle = document.createElement("h5");
     modalTitle.className = "modal-title";
-    modalTitle.innerText = "Logging in with token";
-    modalTitle.style.color = "#FFFFFF"; // White text color
-    modalTitle.style.fontWeight = "bold"; // Make the title bold
-    modalTitle.style.fontSize = "18px"; // Slightly larger font size
+    modalTitle.innerText = "Login with Token";
+    modalTitle.style.cssText = `
+      color: #fff !important;
+      margin: 0 !important;
+    `;
 
-    modalHeader.appendChild(modalTitle);
-
+    const modalBody = document.createElement("div");
+    modalBody.className = "modal-body";
+    modalBody.style.cssText = `
+      padding: 1rem !important;
+    `;
     const tokenInput = document.createElement("input");
-    tokenInput.type = "text";
+    tokenInput.type = "text"; // Keep as text
+    tokenInput.className = "form-control bg-dark text-light";
     tokenInput.placeholder = "Enter your token";
-    tokenInput.style.width = "60%";
-    tokenInput.style.padding = "12px"; // Slightly more padding
-    tokenInput.style.border = "2px solid #4A90E2"; // Blue border
-    tokenInput.style.borderRadius = "8px";
-    tokenInput.style.fontSize = "16px";
-    tokenInput.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)"; // Subtle shadow
-    tokenInput.style.marginBottom = "15px";
-    tokenInput.style.marginTop = "15px";
-    tokenInput.style.marginLeft = "25px";
-    tokenInput.style.backgroundColor = "#FFFFFF"; // White background
-    tokenInput.style.color = "#333333"; // Dark gray text color
-    tokenInput.style.outline = "none"; // Remove default focus outline
-
-    // Add focus styles
-    tokenInput.addEventListener("focus", function () {
-      this.style.borderColor = "#2E5AAC"; // Darker blue on focus
-      this.style.boxShadow = "0 0 0 3px rgba(74, 144, 226, 0.3)"; // Blue glow effect
-    });
-
-    tokenInput.addEventListener("blur", function () {
-      this.style.borderColor = "#4A90E2"; // Return to original border color
-      this.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)"; // Return to original shadow
-    });
-
-    // Style the placeholder text
-    tokenInput.style.setProperty("::placeholder", "color: #999999"); // Light gray placeholder text
-
-    // Create a new container for the input and buttons
-    const inputButtonContainer = document.createElement("div");
-    inputButtonContainer.style.display = "flex"; // Enable flexbox
-    inputButtonContainer.style.alignItems = "center"; // Center items vertically
-
-    inputButtonContainer.style.margin = "10px 0"; // Margin to separate from modal edges
-
-    // Append token input to the container
-    inputButtonContainer.appendChild(tokenInput);
+    tokenInput.autocomplete = "off"; // Prevent autocomplete
+    tokenInput.spellcheck = false; // Disable spell checking
+    tokenInput.setAttribute("autocorrect", "off"); // Disable autocorrect
+    tokenInput.setAttribute("autocapitalize", "off"); // Disable auto capitalization
+    tokenInput.style.cssText = `
+      background-color: var(--bg-secondary) !important;
+      border: 1px solid rgba(255, 255, 255, 0.125) !important;
+      color: var(--text-primary) !important;
+      padding: 0.5rem 1rem !important;
+      width: 100% !important;
+      margin-bottom: 1rem !important;
+    `;
 
     const modalFooter = document.createElement("div");
     modalFooter.className = "modal-footer";
+    modalFooter.style.cssText = `
+      border-top: 1px solid rgba(255, 255, 255, 0.125) !important;
+      padding: 1rem !important;
+      justify-content: flex-end !important;
+    `;
 
     const loginButton = document.createElement("button");
     loginButton.type = "button";
-    loginButton.className = "btn btn-primary";
+    loginButton.className = "btn"; // Remove btn-primary
     loginButton.innerText = "Login";
-    loginButton.style.marginLeft = "10px"; // Margin to the left of the login button
-    loginButton.style.maxWidth = "15%"; // Full width
+    loginButton.style.cssText = `
+      background-color: var(--accent-color) !important;
+      border-color: var(--accent-color) !important;
+      color: var(--text-primary) !important;
+      margin-left: 0.5rem !important;
+      transition: background-color 0.2s ease-in-out !important;
+    `;
+
+    // Add hover effect
+    loginButton.addEventListener("mouseover", () => {
+      loginButton.style.backgroundColor =
+        "var(--accent-color-light) !important";
+    });
+
+    loginButton.addEventListener("mouseout", () => {
+      loginButton.style.backgroundColor = "var(--accent-color) !important";
+    });
+
+    const closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.className = "btn"; // Remove btn-secondary
+    closeButton.innerText = "Close";
+    closeButton.style.cssText = `
+      background-color: var(--bg-secondary) !important;
+      border-color: var(--bg-secondary) !important;
+      color: var(--text-muted) !important;
+      transition: background-color 0.2s ease-in-out !important;
+    `;
+
+    // Add hover effect
+    closeButton.addEventListener("mouseover", () => {
+      closeButton.style.backgroundColor = "var(--bg-primary) !important";
+    });
+
+    closeButton.addEventListener("mouseout", () => {
+      closeButton.style.backgroundColor = "var(--bg-secondary) !important";
+    });
+
+    // Error message element
+    const errorMessage = document.createElement("div");
+    errorMessage.className = "alert alert-danger d-none";
+    errorMessage.style.cssText = `
+      margin-top: 1rem !important;
+      display: none !important;
+    `;
+
+    // Login button click handler
     loginButton.onclick = () => {
       const token = tokenInput.value;
+      errorMessage.style.display = "none !important";
+      loginButton.disabled = true;
+      loginButton.innerHTML =
+        '<span class="spinner-border spinner-border-sm"></span> Logging in...';
 
       fetch(
         "https://api3.jailbreakchangelogs.xyz/users/get/token?token=" + token
       )
         .then((response) => {
           if (!response.ok) {
-            console.error("Unexpected response status:", response.status);
-            return null;
+            throw new Error(`HTTP error! status: ${response.status}`);
           }
           return response.json();
         })
         .then((userData) => {
-          if (!userData) return;
+          if (!userData) {
+            throw new Error("Invalid token");
+          }
           deleteCookie("token");
-          setCookie("token", token, 7); // Set the token cookie for 7 days
+          setCookie("token", token, 7);
           const avatarURL = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
           sessionStorage.setItem("user", JSON.stringify(userData));
           sessionStorage.setItem("avatar", avatarURL);
           sessionStorage.setItem("userid", userData.id);
-          closeModal(); // Close the modal after successful login
-          window.location.reload(); // Reload the page to reflect the new user data
+          closeModal();
+          window.location.reload();
         })
         .catch((error) => {
           console.error("Error fetching user data:", error);
+          errorMessage.style.display = "block !important";
+          errorMessage.textContent =
+            "Invalid token or network error. Please try again.";
+          loginButton.disabled = false;
+          loginButton.innerText = "Login";
         });
     };
 
-    const footerCloseButton = document.createElement("button");
-    footerCloseButton.type = "button";
-    footerCloseButton.className = "btn btn-secondary";
-    footerCloseButton.innerText = "Close";
-    footerCloseButton.style.marginLeft = "10px"; // Margin to the right of the close button
-    footerCloseButton.style.maxWidth = "15%"; // Full width
-    footerCloseButton.onclick = closeModal; // Close the modal on click
+    // Close button click handler
+    closeButton.onclick = closeModal;
 
-    // Append buttons to the input/button container
-    inputButtonContainer.appendChild(loginButton);
-    inputButtonContainer.appendChild(footerCloseButton);
+    // Append elements
+    modalHeader.appendChild(modalTitle);
+    modalBody.appendChild(tokenInput);
+    modalBody.appendChild(errorMessage);
+    modalFooter.appendChild(closeButton);
+    modalFooter.appendChild(loginButton);
 
     modalContent.appendChild(modalHeader);
-    modalContent.appendChild(inputButtonContainer); // Append the input/button container
-
+    modalContent.appendChild(modalBody);
+    modalContent.appendChild(modalFooter);
     modalDialog.appendChild(modalContent);
     modal.appendChild(modalDialog);
 
-    // Append modal to body
+    // Add backdrop
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop fade show";
+    backdrop.style.cssText = `
+      opacity: 0.5 !important;
+      background-color: #000 !important;
+    `;
+
+    // Append modal and backdrop to body
+    document.body.appendChild(backdrop);
     document.body.appendChild(modal);
+
+    // Focus input
+    setTimeout(() => tokenInput.focus(), 100);
+
+    // Add escape key handler
+    const handleEscape = (e) => {
+      if (e.key === "Escape") {
+        closeModal();
+        document.removeEventListener("keydown", handleEscape);
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
   }
 
-  // Function to close the modal
   function closeModal() {
     const modal = document.querySelector(".modal");
-    const modalBackdrop = document.querySelector(".modal-backdrop");
+    const backdrop = document.querySelector(".modal-backdrop");
 
-    if (modal) {
-      modal.remove(); // Remove modal
-    }
-    if (modalBackdrop) {
-      modalBackdrop.remove(); // Remove backdrop
-    }
+    if (modal) modal.remove();
+    if (backdrop) backdrop.remove();
+
+    document.body.style.overflow = "auto";
   }
 
   // Event listener for keydown
