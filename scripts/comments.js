@@ -408,7 +408,6 @@ class CommentsManager {
               ${this.currentPage === 1 ? "disabled" : ""}>
         <i class="bi bi-chevron-left"></i>
       </button>
-      <span class="mx-2">Page ${this.currentPage} of ${totalPages}</span>
       <button class="btn btn-sm btn-primary pagination-btn ms-2" 
               ${this.currentPage === totalPages ? "disabled" : ""}>
         <i class="bi bi-chevron-right"></i>

@@ -7,9 +7,21 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2) !important;
   border: 1px solid var(--accent-color) !important;
 }
+/* Center pagination controls */
+#paginationControls {
+  justify-content: center !important;
+  margin-top: 1rem !important;
+}
 
+/* Adjust spacing between pagination buttons */
+.pagination-btn {
+  margin: 0 0.5rem !important;
+}
 .comment-header {
+  text-align: center !important;
   color: var(--text-primary) !important;
+  padding-bottom: 1rem !important;
+  border-bottom: 2px solid var(--accent-color) !important;
   margin-bottom: 1.5rem !important;
   font-family: "Luckiest Guy", cursive !important;
   font-size: 1.75rem !important;

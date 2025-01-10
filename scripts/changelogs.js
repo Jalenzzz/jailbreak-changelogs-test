@@ -1291,39 +1291,6 @@ $(document).ready(function () {
     }
   }
 
-  // Add state tracking for pagination
-  const PaginationState = {
-    currentPage: 1,
-    itemsPerPage: 7,
-    totalPages: 0,
-  };
-
-  // Switch statement for pagination actions
-  function handlePaginationAction(action) {
-    switch (action) {
-      case "next":
-        if (PaginationState.currentPage < PaginationState.totalPages) {
-          PaginationState.currentPage++;
-          return true;
-        }
-        return false;
-      case "prev":
-        if (PaginationState.currentPage > 1) {
-          PaginationState.currentPage--;
-          return true;
-        }
-        return false;
-      case "first":
-        PaginationState.currentPage = 1;
-        return true;
-      case "last":
-        PaginationState.currentPage = PaginationState.totalPages;
-        return true;
-      default:
-        return false;
-    }
-  }
-
   // Function to update quick stats
   function updateQuickStats(data) {
     if (Array.isArray(data) && data.length > 0) {
