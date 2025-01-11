@@ -519,14 +519,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="col-12">
           <div class="card chart-container">
             <div class="card-header text-center">
-              <h3 class="card-title" style="font-weight: revert; font-family: 'Luckiest Guy', cursive;">Value History for ${item.name}</h3>
+              <h3 class="card-title" style="font-weight: revert; font-family: 'Luckiest Guy', cursive;">
+                Value History for ${item.name}
+              </h3>
             </div>
             <div class="card-body" style="padding: 20px;">
-              <canvas id="combinedChart" style="height: 450px;">
-                <!-- Combined graph will be inserted here -->
-              </canvas>
+              <div style="width: 100%; height: auto;">
+                <canvas id="combinedChart" style="width: 100%; height: 450px;">
+                  <!-- Combined graph will be inserted here -->
+                </canvas>
+              </div>
             </div>
-          </div>
         </div>
       </div>`
       : `
