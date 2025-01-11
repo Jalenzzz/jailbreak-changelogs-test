@@ -2,6 +2,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   const rawItemName = window.location.pathname.split("/").pop();
   const itemName = decodeURIComponent(rawItemName).trim().replace(/\s+/g, " "); // Get the item name from the URL
 
+
+  function formatChartValue(value) {
+    // Return "-" if value is null, undefined, or empty string
+    if (value === null || value === undefined || value === "") {
+      return 0;
+    }
+    // Convert string values like "7.5m" or "75k" to numbers
+    let numericValue = value;
+    if (typeof value === "string") {
+      value = value.toLowerCase();
+      if (value.endsWith("m")) {
+        numericValue = parseFloat(value) * 1000000;
+      } else if (value.endsWith("k")) {
+        numericValue = parseFloat(value) * 1000;
+      } else {
+        numericValue = parseFloat(value);
+      }
+    }
+    // Return "-" if conversion resulted in NaN
+    if (isNaN(numericValue)) {
+      return 0;
+    }
+    // Return the number with commas
+    return numericValue;
+  }
+  
   async function loadItemDetails() {
     try {
       const urlPath = window.location.pathname.split("/");
@@ -34,6 +60,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       showErrorMessage("Error Loading item details");
     }
   }
+
+
 
   function formatValue(value) {
     // Return "-" if value is null, undefined, or empty string
@@ -601,145 +629,144 @@ document.addEventListener("DOMContentLoaded", async () => {
       setTimeout(() => {
         const ctx = document.getElementById("combinedChart")?.getContext("2d");
         if (!ctx) return;
-
-        // Generate dummy data
+    
         const dates = [];
         const values = [];
-        const trades = [];
-        const baseValue = Math.floor(Math.random() * 1000000) + 500000;
-
-        for (let i = 30; i >= 0; i--) {
-          const date = new Date();
-          date.setDate(date.getDate() - i);
-          dates.push(
-            date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
-          );
-
-          // Generate random value fluctuations
-          const randomChange = Math.floor(Math.random() * 50000) - 25000;
-          values.push(baseValue + randomChange);
-
-          // Generate random trade volume
-          trades.push(Math.floor(Math.random() * 50));
-        }
-
-        new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: dates,
-            datasets: [
-              {
-                label: "Cash Value",
-                data: values,
-                borderColor: "rgb(24, 101, 131)",
-                backgroundColor: "rgba(24, 101, 131, 0.1)",
-                tension: 0.4,
-                fill: true,
-                borderWidth: 2,
+        const duped_values = [];
+        fetch(`https://api3.jailbreakchangelogs.xyz/item/history?id=${item.id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            for (const item of data) {
+              const date = formatChartDate(item.date);
+              dates.push(date);
+              const value = formatChartValue(item.cash_value);
+              values.push(value);
+              const duped_value = formatChartValue(item.duped_value);
+              duped_values.push(duped_value);
+            }
+            // Initialize the chart after data is ready
+            new Chart(ctx, {
+              type: "line",
+              data: {
+                labels: dates,
+                datasets: [
+                  {
+                    label: "Cash Value",
+                    data: values,
+                    borderColor: "rgb(24, 101, 131)",
+                    backgroundColor: "rgba(24, 101, 131, 0.1)",
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 2,
+                  },
+                  {
+                    label: "Duped Value",
+                    data: duped_values,
+                    borderColor: "#748D92",
+                    backgroundColor: "rgba(116, 141, 146, 0.1)",
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 2,
+                  },
+                ],
               },
-              {
-                label: "Duped Value",
-                data: values.map((v) => v * 0.6),
-                borderColor: "#748D92",
-                backgroundColor: "rgba(116, 141, 146, 0.1)",
-                tension: 0.4,
-                fill: true,
-                borderWidth: 2,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-              mode: "index",
-              intersect: false,
-            },
-            plugins: {
-              legend: {
-                labels: {
-                  color: "#D3D9D4",
-                  usePointStyle: true,
-                  padding: 20,
-                  font: {
-                    size: 12,
-                    weight: "bold",
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                  mode: "index",
+                  intersect: false,
+                },
+                plugins: {
+                  legend: {
+                    labels: {
+                      color: "#D3D9D4",
+                      usePointStyle: true,
+                      padding: 20,
+                      font: {
+                        size: 12,
+                        weight: "bold",
+                      },
+                    },
+                  },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    type: "linear",
+                    display: true,
+                    title: {
+                      display: true,
+                      text: "Value",
+                      color: "#D3D9D4",
+                      font: {
+                        size: 14,
+                        weight: "bold",
+                      },
+                    },
+                    grid: {
+                      color: "rgba(46, 57, 68, 0.1)",
+                      borderColor: "#2E3944",
+                      tickColor: "#2E3944",
+                      lineWidth: 1,
+                      borderDash: [5, 5],
+                      drawBorder: true,
+                      drawTicks: true,
+                    },
+                    ticks: {
+                      color: "#D3D9D4",
+                      padding: 10,
+                      callback: function (value) {
+                        return value.toLocaleString();
+                      },
+                    },
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: "Date",
+                      color: "#D3D9D4",
+                      font: {
+                        size: 14,
+                        weight: "bold",
+                      },
+                    },
+                    grid: {
+                      color: "rgba(46, 57, 68, 0.1)",
+                      borderColor: "#2E3944",
+                      tickColor: "#2E3944",
+                      display: true,
+                      lineWidth: 1,
+                      borderDash: [5, 5],
+                      drawBorder: true,
+                      drawTicks: true,
+                    },
+                    ticks: {
+                      color: "#D3D9D4",
+                      padding: 10,
+                      font: {
+                        size: 11,
+                      },
+                    },
+                  },
+                },
+                layout: {
+                  padding: {
+                    left: 10,
+                    right: 10,
+                    top: 10,
+                    bottom: 10,
                   },
                 },
               },
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                type: "linear",
-                display: true,
-                title: {
-                  display: true,
-                  text: "Value",
-                  color: "#D3D9D4",
-                  font: {
-                    size: 14,
-                    weight: "bold",
-                  },
-                },
-                grid: {
-                  color: "rgba(46, 57, 68, 0.1)",
-                  borderColor: "#2E3944",
-                  tickColor: "#2E3944",
-                  lineWidth: 1,
-                  borderDash: [5, 5],
-                  drawBorder: true,
-                  drawTicks: true,
-                },
-                ticks: {
-                  color: "#D3D9D4",
-                  padding: 10,
-                  callback: function (value) {
-                    return value.toLocaleString();
-                  },
-                },
-              },
-              x: {
-                title: {
-                  display: true,
-                  text: "Date",
-                  color: "#D3D9D4", // Light grayish-green for axis title
-                  font: {
-                    size: 14,
-                    weight: "bold",
-                  },
-                },
-                grid: {
-                  color: "rgba(46, 57, 68, 0.1)", // Dark grayish-blue with opacity for grid
-                  borderColor: "#2E3944",
-                  tickColor: "#2E3944",
-                  display: true,
-                  lineWidth: 1,
-                  borderDash: [5, 5],
-                  drawBorder: true,
-                  drawTicks: true,
-                },
-                ticks: {
-                  color: "#D3D9D4", // Light grayish-green for tick labels
-                  padding: 10,
-                  font: {
-                    size: 11,
-                  },
-                },
-              },
-            },
-            layout: {
-              padding: {
-                left: 10,
-                right: 10,
-                top: 10,
-                bottom: 10,
-              },
-            },
-          },
-        });
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+          });
       }, 100);
     }
+    
 
     // After the container HTML is set, add resize observer
     setTimeout(() => {
@@ -809,6 +836,15 @@ function formatDate(timestamp) {
     month: "short",
     day: "numeric",
     year: "numeric",
+  });
+}
+
+function formatChartDate(timestamp) {
+  // Convert Unix timestamp to milliseconds and create a Date object
+  const date = new Date(timestamp * 1000);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
   });
 }
 
