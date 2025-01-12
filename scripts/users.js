@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
     "recent-comments-button"
   );
 
-  const input = document.getElementById("bannerInput");
   const loggedinuserId = sessionStorage.getItem("userid");
   const userId = pathSegments[pathSegments.length - 1];
   const card_pagination = document.getElementById("card-pagination");
@@ -47,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
   );
   const use_discord_banner_button = document.getElementById("usediscordBanner");
   const bannerInput = document.getElementById("input-for-banner");
+  const input = document.getElementById("bannerInput");
   const save_settings_button = document.getElementById("settings-submit");
   const save_settings_loading = document.getElementById("settings-loading");
 
@@ -175,7 +175,26 @@ document.addEventListener("DOMContentLoaded", function () {
       if (button === use_discord_banner_button) {
         bannerInput.style.display = isCurrentlyEnabled ? "block" : "none";
         if (isCurrentlyEnabled) {
-          bannerInput.value = banner || "";
+          // When switching to custom banner, fetch and show the current custom banner URL
+          fetch(
+            `https://api3.jailbreakchangelogs.xyz/users/background/get?user=${loggedinuserId}`
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              if (
+                data.image_url &&
+                !data.image_url.includes("/assets/backgrounds/background") &&
+                data.image_url !== "NONE"
+              ) {
+                bannerInput.value = data.image_url;
+              } else {
+                bannerInput.value = "";
+              }
+            })
+            .catch((error) => {
+              console.error("Error fetching custom banner:", error);
+              bannerInput.value = "";
+            });
         }
       }
     });
@@ -240,19 +259,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Update banner if custom banner is enabled
       if (!settingsBody.banner_discord) {
-        const image = bannerInput.value.trim() || "NONE";
-        const bannerUrl = `https://api3.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=${encodeURIComponent(
-          image
-        )}`;
+        const image = document.getElementById("bannerInput").value.trim();
 
-        const bannerResponse = await fetch(bannerUrl, {
-          method: "POST",
-        });
+        // Only update custom banner if there's actually a value
+        if (image && image !== "") {
+          const bannerUrl = `https://api3.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=${encodeURIComponent(
+            image
+          )}`;
 
-        if (!bannerResponse.ok) {
-          throw new Error(
-            `Banner update failed! status: ${bannerResponse.status}`
-          );
+          const bannerResponse = await fetch(bannerUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Cache-Control": "no-cache, no-store, must-revalidate",
+              Pragma: "no-cache",
+              Expires: "0",
+            },
+          });
+
+          if (!bannerResponse.ok) {
+            throw new Error(
+              `Banner update failed! status: ${bannerResponse.status}`
+            );
+          }
+        } else {
+          // If no custom banner provided, set it to "NONE"
+          const bannerUrl = `https://api3.jailbreakchangelogs.xyz/users/background/update?user=${token}&image=NONE`;
+          await fetch(bannerUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Cache-Control": "no-cache, no-store, must-revalidate",
+              Pragma: "no-cache",
+              Expires: "0",
+            },
+          });
         }
       }
 
@@ -538,46 +579,62 @@ document.addEventListener("DOMContentLoaded", function () {
       const randomNumber = Math.floor(Math.random() * 12) + 1;
       const fallbackBanner = `/assets/backgrounds/background${randomNumber}.webp`;
 
-      // Check if banner_discord permission exists and is true
-      if (permissions && permissions.banner_discord === 1) {
-        // Try to get animated banner first
+      // First, get the user settings
+      const settingsResponse = await fetch(
+        `https://api3.jailbreakchangelogs.xyz/users/settings?user=${userId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+        }
+      );
+
+      if (!settingsResponse.ok) {
+        throw new Error("Failed to fetch user settings");
+      }
+
+      const settings = await settingsResponse.json();
+
+      // If banner_discord is enabled, try Discord banner
+      if (settings.banner_discord === 1) {
         image = await getBannerUrl(userId, udata.banner);
 
-        // If no Discord banner found, try custom banner
+        // If no Discord banner, use fallback
         if (!image) {
-          const response = await fetch(
-            `https://api3.jailbreakchangelogs.xyz/users/background/get?user=${userId}`
-          );
-
-          if (response.ok) {
-            const bannerData = await response.json();
-            image = bannerData.image_url;
-          }
+          image = fallbackBanner;
         }
       } else {
-        // Try to get custom banner
+        // If banner_discord is disabled, try to get custom banner
         const response = await fetch(
           `https://api3.jailbreakchangelogs.xyz/users/background/get?user=${userId}`
         );
 
         if (response.ok) {
           const bannerData = await response.json();
-          image = bannerData.image_url;
+          // Only use custom banner if it's not a fallback banner path
+          if (
+            bannerData.image_url &&
+            !bannerData.image_url.includes("/assets/backgrounds/background") &&
+            bannerData.image_url !== "NONE"
+          ) {
+            image = bannerData.image_url;
+          } else {
+            image = fallbackBanner;
+          }
+        } else {
+          image = fallbackBanner;
         }
       }
 
-      // If no valid banner found, use fallback
-      if (!image || image === "NONE") {
-        image = fallbackBanner;
-      }
-
-      // Update banner image and store reference
+      // Update banner image
       const userBanner = document.getElementById("banner");
       if (userBanner) {
         userBanner.src = image;
         banner = image;
 
-        // Add error handling for image load
         userBanner.onerror = () => {
           console.error("Failed to load banner image:", image);
           userBanner.src = fallbackBanner;
@@ -613,8 +670,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function fetchUserBio(userId) {
     try {
-      console.log("Fetching bio for user:", userId);
-
       // Fetch both bio and user data in parallel
       const [bioResponse, userResponse] = await Promise.all([
         fetch(
@@ -631,14 +686,10 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(`https://api3.jailbreakchangelogs.xyz/users/get/?id=${userId}`),
       ]);
 
-      console.log("Bio API response status:", bioResponse.status);
-
       if (!bioResponse.ok || !userResponse.ok) {
         if (bioResponse.status === 404) {
-          console.log("No bio found (404)");
           userBio.textContent = "";
         } else {
-          console.log("Error fetching bio:", bioResponse.status);
           userBio.textContent = "Error fetching description.";
           throw new Error(`HTTP error! status: ${bioResponse.status}`);
         }
@@ -651,14 +702,9 @@ document.addEventListener("DOMContentLoaded", function () {
         userResponse.json(),
       ]);
 
-      console.log("Received bio data:", user);
-
       const timestamp = user.last_updated || 0;
       const date = formatDate(timestamp);
-      console.log("Formatted date:", date);
-
       const description = user.description || "No description available.";
-      console.log("Description to display:", description);
 
       // Format the created_at date using the Unix timestamp
       const createdTimestamp = parseInt(userData.created_at) * 1000; // Convert to milliseconds
@@ -681,11 +727,6 @@ document.addEventListener("DOMContentLoaded", function () {
       <hr class="my-2" style="border-color: #748D92; opacity: 0.2;">
       <div style="color: #748D92;">Member since: ${memberSince}</div>
       `;
-
-      console.log("Bio elements updated:", {
-        bioContent: userBio.innerHTML,
-        dateContent: userDateBio.textContent,
-      });
     } catch (error) {
       console.error("Error in fetchUserBio:", error);
       userBio.textContent = "Error fetching user bio.";
@@ -1613,6 +1654,7 @@ document.addEventListener("DOMContentLoaded", function () {
             ); // Update button class based on value
             show_comments_button.innerHTML = recentCommentsIcon.outerHTML; // Update button with the icon
             break;
+          // In the loadProfileSettings function, modify the banner_discord case:
           case "banner_discord":
             const bannerDiscordIcon = document.createElement("i");
             bannerDiscordIcon.classList.add(
@@ -1620,27 +1662,42 @@ document.addEventListener("DOMContentLoaded", function () {
               value === 1 ? "bi-check-lg" : "bi-x-lg"
             );
 
-            // Show/hide input field based on the value
-            bannerInput.style.display = value === 1 ? "none" : "block";
-
-            // Only set banner input value if there's a valid banner
-            if (banner && banner !== "NONE") {
-              bannerInput.value = banner;
-            } else {
-              bannerInput.value = ""; // Clear the input if no valid banner
-            }
-
             use_discord_banner_button.classList.remove(
               "btn-danger",
               "btn-success"
             );
             use_discord_banner_button.classList.add(
+              "btn",
               value === 1 ? "btn-success" : "btn-danger"
             );
             use_discord_banner_button.innerHTML = bannerDiscordIcon.outerHTML;
-            break;
 
-          default:
+            // Show/hide input field based on the value
+            bannerInput.style.display = value === 1 ? "none" : "block";
+
+            // Add this new code to fetch and display current custom banner URL
+            if (!value) {
+              // If Discord banner is disabled
+              fetch(
+                `https://api3.jailbreakchangelogs.xyz/users/background/get?user=${loggedinuserId}`
+              )
+                .then((response) => response.json())
+                .then((data) => {
+                  const input = document.getElementById("bannerInput");
+                  if (
+                    data.image_url &&
+                    !data.image_url.includes(
+                      "/assets/backgrounds/background"
+                    ) &&
+                    data.image_url !== "NONE"
+                  ) {
+                    input.value = data.image_url;
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error fetching custom banner:", error);
+                });
+            }
             break;
         }
       }
