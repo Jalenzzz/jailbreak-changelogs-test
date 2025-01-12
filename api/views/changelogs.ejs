@@ -250,24 +250,23 @@
           <div class="row">
             <!-- Desktop Options Dropdown -->
             <div class="col-auto d-none d-lg-block me-2">
-              <!-- Your desktop buttons here -->
               <div class="d-flex gap-2 me-2">
+                <!-- Date Range Button -->
                 <button
-                  class="btn btn-primary"
+                  class="btn btn-primary changelog-action-btn"
                   type="button"
                   id="desktopOpenDateFilterModal"
                   aria-label="Select date range"
                   data-bs-toggle="tooltip"
                   title="Select Date Range"
                 >
-                  <i class="bi bi-calendar-range" aria-hidden="true"></i>
-                  <!-- Changed to calendar-range -->
+                  <i class="bi bi-calendar-range"></i>
                 </button>
 
-                <!-- Add before the copy button -->
+                <!-- Share Button -->
                 <div class="dropdown">
                   <button
-                    class="btn btn-primary"
+                    class="btn btn-primary changelog-action-btn"
                     type="button"
                     id="desktopShareChangelog"
                     data-bs-toggle="dropdown"
@@ -301,38 +300,43 @@
                   </ul>
                 </div>
 
+                <!-- Random Changelog Button -->
                 <button
-                  class="btn btn-primary"
+                  class="btn btn-primary changelog-action-btn"
                   type="button"
                   id="randomChangelogDesktopBtn"
                   aria-label="Get a random changelog"
                   data-bs-toggle="tooltip"
                   title="Random changelog"
                 >
-                  <i class="bi bi-stars" aria-hidden="true"></i>
+                  <i class="bi bi-dice-6"></i>
                 </button>
+
+                <!-- Timeline Button -->
                 <a
                   href="/timeline"
-                  class="btn btn-primary"
+                  class="btn btn-primary changelog-action-btn"
                   aria-label="View Timeline"
                   data-bs-toggle="tooltip"
                   title="View Timeline"
                 >
-                  <i class="bi bi-clock-history" aria-hidden="true"></i>
+                  <i class="bi bi-clock-history"></i>
+                  <span class="timeline-text d-none d-lg-inline">Timeline</span>
                 </a>
+
+                <!-- Changelog Versions Button -->
                 <div class="col-auto d-none d-lg-block">
                   <div class="dropdown-changelog-dropdown">
                     <button
-                      class="btn btn-primary dropdown-toggle changelog-btn"
+                      class="btn btn-primary changelog-action-btn"
                       type="button"
                       id="desktopChangelogDropdown"
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
-                      data-bs-toggle="dropdown"
                       title="View Other Changelogs"
                     >
-                      <i class="bi bi-calendar-event" aria-hidden="true"></i
-                      >Changelog Versions
+                      <i class="bi bi-calendar-event"></i>
+                      <span>Changelog Versions</span>
                     </button>
                     <ul
                       class="dropdown-menu changelog-menu"
@@ -427,25 +431,34 @@
               </button>
 
               <!-- Collapsible Menu -->
+              <!-- Collapsible Menu -->
               <div class="collapse mt-3" id="mobileMenuItems">
                 <div class="mobile-menu-container">
-                  <!-- Mobile menu buttons here -->
                   <!-- Date Filter -->
                   <button
                     class="btn mobile-menu-btn"
                     id="mobileOpenDateFilterModal"
                     style="background-color: #124e66; color: #d3d9d4"
                   >
-                    <i class="bi bi-calendar-event me-2"></i> Select Date
+                    <i class="bi bi-calendar-range me-2"></i> Select Date
                   </button>
 
-                  <!-- Jump to Latest -->
-                  <button
+                  <!-- Timeline Button -->
+                  <a
+                    href="/timeline"
                     class="btn mobile-menu-btn"
-                    id="mobileLatestChangelogBtn"
                     style="background-color: #124e66; color: #d3d9d4"
                   >
-                    <i class="bi bi-rocket-takeoff me-2"></i> Jump to Latest
+                    <i class="bi bi-clock-history me-2"></i> Timeline
+                  </a>
+
+                  <!-- Random Changelog -->
+                  <button
+                    class="btn mobile-menu-btn"
+                    id="randomChangelogMobileBtn"
+                    style="background-color: #124e66; color: #d3d9d4"
+                  >
+                    <i class="bi bi-dice-6 me-2"></i> Random Changelog
                   </button>
 
                   <!-- Changelog Versions Dropdown -->
@@ -465,39 +478,47 @@
                     ></ul>
                   </div>
 
-                  <!-- Add before the copy button -->
-                  <button
-                    class="btn mobile-menu-btn dropdown-toggle"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    style="background-color: #124e66; color: #d3d9d4"
-                  >
-                    <i class="bi bi-share me-2"></i> Share Changelog
-                  </button>
-                  <ul class="dropdown-menu w-100 share-menu">
-                    <li>
-                      <button class="dropdown-item" onclick="shareOnDiscord()">
-                        <i class="bi bi-discord"></i> Share on Discord
-                      </button>
-                    </li>
-                    <li>
-                      <button class="dropdown-item" onclick="shareOnTwitter()">
-                        <i class="bi bi-twitter-x"></i> Share on X (Twitter)
-                      </button>
-                    </li>
-                    <li>
-                      <button class="dropdown-item" onclick="shareOnReddit()">
-                        <i class="bi bi-reddit"></i> Share on Reddit
-                      </button>
-                    </li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li>
-                      <button class="dropdown-item" onclick="copyShareLink()">
-                        <i class="bi bi-link-45deg"></i> Copy Link
-                      </button>
-                    </li>
-                  </ul>
+                  <!-- Share Button Dropdown -->
+                  <div class="dropdown">
+                    <button
+                      class="btn mobile-menu-btn dropdown-toggle w-100"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                      style="background-color: #124e66; color: #d3d9d4"
+                    >
+                      <i class="bi bi-share me-2"></i> Share Changelog
+                    </button>
+                    <ul class="dropdown-menu w-100 share-menu">
+                      <li>
+                        <button
+                          class="dropdown-item"
+                          onclick="shareOnDiscord()"
+                        >
+                          <i class="bi bi-discord"></i> Share on Discord
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          class="dropdown-item"
+                          onclick="shareOnTwitter()"
+                        >
+                          <i class="bi bi-twitter-x"></i> Share on X (Twitter)
+                        </button>
+                      </li>
+                      <li>
+                        <button class="dropdown-item" onclick="shareOnReddit()">
+                          <i class="bi bi-reddit"></i> Share on Reddit
+                        </button>
+                      </li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <button class="dropdown-item" onclick="copyShareLink()">
+                          <i class="bi bi-link-45deg"></i> Copy Link
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
 
                   <!-- Copy Changelog -->
                   <button
@@ -506,15 +527,6 @@
                     style="background-color: #124e66; color: #d3d9d4"
                   >
                     <i class="bi bi-clipboard me-2"></i> Copy Changelog
-                  </button>
-
-                  <!-- Random Changelog -->
-                  <button
-                    class="btn btn-primary mobile-menu-btn"
-                    id="randomChangelogMobileBtn"
-                    type="button"
-                  >
-                    <i class="bi bi-stars me-2"></i> Random Changelog
                   </button>
                 </div>
               </div>

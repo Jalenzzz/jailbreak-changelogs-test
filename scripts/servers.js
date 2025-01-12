@@ -366,14 +366,20 @@ async function handleEditServer(event, serverId) {
       );
     }
 
-    const modal = bootstrap.Modal.getInstance(
-      document.getElementById("addServerModal")
-    );
-    modal.hide();
-
-    resetModalToAddMode(form);
-    await fetchServers();
-    showToast("Server updated successfully!", "success");
+    // In handleEditServer function, after the success toast:
+    if (response.ok) {
+      const modal = bootstrap.Modal.getInstance(
+        document.getElementById("addServerModal")
+      );
+      modal.hide();
+      resetModalToAddMode(form);
+      await fetchServers();
+      showToast("Server updated successfully!", "success");
+      showToast(
+        "Updated server URL is being validated and will be available shortly.",
+        "info"
+      );
+    }
   } catch (error) {
     console.error("Error updating server:", error);
     showToast(
@@ -433,8 +439,11 @@ async function deleteServer(serverId) {
       throw new Error(data.message || "Failed to delete server");
     }
 
-    await fetchServers();
-    showToast("Server deleted successfully!", "success");
+    if (response.ok) {
+      await fetchServers();
+      showToast("Server deleted successfully!", "success");
+      showToast("Server list is being updated and validated.", "info");
+    }
   } catch (error) {
     console.error("Error deleting server:", error);
     showToast(error.message || "Failed to delete server", "error");
@@ -549,13 +558,19 @@ async function handleAddServer(event) {
       throw new Error(data.message || "Failed to add server");
     }
 
-    const modal = bootstrap.Modal.getInstance(
-      document.getElementById("addServerModal")
-    );
-    modal.hide();
-    form.reset();
-    await fetchServers();
-    showToast("Server added successfully!", "success");
+    if (response.ok) {
+      const modal = bootstrap.Modal.getInstance(
+        document.getElementById("addServerModal")
+      );
+      modal.hide();
+      form.reset();
+      await fetchServers();
+      showToast("Server added successfully!", "success");
+      showToast(
+        "Server URL is being validated and will be available shortly.",
+        "info"
+      );
+    }
   } catch (error) {
     console.error("Error adding server:", error);
     showToast(
