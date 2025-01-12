@@ -1174,13 +1174,11 @@ document.addEventListener("DOMContentLoaded", function () {
       recentComments.append(...comments_to_add);
     } catch (error) {
       console.error("Error fetching comments:", error);
-      // Replace this line in the catch block of fetchUserComments function:
+
       recentComments.innerHTML = `
-        <div class="alert alert-danger d-flex align-items-center gap-2 m-3" role="alert">
-          <i class="bi bi-exclamation-triangle-fill"></i>
-          <div>
-            Error loading comments. Please try again later.
-          </div>
+        <div class="text-center p-3" style="color: #748D92;">
+          <i class="bi bi-chat-square-text me-2"></i>
+          This user has no comments
         </div>`;
     } finally {
       if (loadingSpinner) {

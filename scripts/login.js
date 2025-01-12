@@ -36,23 +36,64 @@ $(document).ready(function () {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     })
-      .then((response) => response.json())
-      .then((userData) => {
-        const avatarURL = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-        setCookie("token", userData.token, 7);
-        sessionStorage.removeItem("user");
-        sessionStorage.removeItem("avatar");
-        sessionStorage.removeItem("userid");
-        sessionStorage.setItem("user", JSON.stringify(userData));
-        sessionStorage.setItem("avatar", avatarURL);
-        sessionStorage.setItem("userid", userData.id);
-        redirect = localStorage.getItem("redirectAfterLogin");
-        if (redirect === null) {
-          window.location.href = "/";
-        } else {
-          window.location.href = redirect;
-          localStorage.removeItem("redirectAfterLogin");
+      .then((response) => {
+        if (response.status === 403) {
+          throw new Error("banned");
         }
+        if (!response.ok) {
+          throw new Error("network");
+        }
+        return response.json();
+      })
+      .then((userData) => {
+        // Only process if we have valid user data
+        if (userData && userData.id && userData.avatar) {
+          const avatarURL = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+          setCookie("token", userData.token, 7);
+          sessionStorage.removeItem("user");
+          sessionStorage.removeItem("avatar");
+          sessionStorage.removeItem("userid");
+          sessionStorage.setItem("user", JSON.stringify(userData));
+          sessionStorage.setItem("avatar", avatarURL);
+          sessionStorage.setItem("userid", userData.id);
+
+          const redirect = localStorage.getItem("redirectAfterLogin");
+          if (redirect === null) {
+            window.location.href = "/";
+          } else {
+            window.location.href = redirect;
+            localStorage.removeItem("redirectAfterLogin");
+          }
+        }
+      })
+      .catch((error) => {
+        if (error.message === "banned") {
+          toastr.error(
+            "Your account has been banned from Jailbreak Changelogs.",
+            "Access Denied",
+            {
+              positionClass: "toast-bottom-right",
+              timeOut: 5000,
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+        } else {
+          toastr.error(
+            "An error occurred during login. Please try again.",
+            "Error",
+            {
+              positionClass: "toast-bottom-right",
+              timeOut: 3000,
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+        }
+        // Redirect to home page after showing the error
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 5000);
       });
   }
 });
