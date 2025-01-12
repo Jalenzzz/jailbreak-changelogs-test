@@ -660,7 +660,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                   },
                   {
                     label: "Duped Value",
-                    data: duped_values,
+                    data: duped_values.every((value) => value === 0)
+                      ? []
+                      : duped_values,
                     borderColor: "#748D92",
                     backgroundColor: "rgba(116, 141, 146, 0.1)",
                     tension: 0.4,
