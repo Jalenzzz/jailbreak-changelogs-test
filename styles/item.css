@@ -244,15 +244,55 @@ body {
   object-fit: cover; /* Changed from contain to cover */
   object-position: center;
 }
+/* Style for legend items */
+.chart-container canvas {
+  cursor: default;
+}
 
-/* Add new class for chart container */
+/* Add a subtle animation for legend transitions */
+.chart-container .chartjs-legend-item {
+  transition: all 0.2s ease;
+}
+
+/* Add tooltip explaining the legend is clickable */
+.chart-container .chartjs-legend {
+  position: relative;
+}
+
+/* Make legend items more prominent */
+.chart-container .chartjs-legend-item {
+  padding: 6px 10px;
+  margin: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.chart-container .chartjs-legend-item:hover {
+  background-color: var(--legend-hover-bg);
+  transform: translateY(-1px);
+}
+
+/* Add visual feedback for active/inactive state */
+.chart-container .chartjs-legend-item.hidden {
+  opacity: 0.5;
+}
+
 .chart-container {
-  width: 100%; /* increased from 60% */
+  width: 100%;
   margin: 0 auto;
-  height: auto; /* increased from 250px */
-  background-color: rgba(46, 57, 68, 0.3); /* subtle background */
+  background-color: rgba(46, 57, 68, 0.3);
+  --legend-hover-bg: rgba(18, 78, 102, 0.2);
   border-radius: 12px;
   padding: 15px;
+  position: relative;
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9; /* This maintains a consistent ratio */
+  min-height: 300px; /* Minimum height on all devices */
+  max-height: 450px; /* Maximum height to prevent too large charts */
 }
 
 .video-player {
@@ -387,8 +427,13 @@ body {
   }
 
   .chart-container {
-    width: 85%;
-    height: 350px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .chart-wrapper {
+    aspect-ratio: 3/4; /* More vertical space on mobile */
+    min-height: 350px;
   }
 
   .image-container {
@@ -427,11 +472,6 @@ body {
     width: 100%; /* Changed from 95% to 100% */
     height: 200px;
     margin: 0 auto; /* Added auto margins */
-  }
-
-  .chart-container {
-    width: 95%;
-    height: 350px;
   }
 
   .image-container {

@@ -50,11 +50,53 @@ window.shareCurrentView = debounce(function () {
     });
 }, 1000);
 
-// Move searchBar declaration outside of DOMContentLoaded to avoid redeclaration
 const searchBar = document.getElementById("search-bar");
 const clearButton = document.getElementById("clear-search");
 
 document.addEventListener("DOMContentLoaded", () => {
+  const categoryItems = document.querySelectorAll(".category-item");
+
+  categoryItems.forEach((item) => {
+    item.addEventListener("click", function () {
+      // Map directly to sort dropdown values
+      const categoryClasses = {
+        "category-limited-items": "name-limited-items",
+        "category-vehicles": "name-vehicles",
+        "category-rims": "name-rims",
+        "category-spoilers": "name-spoilers",
+        "category-body-colors": "name-body-colors",
+        "category-textures": "name-textures",
+        "category-hyperchromes": "name-hyperchromes",
+        "category-tire-stickers": "name-tire-stickers",
+        "category-drifts": "name-drifts",
+        "category-furnitures": "name-furnitures",
+      };
+
+      // Find the matching category class
+      const categoryClass = Array.from(this.classList).find((cls) =>
+        Object.keys(categoryClasses).includes(cls)
+      );
+
+      if (!categoryClass) {
+        console.error("No specific category class found");
+        return;
+      }
+
+      // Get the corresponding sort value
+      const sortValue = categoryClasses[categoryClass];
+
+      // Update sort dropdown and trigger sort
+      const sortDropdown = document.getElementById("sort-dropdown");
+      if (sortDropdown) {
+        sortDropdown.value = sortValue;
+
+        window.sortItems(); // Trigger sorting
+      } else {
+        console.error("Sort dropdown not found");
+      }
+    });
+  });
+
   const itemsContainer = document.querySelector("#items-container");
   if (!itemsContainer) return;
 
@@ -71,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const valueSortDropdown = document.getElementById("value-sort-dropdown");
     const sortValue = sortDropdown?.value || "name-all-items"; // Provide default value and handle null
     const valueSortType = valueSortDropdown?.value || "cash-desc";
+
     const currentSort = sortValue.split("-").slice(1).join("-");
 
     // Save current filter states before updating anything else
@@ -169,6 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateTotalItemsLabel(itemType);
     currentPage = 1;
+
     displayItems();
   };
 

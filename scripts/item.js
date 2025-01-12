@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const rawItemName = window.location.pathname.split("/").pop();
   const itemName = decodeURIComponent(rawItemName).trim().replace(/\s+/g, " "); // Get the item name from the URL
 
-
   function formatChartValue(value) {
     // Return "-" if value is null, undefined, or empty string
     if (value === null || value === undefined || value === "") {
@@ -27,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Return the number with commas
     return numericValue;
   }
-  
+
   async function loadItemDetails() {
     try {
       const urlPath = window.location.pathname.split("/");
@@ -60,8 +59,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       showErrorMessage("Error Loading item details");
     }
   }
-
-
 
   function formatValue(value) {
     // Return "-" if value is null, undefined, or empty string
@@ -523,13 +520,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 Value History for ${item.name}
               </h3>
             </div>
-            <div class="card-body" style="padding: 20px;">
-              <div style="width: 100%; height: auto;">
-                <canvas id="combinedChart" style="width: 100%; height: 450px;">
-                  <!-- Combined graph will be inserted here -->
-                </canvas>
+            <div class="card-body">
+              <div class="chart-wrapper">
+                <canvas id="combinedChart"></canvas>
               </div>
             </div>
+          </div>
         </div>
       </div>`
       : `
@@ -632,7 +628,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       setTimeout(() => {
         const ctx = document.getElementById("combinedChart")?.getContext("2d");
         if (!ctx) return;
-    
+
         const dates = [];
         const values = [];
         const duped_values = [];
@@ -682,13 +678,53 @@ document.addEventListener("DOMContentLoaded", async () => {
                 },
                 plugins: {
                   legend: {
+                    position: "top",
+                    align: "start",
                     labels: {
                       color: "#D3D9D4",
                       usePointStyle: true,
                       padding: 20,
                       font: {
-                        size: 12,
+                        size: window.innerWidth < 768 ? 11 : 13,
                         weight: "bold",
+                      },
+                      generateLabels: function (chart) {
+                        const defaultLabels =
+                          Chart.defaults.plugins.legend.labels.generateLabels(
+                            chart
+                          );
+                        return defaultLabels.map((label) => ({
+                          ...label,
+                          borderRadius: 4,
+                          textAlign: "left",
+                          padding: window.innerWidth < 768 ? 12 : 8,
+                        }));
+                      },
+                    },
+                    onHover: function (event, legendItem, legend) {
+                      document.body.style.cursor = "pointer";
+                      if (legendItem) {
+                        legendItem.fillStyle = legendItem.strokeStyle + "40";
+                      }
+                    },
+                    onLeave: function (event, legendItem, legend) {
+                      document.body.style.cursor = "default";
+                      if (legendItem) {
+                        legendItem.fillStyle = legendItem.strokeStyle + "20";
+                      }
+                    },
+                    title: {
+                      display: true,
+                      text: "Click legends to show/hide data series",
+                      padding: {
+                        top: 10,
+                        bottom: 20,
+                      },
+                      color: "#748D92",
+                      font: {
+                        size: window.innerWidth < 768 ? 10 : 11,
+                        style: "italic",
+                        weight: "normal",
                       },
                     },
                   },
@@ -753,14 +789,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                     },
                   },
                 },
-                layout: {
-                  padding: {
-                    left: 10,
-                    right: 10,
-                    top: 10,
-                    bottom: 10,
-                  },
+
+                padding: {
+                  left: 5,
+                  right: 5,
+                  top: 20,
+                  bottom: 5,
                 },
+                layout: {},
               },
             });
           })
@@ -769,7 +805,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           });
       }, 100);
     }
-    
 
     // After the container HTML is set, add resize observer
     setTimeout(() => {

@@ -1057,10 +1057,10 @@
 }
 
 /* Category Items Styling */
-.category-limited {
+.category-limited-items {
   background-color: rgba(18, 78, 102, 0.1);
 }
-.category-limited i {
+.category-limited-items i {
   color: #ffd700;
 }
 
@@ -1120,10 +1120,10 @@
   color: #ff4500;
 }
 
-.category-furniture {
+.category-furnitures {
   background-color: rgba(156, 102, 68, 0.1);
 }
-.category-furniture i {
+.category-furnitures i {
   color: #9c6644;
 }
 
