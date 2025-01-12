@@ -20,18 +20,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     return null;
   }
+
   const redirect =
     "https://authorize.roblox.com/?client_id=8033575152059272055&redirect_uri=https://jailbreakchangelogs.xyz/roblox&scope=openid%20profile&response_type=code";
   const test_redirect =
     "https://authorize.roblox.com/?client_id=8033575152059272055&redirect_uri=https://testing.jailbreakchangelogs.xyz/roblox&scope=openid%20profile&response_type=code";
-  const token = getCookie("token");
-  if (!token) {
-    window.location.href = "/login";
-  }
+
   loginButton.addEventListener("click", () => {
     console.log("Redirecting to Roblox OAuth...");
     window.location.href = test_redirect;
   });
+
   if (window.location.search.includes("code=")) {
     const code = new URLSearchParams(window.location.search).get("code");
     console.log("Code:", code);

@@ -667,69 +667,100 @@ document.addEventListener("DOMContentLoaded", function () {
       settings_button.classList.remove("d-none");
     }
   }
-
   async function fetchUserBio(userId) {
     try {
-      // Fetch both bio and user data in parallel
-      const [bioResponse, userResponse] = await Promise.all([
-        fetch(
-          `https://api3.jailbreakchangelogs.xyz/users/description/get?user=${userId}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "Cache-Control": "no-cache, no-store, must-revalidate",
-              Pragma: "no-cache",
-              Expires: "0",
-            },
-          }
-        ),
-        fetch(`https://api3.jailbreakchangelogs.xyz/users/get/?id=${userId}`),
-      ]);
+      // First get user data for member since date
+      const userResponse = await fetch(
+        `https://api3.jailbreakchangelogs.xyz/users/get/?id=${userId}`
+      );
 
-      if (!bioResponse.ok || !userResponse.ok) {
-        if (bioResponse.status === 404) {
-          userBio.textContent = "";
-        } else {
-          userBio.textContent = "Error fetching description.";
-          throw new Error(`HTTP error! status: ${bioResponse.status}`);
-        }
+      // Handle banned user case
+      if (userResponse.status === 403) {
+        userBio.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          This user has been banned.
+        </div>`;
+        userDateBio.innerHTML = "";
+        return;
       }
 
-      await fetchUserBanner(userId);
+      if (!userResponse.ok) {
+        throw new Error(`User data fetch failed: ${userResponse.status}`);
+      }
+      const userData = await userResponse.json();
+      const memberSince = new Date(
+        parseInt(userData.created_at) * 1000
+      ).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
 
-      const [user, userData] = await Promise.all([
-        bioResponse.json(),
-        userResponse.json(),
-      ]);
-
-      const timestamp = user.last_updated || 0;
-      const date = formatDate(timestamp);
-      const description = user.description || "No description available.";
-
-      // Format the created_at date using the Unix timestamp
-      const createdTimestamp = parseInt(userData.created_at) * 1000; // Convert to milliseconds
-      const memberSince = new Date(createdTimestamp).toLocaleDateString(
-        "en-GB",
+      // Then get bio data
+      const bioResponse = await fetch(
+        `https://api3.jailbreakchangelogs.xyz/users/description/get?user=${userId}`,
         {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
         }
       );
 
-      // Update the bio text
+      // Handle 404 (no description) case
+      if (bioResponse.status === 404) {
+        userBio.textContent = "No description provided";
+        userDateBio.innerHTML = `
+                <div class="mb-2">Last updated: Never</div>
+                <hr class="my-2" style="border-color: #748D92; opacity: 0.2;">
+                <div style="color: #748D92;">Member since: ${memberSince}</div>
+            `;
+        return;
+      }
+
+      // Handle other error cases
+      if (!bioResponse.ok) {
+        throw new Error(`Bio fetch failed: ${bioResponse.status}`);
+      }
+
+      // Process bio data for successful response
+      const bioData = await bioResponse.json();
+
+      // Set description text
+      const description = bioData.description || "No description provided";
       userBio.innerHTML = linkifyText(description);
 
-      // Update the date
-      // Update the date in userDateBio
+      // Format and set date
+      // Only use last_updated if it's different from created_at
+      const createdTimestamp = parseInt(userData.created_at) * 1000;
+      const lastUpdatedTimestamp = bioData.last_updated
+        ? bioData.last_updated * 1000
+        : null;
+
+      // If last_updated is null or equals created_at, show "Never"
+      const date =
+        !lastUpdatedTimestamp || lastUpdatedTimestamp === createdTimestamp
+          ? "Never"
+          : formatDate(lastUpdatedTimestamp / 1000); // Convert back to seconds for formatDate
+
       userDateBio.innerHTML = `
-      <div class="mb-2">Last updated: ${date}</div>
-      <hr class="my-2" style="border-color: #748D92; opacity: 0.2;">
-      <div style="color: #748D92;">Member since: ${memberSince}</div>
-      `;
+            <div class="mb-2">Last updated: ${date}</div>
+            <hr class="my-2" style="border-color: #748D92; opacity: 0.2;">
+            <div style="color: #748D92;">Member since: ${memberSince}</div>
+        `;
+
+      await fetchUserBanner(userId);
     } catch (error) {
       console.error("Error in fetchUserBio:", error);
       userBio.textContent = "Error fetching user bio.";
+      userDateBio.innerHTML = `
+            <div class="mb-2">Last updated: Error</div>
+            <hr class="my-2" style="border-color: #748D92; opacity: 0.2;">
+            <div style="color: #748D92;">Member since: Unknown</div>
+        `;
     }
   }
 

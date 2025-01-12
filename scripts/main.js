@@ -144,9 +144,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   checkInvalidSession();
 
-  if (token && (!user || !userid)) {
+  if (token) {
     fetch("https://api3.jailbreakchangelogs.xyz/users/get/token?token=" + token)
       .then((response) => {
+        if (response.status === 403) {
+          // User is banned - clear session and show message
+          clearSessionAndReload();
+          toastControl.showToast(
+            "error",
+            "Your account has been banned.",
+            "Error"
+          );
+          return;
+        }
         if (!response.ok) {
           throw new Error("Invalid response");
         }
@@ -171,6 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
         clearSessionAndReload();
       });
   }
+
   const profilepicture = document.getElementById("profile-picture");
   const mobileprofilepicture = document.getElementById(
     "profile-picture-mobile"
