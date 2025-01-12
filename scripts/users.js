@@ -456,12 +456,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   let banner;
   function decimalToHex(decimal) {
-    // Convert the decimal number to hex and pad with leading zeros if necessary
-    const hex = decimal.toString(16).toUpperCase().padStart(6, "0");
+    if (!decimal) return "#000";
+    // Convert to hex and ensure exactly 6 digits
+    const hex = decimal.toString(16).padStart(6, "0").slice(-6);
 
     // Return the hex color with a # prefix
     return `#${hex}`;
   }
+
   // Toast control mechanism
   const toastControl = {
     lastToastTime: 0,
@@ -677,18 +679,55 @@ document.addEventListener("DOMContentLoaded", function () {
       // Handle banned user case
       if (userResponse.status === 403) {
         userBio.innerHTML = `
-        <div class="alert alert-danger" role="alert">
-          <i class="bi bi-exclamation-triangle-fill me-2"></i>
-          This user has been banned.
-        </div>`;
+    <div class="alert alert-danger border-0 shadow-sm" role="alert" style="background-color: #2E3944; border-left: 4px solid #dc3545;">
+      <div class="d-flex align-items-center">
+        <div class="me-3">
+          <i class="bi bi-shield-x-fill text-danger" style="font-size: 1.5rem;"></i>
+        </div>
+        <div>
+          <h6 class="alert-heading mb-1" style="color: #dc3545;">Account Suspended</h6>
+          <p class="mb-0" style="color: #D3D9D4;">
+            This user's account has been suspended for violating our community guidelines.
+          </p>
+        </div>
+      </div>
+    </div>`;
+
+        // Clear other profile elements
         userDateBio.innerHTML = "";
-        return;
+
+        // Hide interactive elements if they exist
+        const elementsToHide = [
+          document.querySelector(".user-stats"),
+          document.getElementById("follow-button"),
+          document.getElementById("comments-list"),
+          document.getElementById("card-pagination"),
+          document.querySelector(".username-container"),
+        ];
+
+        elementsToHide.forEach((element) => {
+          if (element) element.style.display = "none";
+        });
+
+        // Set suspended account avatar
+        const userAvatar = document.getElementById("user-avatar");
+        if (userAvatar) {
+          userAvatar.src =
+            "https://ui-avatars.com/api/?background=144a61&color=fff&size=128&rounded=true&name=?&bold=true&format=svg";
+          userAvatar.style.border = "4px solid #495057"; // Keep the gray border
+        }
+
+        return; // Exit early
       }
 
       if (!userResponse.ok) {
         throw new Error(`User data fetch failed: ${userResponse.status}`);
       }
       const userData = await userResponse.json();
+      const usernameContainer = document.querySelector(".username-link");
+      if (usernameContainer) {
+        usernameContainer.textContent = "@" + usernameContainer.textContent;
+      }
       const memberSince = new Date(
         parseInt(userData.created_at) * 1000
       ).toLocaleDateString("en-GB", {
@@ -1334,11 +1373,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   userAvatar = document.getElementById("user-avatar");
   if (!udata.accent_color) {
-    userAvatar.style.border = "4px solid #000"; // Default blue border color
+    userAvatar.style.setProperty("--avatar-border-color", "#000");
   } else {
     const hexColor = decimalToHex(udata.accent_color);
-    userAvatar.style.border = `4px solid ${hexColor}`;
+
+    userAvatar.style.setProperty("--avatar-border-color", hexColor);
   }
+
   setAvatarWithFallback(udata.username);
 
   updateUserCounts(userId);
