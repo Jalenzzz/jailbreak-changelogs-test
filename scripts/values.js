@@ -89,8 +89,30 @@ document.addEventListener("DOMContentLoaded", () => {
       const sortDropdown = document.getElementById("sort-dropdown");
       if (sortDropdown) {
         sortDropdown.value = sortValue;
-
         window.sortItems(); // Trigger sorting
+
+        // Add smooth scroll to items container with offset
+        const itemsContainer = document.getElementById("items-container");
+        if (itemsContainer) {
+          setTimeout(() => {
+            // Get the filter controls element for reference
+            const filterControls = document.querySelector(".filter-controls");
+
+            // Calculate position with offset
+            const offset = 150; // Adjust this value to control the padding from top
+            const elementPosition = itemsContainer.getBoundingClientRect().top;
+            const offsetPosition =
+              elementPosition +
+              window.pageYOffset -
+              (filterControls.offsetHeight + offset);
+
+            // Smooth scroll to adjusted position
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: "smooth",
+            });
+          }, 100);
+        }
       } else {
         console.error("Sort dropdown not found");
       }

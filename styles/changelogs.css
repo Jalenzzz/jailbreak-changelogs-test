@@ -793,44 +793,6 @@ button {
   transition: background-color 0.3s, color 0.3s; /* Smooth transition */
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .video-responsive {
-    max-height: 300px; /* Smaller height on mobile */
-    max-width: 100%;
-  }
-  .media-element,
-  .video-responsive {
-    max-height: 300px;
-    max-width: 100%;
-  }
-  .media-element-spacing {
-    margin-bottom: 1rem;
-    max-height: 300px;
-  }
-}
-
-/* For even smaller screens (576px and below) */
-@media (max-width: 576px) {
-  #loading-overlay .loading-logo {
-    width: 200px;
-    height: auto;
-  }
-
-  .custom-spinner {
-    width: 30px;
-    height: 30px;
-  }
-}
-
-/* Extra small mobile devices (up to 400px) */
-@media (max-width: 400px) {
-  .container {
-    padding-left: 5px;
-    padding-right: 5px; /* Ensure no edge space on very small screens */
-  }
-}
-
 /* Changelog Dropdown Styling */
 .changelog-dropdown-item {
   background-color: var(--bg-primary);
@@ -918,22 +880,6 @@ button {
   font-size: 1.1rem;
 }
 
-/* Mobile optimizations */
-@media (max-width: 768px) {
-  .changelog-dropdown-item {
-    padding: 10px 12px;
-    margin: 3px 6px;
-  }
-
-  .changelog-menu {
-    max-height: 300px;
-  }
-
-  .changelog-title {
-    font-size: 0.9rem;
-  }
-}
-
 /* Changelog Introduction Styles */
 .changelog-intro {
   background: var(--bg-primary);
@@ -1002,30 +948,6 @@ button {
   font-size: 0.95rem;
   margin: 0;
   line-height: 1.6;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .changelog-intro {
-    padding: 1.5rem;
-  }
-
-  .changelog-intro .display-4 {
-    font-size: 2rem;
-  }
-
-  .changelog-intro .lead {
-    font-size: 1rem;
-  }
-
-  .feature-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .feature-item {
-    padding: 1.25rem;
-  }
 }
 
 /* Changelog Introduction Styles */
@@ -1134,23 +1056,6 @@ button {
   color: var(--text-primary);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .changelog-intro {
-    padding: 1.5rem;
-  }
-
-  .feature-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .quick-stats,
-  .quick-links {
-    margin-top: 1rem;
-  }
-}
-
 /* Share Menu Styles */
 .share-menu {
   min-width: 200px;
@@ -1173,4 +1078,100 @@ button {
 
 .share-menu .dropdown-item i {
   font-size: 1.1rem;
+}
+@media (max-width: 768px) {
+  /* Changelog intro adjustments */
+  .changelog-intro {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .changelog-intro .display-4 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  .changelog-intro .lead {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  /* Feature grid adjustments */
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .feature-item {
+    padding: 1rem;
+    text-align: left;
+  }
+
+  .feature-item i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-item h5 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .feature-item p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  /* Quick stats and links adjustments */
+  .quick-stats,
+  .quick-links {
+    margin-top: 1rem;
+  }
+
+  .quick-stats h5,
+  .quick-links .card-title {
+    font-size: 1rem;
+  }
+
+  .quick-stats ul li,
+  .quick-links ul li {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+}
+/* For even smaller screens (576px and below) */
+@media (max-width: 576px) {
+  .changelog-intro {
+    padding: 0.75rem;
+  }
+
+  .changelog-intro .display-4 {
+    font-size: 1.25rem;
+  }
+
+  .feature-item {
+    padding: 0.75rem;
+  }
+
+  #loading-overlay .loading-logo {
+    width: 200px;
+    height: auto;
+  }
+
+  .custom-spinner {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Extra small mobile devices (up to 400px) */
+@media (max-width: 400px) {
+  .container {
+    padding-left: 5px;
+    padding-right: 5px; /* Ensure no edge space on very small screens */
+  }
 }
