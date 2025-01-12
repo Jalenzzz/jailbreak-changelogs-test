@@ -535,8 +535,8 @@ document.addEventListener("DOMContentLoaded", function () {
   async function fetchUserBanner(userId) {
     try {
       let image;
-      const fallbackBanner =
-        "https://placehold.co/600x400/212a31/d3d9d4?text=This%20user%20has%20no%20banner";
+      const randomNumber = Math.floor(Math.random() * 12) + 1;
+      const fallbackBanner = `/assets/backgrounds/background${randomNumber}.webp`;
 
       // Check if banner_discord permission exists and is true
       if (permissions && permissions.banner_discord === 1) {
@@ -586,7 +586,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     } catch (error) {
       console.error("Error fetching banner:", error);
-      // Use fallback banner in case of any error
+      const randomNumber = Math.floor(Math.random() * 12) + 1;
+      const fallbackBanner = `/assets/backgrounds/background${randomNumber}.webp`;
       const userBanner = document.getElementById("banner");
       if (userBanner) {
         userBanner.src = fallbackBanner;
@@ -1335,6 +1336,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return []; // Return empty array on error
     }
   }
+
   async function addFollow(userId) {
     try {
       const user = getCookie("token");
@@ -1361,7 +1363,13 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      await updateUserCounts(userId);
+      // Update UI immediately
+      const followersCount = document.querySelector("#followers .fw-bold");
+      if (followersCount) {
+        const currentCount = parseInt(followersCount.textContent);
+        followersCount.textContent = (currentCount + 1).toString();
+      }
+
       return true;
     } catch (error) {
       console.error("Error adding follow:", error);
@@ -1400,7 +1408,13 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      await updateUserCounts(userId);
+      // Update UI immediately
+      const followersCount = document.querySelector("#followers .fw-bold");
+      if (followersCount) {
+        const currentCount = parseInt(followersCount.textContent);
+        followersCount.textContent = Math.max(0, currentCount - 1).toString();
+      }
+
       return true;
     } catch (error) {
       console.error("Error removing follow:", error);
@@ -1412,6 +1426,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return false;
     }
   }
+
   follow_button.addEventListener("click", function () {
     if (follow_button.disabled) return;
     follow_button.disabled = true;
