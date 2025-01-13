@@ -950,7 +950,19 @@
   transform: translateY(-2px);
   border-color: var(--accent-color);
 }
+.media-container .thumbnail {
+  z-index: 2;
+  transition: opacity 0.3s ease-in-out;
+}
 
+.media-container .video-player {
+  z-index: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+.video-player {
+  will-change: opacity;
+  transform: translateZ(0);
+}
 /* Find all separate @media (max-width: 768px) queries and combine them into this single one */
 @media (max-width: 768px) {
   /* Intro container and content */

@@ -354,6 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
   restoreFilters();
 
   // Function to load more items
+  // Function to load more items
   async function loadMoreItems() {
     if (isLoading) return;
 
@@ -380,10 +381,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const itemsRow = document.querySelector("#items-container .row");
     const newItems = filteredItems.slice(startIndex, endIndex);
 
+    // Create a document fragment to batch DOM updates
+    const fragment = document.createDocumentFragment();
+
+    // Add each new item to the fragment
     newItems.forEach((item) => {
       const cardDiv = createItemCard(item);
-      itemsRow.appendChild(cardDiv);
+      fragment.appendChild(cardDiv); // Append to fragment instead of directly to itemsRow
     });
+
+    // Append the fragment to the row (single DOM update)
+    itemsRow.appendChild(fragment);
 
     // Hide spinner after loading completes
     if (spinner) {
@@ -559,10 +567,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const endIndex = startIndex + itemsPerPage;
     const itemsToDisplay = filteredItems.slice(startIndex, endIndex);
 
+    // Create a document fragment to batch DOM updates
+    const fragment = document.createDocumentFragment();
+
     for (let i = 0; i < itemsToDisplay.length; i++) {
       const cardDiv = createItemCard(itemsToDisplay[i]);
-      itemsRow.appendChild(cardDiv);
+      fragment.appendChild(cardDiv); // Append to fragment
     }
+
+    // Append fragment to the row (single DOM update)
+    itemsRow.appendChild(fragment);
 
     // Remove old sentinel if exists
     const oldSentinel = itemsContainer.querySelector(".sentinel");
@@ -661,55 +675,54 @@ document.addEventListener("DOMContentLoaded", () => {
     const mediaElement =
       item.type === "Drift"
         ? `<div class="media-container">
-          <div class="skeleton-loader active"></div>
-          <img 
-            src="/assets/images/items/drifts/thumbnails/${item.name}.webp"
-            class="card-img-top thumbnail"
-            alt="${item.name}"
-            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
-            onerror="handleimage(this)"
-            onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
-          >
-          <video 
-            src="/assets/images/items/drifts/${item.name}.webm"
-            class="card-img-top video-player"
-            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
-            playsinline 
-            muted 
-            loop
-            onloadeddata="this.style.opacity='1'"
-          ></video>
-        </div>`
+                <div class="skeleton-loader active"></div>
+                <img 
+                    src="/assets/images/items/drifts/thumbnails/${item.name}.webp"
+                    class="card-img-top thumbnail"
+                    alt="${item.name}"
+                    style="opacity: 1; z-index: 2;"
+                    onerror="handleimage(this)"
+                    onload="this.previousElementSibling.classList.remove('active')"
+                >
+                <video 
+                    src="/assets/images/items/drifts/${item.name}.webm"
+                    class="card-img-top video-player"
+                    style="opacity: 0; z-index: 1;"
+                    playsinline 
+                    muted 
+                    loop
+                ></video>
+            </div>`
         : item.type === "HyperChrome" && item.name === "HyperShift"
         ? `<div class="media-container">
-          <div class="skeleton-loader active"></div>
-          <video 
-            src="/assets/images/items/hyperchromes/HyperShift.webm"
-            class="card-img-top"
-            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
-            playsinline 
-            muted 
-            loop
-            autoplay
-            id="hypershift-video"
-            onloadeddata="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
-            onerror="handleimage(this)"
-          ></video>
-        </div>`
+                    <div class="skeleton-loader active"></div>
+                    <video 
+                        src="/assets/images/items/hyperchromes/HyperShift.webm"
+                        class="card-img-top"
+                        style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+                        playsinline 
+                        muted 
+                        loop
+                        autoplay
+                        id="hypershift-video"
+                        onloadeddata="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
+                        onerror="handleimage(this)"
+                    ></video>
+                </div>`
         : `<div class="media-container">
-          <div class="skeleton-loader active"></div>
-          <img 
-            onerror="handleimage(this)" 
-            id="${item.name}" 
-            src="/assets/images/items/${item.type.toLowerCase()}s/${
+                    <div class="skeleton-loader active"></div>
+                    <img 
+                        onerror="handleimage(this)" 
+                        id="${item.name}" 
+                        src="/assets/images/items/${item.type.toLowerCase()}s/${
             item.name
           }.webp" 
-            class="card-img-top" 
-            alt="${item.name}" 
-            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
-            onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
-          >
-        </div>`;
+                        class="card-img-top" 
+                        alt="${item.name}" 
+                        style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+                        onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
+                    >
+                </div>`;
 
     // Format values
     const cashValue = formatValue(item.cash_value);
@@ -720,81 +733,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (item.type === "HyperChrome") {
       badgeHtml = `
-        <span class="hyperchrome-badge" style="color: black;">
-          <i class="bi bi-stars"></i>HyperChrome
-        </span>
-      `;
+            <span class="hyperchrome-badge" style="color: black;">
+                <i class="bi bi-stars"></i>HyperChrome
+            </span>
+        `;
     } else {
       // Only show type badge for non-HyperChrome items
       typeBadgeHtml = `
-        <span class="badge item-type-badge" style="background-color: ${color};">${item.type}</span>
-      `;
+            <span class="badge item-type-badge" style="background-color: ${color};">${item.type}</span>
+        `;
 
       // Show limited badge if item is limited
       if (item.is_limited) {
         badgeHtml = `
-          <span class="badge limited-badge">
-            <i class="bi bi-star-fill me-1"></i>Limited
-          </span>
-        `;
+                <span class="badge limited-badge">
+                    <i class="bi bi-star-fill me-1"></i>Limited
+                </span>
+            `;
       }
     }
 
     // Create card with conditional badges
     cardDiv.innerHTML = `
-    <div class="card items-card shadow-sm ${
-      item.is_limited ? "limited-item" : ""
-    }" 
-         onclick="handleCardClick('${
-           item.name
-         }', '${item.type.toLowerCase()}', event)" 
-         onmousedown="handleCardClick('${
-           item.name
-         }', '${item.type.toLowerCase()}', event)"
-         style="cursor: pointer;">
-      ${mediaElement}
-      ${typeBadgeHtml}
-      ${badgeHtml}
-      <div class="item-card-body text-center">
-        <h5 class="card-title">${item.name}</h5>
-        <div class="value-container">
-          <div class="d-flex justify-content-between align-items-center mb-2 value-row">
-            <span>Cash Value:</span>
-            <span class="cash-value" data-value="${cashValue.numeric}">${
-      cashValue.display
-    }</span>
-          </div>
-          <div class="d-flex justify-content-between align-items-center value-row">
-            <span>Duped Value:</span>
-            <span class="duped-value" data-value="${dupedValue.numeric}">${
-      dupedValue.display
-    }</span>
-          </div>
-        </div>
-      </div>
-    </div>`;
+        <div class="card items-card shadow-sm ${
+          item.is_limited ? "limited-item" : ""
+        }" 
+             onclick="handleCardClick('${
+               item.name
+             }', '${item.type.toLowerCase()}', event)" 
+             onmousedown="handleCardClick('${
+               item.name
+             }', '${item.type.toLowerCase()}', event)"
+             style="cursor: pointer;">
+            ${mediaElement}
+            ${typeBadgeHtml}
+            ${badgeHtml}
+            <div class="item-card-body text-center">
+                <h5 class="card-title">${item.name}</h5>
+                <div class="value-container">
+                    <div class="d-flex justify-content-between align-items-center mb-2 value-row">
+                        <span>Cash Value:</span>
+                        <span class="cash-value" data-value="${
+                          cashValue.numeric
+                        }">${cashValue.display}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center value-row">
+                        <span>Duped Value:</span>
+                        <span class="duped-value" data-value="${
+                          dupedValue.numeric
+                        }">${dupedValue.display}</span>
+                    </div>
+                </div>
+            </div>
+        </div>`;
 
     // Add hover event listeners for drift videos
     if (item.type === "Drift") {
       const card = cardDiv.querySelector(".card");
       const video = cardDiv.querySelector("video");
+      const thumbnail = cardDiv.querySelector(".thumbnail");
 
       card.addEventListener("mouseenter", () => {
         video.style.opacity = "1";
+        thumbnail.style.opacity = "0";
         video.play();
       });
 
       card.addEventListener("mouseleave", () => {
         video.style.opacity = "0";
+        thumbnail.style.opacity = "1";
         video.pause();
         video.currentTime = 0;
       });
     }
 
+    // Return the created element
     return cardDiv;
   }
 
-  window.filterItems = function () {
+  window.filterItems = debounce(function () {
     const searchTerm = document
       .getElementById("search-bar")
       .value.toLowerCase();
@@ -904,7 +921,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentPage = 1;
     displayItems();
     updateTotalItemsCount();
-  };
+  }, 300);
 
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
