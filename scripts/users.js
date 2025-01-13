@@ -454,9 +454,11 @@ document.addEventListener("DOMContentLoaded", function () {
   if (permissions.profile_public === true && loggedinuserId !== userId) {
     window.location.href = "/users";
   }
+  
   let banner;
   function decimalToHex(decimal) {
-    if (!decimal) return "#000";
+    if (!decimal || decimal === "None") return "#124E66";
+
     // Convert to hex and ensure exactly 6 digits
     const hex = decimal.toString(16).padStart(6, "0").slice(-6);
 

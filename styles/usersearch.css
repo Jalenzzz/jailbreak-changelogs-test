@@ -83,8 +83,6 @@ body {
 }
 
 .user-avatar {
-  width: 70px !important;
-  height: 70px !important;
   object-fit: cover;
   border: 2px solid var(--button-primary);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

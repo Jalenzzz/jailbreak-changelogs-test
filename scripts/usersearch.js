@@ -3,6 +3,17 @@ const API_BASE_URL = "https://api3.jailbreakchangelogs.xyz";
 const DISCORD_CDN = "https://cdn.discordapp.com";
 const MIN_SEARCH_LENGTH = 1;
 
+const decimalToHex = (decimal) => {
+  // Return default color if decimal is falsy OR specifically "None"
+  if (!decimal || decimal === "None") return "#124E66";
+
+  // Convert to hex and ensure exactly 6 digits
+  const hex = decimal.toString(16).padStart(6, "0").slice(-6);
+
+  // Return the hex color with a # prefix
+  return `#${hex}`;
+};
+
 const elements = {
   searchInput: document.getElementById("searchInput"),
   searchButton: document.getElementById("searchButton"),
@@ -61,30 +72,37 @@ const createUserCard = async (user) => {
   }
 
   return `
-   <div class="col-12 col-md-6 col-lg-4">
-    <div class="card user-card border-0 shadow-sm h-100">
-      <div class="card-body p-3">
-        <div class="d-flex align-items-center gap-2">
-          <img 
-            src="${avatarUrl}"
-            class="user-avatar rounded-circle flex-shrink-0" 
-            alt="${user.username}"
-            width="60"
-            height="60"
-            onerror="this.src='https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${user.username}&bold=true&format=svg'"
-          >
-          <div class="user-info overflow-hidden flex-grow-1">
-            <h5 class="user-name text-truncate mb-1 fs-6">${user.global_name}</h5>
-            <p class="user-username text-muted small mb-0">@${user.username}</p>
-          </div>
-          <a href="/users/${user.id}" class="btn btn-primary btn-sm rounded-pill ms-2">
-            View
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-  `;
+  <div class="col-12 col-md-6 col-lg-4">
+   <div class="card user-card border-0 shadow-sm h-100">
+     <div class="card-body p-3">
+       <div class="d-flex align-items-center gap-2">
+         <img 
+           src="${avatarUrl}"
+           class="user-avatar rounded-circle flex-shrink-0" 
+           alt="${user.username}"
+           width="60"
+           height="60"
+           style="border: 3px solid ${decimalToHex(user.accent_color)};"
+           onerror="this.src='https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${
+             user.username
+           }&bold=true&format=svg'"
+         >
+         <div class="user-info overflow-hidden flex-grow-1">
+           <h5 class="user-name text-truncate mb-1 fs-6">${
+             user.global_name
+           }</h5>
+           <p class="user-username text-muted small mb-0">@${user.username}</p>
+         </div>
+         <a href="/users/${
+           user.id
+         }" class="btn btn-primary btn-sm rounded-pill ms-2">
+           View
+         </a>
+       </div>
+     </div>
+   </div>
+ </div>
+ `;
 };
 
 // Display Functions
