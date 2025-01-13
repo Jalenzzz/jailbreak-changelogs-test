@@ -122,11 +122,14 @@
           <li class="breadcrumb-item"><a href="/">Home</a></li>
           <li class="breadcrumb-item"><a href="/users">Users</a></li>
           <li class="breadcrumb-item" aria-current="page">
-            <a href="/users/<%= userData.id %>">@<%= userData.username %></a>
+            <a href="/users/<%= userData.id %>"
+              >@<%= userData.global_name || userData.username %></a
+            >
           </li>
-          <li class="breadcrumb-item active" aria-current="page">Following</li>
+          <li class="breadcrumb-item active" aria-current="page">Followers</li>
         </ol>
       </nav>
+
       <h2 class="mb-4">
         <%= user && userData.id === user.id ? 'My following' :
         `${userData.global_name}'s following` %>

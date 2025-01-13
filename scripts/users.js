@@ -50,7 +50,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const save_settings_button = document.getElementById("settings-submit");
   const save_settings_loading = document.getElementById("settings-loading");
 
-  // Near the top of the DOMContentLoaded event handler
   if (permissions.profile_public === 0 && loggedinuserId !== userId) {
     // If profile is private and viewer is not the owner
     const mainContent = document.querySelector(".user-content");
@@ -454,7 +453,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (permissions.profile_public === true && loggedinuserId !== userId) {
     window.location.href = "/users";
   }
-  
+
   let banner;
   function decimalToHex(decimal) {
     if (!decimal || decimal === "None") return "#124E66";

@@ -124,7 +124,9 @@
           <li class="breadcrumb-item"><a href="/">Home</a></li>
           <li class="breadcrumb-item"><a href="/users">Users</a></li>
           <li class="breadcrumb-item" aria-current="page">
-            <a href="/users/<%= userData.id %>">@<%= userData.username %></a>
+            <a href="/users/<%= userData.id %>"
+              >@<%= userData.global_name || userData.username %></a
+            >
           </li>
           <li class="breadcrumb-item active" aria-current="page">Followers</li>
         </ol>
