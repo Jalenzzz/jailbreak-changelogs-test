@@ -167,16 +167,23 @@ $(document).ready(function () {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const img = entry.target;
+          const skeletonLoader = img.previousElementSibling;
+
           if (img.dataset.src) {
+            // Keep skeleton loader visible while loading
+            skeletonLoader.classList.add("active");
+
             // Pre-load the image
             const tempImage = new Image();
             tempImage.onload = () => {
               img.src = img.dataset.src;
-              img.classList.remove("loading");
               img.classList.add("loaded");
+              skeletonLoader.classList.remove("active");
             };
             tempImage.onerror = () => {
-              img.onerror(); // Trigger the inline error handler
+              img.src = img.dataset.defaultSrc;
+              img.classList.add("loaded");
+              skeletonLoader.classList.remove("active");
             };
             tempImage.src = img.dataset.src;
             observer.unobserve(img);
@@ -204,14 +211,18 @@ $(document).ready(function () {
           <h3 class="entry-title mb-3 text-custom-header">${formattedTitle}</h3>
           <a href="/changelogs/${changelog.id}" class="changelog-link">
             <div class="image-container">
+              <div class="skeleton-loader active"></div>
               <img 
-                src="${defaultImage}"
+                src=""
                 data-src="${imageUrl}"
-                class="changelog-image loading"
-                alt="Changelog preview for ${changelog.title}"
+                data-default-src="${defaultImage}"
+                class="changelog-image"
+                alt=""
                 width="1920"
                 height="1080"
-                onerror="this.src='${defaultImage}'; this.classList.remove('loading');">
+                onload="this.style.opacity='1'; this.classList.add('loaded'); this.previousElementSibling.classList.remove('active')"
+                onerror="this.src='${defaultImage}'; this.classList.add('loaded'); this.previousElementSibling.classList.remove('active')"
+              >
             </div>
           </a>
         </div>
@@ -319,46 +330,31 @@ $(document).ready(function () {
   // Process the changelog data and render it
   function processData(data) {
     if (Array.isArray(data) && data.length > 0) {
-      // Sort the data array by date (latest first)
       const validData = data
         .filter((entry) => entry && entry.title)
         .sort((a, b) => {
           const dateA = parseDateFromTitle(a.title);
           const dateB = parseDateFromTitle(b.title);
-          return dateB - dateA; // Sort in descending order (latest first)
+          return dateB - dateA;
         });
 
       if (validData.length > 0) {
         const entriesHtml = validData.map(createTimelineEntry).join("");
         $timeline.html(entriesHtml);
 
-        // If it's fresh data, use the fade-in effect
+        // Initialize lazy loading for images after HTML is added
+        setTimeout(() => {
+          $timeline.find(".changelog-image").each(function () {
+            imageObserver.observe(this);
+          });
+        }, 100);
+
         fadeInEntries(0, validData.length);
-
-        // Initialize lazy loading for images
-        $timeline.find(".changelog-image").each(function () {
-          imageObserver.observe(this);
-        });
-
-        setupAccordionButtonText();
-
-        // Open the first accordion item by default
-        $timeline
-          .find(".accordion-button")
-          .first()
-          .removeClass("collapsed")
-          .attr("aria-expanded", "true");
-        $timeline.find(".accordion-collapse").first().addClass("show");
       } else {
-        console.log("No valid entries found");
         $timeline.html("<p>No changelogs found.</p>");
       }
-    } else {
-      console.log("Invalid or empty data");
-      $timeline.html("<p>No changelogs found.</p>");
     }
   }
-
   // Initialize the page by loading all entries
   loadAllEntries();
 
