@@ -114,6 +114,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     return null;
   }
+
+  // Make it globally available
+  window.getCookie = getCookie;
+
   function setCookie(name, value, days) {
     let date = new Date();
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000); // Set expiration time
