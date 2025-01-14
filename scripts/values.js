@@ -1196,8 +1196,7 @@ window.handleCardClick = function (name, type, event) {
   const formattedUrlType = encodeURIComponent(type.toLowerCase());
   const url = `/item/${formattedUrlType}/${formattedName}`;
 
-  // Always open in new tab by using window.open()
-  window.open(url, "_blank");
+  window.location.href = url;
 };
 
 window.handleCategoryClick = function (event, category) {

@@ -263,29 +263,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Determine media element based on type
     let element;
+    // For Drift videos
     if (item.type === "Drift") {
       element = `
-      <div class="media-container ${item.is_limited ? "limited-item" : ""}">
-          <img 
-              src="/assets/images/items/drifts/thumbnails/${item.name}.webp"
-              class="img-fluid rounded thumbnail"
-              alt="${item.name}"
-              onerror="handleimage(this)"
-              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"
-          >
-          <video 
-            src="/assets/images/items/drifts/${item.name}.webm"
-            class="img-fluid rounded video-player"
-            playsinline 
-            muted 
-            loop
-            preload="metadata"
-            defaultMuted
-            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;"
-          ></video>
-          ${item.is_limited ? specialBadgeHtml : ""}
-      </div>
-    `;
+    <div class="media-container ${item.is_limited ? "limited-item" : ""}">
+        <video 
+          src="/assets/images/items/drifts/${item.name}.webm"
+          class="img-fluid rounded video-player"
+          playsinline 
+          muted 
+          loop
+          autoplay
+          defaultMuted
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; opacity: 1;"
+        ></video>
+        ${item.is_limited ? specialBadgeHtml : ""}
+    </div>
+  `;
     } else if (item.type === "HyperChrome" && item.name === "HyperShift") {
       element = `
       <div class="media-container ${item.is_limited ? "limited-item" : ""}">
@@ -397,82 +391,91 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>`
       : "";
 
-    // Add event listener for toggle button text
+    // Replace the existing setTimeout video handling code with this:
     setTimeout(() => {
-      const toggleBtn = document.querySelector('[data-bs-toggle="collapse"]');
-      if (toggleBtn) {
-        const toggleText = toggleBtn.querySelector(".toggle-text");
-        document
-          .querySelector("#dupedOwnersList")
-          .addEventListener("show.bs.collapse", () => {
-            toggleText.textContent = "Hide Owners";
-            toggleBtn
-              .querySelector(".bi")
-              .classList.replace("bi-chevron-down", "bi-chevron-up");
-          });
-        document
-          .querySelector("#dupedOwnersList")
-          .addEventListener("hide.bs.collapse", () => {
-            toggleText.textContent = "Show Owners";
-            toggleBtn
-              .querySelector(".bi")
-              .classList.replace("bi-chevron-up", "bi-chevron-down");
-          });
+      const mediaContainer = document.querySelector(".media-container");
+      const video = mediaContainer.querySelector("video");
+
+      if (video) {
+        // Create intersection observer to handle video playback
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                // Video is visible in viewport
+                video
+                  .play()
+                  .catch((err) => console.log("Video play failed:", err));
+              } else {
+                // Video is not visible in viewport
+                video.pause();
+              }
+            });
+          },
+          {
+            threshold: 0.5, // Trigger when 50% of the video is visible
+          }
+        );
+
+        // Start observing the video
+        observer.observe(mediaContainer);
+
+        // Handle tab visibility changes
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) {
+            video.pause();
+          } else {
+            const box = mediaContainer.getBoundingClientRect();
+            const isVisible = box.top < window.innerHeight && box.bottom > 0;
+            if (isVisible) {
+              video
+                .play()
+                .catch((err) => console.log("Video play failed:", err));
+            }
+          }
+        });
       }
     }, 100);
 
-    const additionalInfo = `
-  ${
-    (item.description && item.description !== "N/A") ||
-    (item.notes && item.notes !== "N/A")
+    const hasValue = value !== "-" && value !== "N/A";
+    const hasDupedValue = duped_value !== "-" && duped_value !== "N/A";
+    const hasDemand = item.demand && item.demand !== "N/A";
+    const hasNotes = item.notes && item.notes !== "N/A";
+    const demandSection = hasDemand
       ? `
-    <div class="additional-info mt-4">
-      ${
-        item.description && item.description !== "N/A"
-          ? `
-        <div class="info-card mb-4 p-4 rounded-3" style="background-color: rgba(46, 57, 68, 0.3); border: 1px solid rgba(46, 57, 68, 0.4);">
-          <h4 class="text-muted mb-3 d-flex align-items-center">
-            <i class="bi bi-info-circle me-2"></i>
-            Description
-          </h4>
-          <p class="mb-0" style="color: #D3D9D4; line-height: 1.6;">
-            ${item.description}
-          </p>
-        </div>
-      `
-          : ""
-      }
-      ${
-        item.notes && item.notes !== "N/A"
-          ? `
-        <div class="info-card p-4 rounded-3" style="background-color: rgba(46, 57, 68, 0.3); border: 1px solid rgba(46, 57, 68, 0.4);">
+    <div class="col-md-6 mt-3">
+      <div class="value-card p-4 rounded-3" style="background-color: rgba(116, 141, 146, 0.1); border: 1px solid rgba(116, 141, 146, 0.2);">
+        <h4 class="text-muted mb-3 d-flex align-items-center">
+          <i class="bi bi-graph-up-arrow me-2"></i>
+          Demand
+        </h4>
+        <p class="h2 mb-0" style="color: #76ABAE; font-weight: 600;">
+          ${item.demand}
+        </p>
+      </div>
+    </div>
+  `
+      : "";
+
+    const notesSection = hasNotes
+      ? `
+      <div class="col-md-6 mt-3">
+        <div class="value-card p-4 rounded-3" style="background-color: rgba(116, 141, 146, 0.1); border: 1px solid rgba(116, 141, 146, 0.2);">
           <h4 class="text-muted mb-3 d-flex align-items-center">
             <i class="bi bi-journal-text me-2"></i>
             Notes
           </h4>
-          <p class="mb-0" style="color: #D3D9D4; line-height: 1.6;">
+          <p class="h5 mb-0" style="color: #76ABAE; font-weight: 500; line-height: 1.4;">
             ${item.notes}
           </p>
         </div>
-      `
-          : ""
-      }
-    </div>
-  `
-      : `
-    <div class="additional-info mt-4">
-      <div class="info-card p-4 rounded-3 text-center" style="background-color: rgba(46, 57, 68, 0.3); border: 1px solid rgba(46, 57, 68, 0.4);">
-        <i class="bi bi-info-circle mb-3" style="font-size: 1.5rem; color: #748D92;"></i>
-        <p class="mb-0" style="color: #748D92;">No additional information available for this item.</p>
       </div>
-    </div>
-  `
-  }`;
-
-    // Modify the valuesSection template to include additionalInfo:
+    `
+      : "";
     const valuesSection = `
       <div class="values-section border-top border-bottom py-4 my-4">
         <div class="row g-4">
+          <!-- Cash Value Card - Always Show -->
           <div class="col-md-6">
             <div class="value-card p-4 rounded-3" style="background-color: rgba(24, 101, 131, 0.1); border: 1px solid rgba(24, 101, 131, 0.2);">
               <h4 class="text-muted mb-3 d-flex align-items-center">
@@ -480,14 +483,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 Cash Value
               </h4>
               <p class="h2 mb-0" style="color: rgb(24, 101, 131); font-weight: 600;">
-                ${
-                  value === "-"
-                    ? '<span class="text-muted">Not Available</span>'
-                    : value
-                }
+                ${hasValue ? value : "No Cash Value"}
               </p>
             </div>
           </div>
+      
+          <!-- Duped Value Card - Always Show -->
           <div class="col-md-6">
             <div class="value-card p-4 rounded-3" style="background-color: rgba(116, 141, 146, 0.1); border: 1px solid rgba(116, 141, 146, 0.2);">
               <h4 class="text-muted mb-3 d-flex align-items-center">
@@ -495,18 +496,39 @@ document.addEventListener("DOMContentLoaded", async () => {
                 Duped Value
               </h4>
               <p class="h2 mb-0" style="color: #748D92; font-weight: 600;">
-                ${
-                  duped_value === "-"
-                    ? '<span class="text-muted">Not Available</span>'
-                    : duped_value
-                }
+                ${hasDupedValue ? duped_value : "No Duped Value"}
+              </p>
+            </div>
+          </div>
+      
+          <!-- Demand Card - Always Show -->
+          <div class="col-md-6 mt-3">
+            <div class="value-card p-4 rounded-3" style="background-color: rgba(116, 141, 146, 0.1); border: 1px solid rgba(116, 141, 146, 0.2);">
+              <h4 class="text-muted mb-3 d-flex align-items-center">
+                <i class="bi bi-graph-up-arrow me-2"></i>
+                Demand
+              </h4>
+              <p class="h2 mb-0" style="color: #76ABAE; font-weight: 600;">
+                ${hasDemand ? item.demand : "No Demand"}
+              </p>
+            </div>
+          </div>
+      
+          <!-- Notes Card - Always Show -->
+          <div class="col-md-6 mt-3">
+            <div class="value-card p-4 rounded-3" style="background-color: rgba(116, 141, 146, 0.1); border: 1px solid rgba(116, 141, 146, 0.2);">
+              <h4 class="text-muted mb-3 d-flex align-items-center">
+                <i class="bi bi-journal-text me-2"></i>
+                Notes
+              </h4>
+              <p class="h5 mb-0" style="color: #76ABAE; font-weight: 500; line-height: 1.4;">
+                ${hasNotes ? item.notes : "No Notes"}
               </p>
             </div>
           </div>
         </div>
       </div>
-      ${additionalInfo}
-      ${dupedOwnersSection}`;
+      `;
 
     // Determine if we should show the graph
     const graphSection = hasValues
@@ -807,26 +829,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           });
       }, 100);
     }
-
-    // After the container HTML is set, add resize observer
-    setTimeout(() => {
-      const mediaContainer = document.querySelector(".media-container");
-      const mediaElement = mediaContainer.querySelector("img, video");
-      const video = mediaContainer.querySelector("video");
-
-      if (video) {
-        // check to ensure video exists before adding listeners
-        mediaContainer.addEventListener("mouseenter", () => {
-          video.style.opacity = "1";
-          video.play().catch((err) => console.log("Video play failed:", err));
-        });
-
-        mediaContainer.addEventListener("mouseleave", () => {
-          video.style.opacity = "0";
-          video.pause();
-        });
-      }
-    }, 100);
   }
 
   function showErrorMessage(message) {

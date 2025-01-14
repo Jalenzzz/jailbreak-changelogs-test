@@ -223,9 +223,9 @@ body {
 
 .media-container {
   position: relative;
-  width: 90%; /* restored to original width for item images */
+  width: 100%;
+  aspect-ratio: 16/9;
   margin: 0 auto;
-  height: 400px; /* restored to original height for item images */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -236,13 +236,16 @@ body {
 
 .media-container img,
 .media-container video {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
-  height: 100%;
-  object-fit: cover; /* Changed from contain to cover */
-  object-position: center;
+  aspect-ratio: 16/9;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #212529;
 }
 /* Style for legend items */
 .chart-container canvas {
@@ -422,8 +425,6 @@ body {
 
   .media-container {
     width: 100%; /* Changed from 90% to 100% */
-    height: 250px;
-    margin: 0 auto; /* Added auto margins */
   }
 
   .chart-container {
@@ -470,8 +471,6 @@ body {
 @media (max-width: 576px) {
   .media-container {
     width: 100%; /* Changed from 95% to 100% */
-    height: 200px;
-    margin: 0 auto; /* Added auto margins */
   }
 
   .image-container {
