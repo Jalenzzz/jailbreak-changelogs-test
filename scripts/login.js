@@ -2,9 +2,6 @@ $(document).ready(function () {
   const ageCheck = $("#ageCheck");
   const tosCheck = $("#tosCheck");
   const loginButton = $("#login-button");
-  const previousPage = document.referrer || "/";
-  // Store it in sessionStorage in case the OAuth redirect clears the referrer
-  sessionStorage.setItem("loginRedirect", previousPage);
 
   function updateLoginButton() {
     loginButton.prop(
@@ -19,6 +16,8 @@ $(document).ready(function () {
   const OauthRedirect =
     "https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=https%3A%2F%2Ftesting.jailbreakchangelogs.xyz%2Flogin&scope=identify";
   const DiscordLoginButton = document.getElementById("login-button");
+  const currentPath = window.location.pathname + window.location.search;
+  sessionStorage.setItem("loginRedirect", currentPath);
   DiscordLoginButton.addEventListener("click", () => {
     console.log("Redirecting to Discord OAuth...");
     window.location.href = OauthRedirect;
