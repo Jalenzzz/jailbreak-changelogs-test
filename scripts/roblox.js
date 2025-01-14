@@ -35,8 +35,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const code = new URLSearchParams(window.location.search).get("code");
     console.log("Code:", code);
     const token = getCookie("token");
+    if (token) {
+      const url = `https://api3.jailbreakchangelogs.xyz/auth/roblox?code=${code}&owner=${token}`
+    } else {
+      const url = `https://api3.jailbreakchangelogs.xyz/auth/roblox?code=${code}`
+    }
     fetch(
-      `https://api.jailbreakchangelogs.xyz/roblox/auth?code=${code}&owner=${token}`,
+      url,
       {
         method: "POST",
         headers: {
