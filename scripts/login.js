@@ -80,19 +80,8 @@ $(document).ready(function () {
             }
           );
         } else {
-          toastr.error(
-            "An error occurred during login. Please try again.",
-            "Error",
-            {
-              positionClass: "toast-bottom-right",
-              timeOut: 3000,
-              closeButton: true,
-              progressBar: true,
-              onHidden: function () {
-                window.location.href = "/";
-              },
-            }
-          );
+          console.error("Login error:", error);
+          window.location.href = "/";
         }
       });
   }
