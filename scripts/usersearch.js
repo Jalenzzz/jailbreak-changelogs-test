@@ -21,8 +21,23 @@ const elements = {
   usersGrid: document.getElementById("usersGrid"),
   loadingSpinner: document.getElementById("loading-spinner"),
   userResults: document.getElementById("user-results"),
+  totalUsersCount: document.getElementById("total-users-count"),
 };
 
+const fetchTotalUsers = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/list`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch user count");
+    }
+    const users = await response.json();
+    const totalUsers = users.length;
+    elements.totalUsersCount.innerHTML = `<i class="bi bi-person-lines-fill me-1"></i>Total Users: ${totalUsers.toLocaleString()}`;
+  } catch (error) {
+    console.error("Error fetching total users:", error);
+    elements.totalUsersCount.innerHTML = `<i class="bi bi-exclamation-triangle me-1"></i>Failed to load user count`;
+  }
+};
 // Message Templates
 const messages = {
   minLength: `
@@ -176,6 +191,7 @@ const handleSearch = async () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   showMessage(messages.minLength);
+  fetchTotalUsers();
   elements.searchButton.addEventListener("click", handleSearch);
 
   // Add clear button functionality
