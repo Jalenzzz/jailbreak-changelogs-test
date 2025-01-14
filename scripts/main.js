@@ -3,6 +3,32 @@ document.addEventListener("DOMContentLoaded", function () {
   const sideMenu = document.getElementById("sideMenu");
   const mobileViewUpdates = document.getElementById("mobileViewUpdates");
 
+  window.checkAndSetAvatar = async function (userData) {
+    const gifUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.gif?size=128`;
+    const webpUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.webp?size=128`;
+    const fallbackAvatar = `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${encodeURIComponent(
+      userData.username
+    )}&bold=true&format=svg`;
+
+    try {
+      // Check GIF
+      const gifResponse = await fetch(gifUrl, { method: "HEAD" });
+      if (gifResponse.ok) {
+        return gifUrl;
+      }
+
+      // Check WEBP
+      const webpResponse = await fetch(webpUrl, { method: "HEAD" });
+      if (webpResponse.ok) {
+        return webpUrl;
+      }
+
+      return fallbackAvatar;
+    } catch {
+      return fallbackAvatar;
+    }
+  };
+
   function toggleMenu() {
     navbarToggler.classList.toggle("opened");
     sideMenu.classList.toggle("show");
@@ -57,32 +83,7 @@ function checkVersionWithCache() {
       });
   }
 }
-function addCloudinaryOptimization(url) {
-  if (url.includes("res.cloudinary.com")) {
-    const parts = url.split("/upload/");
-    if (parts.length === 2) {
-      return `${parts[0]}/upload/w_1200,f_auto,q_auto/${parts[1]}`;
-    }
-  }
-  return url;
-}
 
-// Optimize meta tag images
-document
-  .querySelectorAll('meta[property^="og:image"], meta[name^="twitter:image"]')
-  .forEach((meta) => {
-    const originalUrl = meta.getAttribute("content");
-    meta.setAttribute("content", addCloudinaryOptimization(originalUrl));
-  });
-
-const heroElement = document.querySelector(".hero");
-if (heroElement) {
-  const backgroundImage = getComputedStyle(heroElement).backgroundImage;
-  const imageUrl = backgroundImage.slice(4, -1).replace(/["']/g, "");
-  heroElement.style.backgroundImage = `url('${addCloudinaryOptimization(
-    imageUrl
-  )}')`;
-}
 // Function to update the version display
 function updateVersionDisplay(data) {
   const updateElement = (id, value) => {
@@ -99,70 +100,77 @@ function updateVersionDisplay(data) {
   updateElement("version-number", data.version);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   checkVersionWithCache();
 
-  const avatarUrl = sessionStorage.getItem("avatar");
   const token = Cookies.get("token");
   const user = sessionStorage.getItem("user");
   const userid = sessionStorage.getItem("userid");
 
-  // Function to clear session and reload
   function clearSessionAndReload() {
     Cookies.remove("token");
     sessionStorage.clear();
     window.location.reload();
   }
 
-  function checkInvalidSession() {
-    if (!token && (user || userid)) {
+  // Check and clear invalid session state
+  if (!token && (user || userid)) {
+    clearSessionAndReload();
+    return;
+  }
+
+  if (token) {
+    try {
+      const response = await fetch(
+        "https://api3.jailbreakchangelogs.xyz/users/get/token?token=" + token
+      );
+      if (!response.ok) {
+        throw new Error("Invalid response");
+      }
+
+      const userData = await response.json();
+      if (!userData) {
+        clearSessionAndReload();
+        return;
+      }
+
+      // Check and set avatar
+      const avatarUrl = await window.checkAndSetAvatar(userData);
+      sessionStorage.setItem("avatar", avatarUrl);
+      sessionStorage.setItem("user", JSON.stringify(userData));
+      sessionStorage.setItem("userid", userData.id);
+
+      // Update profile pictures if they exist
+      const profilePicture = document.getElementById("profile-picture");
+      const mobileProfilePicture = document.getElementById(
+        "profile-picture-mobile"
+      );
+
+      if (profilePicture) {
+        profilePicture.src = avatarUrl;
+      }
+      if (mobileProfilePicture) {
+        mobileProfilePicture.src = avatarUrl;
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
       clearSessionAndReload();
     }
   }
 
-  checkInvalidSession();
+  // const profilepicture = document.getElementById("profile-picture");
+  // const mobileprofilepicture = document.getElementById(
+  //   "profile-picture-mobile"
+  // );
 
-  if (token) {
-    fetch("https://api3.jailbreakchangelogs.xyz/users/get/token?token=" + token)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Invalid response");
-        }
-        return response.json();
-      })
-      .then((userData) => {
-        if (!userData) {
-          // User not found in database, sign them out
-          clearSessionAndReload();
-          return;
-        }
+  // if (!profilepicture && !mobileprofilepicture) {
+  //   return;
+  // }
 
-        // Valid user, proceed with normal login
-        const avatarURL = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-        sessionStorage.setItem("user", JSON.stringify(userData));
-        sessionStorage.setItem("avatar", avatarURL);
-        sessionStorage.setItem("userid", userData.id);
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-        // On error, also sign out the user
-        clearSessionAndReload();
-      });
-  }
-
-  const profilepicture = document.getElementById("profile-picture");
-  const mobileprofilepicture = document.getElementById(
-    "profile-picture-mobile"
-  );
-
-  if (!profilepicture && !mobileprofilepicture) {
-    return;
-  }
-
-  if (userid) {
-    profilepicture.src = avatarUrl;
-    mobileprofilepicture.src = avatarUrl;
-  }
+  // if (userid) {
+  //   profilepicture.src = avatarUrl;
+  //   mobileprofilepicture.src = avatarUrl;
+  // }
   let escapePressCount = 0;
   let escapePressTimeout;
 

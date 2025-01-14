@@ -2,6 +2,9 @@ $(document).ready(function () {
   const ageCheck = $("#ageCheck");
   const tosCheck = $("#tosCheck");
   const loginButton = $("#login-button");
+  const previousPage = document.referrer || "/";
+  // Store it in sessionStorage in case the OAuth redirect clears the referrer
+  sessionStorage.setItem("loginRedirect", previousPage);
 
   function updateLoginButton() {
     loginButton.prop(
@@ -14,7 +17,7 @@ $(document).ready(function () {
   tosCheck.change(updateLoginButton);
 
   const OauthRedirect =
-    "https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=https%3A%2F%2Ftesting.jailbreakchangelogs.xyz%2Flogin&scope=identify";
+    "https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5500%2Flogin&scope=identify";
   const DiscordLoginButton = document.getElementById("login-button");
   DiscordLoginButton.addEventListener("click", () => {
     console.log("Redirecting to Discord OAuth...");
@@ -38,13 +41,11 @@ $(document).ready(function () {
         }
         return response.json();
       })
+
       .then((userData) => {
         if (userData && userData.id && userData.avatar) {
           const avatarURL = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
           Cookies.set("token", userData.token, { expires: 7 });
-          sessionStorage.removeItem("user");
-          sessionStorage.removeItem("avatar");
-          sessionStorage.removeItem("userid");
           sessionStorage.setItem("user", JSON.stringify(userData));
           sessionStorage.setItem("avatar", avatarURL);
           sessionStorage.setItem("userid", userData.id);
@@ -56,14 +57,9 @@ $(document).ready(function () {
             closeButton: true,
             progressBar: true,
             onHidden: function () {
-              // Redirect after toast is hidden
-              const redirect = localStorage.getItem("redirectAfterLogin");
-              if (!redirect || redirect !== "/roblox") {
-                window.location.href = "/";
-              } else {
-                window.location.href = redirect;
-                localStorage.removeItem("redirectAfterLogin");
-              }
+              const redirectTo = sessionStorage.getItem("loginRedirect") || "/";
+              sessionStorage.removeItem("loginRedirect"); // Clean up
+              window.location.href = redirectTo;
             },
           });
         }

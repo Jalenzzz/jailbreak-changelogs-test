@@ -9,8 +9,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!token) {
       console.log("No token - redirecting to login");
-      localStorage.setItem("redirectAfterLogin", "/roblox");
-
       // Show toast notification
       toastr.warning(
         "You need to connect your Discord account first before linking your Roblox account.",

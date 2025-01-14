@@ -224,8 +224,8 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
-    <script src="scripts/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="scripts/main.js"></script>
 
     <script
       async
@@ -252,43 +252,8 @@
     </script>
     <%- include('partials/footer') %>
   </body>
-  <script>
-    function getCookie(name) {
-      let cookieArr = document.cookie.split(";");
-      for (let i = 0; i < cookieArr.length; i++) {
-        let cookiePair = cookieArr[i].split("=");
-        if (name === cookiePair[0].trim()) {
-          return decodeURIComponent(cookiePair[1]);
-        }
-      }
-      return null;
-    }
-    const userid = sessionStorage.getItem("userid");
-    const token = getCookie("token");
-    if (token && !userid) {
-      fetch(
-        "https://api.jailbreakchangelogs.xyz/users/get/token?token=" + token
-      )
-        .then((response) => {
-          if (!response.ok) {
-            console.error("Unexpected response status:", response.status);
-            return null;
-          }
-          return response.json();
-        })
-        .then((userData) => {
-          if (!userData) return;
-          const avatarURL = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-          sessionStorage.setItem("user", JSON.stringify(userData));
-          sessionStorage.setItem("avatar", avatarURL);
-          sessionStorage.setItem("userid", userData.id);
-          window.location.reload();
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-        });
-    }
-  </script>
+
+
   <script
     async
     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8152532464536367"

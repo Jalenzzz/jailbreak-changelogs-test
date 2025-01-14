@@ -183,24 +183,56 @@
     const isLoggedIn = !!Cookies.get("token");
     const avatarUrl = sessionStorage.getItem("avatar");
 
-    function setProfilePictureSrc(imgElement, src) {
+    async function setProfilePictureSrc(imgElement, src) {
       if (imgElement) {
-        imgElement.src =
-          src ||
-          "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
+        try {
+          if (src) {
+            imgElement.src = src;
+          } else {
+            const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
+            if (userData.id) {
+              const avatarUrl = await window.checkAndSetAvatar(userData);
+              imgElement.src = avatarUrl;
+            } else {
+              // Use the fallback from checkAndSetAvatar for non-logged in users
+              imgElement.src =
+                "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
+            }
+          }
+        } catch (error) {
+          console.error("Error setting profile picture:", error);
+          // Use fallback on error
+          imgElement.src =
+            "https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=Jailbreak+Break&bold=true&format=svg";
+        }
       }
     }
 
     function getDropdownContent(isLoggedIn) {
-      return isLoggedIn
-        ? `
-          <li><a class="dropdown-item" href="/profile">Profile</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="#" onclick="logout()">Log out</a></li>
-        `
-        : `
-          <li><a class="dropdown-item" href="/login">Log in</a></li>
-        `;
+      if (isLoggedIn) {
+        const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
+        const hasRoblox = userData.roblox_id;
+
+        return `
+      <li><a class="dropdown-item" href="/profile">Profile</a></li>
+      ${
+        !hasRoblox
+          ? `
+      <li>
+        <a class="dropdown-item" href="/roblox">
+          <i class="bi bi-plus-circle"></i> Connect Roblox
+        </a>
+      </li>`
+          : ""
+      }
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item" href="#" onclick="logout()">Log out</a></li>
+    `;
+      } else {
+        return `
+      <li><a class="dropdown-item" href="/login">Log in with Discord</a></li>
+    `;
+      }
     }
 
     function updateDropdownContent() {

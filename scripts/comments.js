@@ -356,10 +356,9 @@ class CommentsManager {
     li.dataset.commentId = comment.id;
 
     // Use the avatar from user details if available
-    const avatarUrl =
-      userDetails && userDetails.avatar
-        ? `https://cdn.discordapp.com/avatars/${userDetails.id}/${userDetails.avatar}.webp?size=128`
-        : fallbackAvatar;
+    const avatarUrl = userDetails
+      ? await window.checkAndSetAvatar(userDetails)
+      : fallbackAvatar;
 
     li.innerHTML = `
     <div class="d-flex align-items-start">
@@ -428,28 +427,6 @@ class CommentsManager {
       commentText.classList.toggle("truncated");
       showMoreBtn.textContent = isExpanded ? "Show more" : "Show less";
     });
-
-    // Check if avatar is animated (GIF)
-    // In comments.js, around line 441, replace the problematic section with:
-
-    // Check if avatar is animated (GIF)
-    if (userDetails && userDetails.avatar) {
-      const avatarImg = li.querySelector("img");
-      const gifUrl = `https://cdn.discordapp.com/avatars/${userDetails.id}/${userDetails.avatar}.gif?size=128`;
-      fetch(gifUrl, { method: "HEAD" })
-        .then((response) => {
-          if (response.ok) {
-            avatarImg.src = gifUrl;
-          } else {
-            avatarImg.src = `https://cdn.discordapp.com/avatars/${userDetails.id}/${userDetails.avatar}.webp?size=128`;
-          }
-        })
-        .catch((error) => {
-          console.error("Error setting avatar:", error);
-          // Fallback to webp format if gif fails
-          avatarImg.src = `https://cdn.discordapp.com/avatars/${userDetails.id}/${userDetails.avatar}.webp?size=128`;
-        });
-    }
 
     if (isOwner) {
       this.setupCommentActions(li, comment);
