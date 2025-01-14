@@ -13,6 +13,42 @@ let currentY = 0;
 let initialTransform = 0;
 const currentUserId = sessionStorage.getItem("userid");
 
+async function canCreateTradeAd() {
+  const token = getCookie("token"); // Using existing getCookie from main.js
+  if (!token) {
+    toastr.error("Please login first");
+    return false;
+  }
+
+  try {
+    const response = await fetch(
+      `https://api3.jailbreakchangelogs.xyz/users/get/token?token=${token}`
+    );
+    if (!response.ok) throw new Error("Failed to fetch user data");
+
+    const userData = await response.json();
+    if (!userData) throw new Error("No user data found");
+
+    // Check if user has Roblox data
+    if (!userData.roblox_id || !userData.roblox_username) {
+      toastr.error("Please link your Roblox account first", "", {
+        timeOut: 5000,
+        closeButton: true,
+        onclick: function () {
+          window.location.href = "/roblox";
+        },
+      });
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error checking trade permissions:", error);
+    toastr.error("Failed to verify trade permissions");
+    return false;
+  }
+}
+
 function createSkeletonTradeAd() {
   return `
     <div class="trade-ad">
@@ -881,6 +917,9 @@ async function deleteTradeAd(tradeId) {
   }
 }
 async function editTradeAd(tradeId) {
+  if (!(await canCreateTradeAd())) {
+    return;
+  }
   try {
     const token = getCookie("token");
     if (!token) {
@@ -1375,33 +1414,44 @@ async function createTradeAdHTML(trade) {
       ),
     ]);
 
-    // Replace skeleton with actual content
     tradeAdElement.innerHTML = `
       <div class="trade-ad">
-        <div class="trade-ad-header">
-          <div class="trader-info">
-            <img src="${avatarUrl}" 
-                alt="${authorDetails?.username || "Unknown"}" 
-                class="trader-avatar"
-                style="border: 4px solid ${decimalToHex(
-                  authorDetails?.accent_color
-                )}"
-                onerror="this.src='https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${encodeURIComponent(
-                  authorDetails?.username || "Unknown"
-                )}&bold=true&format=svg'"
-                width="64"
-                height="64">
-            <div class="trader-details">
-              <span class="trader-name">${
-                authorDetails?.global_name ||
-                authorDetails?.username ||
-                "Unknown User"
-              }</span>
-              <span class="trader-username text-muted">@${
-                authorDetails?.username || "unknown"
-              }</span>
-            </div>
+       <div class="trader-info">
+        <div class="trader-info">
+          <img src="${
+            authorDetails?.roblox_avatar ||
+            "https://tr.rbxcdn.com/0b3725bbe29c30182f7c29fd96d31047/150/150/AvatarHeadshot/Png"
+          }" 
+              alt="${authorDetails?.roblox_username || "Unknown"}" 
+              class="trader-avatar"
+              onerror="this.src='https://tr.rbxcdn.com/0b3725bbe29c30182f7c29fd96d31047/150/150/AvatarHeadshot/Png'"
+              width="64"
+              height="64">
+          <div class="trader-details">
+            <a href="https://www.roblox.com/users/${
+              authorDetails?.roblox_id
+            }/profile" 
+              class="trader-name"
+              target="_blank" 
+              rel="noopener noreferrer">
+              ${authorDetails?.roblox_display_name || "Unknown"} 
+              <span class="text-muted">(${
+                authorDetails?.roblox_id || "Unknown ID"
+              })</span>
+            </a>
+            <a href="https://www.roblox.com/users/${
+              authorDetails?.roblox_id
+            }/profile" 
+              class="trader-username text-muted" 
+              target="_blank" 
+              rel="noopener noreferrer">
+              @${authorDetails?.roblox_username || "unknown"}
+            </a>
           </div>
+        </div>
+
+
+
         </div>
 
         <div class="trade-sides-container">
@@ -1522,7 +1572,10 @@ document.addEventListener("DOMContentLoaded", () => {
 renderTradeItems("Offer");
 renderTradeItems("Request");
 
-function previewTrade() {
+async function previewTrade() {
+  if (!(await canCreateTradeAd())) {
+    return;
+  }
   // Get elements with error checking
   const previewSection = document.getElementById("trade-preview");
   const availableContainer = document.getElementById(
@@ -1681,6 +1734,9 @@ function resetTrade() {
 
 // Function to create a trade advertisement
 async function createTradeAd() {
+  if (!(await canCreateTradeAd())) {
+    return;
+  }
   try {
     // Check for authentication token first
     const token = getCookie("token");

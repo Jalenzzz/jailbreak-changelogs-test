@@ -2,6 +2,33 @@ document.addEventListener("DOMContentLoaded", function () {
   const ageCheck = document.getElementById("ageCheck");
   const tosCheck = document.getElementById("tosCheck");
   const loginButton = document.getElementById("button");
+  if (window.location.href.includes("/roblox")) {
+    console.log("Detected roblox page access");
+    const token = getCookie("token");
+    console.log("Found token:", token);
+
+    if (!token) {
+      console.log("No token - redirecting to login");
+      localStorage.setItem("redirectAfterLogin", "/roblox");
+
+      // Show toast notification
+      toastr.warning(
+        "You need to connect your Discord account first before linking your Roblox account.",
+        "Discord Connection Required",
+        {
+          positionClass: "toast-bottom-right",
+          timeOut: 3000,
+          closeButton: true,
+          progressBar: true,
+          onHidden: function () {
+            // Redirect after toast is hidden
+            window.location.href = "/login";
+          },
+        }
+      );
+      return;
+    }
+  }
 
   function updateLoginButton() {
     loginButton.disabled = !(ageCheck.checked && tosCheck.checked);
@@ -9,17 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   ageCheck.addEventListener("change", updateLoginButton);
   tosCheck.addEventListener("change", updateLoginButton);
-
-  function getCookie(name) {
-    let cookieArr = document.cookie.split(";");
-    for (let i = 0; i < cookieArr.length; i++) {
-      let cookiePair = cookieArr[i].split("=");
-      if (name === cookiePair[0].trim()) {
-        return decodeURIComponent(cookiePair[1]);
-      }
-    }
-    return null;
-  }
 
   const redirect =
     "https://authorize.roblox.com/?client_id=8033575152059272055&redirect_uri=https://jailbreakchangelogs.xyz/roblox&scope=openid%20profile&response_type=code";
@@ -37,22 +53,56 @@ document.addEventListener("DOMContentLoaded", function () {
     const token = getCookie("token");
     let url;
     if (token) {
-      url = `https://api3.jailbreakchangelogs.xyz/auth/roblox?code=${code}&owner=${token}`
+      url = `https://api3.jailbreakchangelogs.xyz/auth/roblox?code=${code}&owner=${token}`;
     } else {
-      window.location.href = "/"
+      window.location.href = "/";
     }
-    fetch(
-      url,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((response) => response.json())
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("network");
+        }
+        return response.json();
+      })
       .then((data) => {
         console.log(data);
+        // Show success message
+        toastr.success(
+          "Your Roblox account has been successfully connected!",
+          "Success",
+          {
+            positionClass: "toast-bottom-right",
+            timeOut: 3000,
+            closeButton: true,
+            progressBar: true,
+            onHidden: function () {
+              // Redirect to home page after showing success message
+              window.location.href = "/";
+            },
+          }
+        );
+      })
+      .catch((error) => {
+        // Show error message
+        toastr.error(
+          "An error occurred while connecting your Roblox account. Please try again.",
+          "Error",
+          {
+            positionClass: "toast-bottom-right",
+            timeOut: 3000,
+            closeButton: true,
+            progressBar: true,
+            onHidden: function () {
+              // Redirect to home page after showing error
+              window.location.href = "/";
+            },
+          }
+        );
       });
   }
 });

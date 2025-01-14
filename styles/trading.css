@@ -1403,6 +1403,22 @@ video.card-img-top {
   color: var(--text-primary);
   font-size: 1.1rem;
 }
+.trader-name,
+.trader-username {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.trader-name:hover,
+.trader-username:hover {
+  color: var(--accent-color-light);
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
 
 .trader-username {
   font-size: 0.9rem;
