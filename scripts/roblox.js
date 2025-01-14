@@ -35,10 +35,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const code = new URLSearchParams(window.location.search).get("code");
     console.log("Code:", code);
     const token = getCookie("token");
+    let url;
     if (token) {
-      const url = `https://api3.jailbreakchangelogs.xyz/auth/roblox?code=${code}&owner=${token}`
+      url = `https://api3.jailbreakchangelogs.xyz/auth/roblox?code=${code}&owner=${token}`
     } else {
-      const url = `https://api3.jailbreakchangelogs.xyz/auth/roblox?code=${code}`
+      url = `https://api3.jailbreakchangelogs.xyz/auth/roblox?code=${code}`
     }
     fetch(
       url,
