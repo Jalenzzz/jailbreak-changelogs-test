@@ -1,4 +1,12 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  function showLoadingOverlay() {
+    $("#loading-overlay").addClass("show");
+  }
+
+  function hideLoadingOverlay() {
+    $("#loading-overlay").removeClass("show");
+  }
+
   const rawItemName = window.location.pathname.split("/").pop();
   const itemName = decodeURIComponent(rawItemName).trim().replace(/\s+/g, " "); // Get the item name from the URL
 
@@ -28,9 +36,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function loadItemDetails() {
+    showLoadingOverlay(); // Show loading when starting to fetch
+
     try {
       const urlPath = window.location.pathname.split("/");
-      const urlType = urlPath[2]; // Get type from URL
+      const urlType = urlPath[2];
       const rawItemName = urlPath.pop();
       const itemName = decodeURIComponent(rawItemName)
         .trim()
@@ -57,6 +67,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
       console.error("Error fetching data:", error);
       showErrorMessage("Error Loading item details");
+    } finally {
+      hideLoadingOverlay();
     }
   }
 
@@ -391,7 +403,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>`
       : "";
 
-    // Replace the existing setTimeout video handling code with this:
     setTimeout(() => {
       const mediaContainer = document.querySelector(".media-container");
       const video = mediaContainer.querySelector("video");
@@ -832,6 +843,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function showErrorMessage(message) {
+    hideLoadingOverlay();
     const container = document.getElementById("item-container");
     container.innerHTML = `
             <div class="container mt-5">

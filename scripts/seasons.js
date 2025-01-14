@@ -41,14 +41,11 @@ $(document).ready(function () {
   }
 
   function fetchAllSeasons() {
-    console.log("Fetching all seasons");
     return fetch("https://api3.jailbreakchangelogs.xyz/seasons/list")
       .then((response) => {
-        console.log("Seasons API response status:", response.status);
         return response.json();
       })
       .then((data) => {
-        console.log("Seasons data received:", data);
         return data;
       })
       .catch((error) => {
@@ -58,14 +55,11 @@ $(document).ready(function () {
   }
 
   function fetchAllRewards() {
-    console.log("Fetching all rewards");
     return fetch("https://api3.jailbreakchangelogs.xyz/rewards/list")
       .then((response) => {
-        console.log("Rewards API response status:", response.status);
         return response.json();
       })
       .then((data) => {
-        console.log("Rewards data received:", data);
         return data;
       })
       .catch((error) => {
@@ -75,8 +69,6 @@ $(document).ready(function () {
   }
 
   function loadAllData() {
-    console.log("Starting loadAllData function");
-
     const latestSeasonPromise = fetch(
       "https://api3.jailbreakchangelogs.xyz/seasons/latest",
       {
@@ -87,22 +79,14 @@ $(document).ready(function () {
       }
     )
       .then((response) => {
-        console.log("Latest season API response status:", response.status);
         return response.json();
       })
       .then((latestSeasonData) => {
-        console.log("Latest season data received:", latestSeasonData);
-        console.log("Start date:", latestSeasonData.start_date);
-        console.log("End date:", latestSeasonData.end_date);
-        console.log("Season:", latestSeasonData.season);
-        console.log("Title:", latestSeasonData.title);
-
         if (!latestSeasonData.start_date || !latestSeasonData.end_date) {
           console.error("Missing date information in latest season data");
         }
 
         if (window.countdownInterval) {
-          console.log("Clearing existing countdown interval");
           clearInterval(window.countdownInterval);
         }
 
@@ -121,17 +105,14 @@ $(document).ready(function () {
 
     return Promise.all([
       fetchAllSeasons().then((seasons) => {
-        console.log("All seasons data received:", seasons);
         return seasons;
       }),
       fetchAllRewards().then((rewards) => {
-        console.log("All rewards data received:", rewards);
         return rewards;
       }),
       latestSeasonPromise,
     ])
       .then(([seasons, rewards, latest]) => {
-        console.log("All data loaded successfully");
         latestSeason = latest;
         return [seasons, rewards, latest];
       })
@@ -332,21 +313,8 @@ $(document).ready(function () {
     });
   }
   function updateCountdown(startDate, endDate, seasonNumber, seasonTitle) {
-    console.log("Countdown initialized with:", {
-      startDate,
-      endDate,
-      seasonNumber,
-      seasonTitle,
-    });
-
     const startTimestamp = parseInt(startDate);
     const endTimestamp = parseInt(endDate);
-
-    console.log("Parsed timestamps:", {
-      startTimestamp,
-      endTimestamp,
-      currentTime: Math.floor(Date.now() / 1000),
-    });
 
     const $countdownDays = $("#countdown-days");
     const $countdownHours = $("#countdown-hours");
@@ -362,12 +330,6 @@ $(document).ready(function () {
     function calculateTimeRemaining(targetDate) {
       const now = Math.floor(Date.now() / 1000);
       const difference = targetDate - now;
-
-      console.log("Time calculation:", {
-        now,
-        targetDate,
-        difference,
-      });
 
       if (difference <= 0) return null;
 
@@ -395,7 +357,6 @@ $(document).ready(function () {
       }
       // After season ended
       else {
-        console.log("Season ended condition triggered");
         $countdownMode.text("Season Ended");
         $countdownDays.text("00");
         $countdownHours.text("00");

@@ -527,15 +527,6 @@ app.get("/botinvite", (req, res) => {
   res.render("botinvite");
 });
 
-app.get("/keys", (req, res) => {
-  res.render("keys", {
-    title: "API / Changelogs",
-    logoUrl: "/assets/logos/Api_Logo.webp",
-    logoAlt: "API Page Logo",
-    MIN_TITLE_LENGTH,
-    MIN_DESCRIPTION_LENGTH,
-  });
-});
 app.get("/roblox", (req, res) => {
   res.render("roblox");
 });
@@ -967,10 +958,6 @@ app.get("/api", (req, res) => {
 
 app.get("/faq.png", (req, res) => {
   res.sendFile(path.join(__dirname, "../FAQ.png"));
-});
-
-app.get("/api.png", (req, res) => {
-  res.sendFile(path.join(__dirname, "../API.png"));
 });
 
 app.get("/icon-512.png", (req, res) => {

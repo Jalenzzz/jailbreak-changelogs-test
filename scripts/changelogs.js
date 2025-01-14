@@ -1,6 +1,4 @@
 $(document).ready(function () {
-  // Get references to DOM elements
-  const loadingOverlay = document.getElementById("loading-overlay");
   const apiUrl = "https://api3.jailbreakchangelogs.xyz/changelogs/list";
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
@@ -71,12 +69,11 @@ $(document).ready(function () {
 
   // Function to show the loading overlay
   function showLoadingOverlay() {
-    loadingOverlay.classList.add("show");
+    $("#loading-overlay").addClass("show");
   }
 
-  // Function to hide the loading overlay
   function hideLoadingOverlay() {
-    loadingOverlay.classList.remove("show");
+    $("#loading-overlay").removeClass("show");
   }
 
   showLoadingOverlay();

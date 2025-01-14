@@ -71,20 +71,6 @@ body {
   box-shadow: 0 0 0 0.2rem rgba(var(--glow-color), 0.5); /* Glow effect on focus */
 }
 
-.custom-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(116, 141, 146, 0.3);
-  border-radius: 50%;
-  border-top-color: #748d92;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 .card {
   width: 100%; /* Ensures the card uses the full width of its container */
   border-radius: 12px;
