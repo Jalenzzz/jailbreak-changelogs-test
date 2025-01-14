@@ -178,7 +178,9 @@
     const mobileProfilePicture = document.getElementById(
       "profile-picture-mobile"
     );
-    const userId = sessionStorage.getItem("userid") || null;
+
+    // Simply check if token cookie exists
+    const isLoggedIn = !!Cookies.get("token");
     const avatarUrl = sessionStorage.getItem("avatar");
 
     function setProfilePictureSrc(imgElement, src) {
@@ -189,10 +191,10 @@
       }
     }
 
-    function getDropdownContent(userId) {
-      return userId !== null
+    function getDropdownContent(isLoggedIn) {
+      return isLoggedIn
         ? `
-          <li><a class="dropdown-item" href="/users/${userId}">Profile</a></li>
+          <li><a class="dropdown-item" href="/profile">Profile</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="#" onclick="logout()">Log out</a></li>
         `
@@ -202,7 +204,7 @@
     }
 
     function updateDropdownContent() {
-      const dropdownContent = getDropdownContent(userId);
+      const dropdownContent = getDropdownContent(isLoggedIn);
       if (userDropdown) userDropdown.innerHTML = dropdownContent;
       if (mobileUserDropdown) mobileUserDropdown.innerHTML = dropdownContent;
       setProfilePictureSrc(profilePicture, avatarUrl);
@@ -210,20 +212,11 @@
     }
 
     window.logout = function () {
-      if (
-        sessionStorage.getItem("userid") ||
-        document.cookie.includes("token")
-      ) {
-        sessionStorage.removeItem("userid");
-        sessionStorage.removeItem("avatar");
-        sessionStorage.removeItem("user");
-        document.cookie =
-          "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        updateDropdownContent();
-        window.location.href = "/logout";
-      }
+      Cookies.remove("token");
+      updateDropdownContent();
+      window.location.reload();
     };
-    // Initial update of dropdown content
+
     updateDropdownContent();
   });
 </script>
