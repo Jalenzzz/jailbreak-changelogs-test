@@ -136,22 +136,7 @@
     <!-- prettier-ignore -->
     <%- include('partials/nav') %>
     <%- include('partials/announcement') %>
-
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="show">
-      <div class="text-center">
-        <img
-          src="/assets/logos/Jailbreak_Logo.webp"
-          alt="Loading logo"
-          class="loading-logo"
-        />
-      </div>
-      <div class="d-flex justify-content-center mt-3">
-        <div class="spinner-border custom-spinner" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    </div>
+    <%- include('partials/loading') %>
 
     <div class="container-fluid py-4">
       <div class="row justify-content-center">

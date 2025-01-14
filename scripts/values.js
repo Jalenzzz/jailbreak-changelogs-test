@@ -8,17 +8,11 @@ function debounce(func, wait) {
 }
 
 function showLoadingOverlay() {
-  const loadingOverlay = document.getElementById("loading-overlay");
-  if (loadingOverlay) {
-    loadingOverlay.classList.add("show");
-  }
+  $("#loading-overlay").addClass("show");
 }
 
 function hideLoadingOverlay() {
-  const loadingOverlay = document.getElementById("loading-overlay");
-  if (loadingOverlay) {
-    loadingOverlay.classList.remove("show");
-  }
+  $("#loading-overlay").removeClass("show");
 }
 
 // Global shareCurrentView function
