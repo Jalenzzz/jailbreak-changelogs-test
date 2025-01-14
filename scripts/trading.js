@@ -1769,7 +1769,6 @@ async function createTradeAd() {
       offering: offeringList.map((item) => item.id).join(","),
       requesting: requestingList.map((item) => item.id).join(","),
       owner: token,
-      author: userId,
     };
 
     // Make API call to create trade
