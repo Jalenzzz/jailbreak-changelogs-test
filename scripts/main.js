@@ -115,9 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return null;
   }
 
-  // Make it globally available
-  window.getCookie = getCookie;
-
   function setCookie(name, value, days) {
     let date = new Date();
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000); // Set expiration time
@@ -128,6 +125,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Set the cookie with the same name, an empty value, and a past expiration date
     document.cookie = name + "=; Max-Age=0; path=/;";
   }
+
+  window.getCookie = getCookie;
+  window.setCookie = setCookie;
+  window.deleteCookie = deleteCookie;
 
   const token = getCookie("token");
   const user = sessionStorage.getItem("user");

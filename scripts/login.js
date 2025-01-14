@@ -58,7 +58,7 @@ $(document).ready(function () {
             onHidden: function () {
               // Redirect after toast is hidden
               const redirect = localStorage.getItem("redirectAfterLogin");
-              if (redirect === null) {
+              if (!redirect || redirect !== "/roblox") {
                 window.location.href = "/";
               } else {
                 window.location.href = redirect;

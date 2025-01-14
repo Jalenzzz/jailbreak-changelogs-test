@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (window.location.href.includes("/roblox")) {
     console.log("Detected roblox page access");
     const token = getCookie("token");
-    console.log("Found token:", token);
+    console.log("Token status:", token ? "REDACTED" : "Not found");
 
     if (!token) {
       console.log("No token - redirecting to login");
