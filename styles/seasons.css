@@ -150,16 +150,6 @@ span {
     --button-primary-hover-bg
   ) !important; /* Border color on hover */
 }
-/* Custom Spinner */
-.custom-spinner {
-  width: 50px;
-  height: 50px;
-  border-top-color: #31b1ff; /* Blue */
-  border-right-color: #31b1ff; /* Blue */
-  border-bottom-color: #ff341c; /* Orange */
-  border-left-color: #ff341c; /* Orange */
-}
-
 /* Offcanvas Styling */
 .offcanvas {
   color: var(--text-color); /* Text color */
@@ -189,36 +179,7 @@ span {
 .btn-close {
   color: #ffffff; /* Close button text color */
 }
-/* Loading Overlay */
-#loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: none;
-  z-index: 9999;
-  background-color: #2e3944;
-}
 
-#loading-overlay.show {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-#loading-overlay .loading-logo {
-  width: 300px;
-  height: auto;
-}
-
-#loading-overlay .loading-text {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-top: 10px;
-}
 /* Responsive Heading Styles */
 .responsive-heading {
   font-size: 2.5rem; /* Large font size for headings */
@@ -426,13 +387,6 @@ span {
   .season-rewards .d-flex {
     flex-direction: row;
     flex-wrap: nowrap;
-  }
-  #loading-overlay .loading-logo {
-    width: 200px;
-  }
-  .custom-spinner {
-    width: 30px;
-    height: 30px;
   }
 }
 @media (max-width: 400px) {

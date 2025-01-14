@@ -3,6 +3,9 @@
 [data-bs-theme="dark"] body {
   background-color: var(--bg-secondary);
 }
+[data-bs-theme="dark"] #loading-overlay {
+  background-color: var(--bg-secondary);
+}
 
 /* Dropdown separator styling */
 #value-sort-dropdown option[value="separator"] {
@@ -963,6 +966,7 @@
   will-change: opacity;
   transform: translateZ(0);
 }
+
 /* Find all separate @media (max-width: 768px) queries and combine them into this single one */
 @media (max-width: 768px) {
   /* Intro container and content */
@@ -1172,9 +1176,17 @@
   .intro-buttons {
     flex-direction: column;
   }
-
   .intro-button {
     width: 100%;
     justify-content: center;
+  }
+  #loading-overlay .loading-logo {
+    width: 200px;
+    height: auto;
+  }
+
+  .custom-spinner {
+    width: 30px;
+    height: 30px;
   }
 }

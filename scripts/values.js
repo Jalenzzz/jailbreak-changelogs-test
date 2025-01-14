@@ -7,6 +7,20 @@ function debounce(func, wait) {
   };
 }
 
+function showLoadingOverlay() {
+  const loadingOverlay = document.getElementById("loading-overlay");
+  if (loadingOverlay) {
+    loadingOverlay.classList.add("show");
+  }
+}
+
+function hideLoadingOverlay() {
+  const loadingOverlay = document.getElementById("loading-overlay");
+  if (loadingOverlay) {
+    loadingOverlay.classList.remove("show");
+  }
+}
+
 // Global shareCurrentView function
 window.shareCurrentView = debounce(function () {
   const sortDropdown = document.getElementById("sort-dropdown");
@@ -413,6 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
   async function loadItems() {
+    showLoadingOverlay();
     try {
       const response = await fetch(
         "https://api3.jailbreakchangelogs.xyz/items/list",
@@ -451,6 +466,7 @@ document.addEventListener("DOMContentLoaded", () => {
           } else {
             await sortItems(); // Apply saved sort
           }
+          hideLoadingOverlay();
           return;
         }
       }
@@ -460,8 +476,10 @@ document.addEventListener("DOMContentLoaded", () => {
       updateTotalItemsCount();
       updateTotalItemsLabel("all-items");
       preloadItemImages();
+      hideLoadingOverlay();
     } catch (error) {
       console.error("Error fetching data:", error);
+      hideLoadingOverlay();
     }
   }
 
