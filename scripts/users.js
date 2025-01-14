@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", function () {
           : 0,
       };
 
-      const token = getCookie("token");
+      const token = Cookies.get("token");
 
       // Update settings
       const settingsResponse = await fetch(
@@ -400,7 +400,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       try {
-        const user = getCookie("token");
+        const user = Cookies.get("token");
         if (!user) {
           toastControl.showToast("error", "You must be logged in", "Error");
           return;
@@ -1227,17 +1227,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  function getCookie(name) {
-    let cookieArr = document.cookie.split(";");
-    for (let i = 0; i < cookieArr.length; i++) {
-      let cookiePair = cookieArr[i].split("=");
-      if (name === cookiePair[0].trim()) {
-        return decodeURIComponent(cookiePair[1]);
-      }
-    }
-    return null;
-  }
-
   async function updateUserCounts(userId) {
     try {
       // Show 0 initially instead of loading spinners
@@ -1451,7 +1440,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function addFollow(userId) {
     try {
-      const user = getCookie("token");
+      const user = Cookies.get("token");
       const response = await fetch(
         `https://api3.jailbreakchangelogs.xyz/users/followers/add`,
         {
@@ -1496,7 +1485,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function removeFollow(userId) {
     try {
-      const user = getCookie("token");
+      const user = Cookies.get("token");
       const response = await fetch(
         `https://api3.jailbreakchangelogs.xyz/users/followers/remove`,
         {
@@ -1543,7 +1532,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (follow_button.disabled) return;
     follow_button.disabled = true;
 
-    const user = getCookie("token");
+    const user = Cookies.get("token");
     if (!user) {
       // User is not logged in
       toastControl.showToast(

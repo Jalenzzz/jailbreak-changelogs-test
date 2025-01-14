@@ -14,7 +14,7 @@ let initialTransform = 0;
 const currentUserId = sessionStorage.getItem("userid");
 
 async function canCreateTradeAd() {
-  const token = getCookie("token"); // Using existing getCookie from main.js
+  const token = Cookies.get("token");
   if (!token) {
     toastr.error("Please login first");
     return false;
@@ -885,7 +885,7 @@ function toggleConfirmButton() {
 
 async function deleteTradeAd(tradeId) {
   try {
-    const token = getCookie("token");
+    const token = Cookies.get("token");
     if (!token) {
       toastr.error("Please login to delete trade advertisements");
       return;
@@ -921,7 +921,7 @@ async function editTradeAd(tradeId) {
     return;
   }
   try {
-    const token = getCookie("token");
+    const token = Cookies.get("token");
     if (!token) {
       toastr.error("Please login to edit trade advertisements");
       return;
@@ -1024,7 +1024,7 @@ async function editTradeAd(tradeId) {
 }
 async function updateTradeAd(tradeId) {
   try {
-    const token = getCookie("token");
+    const token = Cookies.get("token");
     if (!token) {
       toastr.error("Please login to update trade advertisements");
       return;
@@ -1739,7 +1739,7 @@ async function createTradeAd() {
   }
   try {
     // Check for authentication token first
-    const token = getCookie("token");
+    const token = Cookies.get("token");
     if (!token) {
       toastr.error("Please login to create a trade advertisement");
       return;

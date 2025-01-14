@@ -103,40 +103,13 @@ document.addEventListener("DOMContentLoaded", () => {
   checkVersionWithCache();
 
   const avatarUrl = sessionStorage.getItem("avatar");
-
-  function getCookie(name) {
-    let cookieArr = document.cookie.split(";");
-    for (let i = 0; i < cookieArr.length; i++) {
-      let cookiePair = cookieArr[i].split("=");
-      if (name === cookiePair[0].trim()) {
-        return decodeURIComponent(cookiePair[1]);
-      }
-    }
-    return null;
-  }
-
-  function setCookie(name, value, days) {
-    let date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000); // Set expiration time
-    let expires = "expires=" + date.toUTCString();
-    document.cookie = name + "=" + value + ";" + expires + ";path=/"; // Set cookie with expiration and path
-  }
-  function deleteCookie(name) {
-    // Set the cookie with the same name, an empty value, and a past expiration date
-    document.cookie = name + "=; Max-Age=0; path=/;";
-  }
-
-  window.getCookie = getCookie;
-  window.setCookie = setCookie;
-  window.deleteCookie = deleteCookie;
-
-  const token = getCookie("token");
+  const token = Cookies.get("token");
   const user = sessionStorage.getItem("user");
   const userid = sessionStorage.getItem("userid");
 
   // Function to clear session and reload
   function clearSessionAndReload() {
-    deleteCookie("token");
+    Cookies.remove("token");
     sessionStorage.clear();
     window.location.reload();
   }
@@ -341,8 +314,8 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!userData) {
             throw new Error("Invalid token");
           }
-          deleteCookie("token");
-          setCookie("token", token, 7);
+          Cookies.remove("token");
+          Cookies.set("token", token, { expires: 7 });
           const avatarURL = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
           sessionStorage.setItem("user", JSON.stringify(userData));
           sessionStorage.setItem("avatar", avatarURL);
@@ -432,8 +405,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   window.getAuthToken = function () {
-    return getCookie("token");
+    return Cookies.get("token");
   };
+
   const params = new URLSearchParams(window.location.search);
   const campaign = params.get("campaign") || sessionStorage.getItem("campaign");
   if (campaign) {

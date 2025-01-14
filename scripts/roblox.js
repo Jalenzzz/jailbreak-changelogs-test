@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const loginButton = document.getElementById("button");
   if (window.location.href.includes("/roblox")) {
     console.log("Detected roblox page access");
-    const token = getCookie("token");
+    const token = Cookies.get("token");
     console.log("Token status:", token ? "REDACTED" : "Not found");
 
     if (!token) {
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (window.location.search.includes("code=")) {
     const code = new URLSearchParams(window.location.search).get("code");
     console.log("Code:", code);
-    const token = getCookie("token");
+    const token = Cookies.get("token");
     let url;
     if (token) {
       url = `https://api3.jailbreakchangelogs.xyz/auth/roblox?code=${code}&owner=${token}`;
