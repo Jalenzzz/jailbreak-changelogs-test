@@ -61,6 +61,7 @@ $(document).ready(function () {
               window.location.href = redirectTo;
             },
           });
+          return;
         }
       })
       .catch((error) => {
