@@ -41,7 +41,7 @@ $(document).ready(function () {
       .then((userData) => {
         if (userData && userData.id && userData.avatar) {
           const avatarURL = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-          Cookies.set("token", token, { expires: 7 });
+          Cookies.set("token", userData.token, { expires: 7 });
           sessionStorage.removeItem("user");
           sessionStorage.removeItem("avatar");
           sessionStorage.removeItem("userid");
