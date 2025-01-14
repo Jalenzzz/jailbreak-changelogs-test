@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (token) {
       url = `https://api3.jailbreakchangelogs.xyz/auth/roblox?code=${code}&owner=${token}`
     } else {
-      url = `https://api3.jailbreakchangelogs.xyz/auth/roblox?code=${code}`
+      window.location.href = "/"
     }
     fetch(
       url,
