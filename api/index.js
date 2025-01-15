@@ -103,22 +103,34 @@ app.get("/changelogs/:changelog", async (req, res) => {
   let changelogId = req.params.changelog || 1;
 
   try {
-    // Only fetch the latest changelog data
-    const latestResponse = await fetch(
-      "https://api3.jailbreakchangelogs.xyz/changelogs/latest",
-      {
+    // Fetch both latest and requested changelog data in parallel
+    const [latestResponse, requestedResponse] = await Promise.all([
+      fetch("https://api3.jailbreakchangelogs.xyz/changelogs/latest", {
         headers: {
           "Content-Type": "application/json",
           Origin: "https://jailbreakchangelogs.xyz",
         },
-      }
-    );
+      }),
+      fetch(
+        `https://api3.jailbreakchangelogs.xyz/changelogs/get?id=${changelogId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "https://jailbreakchangelogs.xyz",
+          },
+        }
+      ),
+    ]);
 
-    if (!latestResponse.ok) {
-      throw new Error("Failed to fetch latest changelog");
+    if (!latestResponse.ok || !requestedResponse.ok) {
+      throw new Error("Failed to fetch changelog data");
     }
 
-    const latestData = await latestResponse.json();
+    const [latestData, requestedData] = await Promise.all([
+      latestResponse.json(),
+      requestedResponse.json(),
+    ]);
+
     const latestId = latestData.id;
 
     // If no changelog ID is provided or invalid, redirect to latest
@@ -126,18 +138,17 @@ app.get("/changelogs/:changelog", async (req, res) => {
       return res.redirect(`/changelogs/${latestId}`);
     }
 
-    // Prepare response data
     const responseData = {
-      changelogId, // Pass the requested changelog ID to client
-      latestId, // Pass latest ID for comparison
-      title: latestData.title,
-      image_url: latestData.image_url,
+      changelogId,
+      latestId,
+      title: requestedData.title,
+      image_url: requestedData.image_url,
       logoUrl: "/assets/logos/Changelogs_Logo.webp",
       logoAlt: "Changelogs Page Logo",
       embed_color: 0x134d64,
       isLatest: changelogId === latestId,
       canonicalUrl: "https://testing.jailbreakchangelogs.xyz/changelogs",
-      metaDescription: `View detailed changelog information for Jailbreak update ${latestData.title}. Track new features, vehicles, and game improvements.`,
+      metaDescription: `View detailed changelog information for Jailbreak update ${requestedData.title}. Track new features, vehicles, and game improvements.`,
       MIN_TITLE_LENGTH,
       MIN_DESCRIPTION_LENGTH,
       type: "changelog",
