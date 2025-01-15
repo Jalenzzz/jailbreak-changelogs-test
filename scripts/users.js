@@ -587,7 +587,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Add this helper function to handle banner URL resolution
   async function getBannerUrl(userId, bannerHash) {
     if (!userId || !bannerHash) {
       return null;
@@ -1158,9 +1157,6 @@ document.addEventListener("DOMContentLoaded", function () {
       // Clear existing content
       recentComments.innerHTML = "";
       const comments_to_add = [];
-
-      // Process each comment
-      // In the fetchUserComments function, modify the comment card creation section:
 
       // Process each comment
       for (const comment of paginatedComments) {
