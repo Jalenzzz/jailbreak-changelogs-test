@@ -215,7 +215,7 @@
       </div>
 
       <!-- Trading Interface -->
-      <div class="row mt-3">
+      <div class="row mt-3 trade-sides-wrapper">
         <div class="col-lg-6">
           <h3 class="text-center">Offering</h3>
           <div class="row" id="offering-list"></div>
@@ -234,32 +234,20 @@
             <h3 class="text-center mb-4">Trade Preview</h3>
             <div class="row">
               <div class="col-lg-6">
-                <div class="preview-side">
+                <div class="preview-side-offering">
                   <h4 class="text-center">Offering</h4>
-                  <div
-                    class="preview-items-grid"
-                    id="preview-offering-items"
-                  ></div>
+                  <div id="preview-offering-items"></div>
                 </div>
               </div>
               <div class="col-lg-6">
-                <div class="preview-side">
+                <div class="preview-side-requesting">
                   <h4 class="text-center">Requesting</h4>
-                  <div
-                    class="preview-items-grid"
-                    id="preview-requesting-items"
-                  ></div>
+                  <div id="preview-requesting-items"></div>
                 </div>
               </div>
             </div>
-            <div class="preview-actions mt-4 text-center">
-              <button class="btn btn-primary" onclick="createTradeAd()">
-                <i class="bi bi-plus-circle me-2"></i>Create Trade Ad
-              </button>
-              <button class="btn btn-secondary ms-2" onclick="editTrade()">
-                <i class="bi bi-pencil me-2"></i>Edit Trade
-              </button>
-            </div>
+            <div id="value-differences"></div>
+            <div class="preview-actions mt-4 text-center"></div>
           </div>
         </div>
       </div>
@@ -286,13 +274,6 @@
         <div id="trade-ads-loading" class="trade-ads-loading">
           <div class="loading-spinner"></div>
           <p>Loading trade advertisements...</p>
-        </div>
-      </div>
-
-      <!-- Trade Summary Section -->
-      <div class="row mt-4">
-        <div class="col-12">
-          <div id="trade-summary"></div>
         </div>
       </div>
     </div>

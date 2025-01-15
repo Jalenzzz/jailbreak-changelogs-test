@@ -167,9 +167,7 @@
           Release dates are recorded in the U.S. (EST/EDT) time zone. Some dates
           may be inaccurate due to differing time zones.
         </p>
-        <p class="jb-footer__copyright small mb-2">
-          &copy; 2024 Jailbreak Changelogs. All rights reserved.
-        </p>
+        <p class="jb-footer__copyright small mb-2"></p>
         <div class="jb-footer__links">
           <a href="privacy" class="jb-footer__legal-link small mx-2"
             >Privacy Policy</a
@@ -255,6 +253,15 @@
 </div>
 
 <script>
+  // Update copyright year automatically
+  document.addEventListener("DOMContentLoaded", () => {
+    const copyrightElement = document.querySelector(".jb-footer__copyright");
+    if (copyrightElement) {
+      const currentYear = new Date().getFullYear();
+      copyrightElement.innerHTML = `&copy; ${currentYear} Jailbreak Changelogs. All rights reserved.`;
+    }
+  });
+
   function dismissBanner(type) {
     const banner = document.getElementById(
       type === "testing" ? "testing-banner" : "prod-banner"

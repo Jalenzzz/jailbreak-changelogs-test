@@ -50,6 +50,10 @@ async function canCreateTradeAd() {
 }
 
 function createSkeletonTradeAd() {
+  // Check if viewport is mobile (less than or equal to 768px)
+  const isMobile = window.innerWidth <= 768;
+  const skeletonCount = isMobile ? 2 : 3;
+
   return `
     <div class="trade-ad">
       <div class="trade-ad-header">
@@ -65,15 +69,13 @@ function createSkeletonTradeAd() {
         <div class="trade-side offering">
           <div class="trade-side-label">Offering</div>
           <div class="trade-items-grid">
-            ${Array(4)
+            ${Array(skeletonCount)
               .fill(
-                `
-              <div class="trade-ad-item loading">
-                <div class="item-image-container">
-                  <div class="skeleton-image skeleton"></div>
-                </div>
-              </div>
-            `
+                `<div class="trade-ad-item loading">
+                  <div class="item-image-container">
+                    <div class="skeleton-image skeleton"></div>
+                  </div>
+                </div>`
               )
               .join("")}
           </div>
@@ -81,15 +83,13 @@ function createSkeletonTradeAd() {
         <div class="trade-side requesting">
           <div class="trade-side-label">Requesting</div>
           <div class="trade-items-grid">
-            ${Array(4)
+            ${Array(skeletonCount)
               .fill(
-                `
-              <div class="trade-ad-item loading">
-                <div class="item-image-container">
-                  <div class="skeleton-image skeleton"></div>
-                </div>
-              </div>
-            `
+                `<div class="trade-ad-item loading">
+                  <div class="item-image-container">
+                    <div class="skeleton-image skeleton"></div>
+                  </div>
+                </div>`
               )
               .join("")}
           </div>
@@ -312,6 +312,7 @@ async function loadItems() {
 }
 
 // Add item to trade
+// Update addItemToTrade function
 function addItemToTrade(item, tradeType) {
   const items = tradeType === "Offer" ? offeringItems : requestingItems;
   if (items.length >= 8) {
@@ -328,7 +329,6 @@ function addItemToTrade(item, tradeType) {
   );
 
   if (existingIndex !== -1) {
-    // Instead of showing error, just add the item
     const nextEmptyIndex = findNextEmptySlot(items);
     if (nextEmptyIndex !== -1) {
       items[nextEmptyIndex] = item;
@@ -337,8 +337,27 @@ function addItemToTrade(item, tradeType) {
     items.push(item);
   }
 
+  // Always render trade items first
   renderTradeItems(tradeType);
   updateTradeSummary();
+
+  // Check if preview section exists and is not hidden
+  const previewSection = document.getElementById("trade-preview");
+  if (
+    previewSection &&
+    window.getComputedStyle(previewSection).display !== "none"
+  ) {
+    // Update both sides of the preview to maintain consistency
+    renderPreviewItems("preview-offering-items", offeringItems);
+    renderPreviewItems("preview-requesting-items", requestingItems);
+
+    // Update value differences
+    const valueDifferencesContainer =
+      document.getElementById("value-differences");
+    if (valueDifferencesContainer) {
+      valueDifferencesContainer.innerHTML = renderValueDifferences();
+    }
+  }
 
   if (currentTradeType) {
     displayAvailableItems(currentTradeType);
@@ -346,6 +365,7 @@ function addItemToTrade(item, tradeType) {
 }
 
 // Function to quickly add item from available items
+// Update the quickAddItem function
 function quickAddItem(itemName, itemType) {
   const item = allItems.find((i) => i.name === itemName && i.type === itemType);
   if (!item) return;
@@ -363,6 +383,7 @@ function quickAddItem(itemName, itemType) {
         items[nextEmptyIndex] = item;
         renderTradeItems(selectedTradeType);
         updateTradeSummary();
+        updatePreviewIfVisible(); // Add this line
       } else {
         toastr.error("No empty slots available");
       }
@@ -381,6 +402,7 @@ function quickAddItem(itemName, itemType) {
     // Update UI
     renderTradeItems(currentType);
     updateTradeSummary();
+    updatePreviewIfVisible(); // Add this line
   } else {
     // No placeholder selected, find first empty slot
     const items =
@@ -391,12 +413,33 @@ function quickAddItem(itemName, itemType) {
       items[emptyIndex] = item;
       renderTradeItems(currentTradeType === "offering" ? "Offer" : "Request");
       updateTradeSummary();
+      updatePreviewIfVisible(); // Add this line
     } else {
       toastr.error(
         `No empty slots available in ${
           currentTradeType === "offering" ? "Offer" : "Request"
         }`
       );
+    }
+  }
+}
+
+// Add this new helper function
+function updatePreviewIfVisible() {
+  const previewSection = document.getElementById("trade-preview");
+  if (
+    previewSection &&
+    window.getComputedStyle(previewSection).display !== "none"
+  ) {
+    // Update both sides of the preview
+    renderPreviewItems("preview-offering-items", offeringItems);
+    renderPreviewItems("preview-requesting-items", requestingItems);
+
+    // Update value differences
+    const valueDifferencesContainer =
+      document.getElementById("value-differences");
+    if (valueDifferencesContainer) {
+      valueDifferencesContainer.innerHTML = renderValueDifferences();
     }
   }
 }
@@ -421,12 +464,24 @@ function findNextEmptySlot(items) {
 // Update remove item function to maintain slot positions
 function removeItem(index, tradeType) {
   const items = tradeType === "Offer" ? offeringItems : requestingItems;
-  // Instead of splicing, set the item at index to null to maintain positions
   delete items[index];
 
-  // Update UI
   renderTradeItems(tradeType);
   updateTradeSummary();
+
+  // Automatically update preview if it's visible
+  const previewSection = document.getElementById("trade-preview");
+  if (previewSection && previewSection.style.display === "block") {
+    renderPreviewItems("preview-offering-items", offeringItems);
+    renderPreviewItems("preview-requesting-items", requestingItems);
+
+    // Update value differences
+    const valueDifferencesContainer =
+      document.getElementById("value-differences");
+    if (valueDifferencesContainer) {
+      valueDifferencesContainer.innerHTML = renderValueDifferences();
+    }
+  }
 }
 
 // Function to toggle available items display
@@ -641,9 +696,9 @@ let selectedTradeType = null;
 function createPlaceholderCard(index, tradeType) {
   return `
     <div class="col-md-3 col-6 mb-3">
-      <div class="trade-card empty-slot" 
-           onclick="handlePlaceholderClick(${index}, '${tradeType}')">
-        <div class="card-img-container">
+      <div class="trade-card-wrapper">
+        <div class="trade-card empty-slot" 
+             onclick="handlePlaceholderClick(${index}, '${tradeType}')">
           <div class="empty-slot-content">
             <i class="bi bi-plus-circle"></i>
             <span>Empty Slot</span>
@@ -757,7 +812,7 @@ function renderTradeItems(tradeType) {
           </div>
         </div>
         <div class="trade-card-info">
-          <div class="item-name">${item.name}</div>
+          <div class="item-name ">${item.name}</div>
           <div class="item-type">${item.type}</div>
         </div>
       </div>
@@ -819,51 +874,6 @@ function updateTradeSummary() {
     (sum, item) => sum + (item ? parseValue(item.duped_value || 0) : 0),
     0
   );
-
-  const cashDifference = requestCashValue - offerCashValue;
-  const dupedDifference = requestDupedValue - offerDupedValue;
-
-  document.getElementById("trade-summary").innerHTML = `
-    <div class="card">
-      <div class="card-body">
-        <h5>Trade Summary</h5>
-        <div class="d-flex justify-content-between mb-2">
-          <span>Offering Cash Value:</span>
-          <span>${formatLargeNumber(offerCashValue)}</span>
-        </div>
-        <div class="d-flex justify-content-between mb-2">
-          <span>Offering Duped Value:</span>
-          <span>${formatLargeNumber(offerDupedValue)}</span>
-        </div>
-        <div class="d-flex justify-content-between mb-2">
-          <span>Requesting Cash Value:</span>
-          <span>${formatLargeNumber(requestCashValue)}</span>
-        </div>
-        <div class="d-flex justify-content-between mb-2">
-          <span>Requesting Duped Value:</span>
-          <span>${formatLargeNumber(requestDupedValue)}</span>
-        </div>
-        <div class="d-flex justify-content-between mb-2">
-          <span>Cash Value Difference:</span>
-          <span class="${cashDifference >= 0 ? "text-success" : "text-danger"}">
-            ${cashDifference >= 0 ? "+" : ""}${formatLargeNumber(
-    cashDifference
-  )}
-          </span>
-        </div>
-        <div class="d-flex justify-content-between">
-          <span>Duped Value Difference:</span>
-          <span class="${
-            dupedDifference >= 0 ? "text-success" : "text-danger"
-          }">
-            ${dupedDifference >= 0 ? "+" : ""}${formatLargeNumber(
-    dupedDifference
-  )}
-          </span>
-        </div>
-      </div>
-    </div>
-  `;
 }
 
 // Initialize
@@ -1104,19 +1114,24 @@ async function loadTradeAds() {
       return;
     }
 
-    // Show skeleton loading state
+    // First fetch just the count to know how many skeletons to show
+    const countResponse = await fetch(
+      "https://api3.jailbreakchangelogs.xyz/trades/list"
+    );
+    const data = await countResponse.json();
+    const expectedCount = Array.isArray(data)
+      ? Math.min(data.length, TRADES_PER_PAGE)
+      : 0;
+
+    // Show skeleton loading state with the expected number of items
     tradeAdsSection.innerHTML = `
       <h3><i class="bi bi-clock-history me-2"></i>Recent Trade Advertisements</h3>
       <div class="trade-ads-grid">
-        ${Array(TRADES_PER_PAGE).fill(createSkeletonTradeAd()).join("")}
+        ${Array(expectedCount).fill(createSkeletonTradeAd()).join("")}
       </div>
     `;
 
-    const response = await fetch(
-      "https://api3.jailbreakchangelogs.xyz/trades/list?nocache=true"
-    );
-    const data = await response.json();
-    console.log("Loaded trade ads:", data); // Debug log
+    // Process the already fetched data
     allTradeAds = Array.isArray(data) ? data : [];
 
     if (allTradeAds.length === 0) {
@@ -1414,19 +1429,27 @@ async function createTradeAdHTML(trade) {
       ),
     ]);
 
+    function getFallbackAvatar(username) {
+      return `https://ui-avatars.com/api/?background=134d64&color=fff&size=128&rounded=true&name=${encodeURIComponent(
+        username || "Unknown"
+      )}&bold=true&format=svg`;
+    }
+
     tradeAdElement.innerHTML = `
       <div class="trade-ad">
        <div class="trader-info">
         <div class="trader-info">
-          <img src="${
-            authorDetails?.roblox_avatar ||
-            "https://tr.rbxcdn.com/0b3725bbe29c30182f7c29fd96d31047/150/150/AvatarHeadshot/Png"
-          }" 
-              alt="${authorDetails?.roblox_username || "Unknown"}" 
-              class="trader-avatar"
-              onerror="this.src='https://tr.rbxcdn.com/0b3725bbe29c30182f7c29fd96d31047/150/150/AvatarHeadshot/Png'"
-              width="64"
-              height="64">
+         <img src="${
+           authorDetails?.roblox_avatar ||
+           getFallbackAvatar(authorDetails?.roblox_username)
+         }" 
+          alt="${authorDetails?.roblox_username || "Unknown"}" 
+          class="trader-avatar"
+          onerror="this.onerror=null; this.src='${getFallbackAvatar(
+            authorDetails?.roblox_username
+          )}'"
+          width="64"
+          height="64">
           <div class="trader-details">
             <a href="https://www.roblox.com/users/${
               authorDetails?.roblox_id
@@ -1612,35 +1635,121 @@ async function previewTrade() {
   renderPreviewItems("preview-requesting-items", requestingItems);
 
   // Add preview actions
-  const tradeSummary = document.getElementById("trade-summary");
-  if (tradeSummary) {
-    const previewActions = document.createElement("div");
-    previewActions.className = "preview-actions mt-3 text-center";
-    previewActions.innerHTML = `
-      <button class="btn btn-primary" onclick="createTradeAd()">
-        <i class="bi bi-plus-circle me-2"></i>Create Trade Ad
-      </button>
-      <button class="btn btn-secondary ms-2" onclick="editTrade()">
-        <i class="bi bi-pencil me-2"></i>Edit Trade
-      </button>
-    `;
-    tradeSummary.appendChild(previewActions);
-  }
+  const valueDifferencesContainer =
+    document.getElementById("value-differences");
+  valueDifferencesContainer.innerHTML = renderValueDifferences();
+
+  // Add preview actions
+  const previewActions = document.createElement("div");
+  previewActions.className = "preview-actions mt-4 text-center";
+  previewActions.innerHTML = `
+  <button class="btn btn-primary" onclick="createTradeAd()">
+    <i class="bi bi-plus-circle me-2"></i>Create Trade Ad
+  </button>
+`;
+  valueDifferencesContainer.after(previewActions);
 }
 
 function renderPreviewItems(containerId, items) {
   const container = document.getElementById(containerId);
-  container.innerHTML = Object.values(items)
+  const values = calculateSideValues(items);
+
+  // Count duplicates
+  const itemCounts = new Map();
+  Object.values(items)
     .filter((item) => item)
+    .forEach((item) => {
+      const itemKey = `${item.name}-${item.type}`;
+      itemCounts.set(itemKey, (itemCounts.get(itemKey) || 0) + 1);
+    });
+
+  // Create unique items array with counts
+  const uniqueItems = [];
+  const processedKeys = new Set();
+
+  Object.values(items)
+    .filter((item) => item)
+    .forEach((item) => {
+      const itemKey = `${item.name}-${item.type}`;
+      if (!processedKeys.has(itemKey)) {
+        processedKeys.add(itemKey);
+        uniqueItems.push({
+          item,
+          count: itemCounts.get(itemKey),
+        });
+      }
+    });
+
+  const itemsHtml = uniqueItems
     .map(
-      (item) => `
+      ({ item, count }) => `
       <div class="preview-item">
-        ${getItemImageElement(item)}
+        <div class="preview-item-image-container">
+          ${getItemImageElement(item)}
+          ${count > 1 ? `<div class="item-multiplier">×${count}</div>` : ""}
+        </div>
         <div class="item-name">${item.name}</div>
       </div>
     `
     )
     .join("");
+
+  const valuesHtml = `
+    <div class="side-values-summary">
+      <div class="side-value-row">
+        <span>Cash Value:</span>
+        <span>${formatValue(values.cashValue, true)}</span>
+      </div>
+      <div class="side-value-row">
+        <span>Duped Value:</span>
+        <span>${formatValue(values.dupedValue, true)}</span>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = `
+    <div class="preview-items-grid">
+      ${itemsHtml}
+    </div>
+    ${valuesHtml}
+  `;
+}
+
+function calculateSideValues(items) {
+  const cashValue = Object.values(items)
+    .filter((item) => item)
+    .reduce((sum, item) => sum + parseValue(item.cash_value || 0), 0);
+
+  const dupedValue = Object.values(items)
+    .filter((item) => item)
+    .reduce((sum, item) => sum + parseValue(item.duped_value || 0), 0);
+
+  return { cashValue, dupedValue };
+}
+
+function renderValueDifferences() {
+  const offerValues = calculateSideValues(offeringItems);
+  const requestValues = calculateSideValues(requestingItems);
+
+  const cashDiff = requestValues.cashValue - offerValues.cashValue;
+  const dupedDiff = requestValues.dupedValue - offerValues.dupedValue;
+
+  return `
+    <div class="value-differences">
+      <div class="difference-row">
+        <span>Cash Value Difference:</span>
+        <span class="${cashDiff >= 0 ? "text-success" : "text-danger"}">
+          ${cashDiff >= 0 ? "+" : ""}${formatValue(cashDiff, true)}
+        </span>
+      </div>
+      <div class="difference-row">
+        <span>Duped Value Difference:</span>
+        <span class="${dupedDiff >= 0 ? "text-success" : "text-danger"}">
+          ${dupedDiff >= 0 ? "+" : ""}${formatValue(dupedDiff, true)}
+        </span>
+      </div>
+    </div>
+  `;
 }
 
 function editTrade() {
