@@ -212,9 +212,10 @@
       if (isLoggedIn) {
         const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
         const hasRoblox = userData.roblox_id;
+        const userId = userData.id;
 
         return `
-      <li><a class="dropdown-item" href="/profile">Profile</a></li>
+      <li><a class="dropdown-item" href="/users/${userId}">Profile</a></li>
       ${
         !hasRoblox
           ? `

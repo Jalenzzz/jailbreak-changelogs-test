@@ -2,6 +2,44 @@ document.addEventListener("DOMContentLoaded", function () {
   const permissions = JSON.parse(settings);
   const udata = JSON.parse(userData);
 
+  // Handle Discord connection
+  const discordConnection = document.getElementById("discord-connection");
+  if (discordConnection) {
+    const discordUsername = discordConnection.querySelector(".connection-text");
+
+    discordUsername.textContent = udata.username;
+
+    discordConnection.addEventListener("click", function () {
+      if (!udata.id) {
+        console.error("Discord ID not found in user data");
+        return;
+      }
+      const discordUrl = `https://discord.com/users/${udata.id}`;
+
+      window.open(discordUrl, "_blank", "noopener,noreferrer");
+    });
+  }
+
+  // Handle Roblox connection
+  const robloxConnection = document.getElementById("roblox-connection");
+  if (robloxConnection) {
+    if (udata.roblox_username && udata.roblox_id) {
+      const robloxUsername = robloxConnection.querySelector(".connection-text");
+
+      robloxUsername.textContent = udata.roblox_username;
+
+      robloxConnection.addEventListener("click", function () {
+        const robloxUrl = `https://www.roblox.com/users/${udata.roblox_id}/profile`;
+
+        window.open(robloxUrl, "_blank", "noopener,noreferrer");
+      });
+    } else {
+      // Hide the Roblox connection if user doesn't have Roblox data
+
+      robloxConnection.style.display = "none";
+    }
+  }
+
   const follow_button = document.getElementById("follow-button");
   const settings_button = document.getElementById("settings-button");
   const pathSegments = window.location.pathname.split("/");

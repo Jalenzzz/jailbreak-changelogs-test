@@ -14,16 +14,18 @@ $(document).ready(function () {
   tosCheck.change(updateLoginButton);
 
   const OauthRedirect =
-    "https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5500%2Flogin&scope=identify";
+    "https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=https%3A%2F%2Ftesting.jailbreakchangelogs.xyz%2Flogin&scope=identify";
   const DiscordLoginButton = document.getElementById("login-button");
   // Only store the path if it's not /login and not a Discord OAuth URL
   const currentPath = window.location.pathname + window.location.search;
-  if (currentPath !== '/login' && 
-      !currentPath.includes('/login') && 
-      !window.location.href.includes('discord.com')) {
+  if (
+    currentPath !== "/login" &&
+    !currentPath.includes("/login") &&
+    !window.location.href.includes("discord.com")
+  ) {
     sessionStorage.setItem("loginRedirect", currentPath);
   }
-  
+
   DiscordLoginButton.addEventListener("click", () => {
     console.log("Redirecting to Discord OAuth...");
     window.location.href = OauthRedirect;

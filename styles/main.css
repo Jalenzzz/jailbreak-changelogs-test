@@ -306,7 +306,11 @@
   width: 100% !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
   transition: height 0.3s ease-out !important;
-  display: block !important; /* Hidden by default */
+  display: flex !important; /* Visible by default */
+}
+
+.jbcl-announcement-banner.hidden {
+  display: none !important;
 }
 
 .jbcl-announcement-content {

@@ -1,5 +1,24 @@
 @import url("colors.css");
 
+.footer-credit {
+  font-family: "Inter", sans-serif;
+}
+
+.creator-link {
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+  font-weight: 500;
+}
+
+.creator-link:hover {
+  color: var(--accent-color-light);
+}
+
+.heart-icon {
+  color: var(--accent-color-light);
+  font-size: 0.9em;
+}
+
 .hero {
   background-size: cover;
   background-position: center;

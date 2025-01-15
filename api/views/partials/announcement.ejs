@@ -46,14 +46,14 @@
     const announcement = document.getElementById("siteAnnouncement");
     const isDismissed = sessionStorage.getItem("announcementDismissed");
 
-    if (!isDismissed) {
-      announcement.style.display = "block";
+    if (isDismissed) {
+      announcement.classList.add("hidden");
     }
   });
 
   function dismissAnnouncement() {
     const announcement = document.getElementById("siteAnnouncement");
-    announcement.style.display = "none";
+    announcement.classList.add("hidden");
     sessionStorage.setItem("announcementDismissed", "true");
   }
 </script>
