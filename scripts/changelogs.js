@@ -1150,6 +1150,7 @@ $(document).ready(function () {
       const processedMarkdown = preprocessMarkdown(changelog.sections);
       const processedSections = convertMarkdownToHtml(processedMarkdown);
       contentHtml += processedSections;
+      contentHtml += createNavigationLinks(changelog);
     } else {
       console.warn("No sections available for changelog.");
       contentHtml += '<p class="lead">No sections available.</p>';
@@ -1206,6 +1207,149 @@ $(document).ready(function () {
       }
     }
   });
+
+  function createNavigationLinks(currentChangelog) {
+    const currentIndex = changelogsData.findIndex(
+      (cl) => cl.id === currentChangelog.id
+    );
+    const prevChangelog =
+      currentIndex < changelogsData.length - 1
+        ? changelogsData[currentIndex + 1]
+        : null;
+    const nextChangelog =
+      currentIndex > 0 ? changelogsData[currentIndex - 1] : null;
+
+    return `
+        <nav class="changelog-navigation mt-5 border-top pt-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                ${
+                  prevChangelog
+                    ? `
+                    <div class="nav-item">
+                        <a href="/changelogs/${prevChangelog.id}" 
+                           class="quick-nav-link" 
+                           data-changelog-id="${prevChangelog.id}"
+                           title="${prevChangelog.title}">
+                            <div class="d-flex flex-column">
+                                <small class="text-muted mb-1">Previous Changelog</small>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-arrow-left"></i>
+                                    <span>${extractDate(
+                                      prevChangelog.title
+                                    )}</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                `
+                    : ""
+                }
+                
+                ${
+                  nextChangelog
+                    ? `
+                    <div class="nav-item">
+                        <a href="/changelogs/${nextChangelog.id}" 
+                           class="quick-nav-link" 
+                           data-changelog-id="${nextChangelog.id}"
+                           title="${nextChangelog.title}">
+                            <div class="d-flex flex-column">
+                                <small class="text-muted mb-1">Next Changelog</small>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span>${extractDate(
+                                      nextChangelog.title
+                                    )}</span>
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                `
+                    : ""
+                }
+            </div>
+        </nav>
+    `;
+  }
+
+  $(document).on("click", ".quick-nav-link", function (e) {
+    e.preventDefault();
+    const changelogId = $(this).data("changelog-id");
+    if (changelogId) {
+      const changelog = changelogsData.find((cl) => cl.id === changelogId);
+      if (changelog) {
+        const newUrl = `/changelogs/${changelogId}`;
+        history.pushState({}, "", newUrl);
+
+        // First update the content
+        displayChangelog(changelog);
+        updateChangelogBreadcrumb(changelogId);
+
+        // Update comments if necessary
+        if (window.commentsManagerInstance) {
+          window.commentsManagerInstance.clearComments();
+          window.commentsManagerInstance.type = "changelog";
+          window.commentsManagerInstance.itemId = changelogId;
+          window.commentsManagerInstance.loadComments();
+        }
+
+        // Then scroll to content with offset
+        setTimeout(() => {
+          const contentElement = document.getElementById("content-wrapper");
+          if (contentElement) {
+            const offset = 80; // Adjust this value based on your header height
+            const elementPosition = contentElement.getBoundingClientRect().top;
+            const offsetPosition =
+              elementPosition + window.pageYOffset - offset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: "smooth",
+            });
+          }
+        }, 100);
+      }
+    }
+  });
+
+  function extractDate(title) {
+    // Extract date portion from titles like "March 16th 2018 / Miscellaneous Update 12"
+    const dateMatch = title.match(/^([A-Za-z]+ \d+(?:st|nd|rd|th) \d{4})/);
+    return dateMatch ? dateMatch[1] : title;
+  }
+
+  // Add handler for navigation clicks
+  function handleNavigationClick(event, changelogId) {
+    event.preventDefault();
+    const changelog = changelogsData.find((cl) => cl.id === changelogId);
+    if (changelog) {
+      const newUrl = `/changelogs/${changelogId}`;
+      history.pushState({}, "", newUrl);
+
+      // First update the content
+      displayChangelog(changelog);
+      updateChangelogBreadcrumb(changelogId);
+
+      // Update comments if necessary
+      if (window.commentsManagerInstance) {
+        window.commentsManagerInstance.clearComments();
+        window.commentsManagerInstance.type = "changelog";
+        window.commentsManagerInstance.itemId = changelogId;
+        window.commentsManagerInstance.loadComments();
+      }
+
+      // Then scroll to content with a slight delay to ensure content is rendered
+      setTimeout(() => {
+        const contentElement = document.getElementById("content");
+        if (contentElement) {
+          contentElement.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 100);
+    }
+  }
 
   function formatDate(unixTimestamp) {
     // Check if timestamp is in seconds or milliseconds

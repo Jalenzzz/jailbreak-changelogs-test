@@ -79,6 +79,46 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
   background-color: var(--mention-hover-bg); /* Custom Hover Background */
   cursor: pointer; /* Change Cursor to Pointer on Hover */
 }
+
+.quick-nav-link {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid var(--bg-secondary);
+  min-width: 200px;
+}
+
+.quick-nav-link:hover {
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.quick-nav-link.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.quick-nav-link small {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.quick-nav-link i {
+  color: var(--text-muted);
+}
+
+.quick-nav-link:hover i,
+.quick-nav-link:hover small {
+  color: var(--text-primary);
+}
 .api-error-container {
   text-align: center;
   padding: 2rem;
@@ -1107,6 +1147,14 @@ button {
 @media (max-width: 576px) {
   .changelog-intro {
     padding: 0.75rem;
+  }
+  .quick-nav-link {
+    padding: 0.5rem 0.75rem;
+    min-width: 150px;
+  }
+
+  .quick-nav-link small {
+    font-size: 0.7rem;
   }
 
   .changelog-intro .display-4 {
