@@ -1,5 +1,3 @@
-// trade-ad.js
-
 // Configure toastr
 toastr.options = {
   positionClass: "toast-bottom-right",
@@ -8,6 +6,14 @@ toastr.options = {
   preventDuplicates: true,
   timeOut: 3000,
 };
+
+function showLoadingOverlay() {
+  $("#loading-overlay").addClass("show");
+}
+
+function hideLoadingOverlay() {
+  $("#loading-overlay").removeClass("show");
+}
 
 // Get trade ID from URL
 const tradeId = window.location.pathname.split("/").pop();
@@ -140,6 +146,7 @@ function parseValue(value) {
 
 // Function to fetch and process trade data
 async function loadTradeData() {
+  showLoadingOverlay();
   try {
     // Fetch trade details
     const tradeResponse = await fetch(
@@ -215,6 +222,7 @@ async function loadTradeData() {
       )}&bold=true&format=svg`;
     }
 
+    hideLoadingOverlay();
     // Update trader info
     document.querySelector(".trader-info").innerHTML = `
         <img src="${
@@ -419,6 +427,7 @@ async function loadTradeData() {
     document.querySelector(".trade-content").style.display = "block";
   } catch (error) {
     console.error("Error loading trade:", error);
+    hideLoadingOverlay();
     showErrorState();
   }
 }
