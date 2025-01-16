@@ -53,35 +53,25 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// Function to check version with caching
-function checkVersionWithCache() {
-  const cachedVersion = localStorage.getItem("versionData");
-  const cachedTimestamp = localStorage.getItem("versionTimestamp");
-  const currentTime = new Date().getTime();
+function formatTimestamp(unixTimestamp) {
+  const date = new Date(unixTimestamp * 1000);
+  return date.toUTCString();
+}
 
-  // Check if we have cached data and it's less than 1 hour old
-  if (
-    cachedVersion &&
-    cachedTimestamp &&
-    currentTime - parseInt(cachedTimestamp) < 3600000
-  ) {
-    // Use cached data
-    const versionData = JSON.parse(cachedVersion);
-    updateVersionDisplay(versionData);
-  } else {
-    // Fetch new data
-    fetch("https://api.jailbreakchangelogs.xyz/version/website")
-      .then((response) => response.json())
-      .then((data) => {
-        // Cache the new data
-        localStorage.setItem("versionData", JSON.stringify(data));
-        localStorage.setItem("versionTimestamp", currentTime.toString());
-        updateVersionDisplay(data);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch version data:", error);
-      });
-  }
+// Function to check version
+function checkWebsiteVersion() {
+  fetch("https://api3.jailbreakchangelogs.xyz/version/website")
+    .then((response) => response.json())
+    .then((data) => {
+      const transformedData = {
+        version: data.version,
+        date: formatTimestamp(data.last_updated),
+      };
+      updateVersionDisplay(transformedData);
+    })
+    .catch((error) => {
+      console.error("Failed to fetch version data:", error);
+    });
 }
 
 // Function to update the version display
@@ -91,7 +81,6 @@ function updateVersionDisplay(data) {
     if (element) {
       element.textContent = value;
     } else {
-      // If the element doesn't exist yet, try again after a short delay
       setTimeout(() => updateElement(id, value), 100);
     }
   };
@@ -101,7 +90,7 @@ function updateVersionDisplay(data) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  checkVersionWithCache();
+  checkWebsiteVersion();
 
   const token = Cookies.get("token");
   const user = sessionStorage.getItem("user");
