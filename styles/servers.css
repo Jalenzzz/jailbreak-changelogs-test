@@ -3,6 +3,57 @@
 [data-bs-theme="dark"] body {
   background-color: var(--bg-secondary);
 }
+
+#addServerBtn.btn.btn-primary {
+  font-size: 1rem !important;
+  padding: 0.5rem 1rem !important;
+  display: flex !important;
+  gap: 0.5rem !important;
+  justify-content: flex-start !important;
+}
+
+#addServerBtn.btn.btn-primary .bi {
+  font-size: 1rem !important;
+}
+
+/* Checkbox styling */
+.form-check-input {
+  background-color: var(--bg-secondary);
+  border-color: var(--text-muted);
+  cursor: pointer;
+}
+
+/* Checkbox hover state */
+.form-check-input:hover {
+  border-color: var(--accent-color-light);
+  background-color: var(--bg-primary);
+}
+
+/* Checkbox focus state */
+.form-check-input:focus {
+  border-color: var(--accent-color-light);
+  box-shadow: 0 0 0 0.25rem rgba(29, 125, 163, 0.25); /* using accent-color-light with opacity */
+}
+
+/* Checkbox checked state */
+.form-check-input:checked {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+/* Checkbox checked and hover state */
+.form-check-input:checked:hover {
+  background-color: var(--accent-color-light);
+  border-color: var(--accent-color-light);
+}
+
+/* Checkbox checked and focus state */
+.form-check-input:checked:focus {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color-light);
+  box-shadow: 0 0 0 0.25rem rgba(29, 125, 163, 0.25);
+}
+
 /* Server Introduction Styles */
 .server-intro {
   background: var(--bg-primary);
@@ -209,4 +260,194 @@
 }
 .server-link small {
   font-size: 0.95rem;
+}
+@media (max-width: 768px) {
+  .server-intro {
+    padding: 1.25rem;
+    margin: 0.75rem auto;
+  }
+
+  .server-intro .display-4 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .server-intro .lead {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-grid {
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .feature-item {
+    padding: 1.25rem;
+  }
+
+  .feature-item i {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-item h5 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-item p {
+    font-size: 0.9rem;
+  }
+  /* Server section mobile improvements */
+  .server-section {
+    padding: 1rem;
+    margin: 0.5rem;
+    border-radius: 8px;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .server-container {
+    padding: 0.75rem;
+    min-height: 150px;
+  }
+
+  .server-card {
+    margin-bottom: 0.75rem;
+  }
+
+  .card-body {
+    padding: 0.75rem;
+  }
+
+  /* Improve spacing in server info */
+  .server-info {
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  .server-info > div {
+    margin-bottom: 0.35rem;
+  }
+
+  .server-info > div:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Better button spacing */
+  .d-flex.gap-2 {
+    gap: 0.35rem !important;
+  }
+
+  /* Adjust button sizes */
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .bi {
+    font-size: 0.875rem;
+  }
+
+  /* Improve text truncation */
+  .server-link {
+    max-width: 50%;
+  }
+
+  .text-truncate {
+    max-width: 120px;
+  }
+  #addServerBtn.btn.btn-primary {
+    font-size: 0.875rem !important;
+    padding: 0.375rem 0.75rem !important;
+    justify-content: flex-start !important;
+  }
+
+  #addServerBtn.btn.btn-primary .bi {
+    font-size: 0.875rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .server-intro {
+    padding: 1rem;
+    margin: 0.5rem auto;
+  }
+
+  .server-intro .display-4 {
+    font-size: 1.5rem;
+  }
+
+  .feature-grid {
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .feature-item {
+    padding: 1rem;
+  }
+}
+/* Additional improvements for very small screens */
+@media (max-width: 375px) {
+  .server-container {
+    padding: 0.5rem;
+  }
+
+  .card-body {
+    padding: 0.625rem;
+  }
+
+  .server-info {
+    font-size: 0.8125rem;
+  }
+
+  .btn-sm {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+  }
+  .server-section .btn.btn-primary#addServerBtn {
+    font-size: 0.875rem !important;
+    padding: 0.375rem 0.75rem !important;
+  }
+
+  .server-section .btn.btn-primary#addServerBtn .bi {
+    font-size: 0.875rem !important;
+  }
+  .server-section .d-flex {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+  .server-container {
+    padding: 0.5rem;
+  }
+
+  .card-body {
+    padding: 0.625rem;
+  }
+
+  .server-info {
+    font-size: 0.8125rem;
+  }
+
+  .btn-sm {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+  }
+  #addServerBtn.btn.btn-primary {
+    font-size: 0.8125rem !important;
+    padding: 0.25rem 0.5rem !important;
+    width: 100% !important;
+    margin-top: 0.5rem !important;
+    justify-content: flex-start !important;
+  }
+
+  #addServerBtn.btn.btn-primary .bi {
+    font-size: 0.8125rem !important;
+  }
 }

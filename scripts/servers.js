@@ -25,6 +25,48 @@ document.addEventListener("DOMContentLoaded", () => {
     addServerForm.reset();
   }
 
+  // Initialize date input state
+  const dateInput = document.querySelector('[name="expiresAt"]');
+  const neverExpiresCheckbox = document.getElementById("neverExpires");
+  if (dateInput && neverExpiresCheckbox) {
+    dateInput.disabled = neverExpiresCheckbox.checked;
+    if (!neverExpiresCheckbox.checked) {
+      dateInput.removeAttribute("disabled");
+    }
+  }
+
+  // In the neverExpires change event listener, modify it to:
+  document
+    .getElementById("neverExpires")
+    ?.addEventListener("change", function (e) {
+      const dateInput = document.querySelector('[name="expiresAt"]');
+      if (dateInput) {
+        dateInput.disabled = e.target.checked;
+        if (e.target.checked) {
+          dateInput.value = "";
+          // Add tooltip
+          if (!dateInput.hasAttribute("data-bs-toggle")) {
+            dateInput.setAttribute("data-bs-toggle", "tooltip");
+            dateInput.setAttribute("data-bs-placement", "top");
+            dateInput.setAttribute(
+              "title",
+              'Disabled because "Never expires" is checked'
+            );
+            new bootstrap.Tooltip(dateInput);
+          }
+        } else {
+          // Remove tooltip
+          const tooltip = bootstrap.Tooltip.getInstance(dateInput);
+          if (tooltip) {
+            tooltip.dispose();
+          }
+          dateInput.removeAttribute("data-bs-toggle");
+          dateInput.removeAttribute("data-bs-placement");
+          dateInput.removeAttribute("title");
+        }
+      }
+    });
+
   fetchServers();
 });
 
@@ -165,10 +207,31 @@ async function createServerCard(server, number) {
   const col = document.createElement("div");
   col.className = "col-12 col-md-6 col-lg-4";
 
-  const expirationDate = new Date(parseInt(server.expires) * 1000);
+  // In createServerCard function, modify the expiration date check:
+  const expirationDate =
+    server.expires === "Never"
+      ? "Never"
+      : new Date(parseInt(server.expires) * 1000);
   const now = new Date();
-  const timeLeft = expirationDate - now;
-  const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
+  let timeLeftHtml;
+
+  if (server.expires === "Never") {
+    timeLeftHtml = "<span>Never</span>";
+  } else {
+    const timeLeft = expirationDate - now;
+    const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
+    const formattedExpirationDate = expirationDate.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+    timeLeftHtml = `<span>${daysLeft} days</span>
+    <span class="text-muted d-inline-block ms-1">(${formattedExpirationDate})</span>`;
+  }
+
   const creationDate = new Date(
     parseInt(server.created_at) * 1000
   ).toLocaleDateString();
@@ -236,7 +299,12 @@ async function createServerCard(server, number) {
           </div>
           <div class="server-info">
           <div><small><span class="fw-bold">Created on:</span> ${creationDate}</small></div>
-          <div><small><span class="fw-bold">Expires in:</span> ${daysLeft} days</small></div>
+        <div>
+          <small>
+            <span class="fw-bold">Expires in:</span> 
+            ${timeLeftHtml}
+          </small>
+        </div>
           <div><small><span class="fw-bold">Owner:</span> <a href="/users/${
             server.owner
           }" class="text-decoration-none">@${ownerName}</a></small></div>
@@ -284,9 +352,18 @@ async function editServer(serverId) {
     form.serverRules.value = server.rules === "N/A" ? "" : server.rules;
 
     // Convert Unix timestamp to datetime-local format
-    const expirationDate = new Date(parseInt(server.expires) * 1000);
-    const formattedDate = expirationDate.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:mm
-    form.expiresAt.value = formattedDate;
+    const neverExpiresCheckbox = document.getElementById("neverExpires");
+    if (server.expires === "Never") {
+      neverExpiresCheckbox.checked = true;
+      form.expiresAt.disabled = true;
+      form.expiresAt.value = "";
+    } else {
+      neverExpiresCheckbox.checked = false;
+      form.expiresAt.disabled = false;
+      const expirationDate = new Date(parseInt(server.expires) * 1000);
+      const formattedDate = expirationDate.toISOString().slice(0, 16);
+      form.expiresAt.value = formattedDate;
+    }
 
     // Change form submission handler
     form.onsubmit = (event) => handleEditServer(event, serverId);
@@ -337,6 +414,7 @@ async function handleEditServer(event, serverId) {
     }
 
     const expirationDate = new Date(form.expiresAt.value);
+    const neverExpires = document.getElementById("neverExpires").checked;
     const formData = {
       link: serverLink,
       rules: form.serverRules.value || "N/A",
@@ -393,10 +471,22 @@ async function handleEditServer(event, serverId) {
 }
 
 // Helper function to reset modal to add mode
+// In resetModalToAddMode function:
 function resetModalToAddMode(form) {
   document.getElementById("addServerModalLabel").textContent =
     "Add Private Server";
   form.reset();
+
+  // Properly reset date input state
+  const dateInput = form.querySelector('[name="expiresAt"]');
+  const neverExpiresCheckbox = document.getElementById("neverExpires");
+  if (dateInput && neverExpiresCheckbox) {
+    dateInput.disabled = neverExpiresCheckbox.checked;
+    if (!neverExpiresCheckbox.checked) {
+      dateInput.removeAttribute("disabled");
+    }
+  }
+
   form.onsubmit = (event) => handleAddServer(event);
   const submitButton = form.querySelector('button[type="submit"]');
   submitButton.textContent = "Add Server";
@@ -493,6 +583,7 @@ async function handleAddServer(event) {
   }
 
   const form = event.target;
+  const neverExpires = document.getElementById("neverExpires").checked;
   const submitBtn = form.querySelector('button[type="submit"]');
   const spinner = submitBtn.querySelector(".spinner-border");
 
@@ -534,9 +625,30 @@ async function handleAddServer(event) {
     const formData = {
       link: serverLink,
       rules: form.serverRules.value || "N/A",
-      expires: Math.floor(expirationDate.getTime() / 1000).toString(),
+      expires: neverExpires
+        ? "Never"
+        : Math.floor(
+            new Date(form.expiresAt.value).getTime() / 1000
+          ).toString(),
       token: token,
     };
+
+    // Skip expiration validation if "Never" is selected
+    if (!neverExpires) {
+      const expirationDate = new Date(form.expiresAt.value);
+      const now = new Date();
+      const daysDifference = Math.ceil(
+        (expirationDate - now) / (1000 * 60 * 60 * 24)
+      );
+
+      if (daysDifference < 5) {
+        showToast(
+          "Server expiration must be at least 5 days from now",
+          "error"
+        );
+        return;
+      }
+    }
 
     console.log("Request body:", formData);
 
