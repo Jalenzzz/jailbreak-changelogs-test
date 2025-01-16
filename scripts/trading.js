@@ -1676,12 +1676,30 @@ function formatTimestamp(timestamp) {
   const diffInSeconds = Math.floor((now - date) / 1000);
 
   if (diffInSeconds < 60) return "Just now";
-  if (diffInSeconds < 3600)
-    return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-  if (diffInSeconds < 86400)
-    return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-  if (diffInSeconds < 604800)
-    return `${Math.floor(diffInSeconds / 86400)} days ago`;
+
+  // Minutes
+  const minutes = Math.floor(diffInSeconds / 60);
+  if (minutes < 60) {
+    return minutes === 1 ? "1 minute ago" : `${minutes} minutes ago`;
+  }
+
+  // Hours
+  const hours = Math.floor(diffInSeconds / 3600);
+  if (hours < 24) {
+    return hours === 1 ? "1 hour ago" : `${hours} hours ago`;
+  }
+
+  // Days
+  const days = Math.floor(diffInSeconds / 86400);
+  if (days < 30) {
+    return days === 1 ? "1 day ago" : `${days} days ago`;
+  }
+
+  // Months
+  const months = Math.floor(days / 30);
+  if (months < 12) {
+    return months === 1 ? "1 month ago" : `${months} months ago`;
+  }
 
   // For older dates, return formatted date
   return date.toLocaleDateString("en-US", {
