@@ -684,10 +684,83 @@ body.menu-open {
 }
 
 /* Dropdown item styles */
-.dropdown-menu-dark .dropdown-item:active,
-.dropdown-menu-dark .dropdown-item:focus {
-  background-color: #124e66;
-  color: #ffffff;
+.dropdown-menu {
+  padding: 0.5rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  min-width: 200px;
+}
+
+.dropdown-item {
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-divider {
+  margin: 0.5rem 0;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Style for the profile picture in dropdown toggle */
+.nav-link.dropdown-toggle {
+  padding: 0;
+}
+
+.nav-link.dropdown-toggle img {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: border-color 0.2s;
+}
+
+.nav-link.dropdown-toggle:hover img {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Danger item specific styling */
+.dropdown-item.text-danger {
+  color: #dc3545 !important;
+}
+
+.dropdown-item.text-danger:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* Icons in dropdown items */
+.dropdown-item i,
+.dropdown-item svg {
+  width: 16px;
+  height: 16px;
+  margin-right: 0.5rem;
+  opacity: 0.8;
+}
+
+/* Mobile horizontal separator */
+.side-menu .nav-separator {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 12px 0;
+}
+
+/* Desktop vertical separator */
+.navbar-nav .nav-separator-vertical {
+  width: 1px;
+  height: 24px;
+  margin: 0 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: none; /* Hidden on mobile */
+}
+
+@media (min-width: 992px) {
+  .navbar-nav .nav-separator-vertical {
+    display: block; /* Show on desktop */
+  }
 }
 
 @media (max-width: 768px) {

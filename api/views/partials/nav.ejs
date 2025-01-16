@@ -70,6 +70,8 @@
             <a class="nav-link" href="/seasons">Seasons</a>
           </div>
 
+          <div class="nav-separator"></div>
+
           <!-- Core Trading Features -->
           <div class="nav-item">
             <a class="nav-link" href="/trading">Trading</a>
@@ -81,6 +83,8 @@
             <a class="nav-link" href="/tradetracker">Trade Tracker</a>
           </div>
 
+          <div class="nav-separator"></div>
+
           <!-- Community & Tools -->
           <div class="nav-item">
             <a class="nav-link" href="/users">Users</a>
@@ -91,6 +95,8 @@
           <div class="nav-item">
             <a class="nav-link" href="/bot">Our Discord Bot</a>
           </div>
+
+          <div class="nav-separator"></div>
 
           <!-- Help -->
           <div class="nav-item">
@@ -111,6 +117,8 @@
           <a class="nav-link" href="/seasons">Seasons</a>
         </li>
 
+        <li class="nav-separator-vertical"></li>
+
         <!-- Core Trading Features -->
         <li class="nav-item">
           <a class="nav-link" href="/trading">Trading</a>
@@ -121,6 +129,8 @@
         <li class="nav-item">
           <a class="nav-link" href="/tradetracker">Trade Tracker</a>
         </li>
+
+        <li class="nav-separator-vertical"></li>
 
         <!-- Community & Tools -->
         <li class="nav-item">
@@ -133,10 +143,14 @@
           <a class="nav-link" href="/bot">Discord Bot</a>
         </li>
 
+        <li class="nav-separator-vertical"></li>
+
         <!-- Help -->
         <li class="nav-item">
           <a class="nav-link" href="/faq">FAQ</a>
         </li>
+
+        <li class="nav-separator-vertical"></li>
 
         <!-- Profile picture icon with dynamic dark dropdown (visible on desktop) -->
         <li class="nav-item dropdown d-none d-lg-block ms-2">
@@ -211,32 +225,55 @@
     function getDropdownContent(isLoggedIn) {
       if (isLoggedIn) {
         const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
-        const hasRoblox = userData.roblox_id;
+        const hasRoblox = userData.roblox_id != null;
         const userId = userData.id;
 
         return `
-      <li><a class="dropdown-item" href="/users/${userId}">Profile</a></li>
+      <li>
+        <a class="dropdown-item" href="/users/${userId}">
+          <i class="bi bi-person me-1"></i> Profile
+        </a>
+      </li>
       ${
         !hasRoblox
           ? `
       <li>
         <a class="dropdown-item" href="/roblox">
-          <i class="bi bi-plus-circle"></i> Connect Roblox
+          <svg class="me-1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 24 24">
+            <path fill="#030000" d="M20.4,5.6L7.6,2.4C7.466,2.366,7.331,2.35,7.199,2.35c-0.739,0-1.411,0.5-1.599,1.25L2.4,16.4	c-0.221,0.884,0.316,1.779,1.2,2l12.8,3.2c0.134,0.034,0.269,0.05,0.401,0.05c0.739,0,1.411-0.5,1.599-1.25l3.2-12.8	C21.821,6.716,21.284,5.821,20.4,5.6z M9.155,12.882l0.749-3c0.114-0.454,0.521-0.758,0.969-0.758c0.08,0,0.162,0.01,0.243,0.03	l3,0.75c0.536,0.134,0.861,0.677,0.728,1.213l-0.749,2.999c-0.114,0.454-0.521,0.758-0.969,0.758c-0.08,0-0.162-0.01-0.243-0.03	l-3-0.75C9.347,13.961,9.021,13.418,9.155,12.882z"></path>
+          </svg> Authenticate with Roblox
         </a>
       </li>`
           : ""
       }
       <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item" href="" onclick="logout()">Log out</a></li>
+      <li>
+        <a class="dropdown-item text-danger" href="" onclick="logout()">
+          <i class="bi bi-box-arrow-right me-1"></i> Log out
+        </a>
+      </li>
     `;
       } else {
         return `
-      <li><a class="dropdown-item" href="/login">Log in with Discord</a></li>
+      <li>
+        <a class="dropdown-item" href="/login">
+          <i class="bi bi-discord me-1"></i> Authenticate with Discord
+        </a>
+      </li>
     `;
       }
     }
 
     function updateDropdownContent() {
+      if (isLoggedIn) {
+        const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
+        if (!userData.id) {
+          // If user data isn't loaded yet, retry after a short delay
+          setTimeout(updateDropdownContent, 100);
+          return;
+        }
+      }
+
       const dropdownContent = getDropdownContent(isLoggedIn);
       if (userDropdown) userDropdown.innerHTML = dropdownContent;
       if (mobileUserDropdown) mobileUserDropdown.innerHTML = dropdownContent;
