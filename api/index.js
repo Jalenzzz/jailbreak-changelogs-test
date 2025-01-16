@@ -263,11 +263,15 @@ app.get("/trading", (req, res) => {
   });
 });
 
-app.get("/dashboard", (req, res) => {
-  res.render("dashboard", {
-    title: "Admin Control Panel / Changelogs",
-    logoUrl: "/assets/logos/Admin_Logo.webp", //TODO: Add logo for trading page
-    logoAlt: "Admin Page Logo",
+// In index.js
+app.get("/trading/ad/:tradeId", (req, res) => {
+  const tradeId = req.params.tradeId;
+  res.render("trade-ad", {
+    title: `Trade #${tradeId} - Jailbreak Trading`,
+    metaDescription: `View trade details for Trade #${tradeId}. Check item values and trade status.`,
+    canonicalUrl: `https://testing.jailbreakchangelogs.xyz/trading/ad/${tradeId}`,
+    logoUrl: "/assets/logos/Trade_Ads_Logo.webp",
+    logoAlt: "Trading Page Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
   });

@@ -225,6 +225,15 @@
           <h3 class="text-center">Requesting</h3>
           <div class="row" id="requesting-list"></div>
         </div>
+        <div class="text-center mt-3">
+          <button
+            id="confirm-trade-btn"
+            class="btn btn-primary"
+            onclick="previewTrade()"
+          >
+            <i class="bi bi-eye"></i> Preview Trade
+          </button>
+        </div>
       </div>
 
       <!-- Trade Preview Section -->
@@ -254,7 +263,7 @@
 
       <!-- Available Items Container -->
       <div class="available-items mt-4" id="available-items-container">
-        <div class="d-flex justify-content-center mb-4">
+        <!-- <div class="d-flex justify-content-center mb-4">
           <button
             class="btn btn-success btn-lg"
             id="confirm-trade-btn"
@@ -262,15 +271,11 @@
           >
             <i class="bi bi-check-circle me-2"></i>Preview Trade Ad
           </button>
-        </div>
+        </div> -->
       </div>
 
       <!-- Trade Ads Section -->
       <div class="trade-ads-section">
-        <h3>
-          <i class="bi bi-clock-history me-2"></i>Recent Trade Advertisements
-        </h3>
-
         <div id="trade-ads-loading" class="trade-ads-loading">
           <div class="loading-spinner"></div>
           <p>Loading trade advertisements...</p>
