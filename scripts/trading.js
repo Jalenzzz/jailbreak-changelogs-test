@@ -260,6 +260,32 @@ function decimalToHex(decimal) {
   return `#${hex}`;
 }
 
+function handleModalClose() {
+  // Get current sort value
+  const sortDropdown = document.getElementById("modal-value-sort-dropdown");
+  const currentSort = sortDropdown ? sortDropdown.value : "name-all-items";
+
+  // Reset search input if it exists
+  const searchInput = document.getElementById("modal-item-search");
+  if (searchInput) {
+    searchInput.value = "";
+  }
+
+  // Reset to first page
+  currentPage = 1;
+
+  // Apply the current sort instead of resetting to all items
+  if (sortDropdown) {
+    sortModalItems(); // This will use the current dropdown value
+  } else {
+    // Fallback to all items if dropdown doesn't exist
+    filteredItems = [...allItems];
+  }
+
+  // Re-display items
+  displayAvailableItems(currentTradeType);
+}
+
 function formatValue(value, useSuffix = false) {
   if (!value || value === "N/A") return "No Value";
   const parsedValue = parseValue(value);
@@ -296,6 +322,15 @@ async function loadItems() {
     );
     allItems = await response.json();
 
+    // Reset filtered items to show all items initially
+    filteredItems = [...allItems];
+
+    // Reset sort dropdown to default "All Items"
+    const sortDropdown = document.getElementById("modal-value-sort-dropdown");
+    if (sortDropdown) {
+      sortDropdown.value = "name-all-items";
+    }
+
     currentTradeType = "offering";
 
     // Set active state on offering button
@@ -311,8 +346,6 @@ async function loadItems() {
   }
 }
 
-// Add item to trade
-// Update addItemToTrade function
 function addItemToTrade(item, tradeType) {
   const items = tradeType === "Offer" ? offeringItems : requestingItems;
   if (items.length >= 8) {
@@ -511,8 +544,6 @@ function toggleAvailableItems(type) {
   // Display available items
   displayAvailableItems(type);
 }
-
-// Replace displayAvailableItems function
 function displayAvailableItems(type) {
   const container = document.getElementById("modal-available-items-list");
   const searchInput = document.getElementById("modal-item-search");
@@ -542,53 +573,70 @@ function displayAvailableItems(type) {
   const itemsToDisplay = filteredItems.slice(startIndex, endIndex);
 
   renderPagination(totalPages, type);
-
   container.innerHTML = itemsToDisplay
     .map((item) => {
-      // Special handling for drifts - show only thumbnail
-      const imageUrl =
-        item.type === "Drift"
-          ? `/assets/images/items/drifts/thumbnails/${item.name}.webp`
-          : `/assets/items/${item.type.toLowerCase()}s/${item.name}.webp`;
-
       return `
-          <div class="col-custom-5">
-            <div class="card available-item-card" 
-                 onclick="quickAddItem('${item.name}', '${item.type}')"
-                 data-bs-dismiss="modal">
-              <div class="card-header">
-                ${item.name}
+        <div class="col-custom-5">
+          <div class="card available-item-card" 
+               onclick="quickAddItem('${item.name}', '${item.type}')"
+               data-bs-dismiss="modal">
+            <div class="card-header">
+              ${item.name}
+            </div>
+            <div class="position-relative" style="aspect-ratio: 16/9;">
+              <div class="position-absolute top-50 start-50 translate-middle spinner-container">
+                <div class="spinner-border custom-spinner" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
               </div>
-              ${getItemImageElement(item)}
-              <div class="card-body">
-                <div class="info-row">
-                  <span class="info-label">Type:</span>
-                  <span class="info-value">${item.type}</span>
-                </div>
-                <div class="info-row">
-                  <span class="info-label">Cash Value:</span>
-                  <span class="info-value">${formatValue(
-                    item.cash_value
-                  )}</span>
-                </div>
-                <div class="info-row">
-                  <span class="info-label">Duped Value:</span>
-                  <span class="info-value">${formatValue(
-                    item.duped_value || 0
-                  )}</span>
-                </div>
-                <div class="info-row">
-                  <span class="info-label">Limited:</span>
-                  <span class="info-value">${
-                    item.is_limited ? "True" : "False"
-                  }</span>
-                </div>
+
+              <img class="card-img w-100 h-100 object-fit-cover"
+                   src="${getItemImageUrl(item)}"
+                   alt=""
+                   onload="this.style.display='block'; this.previousElementSibling.style.display='none'"
+                   onerror="this.onerror=null; this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat'; this.style.display='block'; this.previousElementSibling.style.display='none'"
+              >
+            </div>
+            <div class="card-body">
+              <div class="info-row">
+                <span class="info-label">Type:</span>
+                <span class="info-value">${item.type}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Cash Value:</span>
+                <span class="info-value">${formatValue(item.cash_value)}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Duped Value:</span>
+                <span class="info-value">${formatValue(
+                  item.duped_value || 0
+                )}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Limited:</span>
+                <span class="info-value">${
+                  item.is_limited ? "True" : "False"
+                }</span>
               </div>
             </div>
           </div>
-        `;
+        </div>
+      `;
     })
     .join("");
+}
+
+// Helper function to get the correct image URL based on item type
+function getItemImageUrl(item) {
+  if (item.name === "HyperShift") {
+    return `/assets/images/items/hyperchromes/HyperShift.gif`;
+  }
+
+  if (item.type === "Drift") {
+    return `/assets/images/items/drifts/thumbnails/${item.name}.webp`;
+  }
+
+  return `/assets/items/${item.type.toLowerCase()}s/${item.name}.webp`;
 }
 
 function sortModalItems() {
@@ -604,10 +652,20 @@ function sortModalItems() {
   // First filter by category
   if (itemType === "all-items") {
     filteredItems = [...allItems];
+    // Shuffle the array using Fisher-Yates algorithm
+    for (let i = filteredItems.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [filteredItems[i], filteredItems[j]] = [
+        filteredItems[j],
+        filteredItems[i],
+      ];
+    }
   } else if (itemType === "limited-items") {
     filteredItems = allItems.filter((item) => {
       return item.is_limited;
     });
+    // Sort limited items by name
+    filteredItems.sort((a, b) => a.name.localeCompare(b.name));
   } else {
     // Convert type names to match the API format
     const typeMap = {
@@ -628,10 +686,9 @@ function sortModalItems() {
     filteredItems = allItems.filter((item) => {
       return item.type === targetType;
     });
+    // Sort filtered items by name
+    filteredItems.sort((a, b) => a.name.localeCompare(b.name));
   }
-
-  // Sort the filtered items by name
-  filteredItems.sort((a, b) => a.name.localeCompare(b.name));
 
   // Reset to first page and display filtered items
   currentPage = 1;
@@ -1317,8 +1374,11 @@ function changeTradesPage(newPage) {
   }
 }
 
-// Update the document ready event listener
 document.addEventListener("DOMContentLoaded", async () => {
+  const availableItemsModal = document.getElementById("availableItemsModal");
+  if (availableItemsModal) {
+    availableItemsModal.addEventListener("hidden.bs.modal", handleModalClose);
+  }
   // Load items first
   await loadItems();
 
@@ -2120,4 +2180,29 @@ async function createTradeAd() {
       hideBottomSheet();
     }
   });
+
+  document
+    .getElementById("availableItemsModal")
+    .addEventListener("hidden.bs.modal", () => {
+      // Reset search input
+      const searchInput = document.getElementById("modal-item-search");
+      if (searchInput) {
+        searchInput.value = "";
+      }
+
+      // Reset sort dropdown
+      const sortDropdown = document.getElementById("modal-value-sort-dropdown");
+      if (sortDropdown) {
+        sortDropdown.value = "name-all-items";
+      }
+
+      // Reset filtered items to show all items
+      filteredItems = [...allItems];
+
+      // Reset to first page
+      currentPage = 1;
+
+      // Reset display
+      displayAvailableItems(currentTradeType);
+    });
 }

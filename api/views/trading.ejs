@@ -262,25 +262,10 @@
       </div>
 
       <!-- Available Items Container -->
-      <div class="available-items mt-4" id="available-items-container">
-        <!-- <div class="d-flex justify-content-center mb-4">
-          <button
-            class="btn btn-success btn-lg"
-            id="confirm-trade-btn"
-            onclick="previewTrade()"
-          >
-            <i class="bi bi-check-circle me-2"></i>Preview Trade Ad
-          </button>
-        </div> -->
-      </div>
+      <div class="available-items mt-4" id="available-items-container"></div>
 
       <!-- Trade Ads Section -->
-      <div class="trade-ads-section">
-        <div id="trade-ads-loading" class="trade-ads-loading">
-          <div class="loading-spinner"></div>
-          <p>Loading trade advertisements...</p>
-        </div>
-      </div>
+      <div class="trade-ads-section"></div>
     </div>
 
     <!-- Modal for Available Items -->
@@ -295,11 +280,34 @@
         class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
       >
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="availableItemsModalLabel">
-              Select Item
-            </h5>
-            <div class="d-flex gap-2 align-items-center">
+          <div
+            class="modal-header border-bottom-0 align-items-center px-4 py-3"
+          >
+            <div class="d-flex align-items-center gap-3 flex-grow-1">
+              <h5 class="modal-title fs-4 mb-0" id="availableItemsModalLabel">
+                Select Items
+              </h5>
+              <div class="search-wrapper flex-grow-1 position-relative">
+                <i class="bi bi-search search-icon"></i>
+                <input
+                  type="text"
+                  id="modal-item-search"
+                  class="form-control form-control-lg search-input"
+                  placeholder="Search items..."
+                  oninput="handleSearch(currentTradeType)"
+                />
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-subheader px-4 py-2">
+            <div class="d-flex justify-content-between align-items-center">
               <select
                 id="modal-value-sort-dropdown"
                 class="form-select"
@@ -319,28 +327,19 @@
                 <option value="name-furnitures">Furniture</option>
               </select>
 
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+              <div id="modal-pagination-top"></div>
             </div>
           </div>
-          <div class="modal-body">
-            <div class="search-container mb-3">
-              <i class="bi bi-search search-icon"></i>
-              <input
-                type="text"
-                id="modal-item-search"
-                class="search-input"
-                placeholder="Search items..."
-                oninput="handleSearch(currentTradeType)"
-              />
-            </div>
-            <div id="modal-pagination-top"></div>
-            <div class="row" id="modal-available-items-list"></div>
-            <div id="modal-pagination-bottom"></div>
+
+          <div class="modal-body px-4 py-3">
+            <div class="row g-3" id="modal-available-items-list"></div>
+          </div>
+
+          <div class="modal-footer border-top-0 px-4 py-3">
+            <div
+              id="modal-pagination-bottom"
+              class="w-100 d-flex justify-content-center"
+            ></div>
           </div>
         </div>
       </div>

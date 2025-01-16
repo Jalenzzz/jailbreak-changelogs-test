@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // In the neverExpires change event listener, modify it to:
   document
     .getElementById("neverExpires")
     ?.addEventListener("change", function (e) {
@@ -43,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (dateInput) {
         dateInput.disabled = e.target.checked;
         if (e.target.checked) {
-          dateInput.value = "";
           // Add tooltip
           if (!dateInput.hasAttribute("data-bs-toggle")) {
             dateInput.setAttribute("data-bs-toggle", "tooltip");
@@ -650,8 +648,6 @@ async function handleAddServer(event) {
       }
     }
 
-    console.log("Request body:", formData);
-
     const response = await fetch(
       "https://api3.jailbreakchangelogs.xyz/servers/add",
       {
@@ -664,7 +660,6 @@ async function handleAddServer(event) {
     );
 
     const data = await response.json();
-    console.log("Response data:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "Failed to add server");
