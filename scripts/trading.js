@@ -759,8 +759,6 @@ function renderEmptySlots(containerId, count) {
   container.innerHTML = html;
 }
 
-// Modified renderTradeItems function
-// Find this function in the code
 function renderTradeItems(tradeType) {
   const items = tradeType === "Offer" ? offeringItems : requestingItems;
   const containerId =

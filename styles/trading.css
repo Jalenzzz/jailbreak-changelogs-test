@@ -1491,10 +1491,13 @@ video.card-img-top {
   padding: 2rem;
   margin: 1rem 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: "Luckiest Guy", Arial, Helvetica, sans-serif;
+  letter-spacing: 0.5px;
 }
 
 .trade-sides-wrapper h3 {
-  color: var(--text-primary);
+  color: #2196f3; /* Blue for requesting */
+  border-bottom: 2px solid #2196f3;
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
@@ -1506,10 +1509,6 @@ video.card-img-top {
   border-bottom: 2px solid #00c853;
 }
 
-.trade-sides-wrapper .col-lg-6:last-child h3 {
-  color: #2196f3; /* Blue for requesting */
-  border-bottom: 2px solid #2196f3;
-}
 /* Trade Preview Container */
 .trade-preview {
   background: var(--bg-primary);
