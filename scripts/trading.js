@@ -983,22 +983,21 @@ async function deleteTradeAd(tradeId) {
 }
 async function editTradeAd(tradeId) {
   try {
-    console.log("Starting editTradeAd for trade:", tradeId);
+    // Update URL with edit parameter
     const url = new URL(window.location);
     url.searchParams.set("edit", tradeId);
     window.history.replaceState({}, "", url);
+
+    // Check authentication
     const token = Cookies.get("token");
     if (!token) {
-      console.log("No token found, user not logged in");
       toastr.error("Please login to edit trade advertisements");
-      const url = new URL(window.location);
       url.searchParams.delete("edit");
       window.history.replaceState({}, "", url);
       return;
     }
 
-    // Get user data from token first
-    console.log("Fetching user data...");
+    // Get user data from token
     const userResponse = await fetch(
       `https://api3.jailbreakchangelogs.xyz/users/get/token?token=${token}`
     );
@@ -1007,35 +1006,25 @@ async function editTradeAd(tradeId) {
       throw new Error("Failed to fetch user data");
     }
     const userData = await userResponse.json();
-    console.log("User data fetched:", userData);
 
-    // Fetch specific trade details
-    console.log("Fetching trade details...");
+    // Fetch trade details
     const tradeResponse = await fetch(
       `https://api3.jailbreakchangelogs.xyz/trades/get?id=${tradeId}`
     );
     if (!tradeResponse.ok) {
       console.error("Trade not found:", tradeResponse.status);
       toastr.error("Trade advertisement not found");
-      const url = new URL(window.location);
       url.searchParams.delete("edit");
       window.history.replaceState({}, "", url);
       return;
     }
     const trade = await tradeResponse.json();
+
     // Fetch author details
     const authorDetails = await fetchUserDetails(trade.author);
 
-    // Check if the current user is the author
-    console.log(
-      "Comparing user IDs - Author:",
-      trade.author,
-      "Current:",
-      userData.id
-    );
-
+    // Verify ownership
     if (trade.author !== userData.id) {
-      console.log("Permission denied - user is not the author");
       toastr.error(
         "You don't have permission to edit this trade advertisement"
       );
@@ -1045,151 +1034,71 @@ async function editTradeAd(tradeId) {
       return;
     }
 
-    // Show toast with author details
+    // Show success toast
     toastr.success(
       `Editing Trade #${tradeId} by ${
         authorDetails?.roblox_username || "Unknown"
       }`,
       "",
-      {
-        timeOut: 5000,
-      }
+      { timeOut: 5000 }
     );
 
+    // Reset current trade
+    resetTrade();
+
+    // Show the trade preview
+    const previewSection = document.getElementById("trade-preview");
+    if (previewSection) {
+      previewSection.style.display = "block";
+
+      // Load offering items
+      const offeringIds = trade.offering.split(",").filter((id) => id);
+      for (const id of offeringIds) {
+        const item = await fetchItemDetails(id);
+        if (item) {
+          addItemToTrade(item, "Offer");
+        }
+      }
+
+      // Load requesting items
+      const requestingIds = trade.requesting.split(",").filter((id) => id);
+      for (const id of requestingIds) {
+        const item = await fetchItemDetails(id);
+        if (item) {
+          addItemToTrade(item, "Request");
+        }
+      }
+
+      // Update preview
+      renderPreviewItems("preview-offering-items", offeringItems);
+      renderPreviewItems("preview-requesting-items", requestingItems);
+
+      // Update value differences
+      const valueDifferencesContainer =
+        document.getElementById("value-differences");
+      if (valueDifferencesContainer) {
+        valueDifferencesContainer.innerHTML = renderValueDifferences();
+      }
+
+      // Add update/cancel buttons
+      const previewActions = document.querySelector(".preview-actions");
+      if (previewActions) {
+        previewActions.innerHTML = `
+          <button class="btn btn-primary" onclick="updateTradeAd('${tradeId}')">
+            <i class="bi bi-save"></i> Update Trade
+          </button>
+          <button class="btn btn-secondary ms-2" onclick="cancelEdit()">
+            <i class="bi bi-x-circle"></i> Cancel
+          </button>
+        `;
+      }
+    }
+
+    // Scroll to trade section
     const tradeSidesWrapper = document.querySelector(".trade-sides-wrapper");
     if (tradeSidesWrapper) {
       tradeSidesWrapper.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-    // Clear current trade
-    console.log("Resetting current trade...");
-    resetTrade();
-
-    // Get and verify confirm button exists
-    const confirmButton = document.getElementById("confirm-trade-btn");
-    console.log("Confirm button found:", confirmButton);
-    if (!confirmButton) {
-      console.error("Confirm button not found in DOM");
-      return;
-    }
-
-    // Show the trade editor
-    console.log("Setting up trade editor UI...");
-    document.getElementById("trade-preview").style.display = "none";
-    const availableContainer = document.getElementById(
-      "available-items-container"
-    );
-    console.log("Available container found:", availableContainer);
-
-    if (availableContainer) {
-      availableContainer.style.display = "block";
-      availableContainer.classList.add("editing");
-    }
-
-    // Create wrapper and elements
-    console.log("Creating confirm wrapper and elements...");
-    const confirmWrapper = document.createElement("div");
-    confirmWrapper.className = "confirm-trade-wrapper";
-
-    // Update confirm button BEFORE moving it
-    console.log("Updating confirm button properties...");
-    confirmButton.innerHTML = '<i class="bi bi-save"></i> Update Trade';
-    confirmButton.className = "btn btn-primary";
-    confirmButton.style.display = "block";
-    confirmButton.onclick = () => updateTradeAd(tradeId);
-
-    const statusContainer = document.createElement("div");
-    statusContainer.className = "status-container";
-    statusContainer.innerHTML = `
-      <label for="trade-status-select" class="form-label">Trade Status</label>
-      <select id="trade-status-select" class="form-select">
-        <option value="Pending" ${
-          trade.status === "Pending" ? "selected" : ""
-        }>Pending</option>
-        <option value="Completed" ${
-          trade.status === "Completed" ? "selected" : ""
-        }>Completed</option>
-      </select>
-    `;
-
-    // Create cancel button
-    const cancelButton = document.createElement("button");
-    cancelButton.className = "btn btn-secondary";
-    cancelButton.innerHTML = '<i class="bi bi-x-circle"></i> Cancel Edit';
-    cancelButton.onclick = () => {
-      if (
-        confirm(
-          "Are you sure you want to cancel editing? All changes will be lost."
-        )
-      ) {
-        resetTrade();
-        window.location.href = "/trading";
-      }
-    };
-
-    // Create button container
-    const buttonContainer = document.createElement("div");
-    buttonContainer.className = "button-container";
-
-    // Clone the confirm button instead of moving it
-    const confirmButtonClone = confirmButton.cloneNode(true);
-    confirmButtonClone.onclick = () => updateTradeAd(tradeId);
-
-    console.log("Adding buttons to container...");
-    buttonContainer.appendChild(cancelButton);
-    buttonContainer.appendChild(confirmButtonClone);
-
-    // Add elements to wrapper
-    confirmWrapper.appendChild(statusContainer);
-    confirmWrapper.appendChild(buttonContainer);
-
-    // Add wrapper to container
-    console.log("Adding wrapper to available container...");
-    availableContainer.appendChild(confirmWrapper);
-
-    // Now remove the original button
-    if (confirmButton.parentNode) {
-      confirmButton.parentNode.removeChild(confirmButton);
-    }
-
-    // Load items
-    const offeringIds = trade.offering.split(",").filter((id) => id);
-    const requestingIds = trade.requesting.split(",").filter((id) => id);
-
-    let loadedOfferingItems = 0;
-    let loadedRequestingItems = 0;
-
-    // Load offering items
-    for (const id of offeringIds) {
-      const item = await fetchItemDetails(id);
-      if (item) {
-        addItemToTrade(item, "Offer");
-        loadedOfferingItems++;
-      }
-    }
-
-    // Load requesting items
-    for (const id of requestingIds) {
-      const item = await fetchItemDetails(id);
-      if (item) {
-        addItemToTrade(item, "Request");
-        loadedRequestingItems++;
-      }
-    }
-
-    console.log(
-      "Items loaded - Offering:",
-      loadedOfferingItems,
-      "Requesting:",
-      loadedRequestingItems
-    );
-
-    // Verify final state
-    console.log("Final button state:", {
-      exists: !!document.getElementById("confirm-trade-btn"),
-      display: document.getElementById("confirm-trade-btn")?.style.display,
-      className: document.getElementById("confirm-trade-btn")?.className,
-      innerHTML: document.getElementById("confirm-trade-btn")?.innerHTML,
-    });
   } catch (error) {
     console.error("Error in editTradeAd:", error);
     toastr.error("Failed to load trade for editing");
@@ -1197,6 +1106,15 @@ async function editTradeAd(tradeId) {
     url.searchParams.delete("edit");
     window.history.replaceState({}, "", url);
   }
+}
+
+function cancelEdit() {
+  const url = new URL(window.location);
+  url.searchParams.delete("edit");
+  window.history.replaceState({}, "", url);
+
+  resetTrade();
+  window.location.reload();
 }
 
 async function updateTradeAd(tradeId) {
@@ -1225,7 +1143,8 @@ async function updateTradeAd(tradeId) {
       return;
     }
 
-    const url = `https://api3.jailbreakchangelogs.xyz/trades/update?id=${tradeId}&token=${token}`;
+    // First url declaration - for API endpoint
+    const apiUrl = `https://api3.jailbreakchangelogs.xyz/trades/update?id=${tradeId}&token=${token}`;
 
     const tradeData = {
       offering: offeringList.map((item) => item.id).join(","),
@@ -1233,7 +1152,7 @@ async function updateTradeAd(tradeId) {
       status: selectedStatus,
     };
 
-    const response = await fetch(url, {
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1249,6 +1168,11 @@ async function updateTradeAd(tradeId) {
 
     toastr.success("Trade advertisement updated successfully!");
 
+    // Second url declaration - for window location
+    const pageUrl = new URL(window.location);
+    pageUrl.searchParams.delete("edit");
+    window.history.replaceState({}, "", pageUrl);
+
     // Store the button reference before resetting
     const confirmButton = document.getElementById("confirm-trade-btn");
 
@@ -1257,20 +1181,29 @@ async function updateTradeAd(tradeId) {
 
     // Update button if it still exists
     if (confirmButton) {
-      confirmButton.innerHTML =
-        '<i class="bi bi-plus-circle"></i> Create Trade';
+      confirmButton.innerHTML = '<i class="bi bi-eye"></i> Preview Trade';
       confirmButton.onclick = previewTrade;
-    } else {
-      console.warn("Confirm button not found after reset");
     }
 
-    await loadTradeAds(); // Refresh trade ads list
+    // Only refresh the specific trade that was updated
+    const updatedTrade = await fetch(
+      `https://api3.jailbreakchangelogs.xyz/trades/get?id=${tradeId}`
+    ).then((res) => res.json());
+
+    if (updatedTrade) {
+      const tradeElement = document.querySelector(
+        `[data-trade-id="${tradeId}"]`
+      );
+      if (tradeElement) {
+        const newTradeHtml = await createTradeAdHTML(updatedTrade);
+        tradeElement.outerHTML = newTradeHtml;
+      }
+    }
   } catch (error) {
     console.error("Error updating trade:", error);
     toastr.error("Failed to update trade advertisement");
   }
 }
-
 // Add these variables at the top with other global variables
 const TRADES_PER_PAGE = 6;
 let currentTradesPage = 1;
@@ -2036,7 +1969,6 @@ function calculateTotalValue(items, valueType) {
 }
 function resetTrade() {
   try {
-    console.log("Starting resetTrade...");
     // Clear items
     offeringItems.length = 0;
     requestingItems.length = 0;
@@ -2053,12 +1985,6 @@ function resetTrade() {
     );
     const confirmButton = document.getElementById("confirm-trade-btn");
 
-    console.log("Reset trade - elements found:", {
-      previewSection: !!previewSection,
-      availableContainer: !!availableContainer,
-      confirmButton: !!confirmButton,
-    });
-
     // Remove editing class if container exists
     if (availableContainer) {
       availableContainer.classList.remove("editing");
@@ -2067,20 +1993,17 @@ function resetTrade() {
     // Remove the confirm wrapper if it exists
     const confirmWrapper = document.querySelector(".confirm-trade-wrapper");
     if (confirmWrapper) {
-      console.log("Removing confirm wrapper");
       confirmWrapper.remove();
     }
 
     // Handle confirm button if it exists
     if (confirmButton) {
-      console.log("Resetting confirm button state");
       confirmButton.innerHTML =
         '<i class="bi bi-plus-circle"></i> Create Trade';
       confirmButton.onclick = previewTrade;
 
       // Only try to append if both container and button exist
       if (availableContainer) {
-        console.log("Re-appending confirm button to available container");
         availableContainer.appendChild(confirmButton);
       }
     }
@@ -2092,8 +2015,6 @@ function resetTrade() {
     if (availableContainer) {
       availableContainer.style.display = "block";
     }
-
-    console.log("Reset trade complete");
   } catch (error) {
     console.error("Error in resetTrade:", error);
     toastr.error("An error occurred while resetting the trade");
