@@ -20,6 +20,23 @@ $(document).ready(function () {
   // jQuery references for search results and navbar
   const $searchResultsContainer = $("#search-results");
   const $navbarCollapse = $("#navbarContent");
+  const debounceLatestChangelog = (function () {
+    let timeoutId = null;
+    const delay = 4700; // Same as random changelog delay for consistency
+
+    return function (fn) {
+      if (timeoutId) {
+        return; // Exit if there's a pending action
+      }
+
+      fn(); // Execute the function
+
+      // Set the timeout and store its ID
+      timeoutId = setTimeout(() => {
+        timeoutId = null; // Reset the timeout ID after delay
+      }, delay);
+    };
+  })();
 
   // Initialize changelogs data and debounce timer
   let changelogsData = [];
@@ -45,27 +62,40 @@ $(document).ready(function () {
       breadcrumbHtml;
   }
 
-  // Displays the most recent changelog entry.
-  function displayLatestChangelog() {
-    if (changelogsData && changelogsData.length > 0) {
-      const latestChangelog = changelogsData[0]; // Get the first (latest) changelog
+  $("#latestChangelogBtn, #latestChangelogMobileBtn").on("click", function () {
+    const $btn = $(this);
 
-      // Update the URL without reloading the page
-      const newUrl = `/changelogs/${latestChangelog.id}`;
-      history.pushState({}, "", newUrl);
-
-      // Display the changelog content
-      displayChangelog(latestChangelog);
-
-      // Update the breadcrumb
-      updateChangelogBreadcrumb(latestChangelog.id);
-
-      changelogToast("Showing latest changelog"); // Show a toast notification
-    } else {
-      console.warn("No changelog data available to display latest entry.");
-      changelogToast("No changelog data available.");
+    // Check if button is already disabled
+    if ($btn.prop("disabled")) {
+      return;
     }
-  }
+
+    debounceLatestChangelog(() => {
+      if (changelogsData && changelogsData.length > 0) {
+        const latestChangelog = changelogsData[0];
+        const currentChangelogId = parseInt(
+          window.location.pathname.split("/").pop()
+        );
+
+        // Only proceed if we're not already on the latest changelog
+        if (currentChangelogId !== latestChangelog.id) {
+          const newUrl = `/changelogs/${latestChangelog.id}`;
+          history.pushState({}, "", newUrl);
+          displayChangelog(latestChangelog);
+          updateChangelogBreadcrumb(latestChangelog.id);
+          changelogToast("Showing latest changelog");
+        }
+      }
+    });
+
+    // Add visual feedback by disabling the button temporarily
+    $btn.prop("disabled", true).addClass("disabled");
+
+    // Re-enable the button after the delay
+    setTimeout(() => {
+      $btn.prop("disabled", false).removeClass("disabled");
+    }, 4700);
+  });
 
   // Function to show the loading overlay
   function showLoadingOverlay() {
