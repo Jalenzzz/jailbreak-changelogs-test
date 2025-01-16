@@ -2,7 +2,8 @@
   <h2 class="comment-header mb-4" id="comment-header">
     <% if (type === 'changelog') { %> Comments for Changelog #<%= itemId %> <% }
     else if (type === 'season') { %> Comments for Season <%= itemId %> <% } else
-    { %> Comments for <%= itemName %> [<%= type.charAt(0).toUpperCase() +
+    if (type === 'trade') { %> Comments for Trade #<%= itemId %> <% } else { %>
+    Comments for <%= itemName %> [<%= type.charAt(0).toUpperCase() +
     type.slice(1) %>] <% } %>
   </h2>
 

@@ -274,6 +274,7 @@ app.get("/trading/ad/:tradeId", (req, res) => {
     logoAlt: "Trading Page Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
+    tradeId,
   });
 });
 

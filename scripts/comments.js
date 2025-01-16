@@ -23,12 +23,14 @@ class CommentsManager {
     // Wait for DOM to be ready
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", () => {
-        this.initializeElements();
-        this.setupEventListeners();
+        if (this.initializeElements()) {
+          this.setupEventListeners();
+        }
       });
     } else {
-      this.initializeElements();
-      this.setupEventListeners();
+      if (this.initializeElements()) {
+        this.setupEventListeners();
+      }
     }
 
     window.commentsManagerInstance = this;
@@ -144,6 +146,9 @@ class CommentsManager {
       case "season":
         headerText = `Comments for Season ${this.itemId}`;
         break;
+      case "trade":
+        headerText = `Comments for Trade #${this.itemId}`;
+        break;
       default:
         // For items (vehicles, rims, etc.)
         if (this.itemName) {
@@ -160,6 +165,11 @@ class CommentsManager {
   }
 
   clearComments() {
+    if (!this.commentsList || !this.paginationControls) {
+      console.error("[Debug] Cannot clear comments - elements not initialized");
+      return;
+    }
+
     this.comments = [];
     this.currentPage = 1;
     this.commentsList.innerHTML = "";
@@ -168,6 +178,16 @@ class CommentsManager {
 
   async loadComments() {
     if (this._isLoading) return; // Prevent concurrent loads
+
+    // Check if elements are initialized
+    if (!this.commentsList || !this.paginationControls) {
+      console.error("[Debug] Comments elements not initialized yet");
+      // Try to initialize elements
+      if (!this.initializeElements()) {
+        return; // Exit if initialization fails
+      }
+    }
+
     this._isLoading = true;
 
     // Clear existing comments and update header first

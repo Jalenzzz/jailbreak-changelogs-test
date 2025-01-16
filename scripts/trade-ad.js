@@ -466,5 +466,13 @@ function updateBreadcrumbs(items) {
     .join("");
 }
 
+// Initialize comments manager for this trade
+if (!window.commentsManagerInstance) {
+  document.addEventListener("DOMContentLoaded", () => {
+    window.commentsManagerInstance = new CommentsManager("trade", tradeId);
+    window.commentsManagerInstance.loadComments();
+  });
+}
+
 // Load trade data when page loads
 document.addEventListener("DOMContentLoaded", loadTradeData);

@@ -20,6 +20,12 @@
   --active-bg: rgba(18, 78, 102, 0.2); /* #124E66 with opacity */
 }
 
+.modal {
+  --bs-modal-bg: var(--bg-primary) !important;
+  --bs-modal-header-bg: var(--bg-secondary) !important;
+  --bs-modal-footer-bg: var(--bg-secondary) !important;
+}
+
 /* Dark Theme Overrides */
 [data-bs-theme="dark"] {
   --background-dark: var(--bg-primary);

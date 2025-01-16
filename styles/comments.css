@@ -274,22 +274,23 @@
 
 @keyframes spin {
   to {
-    transform: rotate(360deg) !important;
+    transform: rotate(360deg);
   }
 }
-/* Add these styles to your comments.css file */
 
-/* Edit Comment Modal Styling */
-#editCommentModal .modal-content {
-  background-color: var(--bg-primary) !important;
-  border: 1px solid var(--bg-secondary) !important;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3) !important;
+/* Modal Body Styling */
+.modal {
+  --bs-modal-bg: var(--bg-primary) !important;
+  --bs-modal-header-bg: var(--bg-secondary) !important;
+  --bs-modal-footer-bg: var(--bg-secondary) !important;
 }
 
+/* Explicit styling for modal header and footer */
 #editCommentModal .modal-header {
   background-color: var(--bg-secondary) !important;
   border-bottom: 1px solid var(--accent-color) !important;
   padding: 1rem 1.5rem !important;
+  color: var(--text-primary) !important;
 }
 
 #editCommentModal .modal-footer {
@@ -298,87 +299,86 @@
   padding: 1rem 1.5rem !important;
 }
 
-#editCommentModal .modal-title {
+#editCommentModal .modal-body {
+  background-color: var(--bg-primary) !important;
+  padding: 1.5rem !important;
   color: var(--text-primary) !important;
-  font-weight: 600 !important;
 }
 
-/* Form Controls */
-#editCommentModal .form-control {
+/* Form Group Styling */
+#editCommentModal .modal-body .mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+/* Label Styling */
+#editCommentModal .modal-body .form-label {
+  color: var(--text-primary) !important;
+  font-weight: 500 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 0.95rem !important;
+}
+
+/* Textarea Styling */
+#editCommentModal .modal-body textarea.form-control {
   background-color: var(--bg-secondary) !important;
   border: 1px solid var(--accent-color) !important;
   color: var(--text-primary) !important;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 0.95rem !important;
+  line-height: 1.5 !important;
+  min-height: 120px !important;
+  resize: vertical !important;
+  width: 100% !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease-in-out !important;
 }
 
-#editCommentModal .form-control:focus {
-  background-color: var(--bg-secondary) !important;
+/* Textarea Focus State */
+#editCommentModal .modal-body textarea.form-control:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px var(--accent-color) !important;
   border-color: var(--accent-color-light) !important;
-  box-shadow: 0 0 0 0.25rem rgba(29, 125, 163, 0.25) !important;
-  color: var(--text-primary) !important;
+  background-color: var(--bg-secondary) !important;
 }
 
-#editCommentModal .form-control::placeholder {
+/* Textarea Placeholder */
+#editCommentModal .modal-body textarea.form-control::placeholder {
   color: var(--text-muted) !important;
+  opacity: 0.7 !important;
 }
 
-/* Buttons */
-#editCommentModal .btn-primary {
-  background-color: var(--accent-color) !important;
-  border-color: var(--accent-color) !important;
-  color: var(--text-primary) !important;
-  transition: all 0.2s ease !important;
-}
-
-#editCommentModal .btn-primary:hover,
-#editCommentModal .btn-primary:focus {
-  background-color: var(--accent-color-light) !important;
+/* Textarea Hover State */
+#editCommentModal .modal-body textarea.form-control:hover {
   border-color: var(--accent-color-light) !important;
 }
 
-#editCommentModal .btn-secondary {
-  background-color: var(--bg-secondary) !important;
-  border: 1px solid var(--text-muted) !important;
-  color: var(--text-primary) !important;
-}
-
-#editCommentModal .btn-secondary:hover,
-#editCommentModal .btn-secondary:focus {
-  background-color: var(--text-muted) !important;
-  border-color: var(--text-muted) !important;
-}
-
-/* Close Button */
-#editCommentModal .btn-close-white {
-  filter: brightness(0) invert(1) !important;
-  opacity: 0.75 !important;
-}
-
-#editCommentModal .btn-close-white:hover {
-  opacity: 1 !important;
-}
-
-/* Disabled State */
-#editCommentModal .form-control:disabled {
+/* Textarea Disabled State */
+#editCommentModal .modal-body textarea.form-control:disabled {
   background-color: var(--bg-primary) !important;
+  cursor: not-allowed !important;
   opacity: 0.75 !important;
 }
 
-/* Scrollbar Styling */
-#editCommentModal textarea::-webkit-scrollbar {
+/* Custom Scrollbar for Textarea */
+#editCommentModal .modal-body textarea.form-control::-webkit-scrollbar {
   width: 8px !important;
+  height: 8px !important;
 }
 
-#editCommentModal textarea::-webkit-scrollbar-track {
+#editCommentModal .modal-body textarea.form-control::-webkit-scrollbar-track {
   background: var(--bg-primary) !important;
-}
-
-#editCommentModal textarea::-webkit-scrollbar-thumb {
-  background: var(--accent-color) !important;
   border-radius: 4px !important;
 }
 
-#editCommentModal textarea::-webkit-scrollbar-thumb:hover {
+#editCommentModal .modal-body textarea.form-control::-webkit-scrollbar-thumb {
+  background: var(--accent-color) !important;
+  border-radius: 4px !important;
+  border: 2px solid var(--bg-primary) !important;
+}
+
+#editCommentModal
+  .modal-body
+  textarea.form-control::-webkit-scrollbar-thumb:hover {
   background: var(--accent-color-light) !important;
 }
 
@@ -444,6 +444,19 @@
 
   .pagination-input {
     max-width: 50px !important;
+  }
+  #editCommentModal .modal-body {
+    padding: 1rem !important;
+  }
+
+  #editCommentModal .modal-body textarea.form-control {
+    min-height: 100px !important;
+    font-size: 0.9rem !important;
+    padding: 0.625rem 0.875rem !important;
+  }
+
+  #editCommentModal .modal-body .form-label {
+    font-size: 0.9rem !important;
   }
 }
 
