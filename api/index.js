@@ -77,6 +77,7 @@ app.get("/trade-data", async (req, res) => {
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views")); // Set the directory for your EJS files
+app.set("view cache", true);
 
 app.get("/changelogs", async (req, res) => {
   try {
