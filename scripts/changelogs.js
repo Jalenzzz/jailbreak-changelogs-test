@@ -83,11 +83,18 @@ $(document).ready(function () {
           history.pushState({}, "", newUrl);
           displayChangelog(latestChangelog);
           updateChangelogBreadcrumb(latestChangelog.id);
+
+          if (window.commentsManagerInstance) {
+            window.commentsManagerInstance.clearComments();
+            window.commentsManagerInstance.type = "changelog";
+            window.commentsManagerInstance.itemId = latestChangelog.id;
+            window.commentsManagerInstance.loadComments();
+          }
+
           changelogToast("Showing latest changelog");
         }
       }
     });
-
     // Add visual feedback by disabling the button temporarily
     $btn.prop("disabled", true).addClass("disabled");
 
