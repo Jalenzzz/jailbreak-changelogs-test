@@ -99,6 +99,21 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .intro-container.hero-style {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border-radius: 0;
+    width: calc(100% + 2rem);
+  }
+
+  .intro-container {
+    padding: 1.5rem !important; /* Override default padding */
+  }
+
+  .hero-content {
+    padding: 0.5rem;
+  }
+
   .intro-container h1 {
     font-size: 2rem;
   }
@@ -119,6 +134,7 @@
     font-size: 0.85rem;
   }
 }
+
 @media (max-width: 576px) {
   .intro-buttons {
     flex-direction: column;

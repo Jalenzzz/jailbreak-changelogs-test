@@ -748,21 +748,6 @@ body.menu-open {
   margin: 12px 0;
 }
 
-/* Desktop vertical separator */
-.navbar-nav .nav-separator-vertical {
-  width: 1px;
-  height: 24px;
-  margin: 0 15px;
-  background-color: rgba(255, 255, 255, 0.1);
-  display: none; /* Hidden on mobile */
-}
-
-@media (min-width: 992px) {
-  .navbar-nav .nav-separator-vertical {
-    display: block; /* Show on desktop */
-  }
-}
-
 @media (max-width: 768px) {
   .breadcrumb {
     padding: 12px 20px;
