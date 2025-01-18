@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
       }
     }
-  
+
     function showFirefoxAutoplayNotice() {
       // Remove existing notice if present
       const existingNotice = document.querySelector(".firefox-autoplay-notice");
@@ -475,6 +475,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     `
       : "";
     const valuesSection = `
+    
       <div class="values-section border-top border-bottom py-4 my-4">
         <div class="row g-4">
           <!-- Cash Value Card - Always Show -->
@@ -572,11 +573,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/">Home</a></li>
                         <li class="breadcrumb-item"><a href="/values">Values</a></li>
-                        <li class="breadcrumb-item">
-                            <a href="/values?sort=name-${formattedUrlType.toLowerCase()}s&valueSort=alpha-asc">
-                                ${formattedUrlType}s
-                            </a>
-                        </li>
+                      <li class="breadcrumb-item">
+                          <a href="/values?sort=${formattedUrlType.toLowerCase()}s&valueSort=cash-desc">
+                              ${formattedUrlType}s
+                          </a>
+                      </li>
                         <li class="breadcrumb-item active" aria-current="page">${
                           item.name
                         }</li>
@@ -624,6 +625,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                               }</h1>
                               ${typeBadgeHtml}
                           </div>
+                           ${
+                             item.description && item.description !== "N/A"
+                               ? `<p class="text-muted mb-0">${item.description}</p>`
+                               : ""
+                           }
                           <!-- Values Section -->
                           ${valuesSection}
                       </div>
