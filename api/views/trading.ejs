@@ -296,6 +296,19 @@
                   placeholder="Search items..."
                   oninput="handleSearch(currentTradeType)"
                 />
+                <button
+                  type="button"
+                  class="btn-clear-search"
+                  id="clear-search-btn"
+                  onclick="clearSearch()"
+                  style="display: none"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Clear search"
+                  aria-label="Clear search"
+                >
+                  <i class="bi bi-x-circle"></i>
+                </button>
               </div>
             </div>
             <button
