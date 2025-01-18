@@ -434,14 +434,28 @@
                     class="form-select"
                     onchange="window.sortItems()"
                   >
-                    <option value="none">Sort by Value</option>
+                    <option value="random">Random</option>
+                    <option value="separator" disabled>
+                      ───── Alphabetically ─────
+                    </option>
+                    <option value="alpha-asc">Name (A to Z)</option>
+                    <option value="alpha-desc">Name (Z to A)</option>
+                    <option value="separator" disabled>
+                      ───── Values ─────
+                    </option>
                     <option value="cash-asc">Cash Value (Low to High)</option>
                     <option value="cash-desc">Cash Value (High to Low)</option>
                     <option value="duped-asc">Duped Value (Low to High)</option>
                     <option value="duped-desc">
                       Duped Value (High to Low)
                     </option>
+                    <option value="separator" disabled>
+                      ───── Demand ─────
+                    </option>
+                    <option value="demand-asc">Demand (Low to High)</option>
+                    <option value="demand-desc">Demand (High to Low)</option>
                   </select>
+
                   <button
                     class="btn btn-outline-secondary"
                     type="button"

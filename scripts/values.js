@@ -223,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("lastSort", sortValue);
     }
 
-    // Add handling for random sort
+    // handling for random sort
     if (valueSortType === "random") {
       filteredItems = shuffleArray([...filteredItems]);
     } else if (valueSortType !== "none") {
@@ -243,12 +243,53 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Add alphabetical sorting logic
+    // alphabetical sorting logic
     if (valueSortType === "alpha-asc" || valueSortType === "alpha-desc") {
       filteredItems.sort((a, b) => {
         return valueSortType === "alpha-asc"
           ? a.name.localeCompare(b.name)
           : b.name.localeCompare(a.name);
+      });
+    }
+    if (valueSortType === "demand-asc" || valueSortType === "demand-desc") {
+      console.log("Starting demand sort:", valueSortType);
+
+      // Demand order from lowest to highest
+      const demandOrder = [
+        "Close to none",
+        "Very Low",
+        "Low",
+        "Decent",
+        "Medium",
+        "High",
+        "Very High",
+      ];
+
+      filteredItems.sort((a, b) => {
+        // Normalize demand values without changing case
+        let demandA = a.demand === "N/A" ? "-" : a.demand || "-";
+        let demandB = b.demand === "N/A" ? "-" : b.demand || "-";
+
+        if (demandA === "-" && demandB === "-") return 0;
+        if (demandA === "-") return 1;
+        if (demandB === "-") return -1;
+
+        // Get the index of each demand in our ordered array (case-insensitive)
+        const indexA = demandOrder.findIndex(
+          (d) => d.toLowerCase() === demandA.toLowerCase()
+        );
+        const indexB = demandOrder.findIndex(
+          (d) => d.toLowerCase() === demandB.toLowerCase()
+        );
+
+        // If demand value isn't in the order array, treat it as "-"
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+
+        // Sort based on the index
+        return valueSortType === "demand-asc"
+          ? indexA - indexB
+          : indexB - indexA;
       });
     }
 
@@ -432,6 +473,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
   async function loadItems() {
     showLoadingOverlay();
     try {
@@ -446,39 +488,43 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       );
       allItems = await response.json();
+      console.log(
+        "Unique demand values in dataset:",
+        [...new Set(allItems.map((item) => item.demand))]
+          .filter((demand) => demand !== null)
+          .sort()
+      );
 
       // Preload drift thumbnails
       const driftItems = allItems.filter((item) => item.type === "Drift");
       preloadDriftThumbnails(driftItems);
 
-      // Get saved sort from sessionStorage
+      // Get saved sort and value sort from sessionStorage
       const savedSort = sessionStorage.getItem("sortDropdown");
       const savedValueSort = sessionStorage.getItem("valueSortDropdown");
 
-      // Always set initial filtered items and shuffle them
-      filteredItems = shuffleArray([...allItems]);
+      // Set initial filtered items
+      filteredItems = [...allItems];
 
-      if (savedSort) {
+      // Apply sorting based on saved preferences
+      if (savedSort || savedValueSort) {
         const sortDropdown = document.getElementById("sort-dropdown");
         const valueSortDropdown = document.getElementById(
           "value-sort-dropdown"
         );
+
         if (sortDropdown && valueSortDropdown) {
-          sortDropdown.value = savedSort;
-          valueSortDropdown.value = savedValueSort || "random";
+          if (savedSort) sortDropdown.value = savedSort;
+          if (savedValueSort) valueSortDropdown.value = savedValueSort;
           sort = savedSort;
-          if (savedValueSort === "random") {
-            displayItems(); // Just display shuffled items
-          } else {
-            await sortItems(); // Apply saved sort
-          }
-          hideLoadingOverlay();
-          return;
+          window.sortItems(); // This will apply both sorts
         }
+      } else {
+        // If no saved sorts, shuffle items
+        filteredItems = shuffleArray(filteredItems);
+        displayItems();
       }
 
-      // If no saved sort, just display shuffled items
-      displayItems();
       updateTotalItemsCount();
       updateTotalItemsLabel("all-items");
       preloadItemImages();
@@ -809,7 +855,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <div class="d-flex justify-content-between align-items-center value-row">
                     <span>Demand:</span>
-                    <span class="demand-value">${item.demand || "-"}</span>
+                 <span class="demand-value">${
+                   item.demand === "N/A" ? "-" : item.demand || "-"
+                 }</span>
                 </div>
             </div>
         </div>
@@ -1032,6 +1080,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 500);
 
   // Modify the value-sort-dropdown options in the HTML
+  // Modify the value-sort-dropdown options in the HTML
   const valueSortDropdown = document.getElementById("value-sort-dropdown");
   if (valueSortDropdown) {
     valueSortDropdown.innerHTML = `
@@ -1044,7 +1093,10 @@ document.addEventListener("DOMContentLoaded", () => {
     <option value="cash-desc">Cash Value (High to Low)</option>
     <option value="duped-asc">Duped Value (Low to High)</option>
     <option value="duped-desc">Duped Value (High to Low)</option>
-    `;
+    <option value="separator" disabled>───── Demand ─────</option>
+    <option value="demand-asc">Demand (Low to High)</option>
+    <option value="demand-desc">Demand (High to Low)</option>
+  `;
 
     // Check sessionStorage first, fallback to random
     const savedValueSort = sessionStorage.getItem("valueSortDropdown");
