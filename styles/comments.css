@@ -19,6 +19,11 @@
 .pagination-btn {
   margin: 0 0.5rem !important;
 }
+
+.pagination-btn:hover {
+  margin: 0 0.5rem !important;
+  background-color: var(--accent-color-light) !important;
+}
 .comment-header {
   text-align: center !important;
   color: var(--text-primary) !important;

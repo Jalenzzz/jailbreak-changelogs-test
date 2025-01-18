@@ -38,14 +38,6 @@
 [data-bs-theme="dark"] body {
   background-color: var(--common-bg-color);
 }
-html[data-bs-theme="dark"] .changelog-dropdown-item:nth-child(odd) {
-  background-color: #212a31; /* Dark Gray for Odd Items */
-}
-
-html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
-  background-color: #2e3944; /* Darker Background on Hover */
-  color: #d3d9d4;
-}
 
 /* Dark Theme Specific Styles */
 [data-bs-theme="dark"] {
@@ -69,16 +61,6 @@ html[data-bs-theme="dark"] .changelog-dropdown-item:hover {
 
 .dropdown-menu .dropdown-item {
   color: var(--text-color); /* Default text color */
-}
-
-/* Custom Changelog Dropdown Styling */
-.changelog-dropdown {
-  min-width: 350px;
-  max-height: 400px;
-  overflow-y: auto;
-  border-radius: 8px;
-  padding: 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Button Group Styles */
@@ -344,6 +326,57 @@ span {
   overflow-wrap: break-word;
 }
 
+/* Dropdown button padding */
+#seasonsDropdown {
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+/* Custom scrollbar styling for Webkit browsers (Chrome, Safari, etc.) */
+#seasonList::-webkit-scrollbar {
+  width: 8px;
+}
+
+#seasonList::-webkit-scrollbar-track {
+  background: var(--gray-300);
+  border-radius: 4px;
+}
+
+#seasonList::-webkit-scrollbar-thumb {
+  background: var(--gray-600);
+  border-radius: 4px;
+}
+
+#seasonList::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-700);
+}
+
+/* Dropdown menu padding */
+#seasonList {
+  padding: 0.5rem 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  max-height: 400px; /* Set maximum height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  min-width: 400px; /* Increased from default */
+  max-width: 90vw; /* Ensures it doesn't overflow on mobile */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: var(--gray-600) var(--gray-300); /* For Firefox */
+}
+
+/* Dropdown items padding */
+#seasonList .dropdown-item {
+  padding: 0.75rem 1.25rem;
+  white-space: normal; /* Allows text to wrap */
+  word-wrap: break-word; /* Handles very long words */
+  line-height: 1.4; /* Improves readability of wrapped text */
+}
+
+/* Hover state for dropdown items */
+#seasonList .dropdown-item:hover {
+  background-color: var(--hover-bg-color);
+}
+
 /* Add a subtle animation to the description container */
 .season-description-container:hover {
   transform: translateY(-5px);
@@ -387,6 +420,10 @@ span {
   .season-rewards .d-flex {
     flex-direction: row;
     flex-wrap: nowrap;
+  }
+  #seasonList {
+    min-width: 300px;
+    max-height: 350px; /* Slightly smaller on mobile */
   }
 }
 @media (max-width: 400px) {

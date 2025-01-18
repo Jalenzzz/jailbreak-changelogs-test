@@ -254,15 +254,13 @@
                   <button
                     class="btn btn-primary changelog-action-btn"
                     type="button"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Share Changelog"
                     id="desktopShareChangelog"
-                    data-bs-trigger="hover"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    title="Share Changelog"
                   >
                     <i class="bi bi-share"></i>
                   </button>
-
                   <ul class="dropdown-menu share-menu">
                     <li>
                       <button class="dropdown-item" onclick="shareOnDiscord()">
@@ -304,9 +302,7 @@
                 <button
                   class="btn btn-primary changelog-action-btn"
                   id="latestChangelogBtn"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  data-bs-title="View Latest Changelog"
+                  title="View Latest Changelog"
                   aria-label="View latest changelog"
                 >
                   <i class="bi bi-clock-history"></i>
@@ -331,13 +327,14 @@
                     <button
                       class="btn btn-primary changelog-action-btn"
                       type="button"
-                      title="Select Changelog"
                       id="desktopChangelogDropdown"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                      title="View Other Changelogs"
                     >
                       <i class="bi bi-calendar-event"></i>
-                      <span>Select Changelog</span>
+                      <span>Changelog Versions</span>
                     </button>
-
                     <ul
                       class="dropdown-menu changelog-menu"
                       aria-labelledby="desktopChangelogDropdown"
