@@ -1190,7 +1190,7 @@ document.addEventListener("DOMContentLoaded", function () {
           // Updated image URL structure to match the correct path
           const itemType = comment.item_type.toLowerCase() + "s"; // Add 's' to pluralize
           imageUrl = item.name
-            ? `/assets/items/${itemType}/${item.name}.webp` // Added /assets/items/ and .webp extension
+            ? `/assets/images/items/480p/${itemType}/${item.name}.webp` // Added /assets/items/ and .webp extension
             : "assets/images/changelogs/347.webp";
           displayTitle = item.name || "Unknown Item";
           displayType = item.type || comment.item_type;
