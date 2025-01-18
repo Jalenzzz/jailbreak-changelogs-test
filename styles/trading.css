@@ -1959,15 +1959,20 @@ video.card-img-top {
   .trade-items-grid {
     grid-template-columns: repeat(1, 1fr);
   }
+  .intro-container {
+    padding: 1.5rem !important;
+  }
 
   .intro-container.hero-style {
-    min-height: 300px;
-    padding: 1rem; /* Reduce padding */
-    margin: 1rem 0.5rem; /* Reduce margins */
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border-radius: 0;
+    width: calc(100% + 2rem);
   }
+
   /* Increase the content width */
   .hero-content {
-    padding: 1rem 0.5rem; /* Reduce padding */
+    padding: 0.5rem;
     width: 100%; /* Full width */
   }
 
@@ -2195,12 +2200,21 @@ video.card-img-top {
     width: 36px;
     height: 36px;
   }
+
   .intro-container.hero-style {
-    margin: 0.5rem; /* Further reduce margins */
+    margin: 0.5rem -1rem;
+    min-height: auto;
   }
+
   .hero-content {
-    padding: 0.75rem 0.25rem; /* Further reduce padding */
+    padding: 0.75rem 0.25rem;
   }
+
+  .quick-tip {
+    font-size: 0.85rem;
+    padding: 0.75rem;
+  }
+
   .trade-items-grid {
     grid-template-columns: repeat(2, 1fr);
   }

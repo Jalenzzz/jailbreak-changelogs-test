@@ -74,11 +74,58 @@ body.menu-open {
 .white-close-button {
   filter: invert(1) grayscale(100%) brightness(200%);
 }
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 50px 20px; /* Reduce padding on mobile */
+  }
+
+  .hero-content {
+    padding: 0 10px; /* Add some side padding */
+  }
+
+  .hero-content h1 {
+    font-size: 1.75rem; /* Smaller heading */
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-content .lead {
+    font-size: 1rem; /* Smaller lead text */
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-content .bi-discord {
+    font-size: 1.75rem !important; /* Adjust discord icon size */
+  }
+
+  .btn-custom {
+    width: 100%; /* Full width button */
+    max-width: 300px; /* Maximum width */
+    padding: 10px 20px;
+    font-size: 0.95rem;
+  }
+}
+
 @media (max-width: 576px) {
   .alert {
     font-size: 0.9rem;
   }
   .bi-exclamation-triangle-fill {
     font-size: 1rem;
+  }
+  .hero {
+    padding: 40px 15px; /* Further reduce padding */
+  }
+
+  .hero-content h1 {
+    font-size: 1.5rem; /* Even smaller heading */
+  }
+
+  .hero-content .bi-discord {
+    font-size: 1.5rem !important; /* Smaller discord icon */
+  }
+
+  .hero-content .lead {
+    font-size: 0.95rem; /* Smaller lead text */
   }
 }

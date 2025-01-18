@@ -195,6 +195,7 @@
 .form-select:focus {
   border-color: #dee2e6;
   box-shadow: none;
+  background-color: var(--bg-primary);
 }
 
 .form-control {
@@ -569,11 +570,32 @@
 .contributor-header {
   display: flex;
   align-items: center;
+  justify-content: center; /* Add this to center content */
   color: var(--text-primary);
   border-bottom: 2px solid var(--accent-color);
-  padding-bottom: 1rem;
+  padding: 1rem;
   width: 100%;
   background-color: rgba(17, 76, 99, 0.2);
+  text-align: center; /* Add this to center text */
+}
+
+.contributor-header .d-flex {
+  justify-content: center; /* Center the flex container */
+  width: 100%;
+}
+
+.contributor-header i.bi-people-fill {
+  margin-right: 0.5rem; /* Adjust icon spacing */
+}
+
+.contributor-header h5 {
+  margin: 0;
+}
+
+/* Adjust toggle icon position */
+.contributor-header .toggle-icon {
+  position: absolute;
+  right: 1rem;
 }
 
 .contributor-header i {
@@ -668,7 +690,7 @@
 
 /* Intro Content Section */
 .intro-content {
-  background-color: #212a31;
+  background-color: var(--bg-primary);
   padding: 1.5rem;
   border-radius: 8px;
   margin-bottom: 1rem;
@@ -710,13 +732,13 @@
 .form-control,
 .form-select,
 .btn-outline-secondary {
-  background-color: #212a31;
+  background-color: var(--bg-primary);
   color: #d3d9d4;
   border-color: #748d92;
 }
 
 .total-items-section {
-  background-color: #212a31;
+  background-color: var(--bg-primary);
 }
 
 .total-items-info {
@@ -902,13 +924,26 @@
   transform: translateZ(0);
 }
 
-/* Find all separate @media (max-width: 768px) queries and combine them into this single one */
 @media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 8px !important; /* Reduce padding on mobile */
+    padding-right: 8px !important;
+  }
+
+  .contributor-header .d-flex {
+    padding: 0 1.5rem; /* Add padding to prevent overlap with toggle icon */
+  }
+
   /* Intro container and content */
   .intro-container {
-    padding: 1rem;
+    padding: 0.75rem !important; /* Reduce internal padding */
+    margin: 0 -4px; /* Negative margin to extend width */
     max-height: none;
     overflow-y: visible;
+  }
+
+  .intro-content {
+    padding: 1rem !important; /* Adjust content padding */
   }
 
   .intro-content h1 {
@@ -957,6 +992,7 @@
   }
 
   .contributor-header {
+    position: relative;
     cursor: pointer;
     padding: 1rem;
     margin-bottom: 0;
@@ -1106,6 +1142,10 @@
 }
 
 @media (max-width: 576px) {
+  .container-fluid {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
   .intro-buttons {
     flex-direction: column;
   }
