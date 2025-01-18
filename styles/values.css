@@ -158,7 +158,7 @@
 
 .item-type-badge {
   position: absolute;
-  bottom: 116px; /* Original desktop position */
+  bottom: 158px; /* Original desktop position */
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
@@ -517,7 +517,7 @@
 /* HyperChrome badge styling */
 .hyperchrome-badge {
   position: absolute;
-  bottom: 120px;
+  bottom: 166px;
   left: 50%;
   transform: translateX(-50%);
   padding: 0.2rem 0.4rem; /* Reduced from 0.4rem 0.8rem */
@@ -1121,10 +1121,10 @@
     padding: 0.3rem 0.6rem; /* Unified padding for mobile */
   }
 
-  .item-type-badge,
+  /* .item-type-badge,
   .hyperchrome-badge {
-    bottom: 108px; /* Adjusted position to be more centered between image and body */
-  }
+    bottom: 108px;
+  } */
 
   .limited-badge {
     top: 8px;
@@ -1177,7 +1177,7 @@
   }
 
   .item-type-badge {
-    bottom: 96px;
+    bottom: 130px;
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
   }
@@ -1188,7 +1188,7 @@
   }
 
   .hyperchrome-badge {
-    bottom: 107px;
+    bottom: 138px;
     font-size: 0.65rem;
     padding: 0.2rem 0.4rem;
   }
