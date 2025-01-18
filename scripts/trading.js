@@ -7,6 +7,13 @@ toastr.options = {
   timeOut: 3000,
 };
 
+const tooltipTriggerList = document.querySelectorAll(
+  '[data-bs-toggle="tooltip"]'
+);
+const tooltipList = [...tooltipTriggerList].map(
+  (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+);
+
 let activeBottomSheet = null;
 let startY = 0;
 let currentY = 0;
@@ -242,7 +249,7 @@ function getItemImageElement(item) {
                  onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">`;
   }
 
-  return `<img src="/assets/items/${item.type.toLowerCase()}s/${
+  return `<img src="/assets/images/items/480p/${item.type.toLowerCase()}s/${
     item.name
   }.webp" 
                class="card-img-top" 
@@ -261,28 +268,19 @@ function decimalToHex(decimal) {
 }
 
 function handleModalClose() {
-  // Get current sort value
-  const sortDropdown = document.getElementById("modal-value-sort-dropdown");
-  const currentSort = sortDropdown ? sortDropdown.value : "name-all-items";
-
-  // Reset search input if it exists
   const searchInput = document.getElementById("modal-item-search");
+  const clearButton = document.getElementById("clear-search-btn");
+
   if (searchInput) {
     searchInput.value = "";
   }
 
-  // Reset to first page
-  currentPage = 1;
-
-  // Apply the current sort instead of resetting to all items
-  if (sortDropdown) {
-    sortModalItems(); // This will use the current dropdown value
-  } else {
-    // Fallback to all items if dropdown doesn't exist
-    filteredItems = [...allItems];
+  if (clearButton) {
+    clearButton.style.display = "none";
   }
 
-  // Re-display items
+  currentPage = 1;
+  filteredItems = [...allItems];
   displayAvailableItems(currentTradeType);
 }
 
@@ -544,6 +542,7 @@ function toggleAvailableItems(type) {
   // Display available items
   displayAvailableItems(type);
 }
+
 function displayAvailableItems(type) {
   const container = document.getElementById("modal-available-items-list");
   const searchInput = document.getElementById("modal-item-search");
@@ -556,15 +555,32 @@ function displayAvailableItems(type) {
 
   const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
 
+  // Reset filtered items to all items before applying new search
   if (searchTerm) {
-    filteredItems = filteredItems.filter((item) =>
+    filteredItems = allItems.filter((item) =>
       item.name.toLowerCase().includes(searchTerm)
     );
+  } else {
+    filteredItems = [...allItems];
   }
 
-  // If no items are filtered and no search term, show all items
-  if (filteredItems.length === 0 && !searchTerm) {
-    filteredItems = [...allItems];
+  // Get the current category from the dropdown
+  const sortDropdown = document.getElementById("modal-value-sort-dropdown");
+  const selectedOption = sortDropdown
+    ? sortDropdown.options[sortDropdown.selectedIndex].text
+    : "All Items";
+
+  // Show no results message if no items match the search
+  if (filteredItems.length === 0) {
+    container.innerHTML = `
+      <div class="col-12 text-center py-4">
+        <div class="no-results">
+          <i class="bi bi-search mb-2" style="font-size: 2rem;"></i>
+          <p class="mb-0">No ${selectedOption} found matching "${searchTerm}"</p>
+        </div>
+      </div>
+    `;
+    return;
   }
 
   const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
@@ -636,7 +652,9 @@ function getItemImageUrl(item) {
     return `/assets/images/items/drifts/thumbnails/${item.name}.webp`;
   }
 
-  return `/assets/items/${item.type.toLowerCase()}s/${item.name}.webp`;
+  return `/assets/images/items/480p/${item.type.toLowerCase()}s/${
+    item.name
+  }.webp`;
 }
 
 function sortModalItems() {
@@ -734,9 +752,36 @@ let searchTimeout;
 function handleSearch(type) {
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(() => {
-    currentPage = 1; // Reset to first page on search
+    currentPage = 1;
+    filteredItems = [...allItems];
     displayAvailableItems(type);
+
+    // Show/hide clear button based on search input
+    const searchInput = document.getElementById("modal-item-search");
+    const clearButton = document.getElementById("clear-search-btn");
+    if (clearButton) {
+      clearButton.style.display = searchInput.value ? "block" : "none";
+    }
   }, 300);
+}
+
+function clearSearch() {
+  const searchInput = document.getElementById("modal-item-search");
+  const clearButton = document.getElementById("clear-search-btn");
+
+  if (searchInput) {
+    searchInput.value = "";
+    searchInput.focus(); // Keep focus on search input after clearing
+  }
+
+  if (clearButton) {
+    clearButton.style.display = "none";
+  }
+
+  // Reset search results
+  currentPage = 1;
+  filteredItems = [...allItems];
+  displayAvailableItems(currentTradeType);
 }
 
 // Format value for display
@@ -1497,8 +1542,10 @@ async function createTradeAdHTML(trade) {
       // Regular items
       const imageUrl =
         item.type === "Drift"
-          ? `/assets/images/items/drifts/thumbnails/${item.name}.webp`
-          : `/assets/items/${item.type.toLowerCase()}s/${item.name}.webp`;
+          ? `/assets/images/items/480p/drifts/${item.name}.webp`
+          : `/assets/images/items/480p/${item.type.toLowerCase()}s/${
+              item.name
+            }.webp`;
 
       return `
         <div class="trade-ad-item" onclick="showBottomSheet(${JSON.stringify(

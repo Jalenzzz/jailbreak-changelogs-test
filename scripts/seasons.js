@@ -2,7 +2,6 @@ $(document).ready(function () {
   // DOM element references
   const $seasonDetailsContainer = $("#season-details");
   const $carouselInner = $("#carousel-inner");
-  const $loadingOverlay = $("#loading-overlay");
   const $seasonList = $("#seasonList"); // Reference to the season dropdown
   // let userdata = null;
   let latestSeason = null;
@@ -17,14 +16,6 @@ $(document).ready(function () {
     const seasonBreadcrumb = document.querySelector(".season-breadcrumb");
     if (seasonBreadcrumb) {
       seasonBreadcrumb.textContent = `Season ${season}`;
-    }
-  }
-
-  function toggleLoadingOverlay(show) {
-    if (show) {
-      $loadingOverlay.show();
-    } else {
-      $loadingOverlay.hide();
     }
   }
 
@@ -132,17 +123,21 @@ $(document).ready(function () {
       return;
     }
 
-    $seasonList.empty(); // Clear existing items
+    $seasonList.empty();
 
     seasonData.forEach((season) => {
       const listItem = $(`
-        <li class="w-100">
-          <a class="dropdown-item changelog-dropdown-item w-100" href="?season=${season.season}">
-            <span class="badge me-2" style="background-color: #124E66; color: #D3D9D4">Season ${season.season}</span>
-            ${season.title}
-          </a>
-        </li>
-      `);
+            <li class="w-100">
+                <a class="dropdown-item season-dropdown-item w-100" 
+                   href="/seasons/${season.season}" 
+                   data-season-id="${season.season}">
+                    <span class="badge me-2" style="background-color: #124E66; color: #D3D9D4">
+                        Season ${season.season}
+                    </span>
+                    ${season.title}
+                </a>
+            </li>
+        `);
       $seasonList.append(listItem);
     });
   }
@@ -434,16 +429,13 @@ $(document).ready(function () {
   }
 
   // Add event listener for season selection
-  $seasonList.on("click", ".changelog-dropdown-item", function (e) {
+  $(document).on("click", ".season-dropdown-item", function (e) {
     e.preventDefault();
-    const selectedSeason = $(this).attr("href").split("=")[1];
+    const selectedSeason = $(this).data("season-id");
 
     // Update the URL with the selected season
     const newUrl = `/seasons/${selectedSeason}`;
     window.history.pushState({}, "", newUrl);
-
-    // Only show loading overlay if we're fetching fresh data
-    toggleLoadingOverlay(true);
 
     // Properly update the CommentsManager with new season ID
     if (window.commentsManagerInstance) {
@@ -460,9 +452,7 @@ $(document).ready(function () {
       window.commentsManagerInstance.loadComments();
     }
 
-    loadSeasonDetails(parseInt(selectedSeason)).then(() => {
-      toggleLoadingOverlay(false);
-    });
+    loadSeasonDetails(parseInt(selectedSeason));
   });
 
   // Modify the initial data loading
@@ -496,9 +486,7 @@ $(document).ready(function () {
       // Remove the return and chain the promises properly
       return loadSeasonDetails(parseInt(seasonNumber));
     })
-    .then(() => {
-      toggleLoadingOverlay(false);
-    })
+
     .catch((error) => {
       console.error("Failed to fetch data:", error);
       $seasonDetailsContainer.html(`
@@ -510,7 +498,6 @@ $(document).ready(function () {
       $seasonList.html(
         '<li class="w-100"><span class="dropdown-item">No seasons available</span></li>'
       );
-      $loadingOverlay.hide();
     });
 
   function formatDate(unixTimestamp) {
