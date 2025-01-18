@@ -33,12 +33,12 @@ window.shareCurrentView = debounce(function () {
   const valueSortDropdown = document.getElementById("value-sort-dropdown");
   const searchBar = document.getElementById("search-bar");
 
-  // Build URL parameters
+  // Build URL parameters - This was missing
   const params = new URLSearchParams();
   if (sortDropdown.value !== "name-all-items") {
-    params.append("sort", sortDropdown.value);
+    params.append("sort", sortDropdown.value.split("-").slice(1).join("-"));
   }
-  if (valueSortDropdown.value !== "none") {
+  if (valueSortDropdown.value !== "random") {
     params.append("valueSort", valueSortDropdown.value);
   }
   if (searchBar.value.trim()) {
@@ -1075,21 +1075,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const sortValue = urlParams.get("sort");
     // Validate sort parameter
     if (VALID_SORTS.includes(sortValue)) {
-      document.getElementById("sort-dropdown").value = `name-${sortValue}`;
+      const dropdown = document.getElementById("sort-dropdown");
+      dropdown.value = `name-${sortValue}`;
+      sessionStorage.setItem("sortDropdown", dropdown.value);
     }
   }
   if (urlParams.has("valueSort")) {
-    document.getElementById("value-sort-dropdown").value =
-      urlParams.get("valueSort");
-  }
-  if (urlParams.has("search")) {
-    document.getElementById("search-bar").value = urlParams.get("search");
-    filterItems();
+    const valueSort = urlParams.get("valueSort");
+    const valueSortDropdown = document.getElementById("value-sort-dropdown");
+    valueSortDropdown.value = valueSort;
+    sessionStorage.setItem("valueSortDropdown", valueSort);
   }
 
-  // Apply the sort and clean up URL
-  sortItems();
+  // Clean up URL after storing parameters
   window.history.replaceState({}, "", window.location.pathname);
+
+  // Apply the sort
+  sortItems();
 
   // Restore contributors section state on mobile
   if (window.innerWidth <= 768) {
@@ -1208,20 +1210,18 @@ window.handleCardClick = function (name, type, event) {
 window.handleCategoryClick = function (event, category) {
   event.preventDefault();
 
-  // Convert any spaces to hyphens in the category name
   const hyphenatedCategory = category.replace(/\s+/g, "-");
-
-  // Set both dropdown value and sessionStorage
   const dropdown = document.getElementById("sort-dropdown");
   const newValue = `name-${hyphenatedCategory}`;
   dropdown.value = newValue;
   sessionStorage.setItem("sortDropdown", newValue);
 
-  // Apply the filter
-  sortItems();
+  // Get the current value sort
+  const valueSortDropdown = document.getElementById("value-sort-dropdown");
+  const valueSort = valueSortDropdown.value;
+  sessionStorage.setItem("valueSortDropdown", valueSort);
 
-  // Clean up URL after applying filter
-  window.history.replaceState({}, "", "/values");
+  sortItems();
 };
 
 // Make sure sortItems is accessible globally
