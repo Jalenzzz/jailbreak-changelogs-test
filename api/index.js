@@ -293,19 +293,7 @@ app.get("/bot", (req, res) => {
 });
 
 app.get("/values", async (req, res) => {
-  const validSorts = [
-    "vehicles",
-    "spoilers",
-    "rims",
-    "body-colors",
-    "textures",
-    "tire-stickers",
-    "drifts",
-  ];
-  const sortParam = req.query.sort?.toLowerCase();
-
   try {
-    // Fetch items data
     const response = await fetch(
       "https://api3.jailbreakchangelogs.xyz/items/list",
       {
@@ -323,8 +311,7 @@ app.get("/values", async (req, res) => {
       title: "Values / Changelogs",
       logoUrl: "/assets/logos/Values_Logo.webp",
       logoAlt: "Values Page Logo",
-      initialSort: validSorts.includes(sortParam) ? sortParam : null,
-      allItems, // Pass items data to template
+      allItems,
       MIN_TITLE_LENGTH,
       MIN_DESCRIPTION_LENGTH,
     });
@@ -334,8 +321,7 @@ app.get("/values", async (req, res) => {
       title: "Values / Changelogs",
       logoUrl: "/assets/logos/Values_Logo.webp",
       logoAlt: "Values Page Logo",
-      initialSort: validSorts.includes(sortParam) ? sortParam : null,
-      allItems: [], // Pass empty array if fetch fails
+      allItems: [],
       MIN_TITLE_LENGTH,
       MIN_DESCRIPTION_LENGTH,
     });

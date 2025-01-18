@@ -1,3 +1,15 @@
+const VALID_SORTS = [
+  "vehicles",
+  "spoilers",
+  "rims",
+  "body-colors",
+  "textures",
+  "tire-stickers",
+  "drifts",
+  "hyperchromes",
+  "furnitures",
+  "limited-items",
+];
 // Global debounce function
 function debounce(func, wait) {
   let timeout;
@@ -689,7 +701,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `<div class="media-container">
                 <div class="skeleton-loader active"></div>
                 <img 
-                    src="/assets/images/items/drifts/thumbnails/${item.name}.webp"
+                    src="/assets/images/items/480p/drifts/${item.name}.webp"
                     class="card-img-top thumbnail"
                     alt="${item.name}"
                     style="opacity: 1; z-index: 2;"
@@ -726,7 +738,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <img 
                         onerror="handleimage(this)" 
                         id="${item.name}" 
-                        src="/assets/images/items/${item.type.toLowerCase()}s/${
+                        src="/assets/images/items/480p/${item.type.toLowerCase()}s/${
             item.name
           }.webp" 
                         class="card-img-top" 
@@ -1059,30 +1071,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Handle URL parameters and clean up URL
   const urlParams = new URLSearchParams(window.location.search);
-  if (
-    urlParams.has("sort") ||
-    urlParams.has("valueSort") ||
-    urlParams.has("search")
-  ) {
-    // Apply the filters from URL parameters
-    if (urlParams.has("sort")) {
-      document.getElementById("sort-dropdown").value = urlParams.get("sort");
+  if (urlParams.has("sort")) {
+    const sortValue = urlParams.get("sort");
+    // Validate sort parameter
+    if (VALID_SORTS.includes(sortValue)) {
+      document.getElementById("sort-dropdown").value = `name-${sortValue}`;
     }
-    if (urlParams.has("valueSort")) {
-      document.getElementById("value-sort-dropdown").value =
-        urlParams.get("valueSort");
-    }
-    if (urlParams.has("search")) {
-      document.getElementById("search-bar").value = urlParams.get("search");
-      filterItems();
-    }
-
-    // Apply the sort
-    sortItems();
-
-    // Clean up the URL without refreshing the page
-    window.history.replaceState({}, "", window.location.pathname);
   }
+  if (urlParams.has("valueSort")) {
+    document.getElementById("value-sort-dropdown").value =
+      urlParams.get("valueSort");
+  }
+  if (urlParams.has("search")) {
+    document.getElementById("search-bar").value = urlParams.get("search");
+    filterItems();
+  }
+
+  // Apply the sort and clean up URL
+  sortItems();
+  window.history.replaceState({}, "", window.location.pathname);
 
   // Restore contributors section state on mobile
   if (window.innerWidth <= 768) {
@@ -1174,6 +1181,11 @@ function updateSearchPlaceholder() {
 }
 
 window.handleCardClick = function (name, type, event) {
+  // Prevent opening card on right click (event.button = 2)
+  if (event.button === 2) {
+    return;
+  }
+
   event.preventDefault();
 
   // Always convert spaces to hyphens for consistent storage
@@ -1242,6 +1254,6 @@ function preloadDriftThumbnails(driftItems) {
 
   driftItems.forEach((item) => {
     const img = new Image();
-    img.src = `/assets/images/items/drifts/thumbnails/${item.name}.webp`;
+    img.src = `/assets/images/items/480p/drifts/${item.name}.webp`;
   });
 }
