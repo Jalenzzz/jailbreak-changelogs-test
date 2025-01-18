@@ -420,12 +420,12 @@ app.get("/item/:type/:item", async (req, res) => {
     // Generate image URL for the item
     let image_url;
     if (item.type === "Drift") {
-      image_url = `/assets/items/drifts/thumbnails/${item.name}.webp`;
+      image_url = `/assets/images/items/drifts/thumbnails/${item.name}.webp`;
     } else if (item.type === "HyperChrome" && item.name === "HyperShift") {
-      image_url = `/assets/items/hyperchromes/HyperShift.webm`;
+      image_url = `/assets/images/items/hyperchromes/HyperShift.webm`;
     } else {
       const pluralType = `${item.type.toLowerCase()}s`;
-      image_url = `/assets/items/${pluralType}/${item.name}.webp`;
+      image_url = `/assets/images/items/${pluralType}/${item.name}.webp`;
     }
     item.image = image_url;
 
