@@ -45,20 +45,6 @@ $(document).ready(function () {
       });
   }
 
-  function fetchAllRewards() {
-    return fetch("https://api3.jailbreakchangelogs.xyz/rewards/list")
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        return data;
-      })
-      .catch((error) => {
-        console.error("Error fetching rewards:", error);
-        throw error;
-      });
-  }
-
   function loadAllData() {
     const latestSeasonPromise = fetch(
       "https://api3.jailbreakchangelogs.xyz/seasons/latest",
@@ -69,9 +55,7 @@ $(document).ready(function () {
         },
       }
     )
-      .then((response) => {
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((latestSeasonData) => {
         if (!latestSeasonData.start_date || !latestSeasonData.end_date) {
           console.error("Missing date information in latest season data");
@@ -94,25 +78,16 @@ $(document).ready(function () {
         return null;
       });
 
-    return Promise.all([
-      fetchAllSeasons().then((seasons) => {
-        return seasons;
-      }),
-      fetchAllRewards().then((rewards) => {
-        return rewards;
-      }),
-      latestSeasonPromise,
-    ])
-      .then(([seasons, rewards, latest]) => {
+    return Promise.all([fetchAllSeasons(), latestSeasonPromise])
+      .then(([seasons, latest]) => {
         latestSeason = latest;
-        return [seasons, rewards, latest];
+        return [seasons, latest];
       })
       .catch((error) => {
         console.error("Error in Promise.all:", error);
         throw error;
       });
   }
-
   // Function to populate the season dropdown menu
   function populateSeasonDropdown(seasonData) {
     if (!Array.isArray(seasonData) || seasonData.length === 0) {
@@ -142,7 +117,7 @@ $(document).ready(function () {
     });
   }
 
-  function displaySeasonDetails(season, seasonData, rewardsData) {
+  function displaySeasonDetails(season, seasonData) {
     localStorage.setItem("selectedSeason", season);
 
     // Calculate duration and format dates
@@ -167,17 +142,47 @@ $(document).ready(function () {
     const countdownColor = getCountdownColor(remainingDays);
 
     $seasonDetailsContainer.html(`
+      <h2 class="season-title display-4 text-custom-header mb-3">Season ${season} / ${seasonData.title}</h2>
+      <div class="season-description-container">
+          <div class="season-dates mb-3">
+             <p class="mb-1"><strong>Start Date:</strong> ${formatDate(
+               startDate
+             )}</p>
+             <p class="mb-1"><strong>End Date:</strong> ${formatDate(
+               endDate
+             )}</p>
+             <p class="mb-1"><strong>Duration:</strong> ${durationDays} days</p>
+          </div>
+          <div class="season-description-body text-center"> 
+              ${
+                seasonData.description
+                  ? `<p class="season-description-text">${seasonData.description}</p>`
+                  : `
+                      <div class="no-description">
+                          <i class="bi bi-info-circle text-muted mb-2" style="font-size: 2rem;"></i>
+                          <p class="text-muted">No description available.</p>
+                      </div>`
+              }
+          </div>
+      </div>
+    `);
+
+    // Update comments header
+    if (window.commentsManagerInstance) {
+      window.commentsManagerInstance.updateCommentsHeader();
+    }
+
+    $seasonDetailsContainer.html(`
         <h2 class="season-title display-4 text-custom-header mb-3">Season ${season} / ${seasonData.title}</h2>
         <div class="season-description-container">
             <div class="season-dates mb-3">
                <p class="mb-1"><strong>Start Date:</strong> ${formatDate(
                  startDate
                )}</p>
-              <p class="mb-1"><strong>End Date:</strong> ${formatDate(
-                endDate
-              )}</p>
-              <p class="mb-1"><strong>Duration:</strong> ${durationDays} days</p>
-
+               <p class="mb-1"><strong>End Date:</strong> ${formatDate(
+                 endDate
+               )}</p>
+               <p class="mb-1"><strong>Duration:</strong> ${durationDays} days</p>
             </div>
             <div class="season-description-body text-center"> 
                 ${
@@ -191,61 +196,43 @@ $(document).ready(function () {
                 }
             </div>
         </div>
-    `);
+      `);
 
     // Update comments header
     if (window.commentsManagerInstance) {
       window.commentsManagerInstance.updateCommentsHeader();
     }
 
-    // Check if rewardsData is available and not empty
-    if (rewardsData && rewardsData.length > 0) {
-      // Filter rewards for the current season
-      const rewards = rewardsData.filter(
-        (reward) => reward.season_number === parseInt(season)
-      );
+    if (seasonData.rewards && seasonData.rewards.length > 0) {
+      const rewardsHTML = seasonData.rewards
+        .map((reward, index) => {
+          const isBonus = reward.bonus === "True";
+          const bonusBadge = isBonus
+            ? `<span class="badge rounded-pill fs-6 fs-md-5" style="background-color: #748D92; color: #212A31">Bonus</span>`
+            : "";
+          const requirementBadge = `<span class="badge rounded-pill fs-6 fs-md-5" style="background-color: #124E66; color: #D3D9D4">${reward.requirement}</span>`;
 
-      if (rewards.length > 0) {
-        // Generate HTML for season rewards
-        const rewardsHTML = rewards
-          .map((reward, index) => {
-            const isBonus = reward.bonus === "True";
-            const bonusBadge = isBonus
-              ? `<span class="badge rounded-pill fs-6 fs-md-5" style="background-color: #748D92; color: #212A31">Bonus</span>`
-              : "";
-            const requirementBadge = `<span class="badge rounded-pill fs-6 fs-md-5" style="background-color: #124E66; color: #D3D9D4">${reward.requirement}</span>`;
+          return `
+              <div class="reward-item ${
+                isBonus ? "bonus-reward" : ""
+              }" style="--animation-order: ${index}">
+                <div class="reward-content">
+                  <h6 class="reward-title">${reward.item}</h6>
+                  <div class="reward-badges">
+                    ${bonusBadge}
+                    ${requirementBadge}
+                  </div>
+                </div>
+              </div>`;
+        })
+        .join("");
 
-            return `
-          <div class="reward-item ${
-            isBonus ? "bonus-reward" : ""
-          }" style="--animation-order: ${index}">
-            <div class="reward-content">
-              <h6 class="reward-title">${reward.item}</h6>
-              <div class="reward-badges">
-                ${bonusBadge}
-                ${requirementBadge}
-              </div>
-            </div>
-          </div>`;
-          })
-          .join("");
-
-        // Append the rewards list to the season details container
-        $seasonDetailsContainer.append(
-          `
+      $seasonDetailsContainer.append(`
           <div class="rewards-container">
             <h3 class="rewards-title">Season Rewards</h3>
             <div class="rewards-list">${rewardsHTML}</div>
-          </div>`
-        );
-      } else {
-        // If no rewards for this season, display a message and disable comments
-        $seasonDetailsContainer.append(
-          '<p class="text-warning">No rewards data available for this season.</p>'
-        );
-      }
+          </div>`);
     } else {
-      // If no rewards data at all, display a message and disable comments
       $seasonDetailsContainer.append(
         '<p class="text-warning">No rewards data available.</p>'
       );
@@ -310,7 +297,6 @@ $(document).ready(function () {
   function updateCountdown(startDate, endDate, seasonNumber, seasonTitle) {
     const startTimestamp = parseInt(startDate);
     const endTimestamp = parseInt(endDate);
-
     const $countdownDays = $("#countdown-days");
     const $countdownHours = $("#countdown-hours");
     const $countdownMinutes = $("#countdown-minutes");
@@ -387,24 +373,19 @@ $(document).ready(function () {
     // Update every second
     return setInterval(updateTimer, 1000);
   }
-
   function loadSeasonDetails(season) {
-    return Promise.all([fetchAllSeasons(), fetchAllRewards()])
-      .then(([allSeasons, allRewards]) => {
+    return fetchAllSeasons()
+      .then((allSeasons) => {
         const seasonData = allSeasons.find(
           (s) => s.season === parseInt(season)
         );
-        const seasonRewards = allRewards.filter(
-          (r) => r.season_number === parseInt(season)
-        );
-        displaySeasonDetails(season, seasonData, seasonRewards);
-        updateCarousel(seasonRewards);
-        updateBreadcrumb(season);
-
         if (seasonData) {
+          displaySeasonDetails(season, seasonData);
+          updateCarousel(seasonData.rewards);
+          updateBreadcrumb(season);
           document.title = `Season ${season} - ${seasonData.title}`;
         } else {
-          document.title = `Season ${season}`;
+          throw new Error("Season not found");
         }
         return false;
       })
@@ -416,6 +397,7 @@ $(document).ready(function () {
         return false;
       });
   }
+
   function displayErrorMessage(message) {
     $seasonDetailsContainer.html(`
       <div class="alert alert-danger" role="alert">
@@ -455,20 +437,16 @@ $(document).ready(function () {
     loadSeasonDetails(parseInt(selectedSeason));
   });
 
-  // Modify the initial data loading
   loadAllData()
-    .then(([seasonDescriptions, allRewards, latestSeason]) => {
-      populateSeasonDropdown(seasonDescriptions);
+    .then(([seasons, latestSeason]) => {
+      populateSeasonDropdown(seasons);
       const pathSegments = window.location.pathname.split("/");
       let seasonNumber = pathSegments[pathSegments.length - 1];
 
-      // Use latest season from API instead of calculating
       if (
         !seasonNumber ||
         isNaN(seasonNumber) ||
-        !seasonDescriptions.some(
-          (desc) => desc.season === parseInt(seasonNumber)
-        )
+        !seasons.some((desc) => desc.season === parseInt(seasonNumber))
       ) {
         seasonNumber = latestSeason.season.toString();
         const newUrl = `${window.location.origin}/seasons/${seasonNumber}`;
@@ -483,7 +461,6 @@ $(document).ready(function () {
         window.commentsManagerInstance.loadComments();
       }
 
-      // Remove the return and chain the promises properly
       return loadSeasonDetails(parseInt(seasonNumber));
     })
 
