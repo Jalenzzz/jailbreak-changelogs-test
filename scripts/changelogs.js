@@ -1,4 +1,12 @@
 $(document).ready(function () {
+  // Initialize tooltips
+  const tooltipTriggerList = document.querySelectorAll(
+    '[data-bs-toggle="tooltip"]'
+  );
+  const tooltipList = [...tooltipTriggerList].map(
+    (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+  );
+
   const apiUrl = "https://api3.jailbreakchangelogs.xyz/changelogs/list";
   const imageElement = document.getElementById("sidebarImage");
   const sectionsElement = document.getElementById("content");
@@ -1125,6 +1133,16 @@ $(document).ready(function () {
       .trim(); // Trim leading and trailing whitespace
   }
 
+  function initializeQuickNavTooltips() {
+    const quickNavLinks = document.querySelectorAll(".quick-nav-link");
+    quickNavLinks.forEach((link) => {
+      new bootstrap.Tooltip(link, {
+        placement: "top",
+        trigger: "hover",
+      });
+    });
+  }
+
   // Function to display the selected changelog
   function displayChangelog(changelog) {
     localStorage.setItem("selectedChangelogId", changelog.id);
@@ -1158,6 +1176,9 @@ $(document).ready(function () {
       const processedSections = convertMarkdownToHtml(processedMarkdown);
       contentHtml += processedSections;
       contentHtml += createNavigationLinks(changelog);
+      setTimeout(() => {
+        initializeQuickNavTooltips();
+      }, 0);
     } else {
       console.warn("No sections available for changelog.");
       contentHtml += '<p class="lead">No sections available.</p>';
