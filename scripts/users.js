@@ -763,9 +763,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       const userData = await userResponse.json();
       const usernameContainer = document.querySelector(".username-link");
-      if (usernameContainer) {
-        usernameContainer.textContent = "@" + usernameContainer.textContent;
-      }
+      // if (usernameContainer) {
+      //   usernameContainer.textContent = "@" + usernameContainer.textContent;
+      // }
       const memberSince = new Date(
         parseInt(userData.created_at) * 1000
       ).toLocaleDateString("en-GB", {

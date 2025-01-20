@@ -302,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Now check for saved sort and value sort
   const savedSort = sessionStorage.getItem("sortDropdown");
   const savedValueSort =
-    sessionStorage.getItem("valueSortDropdown") || "random"; // Default to random if not set
+    sessionStorage.getItem("valueSortDropdown") || "cash-desc";
 
   if (savedSort || savedValueSort) {
     const sortDropdown = document.getElementById("sort-dropdown");

@@ -231,14 +231,13 @@ body {
 .container {
   max-width: 1000px;
   padding: 0 16px;
+  margin: 0 auto;
 }
 
-.container .container {
-  padding: 0;
-}
 .row {
   margin: 0;
 }
+
 .col-md-3,
 .col-md-9 {
   padding: 0;
@@ -262,7 +261,9 @@ body {
   height: 300px;
   overflow: hidden;
   background-color: var(--background-light);
-  max-width: 100vw;
+  max-width: 1000px; /* Match container max-width */
+  margin: 0 auto; /* Center the banner */
+  border-radius: 16px; /* Optional: add rounded corners */
 }
 
 .banner-image {
@@ -291,7 +292,9 @@ body {
   position: relative;
   width: 100%;
   margin-bottom: 2rem;
+  padding-top: 1rem; /* Add some space at the top */
 }
+
 .user-avatar {
   width: 150px;
   height: 150px;
@@ -324,26 +327,22 @@ body {
 
 /* Typography */
 .user-display-name {
-  margin-bottom: 0.25rem;
-  color: var(--text-body);
-  font-size: 1rem;
-  font-weight: 600;
+  margin: 0;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  flex-shrink: 1; /* Allow the name to shrink if needed */
+  min-width: 0; /* Prevent text overflow */
 }
 
 .username-link {
-  color: var(--text-body);
-  text-decoration: none;
   font-size: 1.1rem;
   transition: color 0.2s ease;
-
-  &:hover {
-    text-decoration: underline;
-  }
+  color: var(--text-muted) !important;
 }
 
 .text-muted {
-  color: var(--text-secondary) !important;
-  font-size: 13px;
+  color: var(--text-muted) !important;
 }
 
 /* Buttons */
@@ -477,13 +476,19 @@ body {
     width: 100%;
   }
 
-  /* This is the key change - making the top line a flex container */
   .name-and-button {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* Changed from fixed gap */
     width: 100%;
     margin-bottom: 0.25rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto; /* This pushes the buttons to the end */
   }
 
   .display-name {
@@ -533,8 +538,10 @@ body {
   .name-and-button {
     display: flex;
     align-items: center;
-    gap: 33rem;
-    margin-bottom: 0.25rem;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 0.5rem; /* Add some bottom margin */
+    gap: 1rem; /* Add gap between name and buttons */
   }
 
   .user-display-name {
@@ -548,6 +555,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    flex-shrink: 0; /* Prevent buttons from shrinking */
   }
 
   .action-button {
