@@ -923,6 +923,28 @@
   will-change: opacity;
   transform: translateZ(0);
 }
+.values-card {
+  background-color: var(--bg-secondary); /* Background color */
+  border: 1px solid var(--accent-color); /* Accent border color */
+  border-radius: 8px; /* Rounded corners */
+  padding: 2rem; /* Increased padding for a larger card */
+  text-align: center; /* Center the text */
+  margin: 1rem auto; /* Center the card horizontally */
+  max-width: 500px; /* Increased maximum width for the card */
+}
+
+.values-card img {
+  width: 100%; /* Make image responsive */
+  height: auto; /* Maintain aspect ratio */
+  max-width: 100%; /* Ensure it fits within the card */
+  margin-bottom: 0.5rem; /* Space between image and text */
+}
+
+.values-text {
+  font-size: 1.5rem; /* Increased font size for better visibility */
+  font-weight: bold; /* Make text bold */
+  color: var(--text-primary); /* Text color */
+}
 
 @media (max-width: 768px) {
   .container-fluid {
