@@ -250,7 +250,7 @@ function addItemToTrade(item, tradeType) {
 
   // Always render trade items first
   renderTradeItems(tradeType);
-  updateTradeSummary();
+ 
 
   // Automatically update preview
   updatePreview();
@@ -292,7 +292,7 @@ function quickAddItem(itemName, itemType) {
       if (nextEmptyIndex !== -1) {
         items[nextEmptyIndex] = item;
         renderTradeItems(selectedTradeType);
-        updateTradeSummary();
+   
         updatePreview(); // Add this line
       } else {
         toastr.error("No empty slots available");
@@ -311,7 +311,7 @@ function quickAddItem(itemName, itemType) {
 
     // Update UI
     renderTradeItems(currentType);
-    updateTradeSummary();
+    
     updatePreview(); // Add this line
   } else {
     // No placeholder selected, find first empty slot
@@ -322,7 +322,7 @@ function quickAddItem(itemName, itemType) {
     if (emptyIndex !== -1) {
       items[emptyIndex] = item;
       renderTradeItems(currentTradeType === "offering" ? "Offer" : "Request");
-      updateTradeSummary();
+    
       updatePreview(); // Add this line
     } else {
       toastr.error(
@@ -357,7 +357,7 @@ function removeItem(index, tradeType) {
   delete items[index];
 
   renderTradeItems(tradeType);
-  updateTradeSummary();
+
 
   // Automatically update preview
   updatePreview();
@@ -961,7 +961,7 @@ function resetTrade() {
   // Reset UI
   renderTradeItems("Offer");
   renderTradeItems("Request");
-  updateTradeSummary();
+
 
   // Hide preview
   document.getElementById("trade-preview").style.display = "none";
