@@ -36,7 +36,7 @@ function getItemImageElement(item) {
   }
 
   // Regular items
-  return `<img src="/assets/items/${item.type.toLowerCase()}s/${
+  return `<img src="/assets/images/items/480p/${item.type.toLowerCase()}s/${
     item.name
   }.webp" 
                  class="card-img-top" 

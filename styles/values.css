@@ -923,27 +923,23 @@
   will-change: opacity;
   transform: translateZ(0);
 }
-.values-card {
-  background-color: var(--bg-secondary); /* Background color */
-  border: 1px solid var(--accent-color); /* Accent border color */
-  border-radius: 8px; /* Rounded corners */
-  padding: 2rem; /* Increased padding for a larger card */
-  text-align: center; /* Center the text */
-  margin: 1rem auto; /* Center the card horizontally */
-  max-width: 500px; /* Increased maximum width for the card */
-}
 
-.values-card img {
-  width: 100%; /* Make image responsive */
-  height: auto; /* Maintain aspect ratio */
-  max-width: 100%; /* Ensure it fits within the card */
-  margin-bottom: 0.5rem; /* Space between image and text */
-}
-
-.values-text {
-  font-size: 1.5rem; /* Increased font size for better visibility */
+.discord-button {
+  color: white;
+  background-color: var(--accent-color);
+  border: none;
+  padding: 5px 10px; /* Reduced padding for a smaller button */
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px; /* Margin for spacing */
+  width: auto; /* Ensure button is not too wide */
   font-weight: bold; /* Make text bold */
-  color: var(--text-primary); /* Text color */
+  font-size: 14px; /* Adjust font size if needed */
+  transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+}
+
+.discord-button:hover {
+  background-color: var(--bg-secondary);
 }
 
 @media (max-width: 768px) {

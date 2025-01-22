@@ -256,7 +256,7 @@ app.get("/seasons/:season", async (req, res) => {
 app.get("/trading", (req, res) => {
   res.render("trading", {
     title: "Trading / Changelogs",
-    logoUrl: "/assets/logos/JB Changelogs Banner.png",
+    logoUrl: "/assets/logos/JB Changelogs (Collab).png",
     logoAlt: "Trading Page Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
@@ -270,7 +270,7 @@ app.get("/trading/ad/:tradeId", (req, res) => {
     title: `Trade #${tradeId} - Jailbreak Trading`,
     metaDescription: `View trade details for Trade #${tradeId}. Check item values and trade status.`,
     canonicalUrl: `https://testing.jailbreakchangelogs.xyz/trading/ad/${tradeId}`,
-    logoUrl: "/assets/logos/JB Changelogs Banner.png",
+    logoUrl: "/assets/logos/JB Changelogs (Collab).png",
     logoAlt: "Trading Page Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
@@ -308,7 +308,7 @@ app.get("/values", async (req, res) => {
 
     res.render("values", {
       title: "Values / Changelogs",
-      logoUrl: "/assets/logos/JB Changelogs Banner.png",
+      logoUrl: "/assets/logos/JB Changelogs (Collab).png",
       logoAlt: "Values Page Logo",
       allItems,
       MIN_TITLE_LENGTH,
@@ -318,7 +318,7 @@ app.get("/values", async (req, res) => {
     console.error("Error fetching items:", error);
     res.render("values", {
       title: "Values / Changelogs",
-      logoUrl: "/assets/logos/JB Changelogs Banner.png",
+      logoUrl: "/assets/logos/JB Changelogs (Collab).png",
       logoAlt: "Values Page Logo",
       allItems: [],
       MIN_TITLE_LENGTH,
@@ -330,7 +330,7 @@ app.get("/values", async (req, res) => {
 app.get("/values/calculator", (req, res) => {
   res.render("calculator", {
     title: "Value Calculator / Changelogs",
-    logoUrl: "/assets/logos/JB Changelogs Banner.png",
+    logoUrl: "/assets/logos/JB Changelogs (Collab).png",
     logoAlt: "Values Calculator Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
