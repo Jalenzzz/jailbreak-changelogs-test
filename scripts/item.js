@@ -632,6 +632,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                            }
                           <!-- Values Section -->
                           ${valuesSection}
+
+                          <div class="values-text d-flex flex-column align-items-start mt-3">
+                            <strong class="mb-2">Want to make a value suggestion for ${
+                              item.name
+                            }?</strong>
+                            <button
+                              onclick="window.open('https://discord.gg/PmDXwK2b6n', '_blank', 'noopener,noreferrer')"
+                              class="discord-button"
+                            >
+                              Join Jailbreak Trading Core!
+                            </button>
+                          </div>
                       </div>
                   </div>
               </div>

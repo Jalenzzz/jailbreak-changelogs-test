@@ -610,3 +610,20 @@ body {
   background-color: rgba(18, 78, 102, 0.4) !important;
   transition: background-color 0.2s ease;
 }
+.discord-button {
+  color: white;
+  background-color: var(--accent-color);
+  border: none;
+  padding: 5px 10px; /* Reduced padding for a smaller button */
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px; /* Margin for spacing */
+  width: auto; /* Ensure button is not too wide */
+  font-weight: bold; /* Make text bold */
+  font-size: 14px; /* Adjust font size if needed */
+  transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+}
+
+.discord-button:hover {
+  background-color: var(--bg-primary);
+}

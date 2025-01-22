@@ -400,16 +400,16 @@ app.get("/item/:type/:item", async (req, res) => {
       return res.render("item", {
         ...seoData,
         title: seoData.pageTitle,
-        logoUrl: "/assets/logos/JB Changelogs Banner.png",
+        logoUrl: "/assets/logos/JB Changelogs (Collab).png",
         logoAlt: "Item Page Logo",
         itemName,
         itemType,
         formattedUrlType,
         error: true,
-        image_url: "/assets/logos/JB Changelogs Banner.png",
+        image_url: "/assets/logos/JB Changelogs (Collab).png",
         item: {
           name: itemName,
-          image: "/assets/logos/JB Changelogs Banner.png",
+          image: "/assets/logos/JB Changelogs (Collab).png",
         },
         MIN_TITLE_LENGTH,
         MIN_DESCRIPTION_LENGTH,
@@ -432,7 +432,7 @@ app.get("/item/:type/:item", async (req, res) => {
     res.render("item", {
       ...seoData,
       title: seoData.pageTitle,
-      logoUrl: "/assets/logos/JB Changelogs Banner.png",
+      logoUrl: "/assets/logos/JB Changelogs (Collab).png",
       logoAlt: "Item Page Logo",
       itemName: item.name,
       itemType,

@@ -794,14 +794,14 @@ body.menu-open {
 
 @media (max-width: 576px) {
   .navbar-logo {
-    height: 34px; /* Adjusted height for small screens */
+    height: 50px; /* Adjusted height for small screens */
+    background-size: contain; /* Ensures the image fits within the div */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    display: inline-block; /* Ensures the element behaves like a block for dimensions */
   }
 }
 
 @media (max-width: 400px) {
-  .navbar-logo {
-    height: 27px; /* Adjusted height for extra small screens */
-  }
   .jbcl-announcement-banner {
     padding: 0.625rem !important;
   }
