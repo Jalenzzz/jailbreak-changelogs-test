@@ -143,7 +143,7 @@ app.get("/changelogs/:changelog", async (req, res) => {
       latestId,
       title: requestedData.title,
       image_url: requestedData.image_url,
-      logoUrl: "/assets/logos/JB Changelogs Banner.png",
+      logoUrl: "/assets/logos/JB Changelogs Banner.webp",
       logoAlt: "Changelogs Page Logo",
       embed_color: 0x134d64,
       isLatest: changelogId === latestId,
@@ -212,7 +212,7 @@ app.get("/seasons/:season", async (req, res) => {
         season: "???",
         title: "Season not found",
         image_url: "/assets/images/changelogs/346.webp",
-        logoUrl: "/assets/logos/JB Changelogs Banner.png",
+        logoUrl: "/assets/logos/JB Changelogs Banner.webp",
         logoAlt: "Jailbreak Seasons Logo",
         seasonId,
         MIN_TITLE_LENGTH,
@@ -241,7 +241,7 @@ app.get("/seasons/:season", async (req, res) => {
       season,
       title,
       image_url,
-      logoUrl: "/assets/logos/JB Changelogs Banner.png",
+      logoUrl: "/assets/logos/JB Changelogs Banner.webp",
       logoAlt: "Jailbreak Seasons Logo",
       seasonId,
       MIN_TITLE_LENGTH,
@@ -256,7 +256,7 @@ app.get("/seasons/:season", async (req, res) => {
 app.get("/trading", (req, res) => {
   res.render("trading", {
     title: "Trading / Changelogs",
-    logoUrl: "/assets/logos/JB Changelogs (Collab).png",
+    logoUrl: "/assets/logos/JB Changelogs (Collab).webp",
     logoAlt: "Trading Page Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
@@ -270,7 +270,7 @@ app.get("/trading/ad/:tradeId", (req, res) => {
     title: `Trade #${tradeId} - Jailbreak Trading`,
     metaDescription: `View trade details for Trade #${tradeId}. Check item values and trade status.`,
     canonicalUrl: `https://testing.jailbreakchangelogs.xyz/trading/ad/${tradeId}`,
-    logoUrl: "/assets/logos/JB Changelogs (Collab).png",
+    logoUrl: "/assets/logos/JB Changelogs (Collab).webp",
     logoAlt: "Trading Page Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
@@ -283,7 +283,7 @@ app.get("/bot", (req, res) => {
   const image = `/assets/backgrounds/background${randomNumber}.webp`;
   res.render("bot", {
     title: "Discord Bot / Changelogs",
-    logoUrl: "/assets/logos/JB Changelogs Banner.png",
+    logoUrl: "/assets/logos/JB Changelogs Banner.webp",
     logoAlt: "Bot Page Logo",
     image,
     MIN_TITLE_LENGTH,
@@ -308,7 +308,7 @@ app.get("/values", async (req, res) => {
 
     res.render("values", {
       title: "Values / Changelogs",
-      logoUrl: "/assets/logos/JB Changelogs (Collab).png",
+      logoUrl: "/assets/logos/JB Changelogs (Collab).webp",
       logoAlt: "Values Page Logo",
       allItems,
       MIN_TITLE_LENGTH,
@@ -318,7 +318,7 @@ app.get("/values", async (req, res) => {
     console.error("Error fetching items:", error);
     res.render("values", {
       title: "Values / Changelogs",
-      logoUrl: "/assets/logos/JB Changelogs (Collab).png",
+      logoUrl: "/assets/logos/JB Changelogs (Collab).webp",
       logoAlt: "Values Page Logo",
       allItems: [],
       MIN_TITLE_LENGTH,
@@ -330,7 +330,7 @@ app.get("/values", async (req, res) => {
 app.get("/values/calculator", (req, res) => {
   res.render("calculator", {
     title: "Value Calculator / Changelogs",
-    logoUrl: "/assets/logos/JB Changelogs (Collab).png",
+    logoUrl: "/assets/logos/JB Changelogs (Collab).webp",
     logoAlt: "Values Calculator Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
@@ -340,7 +340,7 @@ app.get("/values/calculator", (req, res) => {
 app.get("/servers", (req, res) => {
   res.render("servers", {
     title: "Private Servers / Changelogs",
-    logoUrl: "/assets/logos/JB Changelogs Banner.png",
+    logoUrl: "/assets/logos/JB Changelogs Banner.webp",
     logoAlt: "Servers Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
@@ -400,16 +400,16 @@ app.get("/item/:type/:item", async (req, res) => {
       return res.render("item", {
         ...seoData,
         title: seoData.pageTitle,
-        logoUrl: "/assets/logos/JB Changelogs (Collab).png",
+        logoUrl: "/assets/logos/JB Changelogs (Collab).webp",
         logoAlt: "Item Page Logo",
         itemName,
         itemType,
         formattedUrlType,
         error: true,
-        image_url: "/assets/logos/JB Changelogs (Collab).png",
+        image_url: "/assets/logos/JB Changelogs (Collab).webp",
         item: {
           name: itemName,
-          image: "/assets/logos/JB Changelogs (Collab).png",
+          image: "/assets/logos/JB Changelogs (Collab).webp",
         },
         MIN_TITLE_LENGTH,
         MIN_DESCRIPTION_LENGTH,
@@ -432,7 +432,7 @@ app.get("/item/:type/:item", async (req, res) => {
     res.render("item", {
       ...seoData,
       title: seoData.pageTitle,
-      logoUrl: "/assets/logos/JB Changelogs (Collab).png",
+      logoUrl: "/assets/logos/JB Changelogs (Collab).webp",
       logoAlt: "Item Page Logo",
       itemName: item.name,
       itemType,
@@ -446,17 +446,17 @@ app.get("/item/:type/:item", async (req, res) => {
     console.error("Error fetching item data:", error);
     res.render("item", {
       title: `${itemName} - Error | JailbreakChangelogs`,
-      logoUrl: "/assets/logos/JB Changelogs Banner.png",
+      logoUrl: "/assets/logos/JB Changelogs Banner.webp",
       logoAlt: "Item Page Logo",
       itemName,
       itemType,
       formattedUrlType,
       error: true,
       errorMessage: "Internal Server Error",
-      image_url: "/assets/logos/JB Changelogs Banner.png",
+      image_url: "/assets/logos/JB Changelogs Banner.webp",
       item: {
         name: itemName,
-        image: "/assets/logos/JB Changelogs Banner.png",
+        image: "/assets/logos/JB Changelogs Banner.webp",
       },
       MIN_TITLE_LENGTH,
       MIN_DESCRIPTION_LENGTH,
@@ -498,7 +498,7 @@ app.get("/item/:item", async (req, res) => {
 app.get("/faq", (req, res) => {
   res.render("faq", {
     title: "User FAQ",
-    logoUrl: "/assets/logos/JB Changelogs Banner.png",
+    logoUrl: "/assets/logos/JB Changelogs Banner.webp",
     logoAlt: "FAQ Page Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
@@ -508,7 +508,7 @@ app.get("/faq", (req, res) => {
 app.get("/privacy", (req, res) => {
   res.render("privacy", {
     title: "Privacy Policy / Changelogs",
-    logoUrl: "/assets/logos/JB Changelogs Banner.png",
+    logoUrl: "/assets/logos/JB Changelogs Banner.webp",
     logoAlt: "Privacy Policy Page Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
@@ -518,7 +518,7 @@ app.get("/privacy", (req, res) => {
 app.get("/tos", (req, res) => {
   res.render("tos", {
     title: "Terms Of Service / Changelogs",
-    logoUrl: "/assets/logos/JB Changelogs Banner.png",
+    logoUrl: "/assets/logos/JB Changelogs Banner.webp",
     logoAlt: "TOS Page Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
@@ -634,7 +634,7 @@ app.get("/users/:user/followers", async (req, res) => {
       isPrivate: false,
       path: req.path,
       title: "Followers / Changelogs",
-      logoUrl: "/assets/logos/JB Changelogs Banner.png",
+      logoUrl: "/assets/logos/JB Changelogs Banner.webp",
       logoAlt: "Users Page Logo",
       user: req.user || null,
       settings,
@@ -746,7 +746,7 @@ app.get("/users/:user/following", async (req, res) => {
       isPrivate: false,
       path: req.path,
       title: "Following / Changelogs",
-      logoUrl: "/assets/logos/JB Changelogs Banner.png",
+      logoUrl: "/assets/logos/JB Changelogs Banner.webp",
       logoAlt: "Users Page Logo",
       user: req.user || null,
       settings,
@@ -766,7 +766,7 @@ app.get("/users/:user/following", async (req, res) => {
 app.get("/users", (req, res) => {
   res.render("usersearch", {
     title: "Users / Changelogs",
-    logoUrl: "/assets/logos/JB Changelogs Banner.png",
+    logoUrl: "/assets/logos/JB Changelogs Banner.webp",
     logoAlt: "Users Page Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
@@ -813,7 +813,7 @@ app.get("/users/:user", async (req, res) => {
   if (!user) {
     return res.render("usersearch", {
       title: "Users / Changelogs",
-      logoUrl: "/assets/logos/JB Changelogs Banner.png",
+      logoUrl: "/assets/logos/JB Changelogs Banner.webp",
       logoAlt: "Users Page Logo",
       MIN_TITLE_LENGTH,
       MIN_DESCRIPTION_LENGTH,
@@ -891,7 +891,7 @@ app.get("/users/:user", async (req, res) => {
         avatar,
         settings,
         title: "Private Profile / Changelogs",
-        logoUrl: "/assets/logos/JB Changelogs Banner.png",
+        logoUrl: "/assets/logos/JB Changelogs Banner.webp",
         logoAlt: "User Profile Logo",
         isPrivateProfile: true,
         isProfileOwner: false,
@@ -908,7 +908,7 @@ app.get("/users/:user", async (req, res) => {
       avatar,
       settings,
       title: "User Profile / Changelogs",
-      logoUrl: "/assets/logos/JB Changelogs Banner.png",
+      logoUrl: "/assets/logos/JB Changelogs Banner.webp",
       logoAlt: "User Profile Logo",
       isPrivateProfile: false,
       isProfileOwner,
@@ -924,7 +924,7 @@ app.get("/users/:user", async (req, res) => {
 app.get("/timeline", (req, res) => {
   res.render("timeline", {
     title: "Timeline / Changelogs",
-    logoUrl: "/assets/logos/JB Changelogs Banner.png",
+    logoUrl: "/assets/logos/JB Changelogs Banner.webp",
     logoAlt: "Timeline Page Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
@@ -934,7 +934,7 @@ app.get("/timeline", (req, res) => {
 app.get("/tradetracker", (req, res) => {
   res.render("tradetracker", {
     title: "Trade Tracker / Changelogs",
-    logoUrl: "/assets/logos/JB Changelogs Banner.png",
+    logoUrl: "/assets/logos/JB Changelogs Banner.webp",
     logoAlt: "Trade Tracker Page Logo",
     MIN_TITLE_LENGTH,
     MIN_DESCRIPTION_LENGTH,
@@ -946,7 +946,7 @@ app.get("/", (req, res) => {
   const image = `/assets/backgrounds/background${randomNumber}.webp`;
   res.render("index", {
     title: "Home / Changelogs",
-    logoUrl: "/assets/logos/JB Changelogs Banner.png",
+    logoUrl: "/assets/logos/JB Changelogs Banner.webp",
     logoAlt: "Home Page Logo",
     image,
     MIN_TITLE_LENGTH,
