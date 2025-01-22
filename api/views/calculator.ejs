@@ -34,15 +34,14 @@
       rel="stylesheet"
     />
     <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-  />
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
     <link rel="stylesheet" href="/styles/calculator.css" />
     <link rel="stylesheet" href="/styles/trading.css" />
     <link rel="stylesheet" href="/styles/main.css" />
 
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -52,19 +51,25 @@
       rel="stylesheet"
     />
     <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
-    integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+      integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
   </head>
 
   <body data-scroll-container>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KM853GJ6"
-      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-      <!-- End Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-KM853GJ6"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <!-- prettier-ignore -->
     <%- include('partials/nav') %>
     <%- include('partials/announcement') %>
@@ -76,7 +81,9 @@
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
             <li class="breadcrumb-item"><a href="/values">Values</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Calculator</li>
+            <li class="breadcrumb-item active" aria-current="page">
+              Calculator
+            </li>
           </ol>
         </nav>
       </div>
@@ -94,32 +101,45 @@
                       Roblox Jailbreak Trade Value Calculator
                     </h1>
                     <p class="lead mb-4 text-shadow">
-                      Calculate the fairness of your Roblox Jailbreak trades using our up-to-date value list database. Compare cash and duped values, analyze trades, and make informed trading decisions.
+                      Calculate the fairness of your Roblox Jailbreak trades
+                      using our up-to-date value list database. Compare cash and
+                      duped values, analyze trades, and make informed trading
+                      decisions.
                     </p>
                     <div class="features mb-4">
                       <div class="feature-item mb-2">
                         <i class="bi bi-calculator me-2"></i>
-                        <span class="text-shadow">Compare up to 8 items on each side of the trade</span>
+                        <span class="text-shadow"
+                          >Compare up to 8 items on each side of the trade</span
+                        >
                       </div>
                       <div class="feature-item mb-2">
                         <i class="bi bi-graph-up me-2"></i>
-                        <span class="text-shadow">View total cash and duped values for both sides</span>
+                        <span class="text-shadow"
+                          >View total cash and duped values for both sides</span
+                        >
                       </div>
                       <div class="feature-item mb-2">
                         <i class="bi bi-arrow-left-right me-2"></i>
-                        <span class="text-shadow">Calculate value differences between offering and requesting</span>
+                        <span class="text-shadow"
+                          >Calculate value differences between offering and
+                          requesting</span
+                        >
                       </div>
                     </div>
                     <div class="quick-tip p-3 rounded">
                       <i class="bi bi-info-circle me-2"></i>
-                      <span>Click any empty slot to add items to your trade. You can add up to 8 items on each side.</span>
+                      <span
+                        >Click any empty slot to add items to your trade. You
+                        can add up to 8 items on each side.</span
+                      >
                     </div>
                     <div class="intro-buttons mt-4">
                       <a
-                       href="/values"
-                       class="intro-button intro-button-calculator"
+                        href="/values"
+                        class="intro-button intro-button-calculator"
                       >
-                       <i class="bi bi-graph-up"></i>
+                        <i class="bi bi-graph-up"></i>
                         Values List
                       </a>
                       <a
@@ -149,44 +169,39 @@
           <h3 class="text-center">Requesting</h3>
           <div class="row" id="requesting-list"></div>
         </div>
-        
       </div>
 
       <!-- Shared Available Items Section -->
       <div class="available-items mt-4" id="available-items-container">
-
         <div id="available-items-list">
           <!-- Available items will be rendered here -->
         </div>
       </div>
 
-     <!-- Trade Preview Section -->
-    <div class="container-fluid mt-4">
-      <div class="trade-preview" id="trade-preview" style="display: none">
-        <div class="container">
-          <h3 class="text-center mb-4">Trade Preview</h3>
-          <div class="row">
-            <div class="col-lg-6">
-              <div class="preview-side-offering">
-                <h4 class="text-center">Offering</h4>
-                <div id="preview-offering-items"></div>
+      <!-- Trade Preview Section -->
+      <div class="container-fluid mt-4">
+        <div class="trade-preview" id="trade-preview" style="display: none">
+          <div class="container">
+            <h3 class="text-center mb-4">Trade Preview</h3>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="preview-side-offering">
+                  <h4 class="text-center">Offering</h4>
+                  <div id="preview-offering-items"></div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="preview-side-requesting">
+                  <h4 class="text-center">Requesting</h4>
+                  <div id="preview-requesting-items"></div>
+                </div>
               </div>
             </div>
-            <div class="col-lg-6">
-              <div class="preview-side-requesting">
-                <h4 class="text-center">Requesting</h4>
-                <div id="preview-requesting-items"></div>
-              </div>
-            </div>
+            <div id="value-differences"></div>
+            <div class="preview-actions mt-4 text-center"></div>
           </div>
-          <div id="value-differences"></div>
-          <div class="preview-actions mt-4 text-center"></div>
         </div>
       </div>
-    </div>
-
-    
-
 
       <div id="top-pagination"></div>
 
@@ -197,116 +212,122 @@
       <div id="bottom-pagination"></div>
     </div>
 
-   
-  </div>
-  <!-- Modal for Available Items -->
-  <div
-  class="modal fade"
-  id="availableItemsModal"
-  tabindex="-1"
-  aria-labelledby="availableItemsModalLabel"
-  aria-hidden="true"
->
-  <div
-    class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
-  >
-    <div class="modal-content">
+    <!-- Modal for Available Items -->
+    <div
+      class="modal fade"
+      id="availableItemsModal"
+      tabindex="-1"
+      aria-labelledby="availableItemsModalLabel"
+      aria-hidden="true"
+    >
       <div
-        class="modal-header border-bottom-0 align-items-center px-4 py-3"
+        class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
       >
-        <div class="d-flex align-items-center gap-3 flex-grow-1">
-          <h5 class="modal-title fs-4 mb-0" id="availableItemsModalLabel">
-            Select Items
-          </h5>
-          <div class="search-wrapper flex-grow-1 position-relative">
-            <i class="bi bi-search search-icon"></i>
-            <input
-              type="text"
-              id="modal-item-search"
-              class="form-control form-control-lg search-input"
-              placeholder="Search items..."
-              oninput="handleSearch(currentTradeType)"
-            />
+        <div class="modal-content">
+          <!-- Redesigned Modal Header -->
+          <div class="modal-header py-3">
+            <div class="d-flex align-items-center flex-grow-1 gap-3">
+              <!-- Title -->
+              <h5 class="modal-title fs-4 mb-0" id="availableItemsModalLabel">
+                Select Items
+              </h5>
+              <!-- Search Bar -->
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0">
+                  <i class="bi bi-search"></i>
+                </span>
+                <input
+                  type="text"
+                  id="modal-item-search"
+                  class="form-control form-control-lg border-start-0"
+                  placeholder="Search items..."
+                  oninput="handleSearch(currentTradeType)"
+                />
+                <button
+                  type="button"
+                  class="btn btn-link border-start-0"
+                  id="clear-search-btn"
+                  onclick="clearSearch()"
+                  style="display: none"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Clear search"
+                  aria-label="Clear search"
+                >
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </div>
+            </div>
+            <!-- Close Button -->
             <button
               type="button"
-              class="btn-clear-search"
-              id="clear-search-btn"
-              onclick="clearSearch()"
-              style="display: none"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Clear search"
-              aria-label="Clear search"
-            >
-              <i class="bi bi-x-circle"></i>
-            </button>
+              class="btn-close btn-close-white ms-2"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-subheader px-4 py-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <select
+                id="modal-value-sort-dropdown"
+                class="form-select"
+                onchange="sortModalItems()"
+              >
+                <option value="name-all-items">All Items</option>
+                <option value="name-limited-items">Limited Items</option>
+                <option value="name-vehicles">Vehicles</option>
+                <option value="name-spoilers">Spoilers</option>
+                <option value="name-rims">Rims</option>
+                <option value="name-body-colors">Body Colors</option>
+                <option value="name-hyperchromes">HyperChromes</option>
+                <option value="name-textures">Body Textures</option>
+                <option value="name-tire-stickers">Tire Stickers</option>
+                <option value="name-tire-styles">Tire Styles</option>
+                <option value="name-drifts">Drifts</option>
+                <option value="name-furnitures">Furniture</option>
+              </select>
+
+              <div id="modal-pagination-top"></div>
+            </div>
+          </div>
+
+          <div class="modal-body px-4 py-3">
+            <div class="row g-3" id="modal-available-items-list"></div>
+          </div>
+
+          <div class="modal-footer border-top-0 px-4 py-3">
+            <div
+              id="modal-pagination-bottom"
+              class="w-100 d-flex justify-content-center"
+            ></div>
           </div>
         </div>
-        <button
-          type="button"
-          class="btn-close btn-close-white"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
-
-      <div class="modal-subheader px-4 py-2">
-        <div class="d-flex justify-content-between align-items-center">
-          <select
-            id="modal-value-sort-dropdown"
-            class="form-select"
-            onchange="sortModalItems()"
-          >
-            <option value="name-all-items">All Items</option>
-            <option value="name-limited-items">Limited Items</option>
-            <option value="name-vehicles">Vehicles</option>
-            <option value="name-spoilers">Spoilers</option>
-            <option value="name-rims">Rims</option>
-            <option value="name-body-colors">Body Colors</option>
-            <option value="name-hyperchromes">HyperChromes</option>
-            <option value="name-textures">Body Textures</option>
-            <option value="name-tire-stickers">Tire Stickers</option>
-            <option value="name-tire-styles">Tire Styles</option>
-            <option value="name-drifts">Drifts</option>
-            <option value="name-furnitures">Furniture</option>
-          </select>
-
-          <div id="modal-pagination-top"></div>
-        </div>
-      </div>
-
-      <div class="modal-body px-4 py-3">
-        <div class="row g-3" id="modal-available-items-list"></div>
-      </div>
-
-      <div class="modal-footer border-top-0 px-4 py-3">
-        <div
-          id="modal-pagination-bottom"
-          class="w-100 d-flex justify-content-center"
-        ></div>
       </div>
     </div>
-  </div>
-</div>
 
+    <%- include('partials/footer') %>
 
-  <%- include('partials/footer') %>
+    <!-- Scripts -->
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+      integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="/scripts/main.js"></script>
 
-  <!-- Scripts -->
-  <script
-    src="https://code.jquery.com/jquery-3.7.1.min.js"
-    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-    crossorigin="anonymous"
-  ></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js" integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"
-  ></script>
-  <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-  <script src="/scripts/main.js"></script>
-
-  <script src="/scripts/calculator.js" defer></script>
-</body>
+    <script src="/scripts/calculator.js" defer></script>
+  </body>
 </html>

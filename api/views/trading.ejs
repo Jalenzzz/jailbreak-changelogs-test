@@ -282,25 +282,29 @@
         class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
       >
         <div class="modal-content">
-          <div
-            class="modal-header border-bottom-0 align-items-center px-4 py-3"
-          >
-            <div class="d-flex align-items-center gap-3 flex-grow-1">
+          <!-- Redesigned Modal Header -->
+          <div class="modal-header py-3">
+            <!-- Remove container-fluid as it's unnecessary in modal header -->
+            <div class="d-flex align-items-center flex-grow-1 gap-3">
+              <!-- Title -->
               <h5 class="modal-title fs-4 mb-0" id="availableItemsModalLabel">
                 Select Items
               </h5>
-              <div class="search-wrapper flex-grow-1 position-relative">
-                <i class="bi bi-search search-icon"></i>
+              <!-- Search Bar -->
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0">
+                  <i class="bi bi-search"></i>
+                </span>
                 <input
                   type="text"
                   id="modal-item-search"
-                  class="form-control form-control-lg search-input"
+                  class="form-control form-control-lg border-start-0"
                   placeholder="Search items..."
                   oninput="handleSearch(currentTradeType)"
                 />
                 <button
                   type="button"
-                  class="btn-clear-search"
+                  class="btn btn-link border-start-0"
                   id="clear-search-btn"
                   onclick="clearSearch()"
                   style="display: none"
@@ -313,14 +317,14 @@
                 </button>
               </div>
             </div>
+            <!-- Close Button -->
             <button
               type="button"
-              class="btn-close btn-close-white"
+              class="btn-close btn-close-white ms-2"
               data-bs-dismiss="modal"
               aria-label="Close"
             ></button>
           </div>
-
           <div class="modal-subheader px-4 py-2">
             <div class="d-flex justify-content-between align-items-center">
               <select

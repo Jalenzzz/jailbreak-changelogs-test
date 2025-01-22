@@ -847,37 +847,83 @@ function changePage(newPage, type) {
 let searchTimeout;
 function handleSearch(type) {
   clearTimeout(searchTimeout);
+  const searchInput = document.getElementById("modal-item-search");
+  const searchTerm = searchInput.value.toLowerCase().trim();
+  const clearButton = document.getElementById("clear-search-btn");
+
+  // Show/hide clear button
+  if (clearButton) {
+    clearButton.style.display = searchTerm ? "block" : "none";
+  }
+
   searchTimeout = setTimeout(() => {
     currentPage = 1;
-    filteredItems = [...allItems];
-    displayAvailableItems(type);
 
-    // Show/hide clear button based on search input
-    const searchInput = document.getElementById("modal-item-search");
-    const clearButton = document.getElementById("clear-search-btn");
-    if (clearButton) {
-      clearButton.style.display = searchInput.value ? "block" : "none";
+    // Filter items based on search term
+    filteredItems = allItems.filter((item) => {
+      const itemName = item.name.toLowerCase();
+      const itemType = item.type.toLowerCase();
+      return itemName.includes(searchTerm) || itemType.includes(searchTerm);
+    });
+
+    // Apply current category filter from dropdown
+    const sortDropdown = document.getElementById("modal-value-sort-dropdown");
+    if (sortDropdown && sortDropdown.value !== "name-all-items") {
+      const [sortType, ...categoryParts] = sortDropdown.value.split("-");
+      const category = categoryParts.join("-");
+
+      if (category === "limited-items") {
+        filteredItems = filteredItems.filter((item) => item.is_limited);
+      } else {
+        const typeMap = {
+          vehicles: "Vehicle",
+          spoilers: "Spoiler",
+          rims: "Rim",
+          "body-colors": "Body Color",
+          hyperchromes: "HyperChrome",
+          textures: "Texture",
+          "tire-stickers": "Tire Sticker",
+          "tire-styles": "Tire Style",
+          drifts: "Drift",
+          furnitures: "Furniture",
+        };
+
+        const targetType = typeMap[category];
+        if (targetType) {
+          filteredItems = filteredItems.filter(
+            (item) => item.type === targetType
+          );
+        }
+      }
     }
+
+    displayAvailableItems(type);
   }, 300);
 }
 
+// Update clearSearch function
 function clearSearch() {
   const searchInput = document.getElementById("modal-item-search");
   const clearButton = document.getElementById("clear-search-btn");
 
   if (searchInput) {
     searchInput.value = "";
-    searchInput.focus(); // Keep focus on search input after clearing
+    searchInput.focus();
   }
 
   if (clearButton) {
     clearButton.style.display = "none";
   }
 
-  // Reset search results
+  // Reset to all items but maintain category filter
   currentPage = 1;
-  filteredItems = [...allItems];
-  displayAvailableItems(currentTradeType);
+  const sortDropdown = document.getElementById("modal-value-sort-dropdown");
+  if (sortDropdown) {
+    sortModalItems(); // This will apply the current category filter
+  } else {
+    filteredItems = [...allItems];
+    displayAvailableItems(currentTradeType);
+  }
 }
 
 // Format value for display
