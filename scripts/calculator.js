@@ -39,6 +39,177 @@ async function loadItems() {
     toastr.error("Failed to load items");
   }
 }
+// Add these to calculator.js
+
+// Helper function to get item images (copied from trading.js)
+function getItemImageElement(item) {
+  // Special handling for HyperShift
+  if (item.name === "HyperShift") {
+    return `<img src="/assets/images/items/hyperchromes/HyperShift.gif" 
+                 class="card-img-top" 
+                 alt="${item.name}">`;
+  }
+
+  if (item.type === "Drift") {
+    return `<img src="/assets/images/items/480p/drifts/${item.name}.webp" 
+                 class="card-img-top" 
+                 alt="${item.name}"
+                 onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">`;
+  }
+
+  return `<img src="/assets/images/items/480p/${item.type.toLowerCase()}s/${
+    item.name
+  }.webp" 
+               class="card-img-top" 
+               alt="${item.name}"
+               onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">`;
+}
+
+// Calculate values for each side
+function calculateSideValues(items) {
+  const cashValue = Object.values(items)
+    .filter((item) => item)
+    .reduce((sum, item) => sum + parseValue(item.cash_value || 0), 0);
+
+  const dupedValue = Object.values(items)
+    .filter((item) => item)
+    .reduce((sum, item) => sum + parseValue(item.duped_value || 0), 0);
+
+  return { cashValue, dupedValue };
+}
+
+// Render the preview items
+function renderPreviewItems(containerId, items) {
+  const container = document.getElementById(containerId);
+  const values = calculateSideValues(items);
+
+  // Count duplicates
+  const itemCounts = new Map();
+  Object.values(items)
+    .filter((item) => item)
+    .forEach((item) => {
+      const itemKey = `${item.name}-${item.type}`;
+      itemCounts.set(itemKey, (itemCounts.get(itemKey) || 0) + 1);
+    });
+
+  // Create unique items array with counts
+  const uniqueItems = [];
+  const processedKeys = new Set();
+
+  Object.values(items)
+    .filter((item) => item)
+    .forEach((item) => {
+      const itemKey = `${item.name}-${item.type}`;
+      if (!processedKeys.has(itemKey)) {
+        processedKeys.add(itemKey);
+        uniqueItems.push({
+          item,
+          count: itemCounts.get(itemKey),
+        });
+      }
+    });
+
+  const itemsHtml = uniqueItems
+    .map(
+      ({ item, count }) => `
+      <div class="preview-item">
+        <div class="preview-item-image-container">
+          ${getItemImageElement(item)}
+          ${count > 1 ? `<div class="item-multiplier">×${count}</div>` : ""}
+        </div>
+        <div class="item-name">${item.name}</div>
+      </div>
+    `
+    )
+    .join("");
+
+  const valuesHtml = `
+    <div class="side-values-summary">
+      <h6>
+        <i class="bi bi-calculator me-2"></i>
+        ${
+          containerId === "preview-offering-items" ? "Offering" : "Requesting"
+        } Totals
+      </h6>
+      <div class="side-value-row">
+        <span class="text-muted">Cash Value:</span>
+        <span class="badge" style="background-color: ${
+          containerId === "preview-offering-items" ? "#00c853" : "#2196f3"
+        }">${formatValue(values.cashValue, true)}</span>
+      </div>
+      <div class="side-value-row">
+        <span class="text-muted">Duped Value:</span>
+        <span class="badge" style="background-color: ${
+          containerId === "preview-offering-items" ? "#00c853" : "#2196f3"
+        }">${formatValue(values.dupedValue, true)}</span>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = `
+    <div class="preview-items-grid">
+      ${itemsHtml}
+    </div>
+    ${valuesHtml}
+  `;
+}
+
+// Render value differences
+function renderValueDifferences() {
+  const offerValues = calculateSideValues(offeringItems);
+  const requestValues = calculateSideValues(requestingItems);
+
+  const cashDiff = requestValues.cashValue - offerValues.cashValue;
+  const dupedDiff = requestValues.dupedValue - offerValues.dupedValue;
+
+  return `
+    <div class="value-differences">
+      <h6 class="difference-title">
+        <i class="bi bi-arrow-left-right me-2"></i>Value Differences
+      </h6>
+      <div class="difference-content">
+        <div class="difference-row">
+          <div class="difference-label">
+            <span>Cash Value Difference:</span>
+            <span class="difference-value ${
+              cashDiff >= 0 ? "positive" : "negative"
+            }">
+              ${cashDiff >= 0 ? "+" : ""}${formatValue(cashDiff, true)}
+            </span>
+          </div>
+          <div class="difference-indicator">
+            <i class="bi ${
+              cashDiff > 0
+                ? "bi-arrow-up-circle-fill text-success"
+                : cashDiff < 0
+                ? "bi-arrow-down-circle-fill text-danger"
+                : "bi-dash-circle-fill text-muted"
+            }"></i>
+          </div>
+        </div>
+        <div class="difference-row">
+          <div class="difference-label">
+            <span>Duped Value Difference:</span>
+            <span class="difference-value ${
+              dupedDiff >= 0 ? "positive" : "negative"
+            }">
+              ${dupedDiff >= 0 ? "+" : ""}${formatValue(dupedDiff, true)}
+            </span>
+          </div>
+          <div class="difference-indicator">
+            <i class="bi ${
+              dupedDiff > 0
+                ? "bi-arrow-up-circle-fill text-success"
+                : dupedDiff < 0
+                ? "bi-arrow-down-circle-fill text-danger"
+                : "bi-dash-circle-fill text-muted"
+            }"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
 
 // Add item to trade
 function addItemToTrade(item, tradeType) {
@@ -48,24 +219,59 @@ function addItemToTrade(item, tradeType) {
     return;
   }
 
-  // Check if item with same name AND type already exists
-  const isDuplicate = items.some(
-    (existingItem) =>
-      existingItem.name === item.name && existingItem.type === item.type
-  );
+  // Count actual items (not empty slots)
+  const itemCount = Object.values(items).filter((item) => item).length;
 
-  if (isDuplicate) {
-    toastr.error(`${item.name} (${item.type}) is already in your ${tradeType}`);
+  if (itemCount >= 8) {
+    toastr.warning(`Maximum of 8 items reached for ${tradeType} side`, "", {
+      timeOut: 2000,
+      closeButton: true,
+      progressBar: true,
+    });
     return;
   }
 
-  items.push(item);
+  // Track item count for multiplier display
+  const existingIndex = items.findIndex(
+    (existingItem) =>
+      existingItem &&
+      existingItem.name === item.name &&
+      existingItem.type === item.type
+  );
+
+  if (existingIndex !== -1) {
+    const nextEmptyIndex = findNextEmptySlot(items);
+    if (nextEmptyIndex !== -1) {
+      items[nextEmptyIndex] = item;
+    }
+  } else {
+    items.push(item);
+  }
+
+  // Always render trade items first
   renderTradeItems(tradeType);
   updateTradeSummary();
 
-  // Refresh current available items view if container is visible
-  if (currentTradeType) {
-    displayAvailableItems(currentTradeType);
+  // Automatically update preview
+  updatePreview();
+}
+
+function updatePreview() {
+  const previewContainer = document.getElementById("trade-preview");
+  if (!previewContainer) return;
+
+  // Always show preview container
+  previewContainer.style.display = "block";
+
+  // Update preview items
+  renderPreviewItems("preview-offering-items", offeringItems);
+  renderPreviewItems("preview-requesting-items", requestingItems);
+
+  // Update value differences
+  const valueDifferencesContainer =
+    document.getElementById("value-differences");
+  if (valueDifferencesContainer) {
+    valueDifferencesContainer.innerHTML = renderValueDifferences();
   }
 }
 
@@ -87,6 +293,7 @@ function quickAddItem(itemName, itemType) {
         items[nextEmptyIndex] = item;
         renderTradeItems(selectedTradeType);
         updateTradeSummary();
+        updatePreview(); // Add this line
       } else {
         toastr.error("No empty slots available");
       }
@@ -105,6 +312,7 @@ function quickAddItem(itemName, itemType) {
     // Update UI
     renderTradeItems(currentType);
     updateTradeSummary();
+    updatePreview(); // Add this line
   } else {
     // No placeholder selected, find first empty slot
     const items =
@@ -115,6 +323,7 @@ function quickAddItem(itemName, itemType) {
       items[emptyIndex] = item;
       renderTradeItems(currentTradeType === "offering" ? "Offer" : "Request");
       updateTradeSummary();
+      updatePreview(); // Add this line
     } else {
       toastr.error(
         `No empty slots available in ${
@@ -145,12 +354,13 @@ function findNextEmptySlot(items) {
 // Update remove item function to maintain slot positions
 function removeItem(index, tradeType) {
   const items = tradeType === "Offer" ? offeringItems : requestingItems;
-  // Instead of splicing, set the item at index to null to maintain positions
   delete items[index];
 
-  // Update UI
   renderTradeItems(tradeType);
   updateTradeSummary();
+
+  // Automatically update preview
+  updatePreview();
 }
 
 // Function to toggle available items display
@@ -208,7 +418,7 @@ function displayAvailableItems(type) {
             <div class="card-header">
               ${item.name}
             </div>
-            <img src="/assets/items/${item.type.toLowerCase()}s/${
+            <img src="/assets/images/items/480p/${item.type.toLowerCase()}s/${
         item.name
       }.webp" 
                  class="card-img-top" 
@@ -365,7 +575,6 @@ function renderEmptySlots(containerId, count) {
   container.innerHTML = html;
 }
 
-// Modified renderTradeItems function
 function renderTradeItems(tradeType) {
   const items = tradeType === "Offer" ? offeringItems : requestingItems;
   const containerId =
@@ -377,25 +586,44 @@ function renderTradeItems(tradeType) {
   // Create an array of 8 slots
   let slots = new Array(8).fill(null);
 
-  // Place items in their exact positions
+  // Count duplicates and track first position
+  const itemPositions = new Map();
+  const itemCounts = new Map();
+
+  // First pass: count items and record first position
   Object.entries(items).forEach(([index, item]) => {
-    if (item) slots[parseInt(index)] = item;
+    if (!item) return;
+    const itemKey = `${item.name}-${item.type}`;
+    if (!itemPositions.has(itemKey)) {
+      itemPositions.set(itemKey, parseInt(index));
+    }
+    itemCounts.set(itemKey, (itemCounts.get(itemKey) || 0) + 1);
   });
 
-  // Generate HTML for both items and empty slots
+  // Second pass: only keep items in their first position
+  Object.entries(items).forEach(([index, item]) => {
+    if (!item) return;
+    const itemKey = `${item.name}-${item.type}`;
+    if (parseInt(index) === itemPositions.get(itemKey)) {
+      slots[parseInt(index)] = item;
+    }
+  });
+
+  // Generate HTML
   let html = slots
     .map((item, index) => {
       if (item) {
+        const itemKey = `${item.name}-${item.type}`;
+        const count = itemCounts.get(itemKey);
         return `
         <div class="col-md-3 mb-3">
           <div class="card h-100 trade-card">
             <div class="card-img-container">
-              <img src="/assets/items/${item.type.toLowerCase()}s/${
-          item.name
-        }.webp" 
-                   class="card-img-top" 
-                   alt="${item.name}"
-                   onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">
+              ${getItemImageElement(item)}
+              ${count > 1 ? `<div class="item-multiplier">×${count}</div>` : ""}
+              <div class="remove-icon" onclick="event.stopPropagation(); removeItem(${index}, '${tradeType}')">
+                <i class="bi bi-trash"></i>
+              </div>
             </div>
             <div class="card-body">
               <h6 class="card-title">${item.name}</h6>
@@ -405,9 +633,6 @@ function renderTradeItems(tradeType) {
               <div class="value-container duped-value">
                 Duped Value: ${formatValue(item.duped_value || 0)}
               </div>
-              <button class="btn btn-danger btn-sm remove-item" onclick="removeItem(${index}, '${tradeType}')">
-                <i class="bi bi-trash"></i> Remove
-              </button>
             </div>
           </div>
         </div>`;
@@ -566,6 +791,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial renders
   renderTradeItems("Offer");
   renderTradeItems("Request");
+
+  updatePreview();
 });
 
 // Initial Render
@@ -585,38 +812,125 @@ function previewTrade() {
     return;
   }
 
-  // Hide available items container and show preview
+  // Show/hide appropriate containers
+  document.getElementById("trade-preview").style.display = "block";
   document.getElementById("available-items-list").style.display = "none";
   document.getElementById("confirm-trade-btn").style.display = "none";
-  document.getElementById("trade-preview-container").style.display = "block";
 
   // Render preview items
   renderPreviewItems("preview-offering-items", offeringItems);
   renderPreviewItems("preview-requesting-items", requestingItems);
+
+  // Update value differences
+  const valueDifferencesContainer =
+    document.getElementById("value-differences");
+  valueDifferencesContainer.innerHTML = renderValueDifferences();
 }
 
 function renderPreviewItems(containerId, items) {
   const container = document.getElementById(containerId);
-  container.innerHTML = Object.values(items)
+  const values = calculateSideValues(items);
+
+  // Count duplicates
+  const itemCounts = new Map();
+  Object.values(items)
     .filter((item) => item)
+    .forEach((item) => {
+      const itemKey = `${item.name}-${item.type}`;
+      itemCounts.set(itemKey, (itemCounts.get(itemKey) || 0) + 1);
+    });
+
+  // Create unique items array with counts
+  const uniqueItems = [];
+  const processedKeys = new Set();
+
+  Object.values(items)
+    .filter((item) => item)
+    .forEach((item) => {
+      const itemKey = `${item.name}-${item.type}`;
+      if (!processedKeys.has(itemKey)) {
+        processedKeys.add(itemKey);
+        uniqueItems.push({
+          item,
+          count: itemCounts.get(itemKey),
+        });
+      }
+    });
+
+  const itemsHtml = uniqueItems
     .map(
-      (item) => `
-      <div class="preview-item">
-        <img src="/assets/items/${item.type.toLowerCase()}s/${item.name}.webp" 
-             alt="${item.name}"
-             onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">
-        <div class="item-name">${item.name}</div>
+      ({ item, count }) => `
+      <div class="trade-ad-item">
+        <div class="trade-ad-item-content">
+          <div class="item-image-container">
+            ${getItemImageElement(item)}
+            ${count > 1 ? `<div class="item-multiplier">×${count}</div>` : ""}
+          </div>
+          <div class="item-details">
+            <div class="item-name">${item.name}</div>
+            <div class="item-values">
+              <div class="value-badge">
+                <span class="value-label">Cash Value:</span>
+                <span class="value-amount">${formatValue(
+                  item.cash_value,
+                  true
+                )}</span>
+              </div>
+              <div class="value-badge">
+                <span class="value-label">Duped Value:</span>
+                <span class="value-amount">${formatValue(
+                  item.duped_value || 0,
+                  true
+                )}</span>
+              </div>
+              <div class="value-badge">
+                <span class="value-label">Type:</span>
+                <span class="value-amount">${item.type}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     `
     )
     .join("");
+
+  const valuesHtml = `
+    <div class="side-values-summary">
+      <h6>
+        <i class="bi bi-calculator me-2"></i>
+        ${
+          containerId === "preview-offering-items" ? "Offering" : "Requesting"
+        } Totals
+      </h6>
+      <div class="side-value-row">
+        <span class="text-muted">Cash Value:</span>
+        <span class="badge" style="background-color: ${
+          containerId === "preview-offering-items" ? "#00c853" : "#2196f3"
+        }">${formatValue(values.cashValue, true)}</span>
+      </div>
+      <div class="side-value-row">
+        <span class="text-muted">Duped Value:</span>
+        <span class="badge" style="background-color: ${
+          containerId === "preview-offering-items" ? "#00c853" : "#2196f3"
+        }">${formatValue(values.dupedValue, true)}</span>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = `
+    <div class="trade-items-grid">
+      ${itemsHtml}
+    </div>
+    ${valuesHtml}
+  `;
 }
 
 function editTrade() {
   // Show available items container and hide preview
   document.getElementById("available-items-list").style.display = "block";
   document.getElementById("confirm-trade-btn").style.display = "block";
-  document.getElementById("trade-preview-container").style.display = "none";
+  document.getElementById("trade-preview").style.display = "none";
 }
 
 async function submitTrade() {
@@ -650,6 +964,6 @@ function resetTrade() {
   updateTradeSummary();
 
   // Hide preview
-  document.getElementById("trade-preview-container").style.display = "none";
+  document.getElementById("trade-preview").style.display = "none";
   document.getElementById("available-items-list").style.display = "block";
 }

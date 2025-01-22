@@ -539,7 +539,7 @@ button {
 /* Trade Cards Container */
 .trade-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr) !important;
   gap: 1rem;
   padding: 1rem;
 }
@@ -727,7 +727,6 @@ video.card-img-top {
 /* Trade Ads Grid */
 .trade-ads-grid {
   display: grid;
-  grid-template-columns: 1fr;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -1373,7 +1372,7 @@ video.card-img-top {
 
 .trade-items-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr) !important;
   gap: 8px;
   flex: 1; /* This makes the grid take up remaining space */
   min-height: 0; /* Allows flex to shrink properly */
@@ -1500,12 +1499,11 @@ video.card-img-top {
   border-radius: 8px;
   margin-bottom: 1rem;
   width: 100%;
-  max-width: 800px;
+  max-width: 1200px; /* Increased from 1000px to accommodate 4 items better */
   margin: 0 auto;
-  height: auto; /* Let height adjust naturally */
-  min-height: 150px; /* Minimum height to maintain consistency */
+  height: auto;
+  min-height: 150px;
 }
-
 /* Offering Side */
 .preview-side-offering {
   border-left: 4px solid #00c853;
@@ -1659,10 +1657,14 @@ video.card-img-top {
   font-weight: bold;
   z-index: 2;
 }
+
 .preview-items-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(
+    3,
+    1fr
+  ) !important; /* Added !important to override media queries */
+  gap: 12px;
   padding: 0.5rem;
   height: auto;
 }
@@ -1725,13 +1727,19 @@ video.card-img-top {
 /* Responsive Adjustments */
 @media (max-width: 1200px) {
   .preview-items-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ) !important; /* Keep 3 per row on large screens */
   }
 }
 
 @media (max-width: 992px) {
   .preview-items-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ) !important; /* 4 per row on medium screens */
   }
 
   .trade-preview {
@@ -1742,7 +1750,7 @@ video.card-img-top {
 /* Responsive adjustments */
 @media (max-width: 1200px) {
   .trade-items-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr) !important;
   }
 }
 
@@ -1918,10 +1926,8 @@ video.card-img-top {
   }
 
   .preview-items-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 items per row on mobile */
+    grid-template-columns: repeat(2, 1fr) !important; /* 2 per row on mobile */
     gap: 8px;
-    padding: 0.5rem;
   }
 
   .preview-item {
@@ -2249,6 +2255,7 @@ video.card-img-top {
   .trade-items-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .preview-items-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;

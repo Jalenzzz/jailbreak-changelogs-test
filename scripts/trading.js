@@ -1259,7 +1259,6 @@ async function loadTradeAds() {
   try {
     const tradeAdsSection = document.querySelector(".trade-ads-section");
     if (!tradeAdsSection) {
-      console.error("Trade ads section not found");
       return;
     }
 
