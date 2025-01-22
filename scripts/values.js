@@ -252,8 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
     if (valueSortType === "demand-asc" || valueSortType === "demand-desc") {
-      console.log("Starting demand sort:", valueSortType);
-
       // Demand order from lowest to highest
       const demandOrder = [
         "Close to none",
@@ -488,12 +486,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       );
       allItems = await response.json();
-      console.log(
-        "Unique demand values in dataset:",
-        [...new Set(allItems.map((item) => item.demand))]
-          .filter((demand) => demand !== null)
-          .sort()
-      );
 
       // Preload drift thumbnails
       const driftItems = allItems.filter((item) => item.type === "Drift");

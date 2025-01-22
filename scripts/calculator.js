@@ -18,12 +18,16 @@ let currentPage = 1;
 let filteredItems = [];
 
 // Fetch all items on load
+// Fetch all items on load
 async function loadItems() {
   try {
     const response = await fetch(
       "https://api3.jailbreakchangelogs.xyz/items/list"
     );
     allItems = await response.json();
+
+    // Initialize filteredItems with all items
+    filteredItems = [...allItems];
 
     currentTradeType = "offering";
 
@@ -32,37 +36,48 @@ async function loadItems() {
       button.dataset.active = (button.dataset.type === "offering").toString();
     });
 
-    displayAvailableItems("offering");
+    // Sort items initially by name-all-items
+    const sortDropdown = document.getElementById("modal-value-sort-dropdown");
+    if (sortDropdown) {
+      sortDropdown.value = "name-all-items";
+      sortModalItems(); // This will trigger the initial sort and display
+    } else {
+      // If dropdown isn't available, just display items
+      displayAvailableItems("offering");
+    }
+
     displayAvailableItems("requesting");
   } catch (error) {
     console.error("Error loading items:", error);
     toastr.error("Failed to load items");
   }
 }
-// Add these to calculator.js
 
 // Helper function to get item images (copied from trading.js)
 function getItemImageElement(item) {
   // Special handling for HyperShift
   if (item.name === "HyperShift") {
     return `<img src="/assets/images/items/hyperchromes/HyperShift.gif" 
-                 class="card-img-top" 
-                 alt="${item.name}">`;
+                 class="card-img-top w-100 h-100 object-fit-cover"
+                 alt="${item.name}"
+                 onload="this.parentElement.previousElementSibling.style.display='none'">`;
   }
 
   if (item.type === "Drift") {
     return `<img src="/assets/images/items/480p/drifts/${item.name}.webp" 
-                 class="card-img-top" 
+                 class="card-img-top w-100 h-100 object-fit-cover"
                  alt="${item.name}"
-                 onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">`;
+                 onload="this.parentElement.previousElementSibling.style.display='none'"
+                 onerror="this.onerror=null; this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">`;
   }
 
   return `<img src="/assets/images/items/480p/${item.type.toLowerCase()}s/${
     item.name
   }.webp" 
-               class="card-img-top" 
+               class="card-img-top w-100 h-100 object-fit-cover"
                alt="${item.name}"
-               onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">`;
+               onload="this.parentElement.previousElementSibling.style.display='none'"
+               onerror="this.onerror=null; this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">`;
 }
 
 // Calculate values for each side
@@ -250,7 +265,6 @@ function addItemToTrade(item, tradeType) {
 
   // Always render trade items first
   renderTradeItems(tradeType);
- 
 
   // Automatically update preview
   updatePreview();
@@ -292,7 +306,7 @@ function quickAddItem(itemName, itemType) {
       if (nextEmptyIndex !== -1) {
         items[nextEmptyIndex] = item;
         renderTradeItems(selectedTradeType);
-   
+
         updatePreview(); // Add this line
       } else {
         toastr.error("No empty slots available");
@@ -311,7 +325,7 @@ function quickAddItem(itemName, itemType) {
 
     // Update UI
     renderTradeItems(currentType);
-    
+
     updatePreview(); // Add this line
   } else {
     // No placeholder selected, find first empty slot
@@ -322,7 +336,7 @@ function quickAddItem(itemName, itemType) {
     if (emptyIndex !== -1) {
       items[emptyIndex] = item;
       renderTradeItems(currentTradeType === "offering" ? "Offer" : "Request");
-    
+
       updatePreview(); // Add this line
     } else {
       toastr.error(
@@ -351,13 +365,71 @@ function findNextEmptySlot(items) {
   return -1;
 }
 
-// Update remove item function to maintain slot positions
+function sortModalItems() {
+  const valueSortDropdown = document.getElementById(
+    "modal-value-sort-dropdown"
+  );
+  if (!valueSortDropdown) {
+    console.error("Sort dropdown not found!");
+    return;
+  }
+
+  const sortValue = valueSortDropdown.value;
+
+  // Parse sort parameters
+  const [sortType, ...categoryParts] = sortValue.split("-");
+  const category = categoryParts.join("-");
+
+  // Start with all items if filteredItems is empty
+  let filtered = filteredItems.length > 0 ? [...filteredItems] : [...allItems];
+
+  // Apply category filter
+  if (category === "limited-items") {
+    filtered = filtered.filter((item) => item.is_limited);
+  } else if (category !== "all-items") {
+    const typeMap = {
+      vehicles: "Vehicle",
+      spoilers: "Spoiler",
+      rims: "Rim",
+      "body-colors": "Body Color",
+      hyperchromes: "HyperChrome",
+      textures: "Texture",
+      "tire-stickers": "Tire Sticker",
+      "tire-styles": "Tire Style",
+      drifts: "Drift",
+      furnitures: "Furniture",
+    };
+
+    const targetType = typeMap[category];
+
+    if (targetType) {
+      filtered = filtered.filter((item) => item.type === targetType);
+    }
+  }
+
+  // Sort items
+  filtered.sort((a, b) => {
+    if (sortType === "value") {
+      const aValue = parseFloat(a.cash_value) || 0;
+      const bValue = parseFloat(b.cash_value) || 0;
+      return bValue - aValue; // Sort high to low
+    } else {
+      // Default to name sort
+      return a.name.localeCompare(b.name);
+    }
+  });
+
+  // Update filteredItems and display
+  filteredItems = filtered;
+  currentPage = 1;
+  displayAvailableItems(currentTradeType);
+}
+
 function removeItem(index, tradeType) {
   const items = tradeType === "Offer" ? offeringItems : requestingItems;
   delete items[index];
 
   renderTradeItems(tradeType);
-
 
   // Automatically update preview
   updatePreview();
@@ -391,15 +463,34 @@ function toggleAvailableItems(type) {
   displayAvailableItems(type);
 }
 
-// Replace displayAvailableItems function
 function displayAvailableItems(type) {
   const container = document.getElementById("modal-available-items-list");
   const searchInput = document.getElementById("modal-item-search");
-  const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
 
-  filteredItems = allItems.filter((item) => {
-    return item.name.toLowerCase().includes(searchTerm);
-  });
+  if (searchInput) {
+    setTimeout(() => {
+      searchInput.focus();
+    }, 500);
+  }
+
+  // Get the current category from the dropdown
+  const sortDropdown = document.getElementById("modal-value-sort-dropdown");
+  const selectedOption = sortDropdown
+    ? sortDropdown.options[sortDropdown.selectedIndex].text
+    : "All Items";
+
+  // Show no results message if no items match
+  if (filteredItems.length === 0) {
+    container.innerHTML = `
+      <div class="col-12 text-center py-4">
+        <div class="no-results">
+          <i class="bi bi-search mb-2" style="font-size: 2rem;"></i>
+          <p class="mb-0">No ${selectedOption} found</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
 
   const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -408,43 +499,59 @@ function displayAvailableItems(type) {
 
   renderPagination(totalPages, type);
 
-  container.innerHTML = itemsToDisplay
-    .map(
-      (item) => `
-        <div class="col-custom-5">
-          <div class="card available-item-card" 
-               onclick="quickAddItem('${item.name}', '${item.type}')"
-               data-bs-dismiss="modal">
-            <div class="card-header">
-              ${item.name}
-            </div>
-            <img src="/assets/images/items/480p/${item.type.toLowerCase()}s/${
-        item.name
-      }.webp" 
-                 class="card-img-top" 
-                 alt="${item.name}"
-                 onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">
-            <div class="card-body">
-              <div class="info-row">
-                <span class="info-label">Type:</span>
-                <span class="info-value">${item.type}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Cash Value:</span>
-                <span class="info-value">${formatValue(item.cash_value)}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Duped Value:</span>
-                <span class="info-value">${formatValue(
-                  item.duped_value || 0
-                )}</span>
-              </div>
+  // Add count display
+  const countDisplay = `
+    <div class="items-count-display mb-3">
+      Showing ${startIndex + 1}-${Math.min(
+    endIndex,
+    filteredItems.length
+  )} of ${filteredItems.length} items
+    </div>
+  `;
+
+  container.innerHTML =
+    countDisplay +
+    itemsToDisplay
+      .map(
+        (item) => `
+    <div class="col-custom-5">
+      <div class="card available-item-card" 
+           onclick="quickAddItem('${item.name}', '${item.type}')"
+           data-bs-dismiss="modal">
+        <div class="card-header">
+          ${item.name}
+        </div>
+        <div class="position-relative" style="aspect-ratio: 16/9; overflow: hidden;">
+          <div class="spinner-container position-absolute top-50 start-50 translate-middle">
+            <div class="spinner-border custom-spinner" role="status">
+              <span class="visually-hidden">Loading...</span>
             </div>
           </div>
+          <div class="item-image-wrapper" style="width: 100%; height: 100%;">
+            ${getItemImageElement(item)}
+          </div>
         </div>
-      `
-    )
-    .join("");
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-label">Type:</span>
+            <span class="info-value">${item.type}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Cash Value:</span>
+            <span class="info-value">${formatValue(item.cash_value)}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Duped Value:</span>
+            <span class="info-value">${formatValue(
+              item.duped_value || 0
+            )}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+      )
+      .join("");
 }
 
 // Update renderPagination function to use modal elements
@@ -504,10 +611,10 @@ let selectedTradeType = null;
 // Function to create empty placeholder cards
 function createPlaceholderCard(index, tradeType) {
   return `
-    <div class="col-md-3 mb-3">
-      <div class="card h-100 trade-card empty-slot" 
-           onclick="handlePlaceholderClick(${index}, '${tradeType}')">
-        <div class="card-img-container">
+    <div class="col-md-3 col-6 mb-3">
+      <div class="trade-card-wrapper">
+        <div class="trade-card empty-slot" 
+             onclick="handlePlaceholderClick(${index}, '${tradeType}')">
           <div class="empty-slot-content">
             <i class="bi bi-plus-circle"></i>
             <span>Empty Slot</span>
@@ -520,8 +627,6 @@ function createPlaceholderCard(index, tradeType) {
 
 // Update handlePlaceholderClick function
 function handlePlaceholderClick(index, tradeType) {
-  console.log("Placeholder clicked:", { index, tradeType });
-
   // Remove selected state from all slots
   document.querySelectorAll(".trade-card.empty-slot").forEach((slot) => {
     slot.classList.remove("selected");
@@ -533,11 +638,6 @@ function handlePlaceholderClick(index, tradeType) {
   // Update the global selection state
   selectedPlaceholderIndex = index;
   selectedTradeType = tradeType;
-
-  console.log("Updated selection state:", {
-    selectedPlaceholderIndex,
-    selectedTradeType,
-  });
 
   // Update modal title
   const modalTitle = document.getElementById("availableItemsModalLabel");
@@ -616,26 +716,25 @@ function renderTradeItems(tradeType) {
         const itemKey = `${item.name}-${item.type}`;
         const count = itemCounts.get(itemKey);
         return `
-        <div class="col-md-3 mb-3">
-          <div class="card h-100 trade-card">
-            <div class="card-img-container">
-              ${getItemImageElement(item)}
-              ${count > 1 ? `<div class="item-multiplier">×${count}</div>` : ""}
-              <div class="remove-icon" onclick="event.stopPropagation(); removeItem(${index}, '${tradeType}')">
-                <i class="bi bi-trash"></i>
+          <div class="col-md-3 col-6 mb-3">
+            <div class="trade-card">
+              <div class="card-img-container">
+                ${getItemImageElement(item)}
+                ${
+                  count > 1
+                    ? `<div class="item-multiplier">×${count}</div>`
+                    : ""
+                }
+                <div class="remove-icon" onclick="event.stopPropagation(); removeItem(${index}, '${tradeType}')">
+                  <i class="bi bi-trash"></i>
+                </div>
+              </div>
+              <div class="trade-card-info">
+                <div class="item-name">${item.name}</div>
+                <div class="item-type">${item.type}</div>
               </div>
             </div>
-            <div class="card-body">
-              <h6 class="card-title">${item.name}</h6>
-              <div class="value-container cash-value">
-                Cash Value: ${formatValue(item.cash_value)}
-              </div>
-              <div class="value-container duped-value">
-                Duped Value: ${formatValue(item.duped_value || 0)}
-              </div>
-            </div>
-          </div>
-        </div>`;
+          </div>`;
       } else {
         return createPlaceholderCard(index, tradeType);
       }
@@ -766,7 +865,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const pendingTrade = localStorage.getItem("pendingTrade");
   if (pendingTrade) {
     try {
-      console.log("Restoring pending trade after auth");
       const { side1, side2 } = JSON.parse(pendingTrade);
       // Restore trade items
       side1.forEach((item) => addItemToTrade(item, "Offer"));
@@ -775,7 +873,6 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.removeItem("pendingTrade");
       // Show preview if returning from auth
       if (isReturnFromAuth) {
-        console.log("Showing trade preview");
         previewTrade();
       }
     } catch (err) {
@@ -962,8 +1059,14 @@ function resetTrade() {
   renderTradeItems("Offer");
   renderTradeItems("Request");
 
-
   // Hide preview
   document.getElementById("trade-preview").style.display = "none";
   document.getElementById("available-items-list").style.display = "block";
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const sortDropdown = document.getElementById("modal-value-sort-dropdown");
+  if (sortDropdown) {
+    sortDropdown.addEventListener("change", sortModalItems);
+  }
+});

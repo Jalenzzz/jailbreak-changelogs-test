@@ -542,7 +542,6 @@ function toggleAvailableItems(type) {
   // Display available items
   displayAvailableItems(type);
 }
-
 function displayAvailableItems(type) {
   const container = document.getElementById("modal-available-items-list");
   const searchInput = document.getElementById("modal-item-search");
@@ -551,17 +550,6 @@ function displayAvailableItems(type) {
     setTimeout(() => {
       searchInput.focus();
     }, 500);
-  }
-
-  const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
-
-  // Reset filtered items to all items before applying new search
-  if (searchTerm) {
-    filteredItems = allItems.filter((item) =>
-      item.name.toLowerCase().includes(searchTerm)
-    );
-  } else {
-    filteredItems = [...allItems];
   }
 
   // Get the current category from the dropdown
@@ -576,22 +564,38 @@ function displayAvailableItems(type) {
       <div class="col-12 text-center py-4">
         <div class="no-results">
           <i class="bi bi-search mb-2" style="font-size: 2rem;"></i>
-          <p class="mb-0">No ${selectedOption} found matching "${searchTerm}"</p>
+          <p class="mb-0">No ${selectedOption} found</p>
         </div>
       </div>
     `;
     return;
   }
 
+  // Use filteredItems.length instead of allItems.length for pagination
   const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
+
+  // Use filteredItems directly instead of filtering again
   const itemsToDisplay = filteredItems.slice(startIndex, endIndex);
 
   renderPagination(totalPages, type);
-  container.innerHTML = itemsToDisplay
-    .map((item) => {
-      return `
+
+  // Add a count display
+  const countDisplay = `
+    <div class="items-count-display mb-3">
+      Showing ${startIndex + 1}-${Math.min(
+    endIndex,
+    filteredItems.length
+  )} of ${filteredItems.length} items
+    </div>
+  `;
+
+  container.innerHTML =
+    countDisplay +
+    itemsToDisplay
+      .map((item) => {
+        return `
         <div class="col-custom-5">
           <div class="card available-item-card" 
                onclick="quickAddItem('${item.name}', '${item.type}')"
@@ -638,8 +642,8 @@ function displayAvailableItems(type) {
           </div>
         </div>
       `;
-    })
-    .join("");
+      })
+      .join("");
 }
 
 // Helper function to get the correct image URL based on item type
@@ -656,36 +660,28 @@ function getItemImageUrl(item) {
     item.name
   }.webp`;
 }
-
 function sortModalItems() {
   const valueSortDropdown = document.getElementById(
     "modal-value-sort-dropdown"
   );
+  if (!valueSortDropdown) {
+    console.error("Sort dropdown not found!");
+    return;
+  }
+
   const sortValue = valueSortDropdown.value;
 
-  // Extract category from sort value
-  const parts = sortValue.split("-");
-  const itemType = parts.slice(1).join("-");
+  // Parse sort parameters
+  const [sortType, ...categoryParts] = sortValue.split("-");
+  const category = categoryParts.join("-");
 
-  // First filter by category
-  if (itemType === "all-items") {
-    filteredItems = [...allItems];
-    // Shuffle the array using Fisher-Yates algorithm
-    for (let i = filteredItems.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [filteredItems[i], filteredItems[j]] = [
-        filteredItems[j],
-        filteredItems[i],
-      ];
-    }
-  } else if (itemType === "limited-items") {
-    filteredItems = allItems.filter((item) => {
-      return item.is_limited;
-    });
-    // Sort limited items by name
-    filteredItems.sort((a, b) => a.name.localeCompare(b.name));
-  } else {
-    // Convert type names to match the API format
+  // Start with all items
+  let filtered = [...allItems];
+
+  // Apply category filter
+  if (category === "limited-items") {
+    filtered = filtered.filter((item) => item.is_limited);
+  } else if (category !== "all-items") {
     const typeMap = {
       vehicles: "Vehicle",
       spoilers: "Spoiler",
@@ -699,18 +695,47 @@ function sortModalItems() {
       furnitures: "Furniture",
     };
 
-    const targetType = typeMap[itemType] || itemType;
+    const targetType = typeMap[category];
 
-    filteredItems = allItems.filter((item) => {
-      return item.type === targetType;
-    });
-    // Sort filtered items by name
-    filteredItems.sort((a, b) => a.name.localeCompare(b.name));
+    if (targetType) {
+      filtered = filtered.filter((item) => item.type === targetType);
+    }
   }
 
-  // Reset to first page and display filtered items
+  filtered.sort((a, b) => {
+    if (sortType === "value") {
+      // Convert values to numbers for comparison
+      const aValue = parseFloat(a.cash_value) || 0;
+      const bValue = parseFloat(b.cash_value) || 0;
+      return bValue - aValue; // Sort high to low
+    } else {
+      // Default to name sort
+      return a.name.localeCompare(b.name);
+    }
+  });
+
+  // Update filtered items
+  filteredItems = filtered;
   currentPage = 1;
+
+  // Display the results
   displayAvailableItems(currentTradeType);
+}
+
+// Helper function to parse values (add if not exists)
+function parseValue(value) {
+  if (typeof value === "number") return value;
+  if (!value || value === "N/A") return 0;
+
+  const numStr = value.toString().toLowerCase();
+  if (numStr.includes("k")) {
+    return parseFloat(numStr) * 1000;
+  } else if (numStr.includes("m")) {
+    return parseFloat(numStr) * 1000000;
+  } else if (numStr.includes("b")) {
+    return parseFloat(numStr) * 1000000000;
+  }
+  return parseFloat(numStr) || 0;
 }
 
 // Update renderPagination function to use modal elements
@@ -2155,12 +2180,6 @@ async function createTradeAd() {
       const searchInput = document.getElementById("modal-item-search");
       if (searchInput) {
         searchInput.value = "";
-      }
-
-      // Reset sort dropdown
-      const sortDropdown = document.getElementById("modal-value-sort-dropdown");
-      if (sortDropdown) {
-        sortDropdown.value = "name-all-items";
       }
 
       // Reset filtered items to show all items
