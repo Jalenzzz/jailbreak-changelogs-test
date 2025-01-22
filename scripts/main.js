@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-function formatTimestamp(unixTimestamp) {
+function formatStamp(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   return date.toUTCString();
 }
@@ -65,7 +65,7 @@ function checkWebsiteVersion() {
     .then((data) => {
       const transformedData = {
         version: data.version,
-        date: formatTimestamp(data.last_updated),
+        date: formatStamp(data.last_updated),
       };
       updateVersionDisplay(transformedData);
     })

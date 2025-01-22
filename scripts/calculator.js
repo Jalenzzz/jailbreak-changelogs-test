@@ -124,17 +124,37 @@ function renderPreviewItems(containerId, items) {
       }
     });
 
+  // In both calculator.js and trading.js, update the itemsHtml section in renderPreviewItems:
   const itemsHtml = uniqueItems
     .map(
       ({ item, count }) => `
-      <div class="preview-item">
-        <div class="preview-item-image-container">
-          ${getItemImageElement(item)}
-          ${count > 1 ? `<div class="item-multiplier">×${count}</div>` : ""}
-        </div>
-        <div class="item-name">${item.name}</div>
+    <div class="preview-item" 
+         data-bs-toggle="tooltip" 
+         data-bs-placement="top" 
+         title="Limited: ${item.is_limited ? "Yes" : "No"} | Demand: ${
+        item.demand || "N/A"
+      }">
+      <div class="preview-item-image-container">
+        ${getItemImageElement(item)}
+        ${count > 1 ? `<div class="item-multiplier">×${count}</div>` : ""}
       </div>
-    `
+      <div class="item-name">
+        ${item.name}
+        ${
+          item.is_limited
+            ? '<i class="bi bi-star-fill text-warning ms-1"></i>'
+            : ""
+        }
+      </div>
+      <div class="item-details">
+        <div class="demand-indicator demand-${(
+          item.demand || "0"
+        ).toLowerCase()}">
+          Demand: ${item.demand || "N/A"}
+        </div>
+      </div>
+    </div>
+  `
     )
     .join("");
 
@@ -514,42 +534,56 @@ function displayAvailableItems(type) {
     itemsToDisplay
       .map(
         (item) => `
-    <div class="col-custom-5">
-      <div class="card available-item-card" 
-           onclick="quickAddItem('${item.name}', '${item.type}')"
-           data-bs-dismiss="modal">
-        <div class="card-header">
-          ${item.name}
-        </div>
-        <div class="position-relative" style="aspect-ratio: 16/9; overflow: hidden;">
-          <div class="spinner-container position-absolute top-50 start-50 translate-middle">
-            <div class="spinner-border custom-spinner" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-          </div>
-          <div class="item-image-wrapper" style="width: 100%; height: 100%;">
-            ${getItemImageElement(item)}
+  <div class="col-custom-5">
+    <div class="card available-item-card" 
+         onclick="quickAddItem('${item.name}', '${item.type}')"
+         data-bs-dismiss="modal">
+      <div class="card-header">
+        ${item.name}
+      </div>
+      <div class="position-relative" style="aspect-ratio: 16/9; overflow: hidden;">
+        <div class="spinner-container position-absolute top-50 start-50 translate-middle">
+          <div class="spinner-border custom-spinner" role="status">
+            <span class="visually-hidden">Loading...</span>
           </div>
         </div>
-        <div class="card-body">
-          <div class="info-row">
-            <span class="info-label">Type:</span>
-            <span class="info-value">${item.type}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Cash Value:</span>
-            <span class="info-value">${formatValue(item.cash_value)}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Duped Value:</span>
-            <span class="info-value">${formatValue(
-              item.duped_value || 0
-            )}</span>
-          </div>
+        <div class="item-image-wrapper" style="width: 100%; height: 100%;">
+          ${getItemImageElement(item)}
+        </div>
+      </div>
+     <div class="card-body">
+        <div class="info-row">
+          <span class="info-label">Type:</span>
+          <span class="info-value">${item.type}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Cash Value:</span>
+          <span class="info-value">${formatValue(item.cash_value)}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Duped Value:</span>
+          <span class="info-value">${formatValue(item.duped_value || 0)}</span>
+        </div>
+        <div class="info-row ${item.is_limited ? "limited-item" : ""}">
+          <span class="info-label">Limited:</span>
+          <span class="info-value">
+            ${
+              item.is_limited
+                ? '<i class="bi bi-star-fill text-warning me-1"></i>Yes'
+                : "No"
+            }
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Demand:</span>
+          <span class="info-value demand-${(
+            item.demand || "0"
+          ).toLowerCase()}">${item.demand || "N/A"}</span>
         </div>
       </div>
     </div>
-  `
+  </div>
+`
       )
       .join("");
 }

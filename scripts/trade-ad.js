@@ -144,6 +144,55 @@ function parseValue(value) {
   return parseFloat(value) || 0;
 }
 
+// Function to create item HTML
+function createItemHTML(item, count) {
+  return `
+    <div class="trade-ad-item">
+      <div class="trade-ad-item-content">
+        <div class="item-image-container">
+          ${getItemImageElement(item)}
+          ${count > 1 ? `<div class="item-multiplier">×${count}</div>` : ""}
+        </div>
+        <div class="item-details">
+          <div class="item-name">
+            ${item.name}
+            ${
+              item.is_limited
+                ? '<i class="bi bi-star-fill text-warning ms-1"></i>'
+                : ""
+            }
+          </div>
+          <div class="item-values">
+            <div class="value-badge">
+              <span class="value-label">Cash Value:</span>
+              <span class="value-amount">${formatValue(
+                item.cash_value,
+                true
+              )}</span>
+            </div>
+            <div class="value-badge">
+              <span class="value-label">Duped Value:</span>
+              <span class="value-amount">${formatValue(
+                item.duped_value,
+                true
+              )}</span>
+            </div>
+            <div class="value-badge">
+              <span class="value-label">Type:</span>
+              <span class="value-amount">${item.type}</span>
+            </div>
+            <div class="value-badge demand-badge">
+              <span class="value-label">Demand:</span>
+              <span class="value-amount demand-${(
+                item.demand || "0"
+              ).toLowerCase()}">${item.demand || "N/A"}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
 // Function to fetch and process trade data
 async function loadTradeData() {
   showLoadingOverlay();
@@ -265,91 +314,16 @@ async function loadTradeData() {
     // Render offering items
     const offeringGrid = document.querySelector(".offering .trade-items-grid");
     offeringGrid.innerHTML = offeringItems
-      .map((item, index) => {
-        const count = itemCounts[item.id];
-        return `
-            <div class="trade-ad-item">
-              <div class="trade-ad-item-content">
-                <div class="item-image-container">
-                  ${getItemImageElement(item)}
-                  ${
-                    count > 1
-                      ? `<div class="item-multiplier">×${count}</div>`
-                      : ""
-                  }
-                </div>
-                <div class="item-details">
-                  <div class="item-name">${item.name}</div>
-                  <div class="item-values">
-                    <div class="value-badge">
-                      <span class="value-label">Cash Value:</span>
-                      <span class="value-amount">${formatValue(
-                        item.cash_value,
-                        true
-                      )}</span>
-                    </div>
-                    <div class="value-badge">
-                      <span class="value-label">Duped Value:</span>
-                      <span class="value-amount">${formatValue(
-                        item.duped_value,
-                        true
-                      )}</span>
-                    </div>
-                    <div class="value-badge">
-                      <span class="value-label">Type:</span>
-                      <span class="value-amount">${item.type}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>`;
-      })
+      .map((item) => createItemHTML(item, itemCounts[item.id]))
       .join("");
 
     // Render requesting items
     const requestingGrid = document.querySelector(
       ".requesting .trade-items-grid"
     );
+
     requestingGrid.innerHTML = requestingItems
-      .map((item, index) => {
-        const count = itemCounts[item.id];
-        return `
-            <div class="trade-ad-item">
-              <div class="trade-ad-item-content">
-                <div class="item-image-container">
-                  ${getItemImageElement(item)}
-                  ${
-                    count > 1
-                      ? `<div class="item-multiplier">×${count}</div>`
-                      : ""
-                  }
-                </div>
-                <div class="item-details">
-                  <div class="item-name">${item.name}</div>
-                  <div class="item-values">
-                    <div class="value-badge">
-                      <span class="value-label">Cash Value:</span>
-                      <span class="value-amount">${formatValue(
-                        item.cash_value,
-                        true
-                      )}</span>
-                    </div>
-                    <div class="value-badge">
-                      <span class="value-label">Duped Value:</span>
-                      <span class="value-amount">${formatValue(
-                        item.duped_value,
-                        true
-                      )}</span>
-                    </div>
-                    <div class="value-badge">
-                      <span class="value-label">Type:</span>
-                      <span class="value-amount">${item.type}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>`;
-      })
+      .map((item) => createItemHTML(item, itemCounts[item.id]))
       .join("");
 
     document.querySelector(".offering .side-total").innerHTML = `

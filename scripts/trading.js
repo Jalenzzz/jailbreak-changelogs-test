@@ -114,8 +114,10 @@ function initializeBottomSheet() {
   const bottomSheet = document.createElement("div");
   bottomSheet.className = "bottom-sheet";
   bottomSheet.innerHTML = `
-    <div class="bottom-sheet-drag-handle"></div>
     <div class="bottom-sheet-header">
+      <button type="button" class="bottom-sheet-close">
+        <i class="bi bi-x-lg"></i>
+      </button>
       <h3 class="bottom-sheet-title"></h3>
     </div>
     <div class="bottom-sheet-content"></div>
@@ -124,63 +126,109 @@ function initializeBottomSheet() {
   const backdrop = document.createElement("div");
   backdrop.className = "bottom-sheet-backdrop";
 
+  // Add click event to backdrop
+  backdrop.addEventListener("click", hideBottomSheet);
+
+  // Add click event to close button
+  const closeButton = bottomSheet.querySelector(".bottom-sheet-close");
+  closeButton.addEventListener("click", (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    hideBottomSheet();
+  });
+
   document.body.appendChild(backdrop);
   document.body.appendChild(bottomSheet);
 
-  backdrop.addEventListener("click", hideBottomSheet);
+  // Only handle touch events on the header area excluding the close button
+  const bottomSheetHeader = bottomSheet.querySelector(".bottom-sheet-header");
+  bottomSheetHeader.addEventListener(
+    "touchstart",
+    (e) => {
+      if (!e.target.closest(".bottom-sheet-close")) {
+        handleTouchStart(e);
+      }
+    },
+    { passive: false }
+  );
 
-  bottomSheet.addEventListener("touchstart", handleTouchStart, {
-    passive: false,
+  bottomSheetHeader.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!e.target.closest(".bottom-sheet-close")) {
+        handleTouchMove(e);
+      }
+    },
+    { passive: false }
+  );
+
+  bottomSheetHeader.addEventListener("touchend", (e) => {
+    if (!e.target.closest(".bottom-sheet-close")) {
+      handleTouchEnd(e);
+    }
   });
-  bottomSheet.addEventListener("touchmove", handleTouchMove, {
-    passive: false,
-  });
-  bottomSheet.addEventListener("touchend", handleTouchEnd);
 
   return { bottomSheet, backdrop };
-}
-
-function handleTouchStart(e) {
-  if (e.target.closest(".bottom-sheet-content")) {
-    // Allow scrolling inside content area
-    return;
-  }
-  e.preventDefault(); // Prevent default only for drag handle area
-  const bottomSheet = e.currentTarget;
-  startY = e.touches[0].clientY;
-  initialTransform = getTransformValue(bottomSheet);
-  bottomSheet.style.transition = "none";
-}
-
-function handleTouchMove(e) {
-  if (e.target.closest(".bottom-sheet-content")) {
-    // Allow scrolling inside content area
-    return;
-  }
-  e.preventDefault();
-  const bottomSheet = e.currentTarget;
-  currentY = e.touches[0].clientY;
-  const deltaY = currentY - startY;
-  const newTransform = Math.min(0, initialTransform - deltaY);
-  bottomSheet.style.transform = `translateY(${newTransform}px)`;
-}
-
-function handleTouchEnd(e) {
-  const bottomSheet = e.currentTarget;
-  bottomSheet.style.transition = "transform 0.3s ease-out";
-  const transformValue = getTransformValue(bottomSheet);
-
-  // If dragged down more than 20% of the sheet height, dismiss it
-  if (transformValue > -window.innerHeight * 0.8) {
-    hideBottomSheet();
-  } else {
-    bottomSheet.style.transform = "translateY(-95%)";
-  }
 }
 
 function getTransformValue(element) {
   const transform = element.style.transform;
   return transform ? parseInt(transform.match(/-?\d+/)[0]) : 0;
+}
+
+function handleTouchStart(e) {
+  // Only handle touch events on the header
+  if (!e.target.closest(".bottom-sheet-header")) {
+    return;
+  }
+
+  console.log("Touch Start:", {
+    target: e.target,
+    clientY: e.touches[0].clientY,
+  });
+
+  e.preventDefault();
+  startY = e.touches[0].clientY;
+  const bottomSheet = document.querySelector(".bottom-sheet");
+  initialTransform = getTransformValue(bottomSheet);
+  bottomSheet.style.transition = "none";
+}
+
+function handleTouchMove(e) {
+  // Only handle touch events on the header
+  if (!e.target.closest(".bottom-sheet-header")) {
+    return;
+  }
+
+  const bottomSheet = document.querySelector(".bottom-sheet");
+  currentY = e.touches[0].clientY;
+  const deltaY = currentY - startY;
+
+  // Only allow dragging down, not up
+  if (deltaY < 0) {
+    return;
+  }
+
+  console.log("Touch Move:", {
+    deltaY,
+    currentY,
+  });
+
+  e.preventDefault();
+  bottomSheet.style.transform = `translateY(${deltaY}px)`;
+}
+
+function handleTouchEnd(e) {
+  const bottomSheet = document.querySelector(".bottom-sheet");
+  const deltaY = currentY - startY;
+
+  bottomSheet.style.transition = "transform 0.3s ease-out";
+
+  // Close sheet if dragged down more than 100px
+  if (deltaY > 100) {
+    hideBottomSheet();
+  } else {
+    bottomSheet.style.transform = "translateY(0)";
+  }
 }
 
 function showBottomSheet(item) {
@@ -193,9 +241,12 @@ function showBottomSheet(item) {
       }
     : initializeBottomSheet();
 
+  // Just add the class to prevent scrolling
+  document.body.classList.add("bottom-sheet-open");
+
   bottomSheet.querySelector(".bottom-sheet-title").textContent = item.name;
   bottomSheet.querySelector(".bottom-sheet-content").innerHTML = `
-    <div class="item-image-container mb-3">
+    <div class="item-image-container">
       ${getItemImageElement(item)}
     </div>
     <div class="bottom-sheet-value">
@@ -218,7 +269,6 @@ function showBottomSheet(item) {
 
   backdrop.classList.add("show");
   bottomSheet.classList.add("show");
-
   activeBottomSheet = bottomSheet;
 }
 
@@ -227,8 +277,18 @@ function hideBottomSheet() {
   const backdrop = document.querySelector(".bottom-sheet-backdrop");
 
   if (bottomSheet && backdrop) {
-    bottomSheet.classList.remove("show");
+    // Remove the class to restore scrolling
+    document.body.classList.remove("bottom-sheet-open");
+
+    // Hide the sheet
+    bottomSheet.style.transform = "translateY(100%)";
     backdrop.classList.remove("show");
+
+    // Remove elements after animation
+    setTimeout(() => {
+      bottomSheet.remove();
+      backdrop.remove();
+    }, 300);
 
     activeBottomSheet = null;
   }
@@ -591,57 +651,68 @@ function displayAvailableItems(type) {
     </div>
   `;
 
+  // Find the card-body section and add the new fields
   container.innerHTML =
     countDisplay +
     itemsToDisplay
       .map((item) => {
         return `
-        <div class="col-custom-5">
-          <div class="card available-item-card" 
-               onclick="quickAddItem('${item.name}', '${item.type}')"
-               data-bs-dismiss="modal">
-            <div class="card-header">
-              ${item.name}
-            </div>
-            <div class="position-relative" style="aspect-ratio: 16/9;">
-              <div class="position-absolute top-50 start-50 translate-middle spinner-container">
-                <div class="spinner-border custom-spinner" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
+      <div class="col-custom-5">
+        <div class="card available-item-card" 
+             onclick="quickAddItem('${item.name}', '${item.type}')"
+             data-bs-dismiss="modal">
+          <div class="card-header">
+            ${item.name}
+          </div>
+          <div class="position-relative" style="aspect-ratio: 16/9;">
+            <div class="position-absolute top-50 start-50 translate-middle spinner-container">
+              <div class="spinner-border custom-spinner" role="status">
+                <span class="visually-hidden">Loading...</span>
               </div>
+            </div>
 
-              <img class="card-img w-100 h-100 object-fit-cover"
-                   src="${getItemImageUrl(item)}"
-                   alt=""
-                   onload="this.style.display='block'; this.previousElementSibling.style.display='none'"
-                   onerror="this.onerror=null; this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat'; this.style.display='block'; this.previousElementSibling.style.display='none'"
-              >
+            <img class="card-img w-100 h-100 object-fit-cover"
+                 src="${getItemImageUrl(item)}"
+                 alt=""
+                 onload="this.style.display='block'; this.previousElementSibling.style.display='none'"
+                 onerror="this.onerror=null; this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat'; this.style.display='block'; this.previousElementSibling.style.display='none'"
+            >
+          </div>
+        <div class="card-body">
+            <div class="info-row">
+              <span class="info-label">Type:</span>
+              <span class="info-value">${item.type}</span>
             </div>
-            <div class="card-body">
-              <div class="info-row">
-                <span class="info-label">Type:</span>
-                <span class="info-value">${item.type}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Cash Value:</span>
-                <span class="info-value">${formatValue(item.cash_value)}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Duped Value:</span>
-                <span class="info-value">${formatValue(
-                  item.duped_value || 0
-                )}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Limited:</span>
-                <span class="info-value">${
-                  item.is_limited ? "True" : "False"
-                }</span>
-              </div>
+            <div class="info-row">
+              <span class="info-label">Cash Value:</span>
+              <span class="info-value">${formatValue(item.cash_value)}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Duped Value:</span>
+              <span class="info-value">${formatValue(
+                item.duped_value || 0
+              )}</span>
+            </div>
+            <div class="info-row ${item.is_limited ? "limited-item" : ""}">
+              <span class="info-label">Limited:</span>
+              <span class="info-value">
+                ${
+                  item.is_limited
+                    ? '<i class="bi bi-star-fill text-warning me-1"></i>Yes'
+                    : "No"
+                }
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Demand:</span>
+              <span class="info-value demand-${(
+                item.demand || "0"
+              ).toLowerCase()}">${item.demand || "N/A"}</span>
             </div>
           </div>
         </div>
-      `;
+      </div>
+    `;
       })
       .join("");
 }
@@ -1901,14 +1972,33 @@ function renderPreviewItems(containerId, items) {
   const itemsHtml = uniqueItems
     .map(
       ({ item, count }) => `
-      <div class="preview-item">
-        <div class="preview-item-image-container">
-          ${getItemImageElement(item)}
-          ${count > 1 ? `<div class="item-multiplier">×${count}</div>` : ""}
-        </div>
-        <div class="item-name">${item.name}</div>
+  <div class="preview-item" 
+       data-bs-toggle="tooltip" 
+       data-bs-placement="top" 
+       title="Limited: ${item.is_limited ? "Yes" : "No"} | Demand: ${
+        item.demand || "N/A"
+      }">
+    <div class="preview-item-image-container">
+      ${getItemImageElement(item)}
+      ${count > 1 ? `<div class="item-multiplier">×${count}</div>` : ""}
+    </div>
+    <div class="item-name">
+      ${item.name}
+      ${
+        item.is_limited
+          ? '<i class="bi bi-star-fill text-warning ms-1"></i>'
+          : ""
+      }
+    </div>
+    <div class="item-details">
+      <div class="demand-indicator demand-${(
+        item.demand || "0"
+      ).toLowerCase()}">
+        Demand: ${item.demand || "N/A"}
       </div>
-    `
+    </div>
+  </div>
+`
     )
     .join("");
 

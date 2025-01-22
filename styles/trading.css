@@ -293,6 +293,18 @@ button {
   box-shadow: 0 0 0 2px rgba(var(--button-primary-bg), 0.2);
 }
 
+#availableItemsModal .position-relative {
+  aspect-ratio: 16/9 !important; /* Force 16:9 aspect ratio */
+  width: 100%;
+  overflow: hidden;
+}
+
+#availableItemsModal .card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* Available Items Section */
 .available-items {
   background: var(--gray-100);
@@ -339,7 +351,7 @@ button {
 
 .available-item-card .card-body {
   padding: 1rem;
-  background-color: var(--bg-primary);
+  background-color: var(--bg-secondary);
 }
 
 .available-item-card .info-row {
@@ -1001,7 +1013,7 @@ video.card-img-top {
 
 .trade-card .card-body {
   padding: 0.75rem;
-  background-color: var(--bg-primary);
+  background-color: var(--bg-secondary);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -2537,54 +2549,93 @@ video.card-img-top {
 /* Bottom Sheet Styles */
 .bottom-sheet {
   position: fixed;
-  bottom: -100%;
+  bottom: 0;
   left: 0;
   width: 100%;
   background: var(--bg-primary);
   border-radius: 16px 16px 0 0;
   z-index: 1050;
+  transform: translateY(100%);
   transition: transform 0.3s ease-out;
   padding: 16px;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
   max-height: 90vh;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+}
+
+.bottom-sheet .item-image-container {
+  width: 100%;
+  aspect-ratio: 16/9; /* Updated aspect ratio */
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+.bottom-sheet .item-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Changed to contain to prevent image distortion */
+  background: var(--bg-secondary);
 }
 
 .bottom-sheet.show {
-  bottom: 0;
-  transform: translateY(-1%);
+  transform: translateY(0); /* Slide up to fully visible */
 }
 
 body.bottom-sheet-open {
-  position: fixed;
-  width: 100%;
-  overflow-y: hidden;
-  touch-action: none;
-  top: 0;
-  left: 0;
+  overflow: hidden !important; /* Just prevent scrolling */
 }
 
+/* Bottom Sheet Close Button */
 .bottom-sheet-header {
+  position: relative;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--gray-300);
+  justify-content: center;
 }
 
 .bottom-sheet-title {
+  margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  margin: 0;
+  text-align: center;
+  padding-right: 32px; /* Make space for close button */
 }
 
 .bottom-sheet-close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
   color: var(--text-primary);
-  padding: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  z-index: 10; /* Ensure button is above other elements */
+  touch-action: manipulation; /* Optimize for touch */
+}
+
+.bottom-sheet-close:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.bottom-sheet-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.bottom-sheet-close i {
+  font-size: 1.25rem;
 }
 
 .bottom-sheet-content {
@@ -2624,6 +2675,7 @@ body.bottom-sheet-open {
   visibility: hidden;
   transition: opacity 0.3s ease;
 }
+
 .bottom-sheet-backdrop.show {
   opacity: 1;
   visibility: visible;
@@ -2631,12 +2683,9 @@ body.bottom-sheet-open {
 
 /* Drag handle for bottom sheet */
 .bottom-sheet-drag-handle {
-  width: 40px;
-  height: 4px;
-  background: var(--gray-300);
-  border-radius: 2px;
-  margin: 0 auto 16px;
+  display: none;
 }
+
 /* Skeleton Loading Animation */
 @keyframes shimmer {
   0% {
