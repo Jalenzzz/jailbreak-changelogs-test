@@ -162,17 +162,6 @@ body {
   margin-bottom: 8px;
 }
 
-.item-type-badge {
-  position: absolute;
-  bottom: 158px; /* Original desktop position */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  font-size: 0.95rem;
-  padding: 0.4rem 0.8rem;
-  margin: 0;
-}
-
 .input-group {
   position: relative;
 }
@@ -233,16 +222,6 @@ body {
   border-color: #0d6efd;
 }
 
-.badge {
-  display: inline-block;
-  background-color: var(--accent-color); /* Deep teal (from your palette) */
-  color: var(--text-primary); /* Very light grayish-green (for good contrast) */
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 5px 10px;
-  border-radius: 20px;
-  margin-bottom: 10px; /* Adds space between badge and title */
-}
 .btn-calculator {
   background-color: var(--accent-color);
   color: var(--text-primary);
@@ -380,7 +359,7 @@ body {
 }
 /* HyperChrome item styling */
 .items-card .card-title:has(+ .value-container):has(~ .hyperchrome-badge) {
-  position: relative;
+  position: static;
   border: 2px solid transparent;
   background: linear-gradient(var(--bg-secondary), var(--bg-secondary))
       padding-box,
@@ -474,15 +453,13 @@ body {
 
 /* HyperChrome badge styling */
 .hyperchrome-badge {
-  position: absolute;
-  bottom: 166px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 0.2rem 0.4rem; /* Reduced from 0.4rem 0.8rem */
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.2rem 0.4rem;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
-  z-index: 3;
   background: linear-gradient(
     124deg,
     #428ffe,
@@ -499,9 +476,6 @@ body {
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
   animation: rainbow 18s ease infinite;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  gap: 4px;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
 }
@@ -907,6 +881,11 @@ body {
   margin: 0 auto; /* Center the container */
 }
 
+.item-type-badge {
+  font-size: 0.95rem; /* Increased from default size */
+  padding: 0.35rem 0.7rem; /* Increased padding */
+}
+
 @media (max-width: 768px) {
   /* Container adjustments */
   .container-fluid {
@@ -927,13 +906,11 @@ body {
 
   /* Badge positioning for mobile */
   .item-type-badge {
-    bottom: 142px; /* Adjusted for smaller card size */
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
   }
 
   .hyperchrome-badge {
-    bottom: 150px;
     font-size: 0.7rem;
     padding: 0.2rem 0.4rem;
   }
@@ -1160,13 +1137,11 @@ body {
   }
 
   .item-type-badge {
-    bottom: 125px;
     font-size: 0.69rem;
     padding: 0.15rem 0.35rem;
   }
 
   .hyperchrome-badge {
-    bottom: 135px;
     font-size: 0.6rem;
     padding: 0.15rem 0.3rem;
   }
@@ -1205,13 +1180,11 @@ body {
 
   /* Adjust badge sizes further */
   .item-type-badge {
-    bottom: 110px;
     font-size: 0.65rem;
     padding: 0.15rem 0.35rem;
   }
 
   .hyperchrome-badge {
-    bottom: 117px;
     font-size: 0.6rem;
     padding: 0.15rem 0.3rem;
   }
@@ -1267,12 +1240,10 @@ body {
   }
 
   .item-type-badge {
-    bottom: 146px;
     font-size: 0.8rem;
   }
 
   .hyperchrome-badge {
-    bottom: 154px;
     font-size: 0.75rem;
   }
 
