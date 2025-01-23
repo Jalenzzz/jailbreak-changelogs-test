@@ -439,8 +439,30 @@
   opacity: 1;
 }
 
-/* NAVBAR STYLING */
-/* Logo Styling */
+/* Base navbar structure */
+.custom-navbar-color {
+  background-color: #212a31;
+  height: 64px; /* Fixed height */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Container positioning */
+.custom-navbar-color .container-fluid {
+  max-width: 1920px; /* Maximum width */
+  padding: 0 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Logo positioning */
+.custom-navbar-color .navbar-brand {
+  margin-right: 48px; /* Space between logo and nav items */
+  padding: 0;
+}
+
 .navbar-logo {
   height: 70px;
   width: auto;
@@ -449,31 +471,37 @@
   margin: -10px 0; /* to prevent increasing navbar height */
 }
 
-/* Custom Navbar Color */
-.custom-navbar-color {
-  background-color: #212a31; /* Dark blue-gray */
-  color: #ffffff; /* White text color */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+/* Navigation items positioning */
+.custom-navbar-color .navbar-collapse {
+  flex: 1;
+  justify-content: flex-start; /* Align items to the left */
 }
 
-/* Navbar Items Styling */
-.custom-navbar-color .navbar-nav .nav-link {
-  color: #d3d9d4; /* Light gray for nav links */
-  transition: color 0.3s ease, background-color 0.3s ease;
+.custom-navbar-color .navbar-nav {
+  width: auto; /* Let nav items take natural width */
+  margin-left: 0; /* Remove any auto margins */
+  gap: 4px; /* Space between nav items */
 }
 
-/* Hover and Focus States for Nav Links */
-.custom-navbar-color .navbar-nav .nav-link:hover,
-.custom-navbar-color .navbar-nav .nav-link:focus {
-  background-color: rgba(211, 217, 212, 0.1); /* Lighter background on hover */
-  color: #ffffff; /* Bright text on hover */
-  border-radius: 8px; /* Increased border-radius for a softer look */
+/* Individual nav items */
+.custom-navbar-color .nav-item {
+  padding: 0;
 }
 
-/* Active Nav Item Styling */
-.custom-navbar-color .navbar-nav .nav-item.active .nav-link {
-  color: #748d92; /* Highlight color for active link */
-  font-weight: bold; /* Bold active link */
+.custom-navbar-color .nav-link {
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+/* Profile section (right side) */
+.custom-navbar-color .navbar-nav.ms-auto {
+  margin-left: auto !important; /* Force right alignment */
+  gap: 0;
+}
+
+/* Ensure dropdown stays aligned properly */
+.custom-navbar-color .nav-item.dropdown {
+  margin-left: 4px;
 }
 
 /* "Join the Discord" Button */
