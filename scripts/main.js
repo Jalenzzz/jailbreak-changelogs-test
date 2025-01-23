@@ -422,6 +422,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           },
         }
       );
+      sessionStorage.removeItem("campaign");
     } else {
       sessionStorage.setItem("campaign", campaign);
     }
