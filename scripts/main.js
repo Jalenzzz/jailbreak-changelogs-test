@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const navbarToggler = document.getElementById("navbarToggler");
   const sideMenu = document.getElementById("sideMenu");
   const mobileViewUpdates = document.getElementById("mobileViewUpdates");
 
@@ -28,19 +27,17 @@ document.addEventListener("DOMContentLoaded", function () {
       return fallbackAvatar;
     }
   };
-
   function toggleMenu() {
-    navbarToggler.classList.toggle("opened");
+    mobileAvatarToggle.classList.toggle("opened");
     sideMenu.classList.toggle("show");
     document.body.classList.toggle("menu-open");
 
     // Update aria-expanded attribute
-    const isExpanded = navbarToggler.classList.contains("opened");
-    navbarToggler.setAttribute("aria-expanded", isExpanded);
+    const isExpanded = mobileAvatarToggle.classList.contains("opened");
+    mobileAvatarToggle.setAttribute("aria-expanded", isExpanded);
   }
 
-  navbarToggler.addEventListener("click", toggleMenu);
-  // check url params
+  mobileAvatarToggle.addEventListener("click", toggleMenu);
 
   // Conditional check for mobileViewUpdates
   if (mobileViewUpdates) {
