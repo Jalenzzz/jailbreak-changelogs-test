@@ -908,9 +908,41 @@ body {
 }
 
 @media (max-width: 768px) {
+  /* Container adjustments */
   .container-fluid {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  .col-12 {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  /* Media container mobile optimization */
+  .media-container {
+    aspect-ratio: 16/9;
+    margin-bottom: 0;
+  }
+
+  /* Badge positioning for mobile */
+  .item-type-badge {
+    bottom: 142px; /* Adjusted for smaller card size */
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .hyperchrome-badge {
+    bottom: 150px;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .limited-badge {
+    top: 6px;
+    right: 6px;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.4rem;
   }
 
   .intro-container {
@@ -922,9 +954,9 @@ body {
   }
 
   .intro-content {
-    padding: 12px !important; /* Reduced padding */
-    margin: 0;
-    overflow: visible;
+    padding: 16px !important; /* Increased padding */
+    margin: 0; /* Reset any margins */
+    border-radius: 8px;
   }
 
   .intro-content h1 {
@@ -1081,51 +1113,6 @@ body {
   #value-sort-dropdown option[value="separator"] {
     font-size: 12px;
   }
-
-  /* Cards and items */
-  .col-md-4,
-  .col-lg-3 {
-    padding: 0.4rem;
-  }
-
-  .items-card {
-    margin-bottom: 0.5rem;
-  }
-
-  .card-title {
-    font-size: 0.9rem;
-  }
-
-  .value-row {
-    font-size: 0.8rem;
-    padding: 3px 6px;
-  }
-
-  .item-type-badge,
-  .hyperchrome-badge,
-  .limited-badge {
-    font-size: 0.75rem; /* Unified font size for mobile */
-    padding: 0.3rem 0.6rem; /* Unified padding for mobile */
-  }
-
-  /* .item-type-badge,
-  .hyperchrome-badge {
-    bottom: 108px;
-  } */
-
-  .limited-badge {
-    top: 8px;
-    right: 8px;
-  }
-
-  .value-container {
-    padding: 0;
-    margin: 0;
-  }
-
-  .item-card-body {
-    padding: 0.5rem 0.25rem 1rem;
-  }
 }
 
 @media (max-width: 576px) {
@@ -1149,65 +1136,20 @@ body {
     border-width: 2px;
   }
 
-  .media-container {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16/9;
-    height: auto; /* Let height be determined by aspect ratio */
-    overflow: hidden;
-    background-color: var(--bg-secondary);
-  }
-
-  /* Ensure images/videos fill container properly */
-  .media-container img,
-  .media-container video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .container-fluid {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-  }
-
   .intro-container {
     padding: 0px !important;
     margin: 0 auto;
   }
 
   .intro-content {
-    padding: 8px !important;
-    margin: 0;
-  }
-
-  .col-12 {
-    padding-left: 4px;
-    padding-right: 4px;
-  }
-
-  .row {
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  #items-container .row {
-    margin-left: -4px;
-    margin-right: -4px;
-  }
-
-  #loading-overlay .loading-logo {
-    width: 200px;
-    height: auto;
+    padding: 16px !important;
   }
 
   .custom-spinner {
     width: 30px;
     height: 30px;
   }
+
   .intro-buttons {
     flex-direction: column;
   }
@@ -1217,100 +1159,124 @@ body {
     justify-content: center;
   }
 
-  .col-6 {
-    flex: 0 0 50%;
-    max-width: 50%;
-    padding: 0.4rem; /* Reduced padding for tighter grid */
-  }
-
   .item-type-badge {
-    bottom: 130px;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-  }
-
-  .limited-badge {
-    font-size: 0.55rem; /* Reduced from 0.75rem */
-    padding: 0.15rem 0.3rem;
+    bottom: 125px;
+    font-size: 0.69rem;
+    padding: 0.15rem 0.35rem;
   }
 
   .hyperchrome-badge {
-    bottom: 138px;
-    font-size: 0.65rem;
-    padding: 0.2rem 0.4rem;
-  }
-
-  .value-container {
-    padding: 0;
-    margin: 0;
+    bottom: 135px;
+    font-size: 0.6rem;
+    padding: 0.15rem 0.3rem;
   }
 
   .card-title {
-    font-size: 0.85rem; /* Even smaller for very small screens */
-  }
-
-  .value-row {
-    font-size: 0.75rem;
-  }
-
-  .value-container {
-    width: 100%;
-    padding: 0;
-    margin: 0 auto;
-  }
-
-  .value-row {
-    width: 100%;
-    font-size: 0.75rem;
-    margin: 0;
-  }
-
-  .item-card-body {
-    padding: 0.5rem 0.15rem 1rem;
-  }
-}
-@media (max-width: 399px) {
-  /* Previous styles remain the same */
-  .card-title {
-    font-size: 0.75rem;
+    font-size: 0.925rem; /* Reduced from 1.2rem */
     margin: 8px 0;
   }
 
-  .value-row {
-    font-size: 0.7rem;
-    padding: 2px 4px;
+  .card-text {
+    font-size: 0.8rem; /* Reduced from 1rem */
+    margin-bottom: 6px;
   }
 
-  /* Adjust badge positions */
+  .value-row {
+    font-size: 0.8rem;
+    padding: 2px 5px;
+  }
+}
+/* Add this new media query for extra small screens */
+@media (max-width: 400px) {
+  .card-title {
+    font-size: 0.875rem; /* Even smaller than before */
+    margin: 6px 0;
+  }
+
+  .card-text {
+    font-size: 0.75rem; /* Reduced further */
+    margin-bottom: 4px;
+  }
+
+  .value-row {
+    font-size: 0.75rem; /* Smaller text */
+    padding: 2px 4px; /* Minimal padding */
+  }
+
+  /* Adjust badge sizes further */
   .item-type-badge {
+    bottom: 110px;
     font-size: 0.65rem;
-    padding: 0.2rem 0.4rem;
-    bottom: 112px; /* Moved down from 158px */
+    padding: 0.15rem 0.35rem;
   }
 
   .hyperchrome-badge {
+    bottom: 117px;
     font-size: 0.6rem;
     padding: 0.15rem 0.3rem;
-    bottom: 116px; /* Moved down from 166px */
   }
 
   .limited-badge {
-    font-size: 0.5rem;
-    padding: 0.1rem 0.25rem;
-    top: 5px; /* Slightly adjusted from 8px */
-    right: 5px; /* Slightly adjusted from 8px */
+    top: 4px;
+    right: 4px;
+    font-size: 0.55rem;
+    padding: 0.1rem 0.3rem;
   }
 
+  /* Reduce card body padding */
   .item-card-body {
-    padding: 0.4rem 0.1rem 0.8rem;
+    padding: 0.25rem 0.25rem 0.75rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .container-fluid {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
   }
 
-  .value-container {
-    padding: 0;
-    margin: 0;
+  .limited-badge {
+    top: 4px;
+    right: 4px;
+    font-size: 0.6rem;
+    padding: 0.15rem 0.35rem;
+  }
+  .intro-container {
+    padding: 4px !important;
+  }
+
+  .intro-content {
+    padding: 16px !important; /* Maintain padding even on smallest screens */
+  }
+
+  .card-text {
+    font-size: 0.8125rem;
   }
 
   .value-row {
-    margin-bottom: 1px;
+    font-size: 0.8125rem;
+    padding: 2px 5px;
+  }
+}
+
+@media (min-width: 428px) and (max-width: 768px) {
+  /* Adjust value row text */
+  .value-row {
+    font-size: 0.875rem; /* Reduced size */
+    padding: 3px 6px; /* Slightly reduced padding */
+  }
+
+  .item-type-badge {
+    bottom: 146px;
+    font-size: 0.8rem;
+  }
+
+  .hyperchrome-badge {
+    bottom: 154px;
+    font-size: 0.75rem;
+  }
+
+  .limited-badge {
+    font-size: 0.7rem;
   }
 }
