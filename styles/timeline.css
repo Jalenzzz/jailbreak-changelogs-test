@@ -1,45 +1,25 @@
 @import "colors.css";
-
-/* Add this to timeline.css */
-/* Update skeleton loader colors for better visibility */
-.skeleton-loader {
+/* Timeline Image Loading Spinner */
+.image-spinner {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    #374653 25%,
-    /* Lighter shade */ #455667 50%,
-    /* Mid shade */ #374653 75% /* Lighter shade */
-  );
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border: 3px solid;
+  border-radius: 50%;
+  border-top-color: #124e66;
+  border-right-color: #124e66;
+  border-bottom-color: #212a31;
+  border-left-color: #212a31;
+  animation: spin 1s linear infinite;
   z-index: 1;
-  border-radius: 8px;
-  opacity: 1;
-  transition: opacity 0.3s ease-out;
 }
 
-[data-bs-theme="dark"] .skeleton-loader {
-  background: linear-gradient(90deg, #374653 25%, #455667 50%, #374653 75%);
-}
-
-.skeleton-loader.active {
-  opacity: 1;
-}
-
-.skeleton-loader:not(.active) {
-  opacity: 0;
-}
-
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
+@keyframes spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
 
@@ -280,54 +260,6 @@ body {
 .semi-transparent-bg {
   background-color: rgba(var(--glow-color), 0.5) !important;
 }
-.custom-spinner {
-  width: 50px;
-  height: 50px;
-  border-top-color: #31b1ff; /* Blue */
-  border-right-color: #31b1ff; /* Blue */
-  border-bottom-color: #ff341c; /* Orange */
-  border-left-color: #ff341c; /* Orange */
-}
-
-#loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  background-color: #ffffff;
-}
-
-#loading-overlay.show {
-  display: flex; /* Enable flexbox */
-  flex-direction: column; /* Stack items vertically */
-  justify-content: center; /* Center items vertically */
-  align-items: center; /* Center items horizontally */
-  height: 100vh; /* Optional: full height for overlay */
-}
-
-#loading-overlay .loading-logo {
-  width: 300px; /* Adjust the width of your logo as needed */
-  height: auto; /* Maintain the aspect ratio */
-}
-
-#loading-overlay .loading-text {
-  font-size: 1.5rem; /* Font size for loading text */
-  font-weight: bold; /* Bold text */
-  margin-top: 10px; /* Space above loading text */
-}
-
-[data-bs-theme="dark"] #loading-overlay {
-  background-color: #2e3944; /* Dark background */
-}
-
-[data-bs-theme="dark"] #loading-overlay .loading-text {
-  color: #ffffff; /* White text in dark theme */
-}
 
 .responsive-text {
   font-size: 1rem;
@@ -473,23 +405,6 @@ button {
   margin-bottom: 0;
   border-radius: 8px;
   overflow: hidden;
-}
-
-/* Add loading skeleton animation */
-.image-container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    var(--timeline-entry-bg-color) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    var(--timeline-entry-bg-color) 100%
-  );
-  background-size: 200% 100%;
 }
 
 .changelog-image {
@@ -759,14 +674,6 @@ button {
   /* Adjust entry content for mobile */
   .entry-content p {
     margin-bottom: 10px;
-  }
-
-  #loading-overlay .loading-logo {
-    width: 200px;
-  }
-  .custom-spinner {
-    width: 30px;
-    height: 30px;
   }
 
   .image-container {

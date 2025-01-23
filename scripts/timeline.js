@@ -161,30 +161,35 @@ $(document).ready(function () {
     }
   });
 
-  // Add this after your existing variable declarations
   const imageObserver = new IntersectionObserver(
     (entries, observer) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const img = entry.target;
-          const skeletonLoader = img.previousElementSibling;
+          const spinner = img.previousElementSibling;
 
-          if (img.dataset.src) {
-            // Keep skeleton loader visible while loading
-            skeletonLoader.classList.add("active");
+          // Show spinner immediately when intersecting
+          spinner.style.display = "block";
 
+          // Only proceed if we have a data-src and it's different from current src
+          if (img.dataset.src && img.src !== img.dataset.src) {
             // Pre-load the image
             const tempImage = new Image();
+
             tempImage.onload = () => {
               img.src = img.dataset.src;
+              img.style.opacity = "1";
               img.classList.add("loaded");
-              skeletonLoader.classList.remove("active");
+              spinner.style.display = "none";
             };
+
             tempImage.onerror = () => {
               img.src = img.dataset.defaultSrc;
+              img.style.opacity = "1";
               img.classList.add("loaded");
-              skeletonLoader.classList.remove("active");
+              spinner.style.display = "none";
             };
+
             tempImage.src = img.dataset.src;
             observer.unobserve(img);
           }
@@ -202,7 +207,8 @@ $(document).ready(function () {
     if (!changelog || !changelog.title) return "";
     const sideClass = index % 2 === 0 ? "left" : "right";
     const formattedTitle = formatTitle(changelog.title);
-    const defaultImage = "/images/placeholder.jpg";
+    const defaultImage =
+      "https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp";
     const imageUrl = changelog.image_url || defaultImage;
 
     return `
@@ -211,7 +217,7 @@ $(document).ready(function () {
           <h3 class="entry-title mb-3 text-custom-header">${formattedTitle}</h3>
           <a href="/changelogs/${changelog.id}" class="changelog-link">
             <div class="image-container">
-              <div class="skeleton-loader active"></div>
+              <div class="image-spinner"></div>
               <img 
                 src=""
                 data-src="${imageUrl}"
@@ -220,8 +226,6 @@ $(document).ready(function () {
                 alt=""
                 width="1920"
                 height="1080"
-                onload="this.style.opacity='1'; this.classList.add('loaded'); this.previousElementSibling.classList.remove('active')"
-                onerror="this.src='${defaultImage}'; this.classList.add('loaded'); this.previousElementSibling.classList.remove('active')"
               >
             </div>
           </a>
@@ -343,11 +347,13 @@ $(document).ready(function () {
         $timeline.html(entriesHtml);
 
         // Initialize lazy loading for images after HTML is added
+        // Increased timeout to ensure DOM is ready
         setTimeout(() => {
-          $timeline.find(".changelog-image").each(function () {
-            imageObserver.observe(this);
+          const images = document.querySelectorAll(".changelog-image");
+          images.forEach((img) => {
+            imageObserver.observe(img);
           });
-        }, 100);
+        }, 300);
 
         fadeInEntries(0, validData.length);
       } else {
@@ -355,6 +361,7 @@ $(document).ready(function () {
       }
     }
   }
+
   // Initialize the page by loading all entries
   loadAllEntries();
 

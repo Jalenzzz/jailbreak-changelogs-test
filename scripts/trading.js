@@ -456,7 +456,6 @@ function addItemToTrade(item, tradeType) {
 }
 
 // Function to quickly add item from available items
-// Update the quickAddItem function
 function quickAddItem(itemName, itemType) {
   const item = allItems.find((i) => i.name === itemName && i.type === itemType);
   if (!item) return;
