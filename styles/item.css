@@ -403,8 +403,120 @@ body {
   }
 }
 
+/* Similar Items Section Styling */
+.similar-items-section {
+  padding: 1rem 0;
+}
+
+.similar-item-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.similar-item-card:hover {
+  transform: translateY(-4px);
+  text-decoration: none !important;
+}
+
+.similar-item-card .card {
+  background: var(--bg-primary);
+  border: 1px solid rgba(18, 78, 102, 0.1);
+  transition: border-color 0.2s ease;
+}
+
+.similar-item-card:hover .card {
+  border-color: rgba(18, 78, 102, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.similar-item-card .card-img-wrapper {
+  background: rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.similar-item-card .card-img-top {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.similar-item-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.similar-item-card .card-title {
+  color: #d3d9d4;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.similar-item-card .best-match-badge {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(25, 135, 84, 0.9) !important;
+}
+
+.similar-item-card .demand-tag {
+  font-size: 0.75rem;
+  color: #76abae !important;
+}
+
+/* Value Display Responsive Behavior */
+.value-display .desktop-value {
+  display: block;
+}
+
+.value-display .mobile-value {
+  display: none;
+}
+
+.text-warning {
+  color: #ffc107 !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .similar-items-section {
+    padding: 0.5rem 0;
+  }
+
+  .value-display .desktop-value {
+    display: none;
+  }
+
+  .value-display .mobile-value {
+    display: block;
+  }
+
+  .similar-item-card .card-title {
+    font-size: 0.9rem;
+  }
+
+  .similar-item-card .card-body {
+    padding: 0.75rem;
+  }
+
+  .similar-item-card .demand-tag {
+    font-size: 0.7rem;
+  }
+
+  .similar-item-card .limited-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .similar-item-card .best-match-badge {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .desktop-value {
+    display: none !important;
+  }
+  .mobile-value {
+    display: block !important;
+  }
+
   .pagination-container {
     margin-top: 20px;
   }
@@ -626,4 +738,14 @@ body {
 
 .discord-button:hover {
   background-color: var(--bg-primary);
+}
+/* Small Mobile Devices */
+@media (max-width: 375px) {
+  .similar-item-card .card-title {
+    font-size: 0.8rem;
+  }
+
+  .similar-item-card .card-body {
+    padding: 0.5rem;
+  }
 }

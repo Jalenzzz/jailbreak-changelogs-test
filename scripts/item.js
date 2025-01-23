@@ -100,6 +100,125 @@ document.addEventListener("DOMContentLoaded", async () => {
     return numericValue.toLocaleString("en-US");
   }
 
+  function formatValueForDisplay(value, isMobile = false) {
+    if (!value || value === "N/A") return "No Value";
+
+    const numericValue = parseNumericValue(value);
+
+    if (isMobile) {
+      if (numericValue >= 1000000) {
+        return (numericValue / 1000000).toFixed(1) + "M";
+      } else if (numericValue >= 1000) {
+        return (numericValue / 1000).toFixed(1) + "K";
+      }
+      return numericValue.toLocaleString();
+    }
+
+    return numericValue.toLocaleString();
+  }
+
+  function parseNumericValue(value) {
+    if (!value || value === "N/A") return 0;
+
+    const valueStr = value.toString().toLowerCase();
+    if (valueStr.endsWith("m")) {
+      return parseFloat(valueStr) * 1000000;
+    } else if (valueStr.endsWith("k")) {
+      return parseFloat(valueStr) * 1000;
+    }
+    return parseFloat(valueStr) || 0;
+  }
+
+  // Demand level mapping
+  const DEMAND_WEIGHTS = {
+    "close to none": 1,
+    low: 2,
+    medium: 3,
+    high: 4,
+    "very high": 5,
+    "n/a": 0,
+  };
+
+  function calculateSimilarityScore(currentItem, comparisonItem) {
+    let score = 0;
+    const weights = {
+      type: 35, // Type match is very important
+      limited: 20, // Limited status is quite important
+      valueRange: 25, // Value similarity is important
+      demand: 15, // Demand similarity has medium importance
+      notes: 5, // Notes similarity has low importance
+    };
+
+    // 1. Type Matching (35 points)
+    if (currentItem.type === comparisonItem.type) {
+      score += weights.type;
+    }
+
+    // 2. Limited Status (20 points)
+    if (currentItem.is_limited === comparisonItem.is_limited) {
+      score += weights.limited;
+    }
+
+    // 3. Value Range Comparison (25 points)
+    const currentValue = parseNumericValue(currentItem.cash_value);
+    const comparisonValue = parseNumericValue(comparisonItem.cash_value);
+
+    if (currentValue > 0 && comparisonValue > 0) {
+      const valueDifference = Math.abs(currentValue - comparisonValue);
+      const valueRatio =
+        Math.min(currentValue, comparisonValue) /
+        Math.max(currentValue, comparisonValue);
+
+      // Score based on value similarity
+      if (valueRatio > 0.9) score += weights.valueRange;
+      else if (valueRatio > 0.7) score += weights.valueRange * 0.8;
+      else if (valueRatio > 0.5) score += weights.valueRange * 0.6;
+      else if (valueRatio > 0.3) score += weights.valueRange * 0.4;
+      else if (valueRatio > 0.1) score += weights.valueRange * 0.2;
+    }
+
+    // 4. Demand Similarity (15 points)
+    const currentDemand =
+      DEMAND_WEIGHTS[currentItem.demand?.toLowerCase() || "n/a"];
+    const comparisonDemand =
+      DEMAND_WEIGHTS[comparisonItem.demand?.toLowerCase() || "n/a"];
+
+    if (currentDemand > 0 && comparisonDemand > 0) {
+      const demandDifference = Math.abs(currentDemand - comparisonDemand);
+      if (demandDifference === 0) score += weights.demand;
+      else if (demandDifference === 1) score += weights.demand * 0.7;
+      else if (demandDifference === 2) score += weights.demand * 0.4;
+    }
+
+    // 5. Notes Analysis (5 points)
+    if (
+      currentItem.notes &&
+      comparisonItem.notes &&
+      currentItem.notes !== "N/A" &&
+      comparisonItem.notes !== "N/A"
+    ) {
+      // Simple text similarity check
+      const currentWords = new Set(
+        currentItem.notes.toLowerCase().split(/\s+/)
+      );
+      const comparisonWords = new Set(
+        comparisonItem.notes.toLowerCase().split(/\s+/)
+      );
+      const commonWords = [...currentWords].filter((word) =>
+        comparisonWords.has(word)
+      );
+
+      if (commonWords.length > 0) {
+        score +=
+          weights.notes *
+          (commonWords.length /
+            Math.max(currentWords.size, comparisonWords.size));
+      }
+    }
+
+    return score;
+  }
+
   function displayItemDetails(item) {
     const image_type = item.type.toLowerCase();
     let color = "#124E66";
@@ -439,6 +558,99 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }, 100);
 
+    async function loadSimilarItems(currentItem) {
+      try {
+        const response = await fetch(
+          "https://api3.jailbreakchangelogs.xyz/items/list"
+        );
+        const items = await response.json();
+
+        // Calculate similarity scores for all items
+        const scoredItems = items
+          .filter((item) => item.id !== currentItem.id) // Exclude current item
+          .map((item) => ({
+            ...item,
+            similarityScore: calculateSimilarityScore(currentItem, item),
+          }))
+          .sort((a, b) => b.similarityScore - a.similarityScore) // Sort by score
+          .slice(0, 4); // Get top 4 most similar items
+
+        // Display the similar items
+        const container = document.getElementById("similar-items");
+        container.innerHTML = ""; // Clear existing items
+
+        scoredItems.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "col-lg-3 col-md-3 col-6"; // Changed to col-6 for mobile (2 per row)
+          card.innerHTML = `
+            <a href="/item/${item.type}/${encodeURIComponent(item.name)}" 
+              class="text-decoration-none similar-item-card">
+              <div class="card h-100">
+                <div class="card-img-wrapper position-relative" style="aspect-ratio: 16/9;">
+                  <img src="/assets/images/items/480p/${item.type.toLowerCase()}s/${
+            item.name
+          }.webp" 
+                      class="card-img-top" 
+                      alt="${item.name}"
+                      onerror="this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat.webp'">
+                  ${
+                    item.similarityScore > 75
+                      ? '<span class="badge bg-success position-absolute top-0 end-0 m-2 best-match-badge">Best Match</span>'
+                      : ""
+                  }
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title text-truncate mb-2">${item.name}</h5>
+                  <div class="value-display">
+                    <div class="mb-2">
+                      <small class="text-muted d-block">Cash Value:</small>
+                      <p class="card-text mb-1 desktop-value" style="color: var(--accent-color-light)">
+                        ${formatValueForDisplay(item.cash_value, false)}
+                      </p>
+                      <p class="card-text mb-1 mobile-value d-none" style="color: var(--accent-color-light)">
+                        ${formatValueForDisplay(item.cash_value, true)}
+                      </p>
+                    </div>
+                    <div class="mb-2">
+                      <small class="text-muted d-block">Duped Value:</small>
+                      <p class="card-text mb-1 desktop-value ${
+                        item.duped_value ? "text-warning" : ""
+                      }">
+                        ${formatValueForDisplay(item.duped_value, false)}
+                      </p>
+                      <p class="card-text mb-1 mobile-value d-none ${
+                        item.duped_value ? "text-warning" : ""
+                      }">
+                        ${formatValueForDisplay(item.duped_value, true)}
+                      </p>
+                    </div>
+                  </div>
+                  ${
+                    item.is_limited
+                      ? '<span class="badge limited-badge"><i class="bi bi-star-fill me-1"></i>Limited</span>'
+                      : ""
+                  }
+                  ${
+                    item.demand && item.demand !== "N/A"
+                      ? `<div class="mt-2">
+                          <small class="text-muted demand-tag">
+                            <i class="bi bi-graph-up-arrow me-1"></i>
+                            ${item.demand}
+                          </small>
+                        </div>`
+                      : ""
+                  }
+                </div>
+              </div>
+            </a>
+          `;
+          container.appendChild(card);
+        });
+      } catch (error) {
+        console.error("Error loading similar items:", error);
+      }
+    }
+
     const hasValue = value !== "-" && value !== "N/A";
     const hasDupedValue = duped_value !== "-" && duped_value !== "N/A";
     const hasDemand = item.demand && item.demand !== "N/A";
@@ -564,7 +776,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
           </div>
         </div>
-      </div>`;
+      </div>
+      `;
 
     container.innerHTML = `
             <!-- Breadcrumb Navigation -->
@@ -849,6 +1062,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           });
       }, 100);
     }
+    // Add at the end of displayItemDetails function
+    loadSimilarItems(item);
   }
 
   function showErrorMessage(message) {
