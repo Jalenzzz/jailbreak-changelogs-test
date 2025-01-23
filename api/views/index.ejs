@@ -264,6 +264,17 @@
         signalGooglefcPresent();
       })();
     </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const mobileViewUpdates = document.getElementById("mobileViewUpdates");
+        if (mobileViewUpdates) {
+          mobileViewUpdates.addEventListener("click", function () {
+            window.openSideMenu();
+          });
+        }
+      });
+    </script>
+
     <%- include('partials/footer') %>
   </body>
 

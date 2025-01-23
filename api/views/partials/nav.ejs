@@ -30,7 +30,7 @@
       <div class="side-menu-content">
         <button
           id="sideMenuClose"
-          class="btn position-absolute top-0 end-0 m-3 text-white"
+          class="btn position-absolute top-0 end-0 text-white"
           type="button"
           aria-label="Close menu"
         >
@@ -159,13 +159,41 @@
 </nav>
 
 <script>
+  window.openSideMenu = function () {
+    const sideMenu = document.getElementById("sideMenu");
+    const mobileAvatarToggle = document.getElementById("mobileAvatarToggle");
+    if (sideMenu && mobileAvatarToggle) {
+      sideMenu.classList.add("active");
+      mobileAvatarToggle.setAttribute("aria-expanded", "true");
+    }
+  };
+
+  window.closeSideMenu = function () {
+    const sideMenu = document.getElementById("sideMenu");
+    const mobileAvatarToggle = document.getElementById("mobileAvatarToggle");
+    if (sideMenu && mobileAvatarToggle) {
+      sideMenu.classList.remove("active");
+      mobileAvatarToggle.setAttribute("aria-expanded", "false");
+    }
+  };
+
+  // Fix the sideMenuClose event listener
+  const sideMenuClose = document.getElementById("sideMenuClose");
+  if (sideMenuClose) {
+    sideMenuClose.addEventListener("click", function () {
+      window.closeSideMenu();
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
+    const sideMenu = document.getElementById("sideMenu");
+    const sideMenuClose = document.getElementById("sideMenuClose");
     const userDropdown = document.getElementById("userDropdown");
     const profilePicture = document.getElementById("profile-picture");
     const mobileProfilePicture = document.getElementById(
       "profile-picture-mobile"
     );
-    const sideMenu = document.getElementById("sideMenu");
+
     const mobileProfileSection = document.getElementById(
       "mobileProfileSection"
     );
@@ -310,7 +338,6 @@
 
     updateContent();
   });
-  const sideMenuClose = document.getElementById("sideMenuClose");
   if (sideMenuClose) {
     sideMenuClose.addEventListener("click", function () {
       sideMenu.classList.remove("active");
@@ -326,18 +353,37 @@
   }
 
   .mobile-profile-section {
-    padding: 1rem;
+    padding: 0 1rem; /* Change padding to only left and right */
+    margin-top: 4rem; /* Space for close button */
+  }
+
+  #sideMenuClose {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1030;
+  }
+
+  .side-menu-content .nav-link {
+    padding: 0.5rem 0;
+    color: white;
   }
 
   .mobile-profile-section .nav-link {
     color: white;
-    padding: 0.5rem 0;
     display: block;
+    padding: 0.5rem 0;
   }
 
   .profile-actions {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+  }
+  .side-menu-content .nav-item {
+    padding: 0 1rem;
+  }
+  .nav-separator {
+    margin: 0.5rem 0;
   }
 </style>
