@@ -487,6 +487,9 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       allItems = await response.json();
 
+      // Start preloading images immediately
+      preloadItemImages();
+
       // Preload drift thumbnails
       const driftItems = allItems.filter((item) => item.type === "Drift");
       preloadDriftThumbnails(driftItems);
@@ -538,49 +541,37 @@ document.addEventListener("DOMContentLoaded", () => {
       itemsContainer.appendChild(itemsRow);
     }
 
-    // Create 12 skeleton cards
-    const skeletonCards = Array(12)
+    // Create 12 cards with spinners
+    const spinnerCards = Array(12)
       .fill(null)
       .map(() => {
         const cardDiv = document.createElement("div");
         cardDiv.classList.add("col-md-4", "col-lg-3", "mb-4");
         cardDiv.innerHTML = `
-        <div class="card items-card shadow-sm" style="cursor: pointer; height: 450px; position: relative;">
-          <div class="media-container" style="position: relative;">
-            <div class="skeleton-loader" style="width: 100%; height: 250px; border-radius: 8px 8px 0 0;"></div>
-          </div>
-          <span style="
-            background-color: #2E3944; 
-            position: absolute;
-            top: 234px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2;
-            font-size: 0.95rem;
-            padding: 0.4rem 0.8rem;
-            width: 100px;
-            animation: pulse 2s infinite ease-in-out;
-          " class="badge"></span>
-          <div class="item-card-body text-center" style="padding-top: 32px;">
-            <h5 class="card-title" style="visibility: hidden;">Placeholder</h5>
-            <div class="value-container" style="visibility: hidden;">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span>Cash Value:</span>
-                <span>0</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center">
-                <span>Duped Value:</span>
-                <span>0</span>
+          <div class="card items-card shadow-sm" style="cursor: pointer; height: 450px; position: relative;">
+            <div class="card-spinner">
+              <div class="custom-spinner"></div>
+            </div>
+            <div class="item-card-body text-center" style="padding-top: 32px;">
+              <h5 class="card-title" style="visibility: hidden;">Placeholder</h5>
+              <div class="value-container" style="visibility: hidden;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span>Cash Value:</span>
+                  <span>0</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span>Duped Value:</span>
+                  <span>0</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      `;
+        `;
         return cardDiv;
       });
 
     itemsRow.innerHTML = "";
-    itemsRow.append(...skeletonCards);
+    itemsRow.append(...spinnerCards);
   }
 
   function updateTotalItemsCount() {
@@ -737,54 +728,69 @@ document.addEventListener("DOMContentLoaded", () => {
     const mediaElement =
       item.type === "Drift"
         ? `<div class="media-container">
-                <div class="skeleton-loader active"></div>
-                <img 
-                    src="/assets/images/items/480p/drifts/${item.name}.webp"
-                    class="card-img-top thumbnail"
-                    alt="${item.name}"
-                    style="opacity: 1; z-index: 2;"
-                    onerror="handleimage(this)"
-                    onload="this.previousElementSibling.classList.remove('active')"
-                >
-                <video 
-                    src="/assets/images/items/drifts/${item.name}.webm"
-                    class="card-img-top video-player"
-                    style="opacity: 0; z-index: 1;"
-                    playsinline 
-                    muted 
-                    loop
-                ></video>
-            </div>`
+        <div class="card-spinner">
+          <div class="custom-spinner"></div>
+        </div>
+        <img 
+            src="/assets/images/items/480p/drifts/${item.name}.webp"
+            class="card-img-top thumbnail"
+            alt="${item.name}"
+            style="opacity: 0; z-index: 2;"
+            onerror="handleimage(this)"
+            onload="setTimeout(() => {
+              this.style.opacity = '1';
+              this.previousElementSibling.style.display = 'none';
+            }, 1000)"
+        >
+        <video 
+            src="/assets/images/items/drifts/${item.name}.webm"
+            class="card-img-top video-player"
+            style="opacity: 0; z-index: 1;"
+            playsinline 
+            muted 
+            loop
+        ></video>
+      </div>`
         : item.type === "HyperChrome" && item.name === "HyperShift"
         ? `<div class="media-container">
-                    <div class="skeleton-loader active"></div>
-                    <video 
-                        src="/assets/images/items/hyperchromes/HyperShift.webm"
-                        class="card-img-top"
-                        style="opacity: 0; transition: opacity 0.3s ease-in-out;"
-                        playsinline 
-                        muted 
-                        loop
-                        autoplay
-                        id="hypershift-video"
-                        onloadeddata="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
-                        onerror="handleimage(this)"
-                    ></video>
-                </div>`
+        <div class="card-spinner">
+          <div class="custom-spinner"></div>
+        </div>
+        <video 
+            src="/assets/images/items/hyperchromes/HyperShift.webm"
+            class="card-img-top"
+            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+            playsinline 
+            muted 
+            loop
+            autoplay
+            id="hypershift-video"
+            onloadeddata="setTimeout(() => {
+              this.style.opacity = '1';
+              this.previousElementSibling.style.display = 'none';
+            }, 1000)"
+            onerror="handleimage(this)"
+        ></video>
+      </div>`
         : `<div class="media-container">
-                    <div class="skeleton-loader active"></div>
-                    <img 
-                        onerror="handleimage(this)" 
-                        id="${item.name}" 
-                        src="/assets/images/items/480p/${item.type.toLowerCase()}s/${
+        <div class="card-spinner">
+          <div class="custom-spinner"></div>
+        </div>
+        <img 
+            onerror="handleimage(this)" 
+            id="${item.name}" 
+            src="/assets/images/items/480p/${item.type.toLowerCase()}s/${
             item.name
           }.webp" 
-                        class="card-img-top" 
-                        alt="${item.name}" 
-                        style="opacity: 0; transition: opacity 0.3s ease-in-out;"
-                        onload="this.style.opacity='1'; this.previousElementSibling.classList.remove('active')"
-                    >
-                </div>`;
+            class="card-img-top" 
+            alt="${item.name}" 
+            style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+            onload="setTimeout(() => {
+              this.style.opacity = '1';
+              this.previousElementSibling.style.display = 'none';
+            }, 1000)"
+        >
+      </div>`;
 
     // Format values
     const cashValue = formatValue(item.cash_value);
@@ -1000,36 +1006,38 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function preloadItemImages() {
-    if (!allItems || allItems.length === 0) {
-      return;
-    }
+    if (!allItems || allItems.length === 0) return;
 
-    const imagePromises = [];
+    // Create a loading queue to prevent overwhelming the browser
+    const imageQueue = allItems
+      .map((item) => {
+        if (item.type.toLowerCase() === "drift") return null;
 
-    for (const item of allItems) {
-      if (item.type.toLowerCase() === "drift") continue;
+        const image_type = item.type.toLowerCase();
+        return `/assets/images/items/480p/${image_type}s/${item.name}.webp`;
+      })
+      .filter((url) => url !== null);
 
-      const image_type = item.type.toLowerCase();
-      const image_url = `/assets/images/items/${image_type}s/${item.name}.webp`;
+    // Load images in batches of 10
+    const batchSize = 10;
+    let currentBatch = 0;
 
-      const promise = new Promise((resolve, reject) => {
+    function loadBatch() {
+      const batch = imageQueue.slice(currentBatch, currentBatch + batchSize);
+      if (batch.length === 0) return;
+
+      batch.forEach((url) => {
         const img = new Image();
-        img.onload = () => {
-          resolve(image_url);
-        };
-        img.onerror = () => {
-          reject(image_url);
-        };
-        img.src = image_url;
+        img.src = url;
       });
 
-      imagePromises.push(promise);
+      currentBatch += batchSize;
+      if (currentBatch < imageQueue.length) {
+        setTimeout(loadBatch, 100); // Load next batch after 100ms
+      }
     }
 
-    Promise.allSettled(imagePromises).then((results) => {
-      const loaded = results.filter((r) => r.status === "fulfilled").length;
-      const failed = results.filter((r) => r.status === "rejected").length;
-    });
+    loadBatch();
   }
 
   // Update clearFilters function
