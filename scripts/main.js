@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(window.location.search);
   const campaign = params.get("campaign") || sessionStorage.getItem("campaign");
   if (campaign) {
-    const token = getCookie("token");
+    const token = Cookies.get("token");
     if (token) {
       fetch(
         "https://api3.jailbreakchangelogs.xyz/campaigns/count?campaign=" +
