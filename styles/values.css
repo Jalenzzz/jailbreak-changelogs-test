@@ -118,12 +118,12 @@ body {
 .spinner-border {
   width: 50px;
   height: 50px;
-  border-width: 3px;
+  border-width: 2px;
   border-style: solid;
-  border-top-color: #31b1ff; /* Blue */
-  border-right-color: #31b1ff; /* Blue */
-  border-bottom-color: #ff341c; /* Orange */
-  border-left-color: #ff341c; /* Orange */
+  border-top-color: #124e66;
+  border-right-color: #124e66;
+  border-bottom-color: #212a31;
+  border-left-color: #212a31;
 }
 
 .loading-spinner.active {
@@ -308,7 +308,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 250px;
+  height: 100%; /* Changed from fixed height */
+  width: 100%;
+  position: absolute; /* Added */
+  top: 0; /* Added */
+  left: 0; /* Added */
   background-color: #212a31;
   border-radius: 8px 8px 0 0;
 }

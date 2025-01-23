@@ -36,9 +36,9 @@
       property="og:description"
       content="Explore the complete chronological history of Roblox Jailbreak updates. See how the game has evolved through major updates and feature releases."
     />
-    <meta property="og:image" content="/assets/logos/Timeline_Logo.webp" />
-    <meta property="og:image:width" content="2328" />
-    <meta property="og:image:height" content="1054" />
+    <meta property="og:image" content="<%= logoUrl %>" />
+    <meta property="og:image:width" content="4000" />
+    <meta property="og:image:height" content="900" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -54,7 +54,7 @@
       name="twitter:description"
       content="Explore the complete chronological history of Roblox Jailbreak updates. See how the game has evolved through major updates and feature releases."
     />
-    <meta name="twitter:image" content="/assets/logos/Timeline_Logo.webp" />
+    <meta property="twitter:image" content="<%= logoUrl %>" />
 
     <!-- Additional SEO -->
     <meta name="robots" content="index, follow" />
@@ -87,7 +87,7 @@
     <link rel="stylesheet" href="styles/timeline.css" />
     <link rel="stylesheet" href="styles/main.css" />
 
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -125,20 +125,7 @@
     <!-- prettier-ignore -->
     <%- include('partials/nav') %>
     <%- include('partials/announcement') %>
-    <div id="loading-overlay" class="show">
-      <div class="text-center">
-        <img
-          src="/assets/logos/Jailbreak_Logo.webp"
-          alt="Loading logo"
-          class="loading-logo"
-        />
-      </div>
-      <div class="d-flex justify-content-center mt-3">
-        <div class="spinner-border custom-spinner" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    </div>
+    <%- include('partials/loading') %>
 
     <div id="main-container" class="container-fluid">
       <div id="content-wrapper" class="row mt-3">

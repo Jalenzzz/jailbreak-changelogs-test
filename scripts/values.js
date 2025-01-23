@@ -509,19 +509,27 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         if (sortDropdown && valueSortDropdown) {
-          if (savedSort) sortDropdown.value = savedSort;
+          if (savedSort) {
+            sortDropdown.value = savedSort;
+            // Extract itemType from savedSort
+            const itemType = savedSort.split("-").slice(1).join("-");
+            updateTotalItemsLabel(itemType);
+          } else {
+            updateTotalItemsLabel("all-items");
+          }
+
           if (savedValueSort) valueSortDropdown.value = savedValueSort;
           sort = savedSort;
           window.sortItems(); // This will apply both sorts
         }
       } else {
-        // If no saved sorts, shuffle items
+        // If no saved sorts, shuffle items and show all items label
         filteredItems = shuffleArray(filteredItems);
+        updateTotalItemsLabel("all-items");
         displayItems();
       }
 
       updateTotalItemsCount();
-      updateTotalItemsLabel("all-items");
       preloadItemImages();
       hideLoadingOverlay();
     } catch (error) {
