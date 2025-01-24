@@ -784,6 +784,13 @@ body {
   color: #9c6644;
 }
 
+.category-tire-styles {
+  background-color: rgba(76, 175, 80, 0.1);
+}
+.category-tire-styles i {
+  color: #4caf50;
+}
+
 /* Intro Buttons */
 .intro-buttons {
   display: flex;
@@ -829,22 +836,42 @@ body {
 /* Categories Section Styles */
 .categories-section {
   border-top: 1px solid rgba(116, 141, 146, 0.2);
-  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.categories-section .row {
+  margin: 0 -0.5rem;
 }
 
 .category-item {
   transition: all 0.3s ease;
   cursor: pointer;
   border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
 }
 
 .category-item:hover {
   transform: translateY(-2px);
   border-color: var(--accent-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
 .media-container .thumbnail {
   z-index: 2;
   transition: opacity 0.3s ease-in-out;
+}
+
+.category-item i {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.category-item span {
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .media-container .video-player {

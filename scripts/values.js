@@ -5,6 +5,7 @@ const VALID_SORTS = [
   "body-colors",
   "textures",
   "tire-stickers",
+  "tire-styles",
   "drifts",
   "hyperchromes",
   "furnitures",
@@ -114,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "category-textures": "name-textures",
         "category-hyperchromes": "name-hyperchromes",
         "category-tire-stickers": "name-tire-stickers",
+        "category-tire-styles": "name-tire-styles",
         "category-drifts": "name-drifts",
         "category-furnitures": "name-furnitures",
       };
@@ -1300,6 +1302,7 @@ function updateSearchPlaceholder() {
     spoilers: "Search spoilers (e.g., Rocket, Wing)...",
     rims: "Search rims (e.g., Star, Spinner)...",
     "tire-stickers": "Search tire stickers (e.g., Badonuts, Blue 50)...",
+    "tire-styles": "Search tire styles (e.g., Brickset, Glacier)...",
     drifts: "Search drifts... (e.g., Cartoon, Melons)...",
     "body-colors": "Search colors (e.g., Red, Blue)...",
     textures: "Search textures (e.g., Aurora, Checkers)...",
