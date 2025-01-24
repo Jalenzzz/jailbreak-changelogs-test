@@ -821,7 +821,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Return default object if value is null, undefined, or empty string
     if (value === null || value === undefined || value === "") {
       return {
-        display: "-",
+        display: "No Value", // Changed from "-" to "No Value"
+        numeric: 0,
+      };
+    }
+
+    if (isNaN(value)) {
+      return {
+        display: "No Value", // Changed from "-" to "No Value"
         numeric: 0,
       };
     }
@@ -1033,7 +1040,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="demand-value">${
                       item.demand === "'N/A'" || item.demand === "N/A"
                         ? "No Demand"
-                        : item.demand || "-"
+                        : item.demand || "No Value"
                     }</span>
                 </div>
                  ${lastUpdatedHtml}
