@@ -339,9 +339,15 @@ function handleModalClose() {
     clearButton.style.display = "none";
   }
 
-  currentPage = 1;
-  filteredItems = [...allItems];
-  displayAvailableItems(currentTradeType);
+  // Instead of resetting to all items, reapply the current sort/filter
+  const sortDropdown = document.getElementById("modal-value-sort-dropdown");
+  if (sortDropdown) {
+    sortModalItems(); // This will maintain the current dropdown selection and apply filters
+  } else {
+    currentPage = 1;
+    filteredItems = [...allItems];
+    displayAvailableItems(currentTradeType);
+  }
 }
 
 function formatValue(value, useSuffix = false) {
@@ -406,6 +412,13 @@ async function loadItems() {
 
 function addItemToTrade(item, tradeType) {
   const items = tradeType === "Offer" ? offeringItems : requestingItems;
+
+  // Check if item is tradable
+  if (item.tradable === 0) {
+    toastr.error(`${item.name} is not tradable and cannot be added to trades`);
+    return;
+  }
+
   if (items.length >= 8) {
     toastr.error(`You can only add up to 8 items to ${tradeType}`);
     return;
@@ -601,6 +614,7 @@ function toggleAvailableItems(type) {
   // Display available items
   displayAvailableItems(type);
 }
+
 function displayAvailableItems(type) {
   const container = document.getElementById("modal-available-items-list");
   const searchInput = document.getElementById("modal-item-search");
@@ -611,11 +625,52 @@ function displayAvailableItems(type) {
     }, 500);
   }
 
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+
+  // Use tradableItems for display
+  const itemsToDisplay = filteredItems.slice(startIndex, endIndex);
+
   // Get the current category from the dropdown
   const sortDropdown = document.getElementById("modal-value-sort-dropdown");
   const selectedOption = sortDropdown
     ? sortDropdown.options[sortDropdown.selectedIndex].text
     : "All Items";
+
+  // Show no results message if no items match the search
+  if (filteredItems.length === 0) {
+    const sortDropdown = document.getElementById("modal-value-sort-dropdown");
+    const selectedValue = sortDropdown ? sortDropdown.value : "name-all-items";
+    const [_, ...categoryParts] = selectedValue.split("-");
+    const currentCategory = categoryParts.join("-");
+
+    container.innerHTML = `
+      <div class="col-12 text-center py-4">
+        <div class="no-results">
+          <i class="bi bi-search mb-2" style="font-size: 2rem;"></i>
+          <p class="mb-0">${
+            currentCategory === "all-items"
+              ? "No items matched your search"
+              : `No items found under ${currentCategory.replace(/-/g, " ")}`
+          }</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  renderPagination(totalPages, type);
+
+  // Add a count display
+  const countDisplay = `
+    <div class="items-count-display mb-3">
+      Showing ${startIndex + 1}-${Math.min(
+    endIndex,
+    filteredItems.length
+  )} of ${filteredItems.length} items
+    </div>
+  `;
 
   // Show no results message if no items match the search
   if (filteredItems.length === 0) {
@@ -630,25 +685,7 @@ function displayAvailableItems(type) {
     return;
   }
 
-  // Use filteredItems.length instead of allItems.length for pagination
-  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-
-  // Use filteredItems directly instead of filtering again
-  const itemsToDisplay = filteredItems.slice(startIndex, endIndex);
-
   renderPagination(totalPages, type);
-
-  // Add a count display
-  const countDisplay = `
-    <div class="items-count-display mb-3">
-      Showing ${startIndex + 1}-${Math.min(
-    endIndex,
-    filteredItems.length
-  )} of ${filteredItems.length} items
-    </div>
-  `;
 
   // Find the card-body section and add the new fields
   container.innerHTML =
@@ -656,62 +693,77 @@ function displayAvailableItems(type) {
     itemsToDisplay
       .map((item) => {
         return `
-      <div class="col-custom-5">
-        <div class="card available-item-card" 
-             onclick="quickAddItem('${item.name}', '${item.type}')"
-             data-bs-dismiss="modal">
-          <div class="card-header">
-            ${item.name}
-          </div>
-          <div class="position-relative" style="aspect-ratio: 16/9;">
-            <div class="position-absolute top-50 start-50 translate-middle spinner-container">
-              <div class="spinner-border custom-spinner" role="status">
-                <span class="visually-hidden">Loading...</span>
+        <div class="col-custom-5">
+          <div class="card available-item-card ${
+            item.tradable === 0 ? "not-tradable" : ""
+          }" 
+               onclick="${
+                 item.tradable === 0
+                   ? ""
+                   : `quickAddItem('${item.name}', '${item.type}')`
+               }"
+               ${item.tradable === 0 ? "" : 'data-bs-dismiss="modal"'}>
+            <div class="card-header">
+              ${item.name}
+            </div>
+            <div class="position-relative" style="aspect-ratio: 16/9;">
+              <div class="position-absolute top-50 start-50 translate-middle spinner-container">
+                <div class="spinner-border custom-spinner" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
               </div>
+      
+              <img class="card-img w-100 h-100 object-fit-cover"
+                   src="${getItemImageUrl(item)}"
+                   alt=""
+                   onload="this.style.display='block'; this.previousElementSibling.style.display='none'"
+                   onerror="this.onerror=null; this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat'; this.style.display='block'; this.previousElementSibling.style.display='none'"
+              >
             </div>
-
-            <img class="card-img w-100 h-100 object-fit-cover"
-                 src="${getItemImageUrl(item)}"
-                 alt=""
-                 onload="this.style.display='block'; this.previousElementSibling.style.display='none'"
-                 onerror="this.onerror=null; this.src='https://placehold.co/2560x1440/212A31/D3D9D4?text=No+Image+Available&font=Montserrat'; this.style.display='block'; this.previousElementSibling.style.display='none'"
-            >
+           <div class="card-body">
+            ${
+              item.tradable === 0
+                ? '<div class="not-tradable-label">Not Tradable</div>'
+                : `
+                <div class="info-row">
+                  <span class="info-label">Type:</span>
+                  <span class="info-value">${item.type}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Cash Value:</span>
+                  <span class="info-value">${formatValue(
+                    item.cash_value
+                  )}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Duped Value:</span>
+                  <span class="info-value">${formatValue(
+                    item.duped_value || 0
+                  )}</span>
+                </div>
+                <div class="info-row ${item.is_limited ? "limited-item" : ""}">
+                  <span class="info-label">Limited:</span>
+                  <span class="info-value">
+                    ${
+                      item.is_limited
+                        ? '<i class="bi bi-star-fill text-warning me-1"></i>Yes'
+                        : "No"
+                    }
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Demand:</span>
+                  <span class="info-value demand-${(
+                    item.demand || "0"
+                  ).toLowerCase()}">${item.demand || "N/A"}</span>
+                </div>
+                `
+            }
           </div>
-        <div class="card-body">
-            <div class="info-row">
-              <span class="info-label">Type:</span>
-              <span class="info-value">${item.type}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Cash Value:</span>
-              <span class="info-value">${formatValue(item.cash_value)}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Duped Value:</span>
-              <span class="info-value">${formatValue(
-                item.duped_value || 0
-              )}</span>
-            </div>
-            <div class="info-row ${item.is_limited ? "limited-item" : ""}">
-              <span class="info-label">Limited:</span>
-              <span class="info-value">
-                ${
-                  item.is_limited
-                    ? '<i class="bi bi-star-fill text-warning me-1"></i>Yes'
-                    : "No"
-                }
-              </span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Demand:</span>
-              <span class="info-value demand-${(
-                item.demand || "0"
-              ).toLowerCase()}">${item.demand || "N/A"}</span>
-            </div>
+
           </div>
         </div>
-      </div>
-    `;
+      `;
       })
       .join("");
 }
@@ -730,18 +782,19 @@ function getItemImageUrl(item) {
     item.name
   }.webp`;
 }
+
 function sortModalItems() {
   const valueSortDropdown = document.getElementById(
     "modal-value-sort-dropdown"
   );
+  const searchInput = document.getElementById("modal-item-search");
+
   if (!valueSortDropdown) {
     console.error("Sort dropdown not found!");
     return;
   }
 
   const sortValue = valueSortDropdown.value;
-
-  // Parse sort parameters
   const [sortType, ...categoryParts] = sortValue.split("-");
   const category = categoryParts.join("-");
 
@@ -766,20 +819,28 @@ function sortModalItems() {
     };
 
     const targetType = typeMap[category];
-
     if (targetType) {
       filtered = filtered.filter((item) => item.type === targetType);
     }
   }
 
+  // Apply search filter if there's a search term
+  const searchTerm = searchInput?.value.toLowerCase().trim();
+  if (searchTerm) {
+    filtered = filtered.filter((item) => {
+      const itemName = item.name.toLowerCase();
+      const itemType = item.type.toLowerCase();
+      return itemName.includes(searchTerm) || itemType.includes(searchTerm);
+    });
+  }
+
+  // Apply sorting
   filtered.sort((a, b) => {
     if (sortType === "value") {
-      // Convert values to numbers for comparison
       const aValue = parseFloat(a.cash_value) || 0;
       const bValue = parseFloat(b.cash_value) || 0;
-      return bValue - aValue; // Sort high to low
+      return bValue - aValue;
     } else {
-      // Default to name sort
       return a.name.localeCompare(b.name);
     }
   });
@@ -2317,13 +2378,16 @@ async function createTradeAd() {
         searchInput.value = "";
       }
 
-      // Reset filtered items to show all items
-      filteredItems = [...allItems];
+      // Don't reset filtered items, instead reapply the current sort/filter
+      const sortDropdown = document.getElementById("modal-value-sort-dropdown");
+      if (sortDropdown) {
+        sortModalItems();
+      }
 
       // Reset to first page
       currentPage = 1;
 
-      // Reset display
+      // Display items with current filters
       displayAvailableItems(currentTradeType);
     });
 }
