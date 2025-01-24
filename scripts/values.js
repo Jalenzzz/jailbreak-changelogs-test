@@ -1044,7 +1044,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="d-flex justify-content-between align-items-center value-row">
                     <span>Demand:</span>
                     <span class="demand-value">${
-                      item.demand === "N/A" ? "-" : item.demand || "-"
+                      item.demand === "'N/A'" || item.demand === "N/A"
+                        ? "No Demand"
+                        : item.demand || "-"
                     }</span>
                 </div>
                  ${lastUpdatedHtml}

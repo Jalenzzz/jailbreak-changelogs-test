@@ -707,9 +707,13 @@ document.addEventListener("DOMContentLoaded", async () => {
           <i class="bi bi-graph-up-arrow me-2"></i>
           Demand
         </h4>
-        <p class="h2 mb-0" style="color: #76ABAE; font-weight: 600;">
-          ${item.demand}
-        </p>
+         <p class="h2 mb-0" style="color: #76ABAE; font-weight: 600;">
+                ${
+                  item.demand === "'N/A'" || item.demand === "N/A"
+                    ? "No Demand"
+                    : item.demand
+                }
+            </p>
       </div>
     </div>
   `
