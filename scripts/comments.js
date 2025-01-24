@@ -1,8 +1,10 @@
 class CommentsManager {
   constructor(type, itemId, itemName = null) {
+    this.sortOrder = sessionStorage.getItem("commentsSort") || "newest";
     if (window.commentsManagerInstance) {
       return window.commentsManagerInstance;
     }
+
     toastr.options = {
       positionClass: "toast-bottom-right",
       timeOut: 3000,
@@ -67,6 +69,7 @@ class CommentsManager {
 
   initializeElements() {
     this.form = document.getElementById("comment-form");
+    this.sortSelect = document.getElementById("comment-sort");
     this.input = document.getElementById("commenter-text");
     this.submitBtn = document.getElementById("submit-comment");
     this.commentsList = document.getElementById("comments-list");
@@ -95,6 +98,16 @@ class CommentsManager {
     this.input.placeholder = this.checkLoginStatus()
       ? "Write a comment..."
       : "Login to comment";
+
+    if (this.sortSelect) {
+      this.sortSelect.value = this.sortOrder;
+      this.sortSelect.addEventListener("change", () => {
+        this.sortOrder = this.sortSelect.value;
+        // Store the preference in sessionStorage
+        sessionStorage.setItem("commentsSort", this.sortOrder);
+        this.renderComments();
+      });
+    }
 
     return true;
   }
@@ -276,35 +289,54 @@ class CommentsManager {
       clearTimeout(this._renderTimeout);
     }
 
+    // Show loading state immediately
+    this.commentsList.innerHTML = `
+    <li class="list-group-item comments-loading">
+      <div class="spinner mb-2"></div>
+      <div>Loading comments...</div>
+    </li>
+  `;
+
     this._renderTimeout = setTimeout(async () => {
-      // Make this an async function
+      console.log("Starting renderComments...");
       this.commentsList.innerHTML = "";
 
       if (this.comments.length === 0) {
         this.commentsList.innerHTML = `
-                <li class="list-group-item text-center" style="background-color: #212a31;">
-                    <div class="py-3">
-                        <i class="bi bi-chat-left-dots mb-2" style="font-size: 1.5rem; color: #6c757d;"></i>
-                        <p class="mb-0 text-muted">No comments yet</p>
-                        <p class="small text-muted mb-0">Be the first to share your thoughts!</p>
-                    </div>
-                </li>
-            `;
+          <li class="list-group-item text-center" style="background-color: #212a31;">
+              <div class="py-3">
+                  <i class="bi bi-chat-left-dots mb-2" style="font-size: 1.5rem; color: #6c757d;"></i>
+                  <p class="mb-0 text-muted">No comments yet</p>
+                  <p class="small text-muted mb-0">Be the first to share your thoughts!</p>
+              </div>
+          </li>
+        `;
         this.paginationControls.style.display = "none";
         return;
       }
 
+      // Sort comments based on selection
+      const commentsToRender = [...this.comments];
+      if (this.sortOrder === "oldest") {
+        commentsToRender.reverse();
+      }
+
+      // Calculate pagination indices
+      const totalPages = Math.ceil(
+        commentsToRender.length / this.commentsPerPage
+      );
       const startIndex = (this.currentPage - 1) * this.commentsPerPage;
       const endIndex = startIndex + this.commentsPerPage;
-      const commentsToShow = this.comments.slice(startIndex, endIndex);
 
-      // Wait for all comments to render
-      await Promise.all(
-        commentsToShow.map((comment) => this.renderCommentItem(comment))
-      );
+      // Get comments for current page
+      const commentsToShow = commentsToRender.slice(startIndex, endIndex);
 
-      // Only show pagination if there are enough comments
-      const totalPages = Math.ceil(this.comments.length / this.commentsPerPage);
+      // Wait for all comments to render in sequence
+      for (const comment of commentsToShow) {
+        await this.renderCommentItem(comment);
+      }
+
+      // Handle pagination display
       if (totalPages > 1) {
         this.renderPagination(totalPages);
         this.paginationControls.style.display = "flex";

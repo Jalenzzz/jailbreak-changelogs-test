@@ -6,6 +6,15 @@ $(document).ready(function () {
   // let userdata = null;
   let latestSeason = null;
 
+  // Function to show the loading overlay
+  function showLoadingOverlay() {
+    $("#loading-overlay").addClass("show");
+  }
+
+  function hideLoadingOverlay() {
+    $("#loading-overlay").removeClass("show");
+  }
+
   function getCountdownColor(days) {
     if (days <= 7) return "#FF4444"; // Red for 7 days or less
     if (days <= 14) return "#e4c61d"; // Yellow for 14 days or less
@@ -294,7 +303,11 @@ $(document).ready(function () {
       $carouselInner.append(carouselItem);
     });
   }
+
   function updateCountdown(startDate, endDate, seasonNumber, seasonTitle) {
+    // Show loading overlay immediately when function starts
+    showLoadingOverlay();
+
     const startTimestamp = parseInt(startDate);
     const endTimestamp = parseInt(endDate);
     const $countdownDays = $("#countdown-days");
@@ -322,6 +335,8 @@ $(document).ready(function () {
       return { days, hours, minutes, seconds };
     }
 
+    let initialUpdateDone = false;
+
     function updateTimer() {
       const currentTime = Math.floor(Date.now() / 1000);
       let timeRemaining;
@@ -343,6 +358,12 @@ $(document).ready(function () {
         $countdownHours.text("00");
         $countdownMinutes.text("00");
         $countdownSeconds.text("00");
+
+        // Hide loading overlay if this is the first update
+        if (!initialUpdateDone) {
+          hideLoadingOverlay();
+          initialUpdateDone = true;
+        }
         return;
       }
 
@@ -364,6 +385,12 @@ $(document).ready(function () {
         $countdownSeconds.text(
           timeRemaining.seconds.toString().padStart(2, "0")
         );
+
+        // Hide loading overlay after first successful update
+        if (!initialUpdateDone) {
+          hideLoadingOverlay();
+          initialUpdateDone = true;
+        }
       }
     }
 
@@ -373,6 +400,7 @@ $(document).ready(function () {
     // Update every second
     return setInterval(updateTimer, 1000);
   }
+
   function loadSeasonDetails(season) {
     return fetchAllSeasons()
       .then((allSeasons) => {
