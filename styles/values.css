@@ -68,22 +68,17 @@ body {
 }
 
 .value-row:first-child {
-  background: rgba(
-    24,
-    101,
-    131,
-    0.1
-  ); /* Changed from green to match cash value color */
+  background: rgba(24, 101, 131, 0.1); /* Cash value background */
 }
 
-.value-row:last-child {
-  background: rgba(
-    116,
-    141,
-    146,
-    0.1
-  ); /* Changed from red to match duped value color */
+.value-row:nth-child(2) {
+  background: rgba(116, 141, 146, 0.1); /* Duped value background */
 }
+
+.value-row:nth-child(3) {
+  background: rgba(0, 213, 255, 0.1); /* Demand background */
+}
+
 .card {
   width: 100%;
   height: auto;
@@ -916,6 +911,7 @@ body {
 .item-type-badge {
   font-size: 0.95rem; /* Increased from default size */
   padding: 0.35rem 0.7rem; /* Increased padding */
+  border-radius: 20px;
 }
 
 @media (max-width: 768px) {

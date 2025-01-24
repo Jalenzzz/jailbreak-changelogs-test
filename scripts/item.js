@@ -288,7 +288,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     padding: 8px 16px;
                     font-size: 1rem;
                     letter-spacing: 0.5px;
-                    border-radius: 6px;">
+                    border-radius: 20px;">
             ${item.type}
         </span>
       `;
