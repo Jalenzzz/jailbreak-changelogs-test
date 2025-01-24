@@ -661,8 +661,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       allItems = await response.json();
 
-      // Initialize filteredItems immediately
-
+      // Initialize filteredItems
       filteredItems = [...allItems];
 
       // Check for saved preferences
@@ -670,7 +669,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const savedValueSort = sessionStorage.getItem("valueSortDropdown");
       const searchValue = searchBar?.value?.trim() || "";
 
-      // Set dropdown values first
+      // Set dropdown values
       const sortDropdown = document.getElementById("sort-dropdown");
       const valueSortDropdown = document.getElementById("value-sort-dropdown");
 
@@ -678,22 +677,11 @@ document.addEventListener("DOMContentLoaded", () => {
         sortDropdown.value = savedSort;
       }
       if (valueSortDropdown) {
-        valueSortDropdown.value = savedValueSort || "cash-desc"; // Default to cash-desc
+        valueSortDropdown.value = savedValueSort || "cash-desc";
       }
 
-      // Now apply filtering and sorting once
-      if (searchValue) {
-        window.filterItems();
-      } else {
-        // Always sort by cash-desc by default if no saved preferences
-        filteredItems = [...allItems].sort((a, b) => {
-          const valueA = formatValue(a.cash_value).numeric;
-          const valueB = formatValue(b.cash_value).numeric;
-          return valueB - valueA;
-        });
-        updateTotalItemsLabel("all-items");
-        displayItems();
-      }
+      // Instead of applying default sort, call sortItems() to apply saved preferences
+      window.sortItems();
 
       // Start preloading images in background
       setTimeout(() => {
@@ -887,7 +875,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function createItemCard(item) {
     const cardDiv = document.createElement("div");
     cardDiv.classList.add("col-6", "col-md-4", "col-lg-3", "mb-4"); // Added col-6 for mobile
-    let color = "#124E66";
 
     // Determine color based on item type
     if (item.type === "Vehicle") color = "#c82c2c";
@@ -896,7 +883,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (item.type === "Tire Sticker") color = "#1CA1BD";
     if (item.type === "Tire Style") color = "#4CAF50";
     if (item.type === "Drift") color = "#FF4500";
-    if (item.type === "Color") color = "#8A2BE2";
+    if (item.type === "Body Color") color = "#8A2BE2";
     if (item.type === "Texture") color = "#708090";
     if (item.type === "HyperChrome") color = "#E91E63";
     if (item.type === "Furniture") color = "#9C6644";

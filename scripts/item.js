@@ -254,7 +254,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function displayItemDetails(item) {
     const image_type = item.type.toLowerCase();
-    let color = "#124E66";
 
     // Define color before using it in badge templates
     if (item.type === "Vehicle") color = "#c82c2c";
@@ -263,7 +262,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (item.type === "Tire Sticker") color = "#1CA1BD";
     if (item.type === "Tire Style") color = "#4CAF50";
     if (item.type === "Drift") color = "#FF4500";
-    if (item.type === "Color") color = "#8A2BE2";
+    if (item.type === "Body Color") color = "#8A2BE2";
     if (item.type === "Texture") color = "#708090";
     if (item.type === "HyperChrome") color = "#E91E63";
     if (item.type === "Furniture") color = "#9C6644";
