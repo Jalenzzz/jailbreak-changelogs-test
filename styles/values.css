@@ -1200,6 +1200,13 @@ body {
     font-size: 0.8rem;
     padding: 2px 5px;
   }
+  .category-item {
+    padding: 0.75rem !important;
+  }
+
+  .category-item span {
+    font-size: 0.85rem;
+  }
 }
 /* Add this new media query for extra small screens */
 @media (max-width: 400px) {
