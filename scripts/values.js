@@ -826,13 +826,6 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     }
 
-    if (isNaN(value)) {
-      return {
-        display: "No Value", // Changed from "-" to "No Value"
-        numeric: 0,
-      };
-    }
-
     // Convert string values like "7.5m" or "75k" to numbers
     let numericValue = value;
     if (typeof value === "string") {
