@@ -831,45 +831,46 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Create card with conditional badges
-    // Replace the existing card HTML template with this:
     cardDiv.innerHTML = `
-<div class="card items-card shadow-sm ${item.is_limited ? "limited-item" : ""}" 
-     onclick="handleCardClick('${
-       item.name
-     }', '${item.type.toLowerCase()}', event)" 
-     onmousedown="handleCardClick('${
-       item.name
-     }', '${item.type.toLowerCase()}', event)"
-     style="cursor: pointer;">
-    ${mediaElement}
-    <div class="item-card-body text-center">
-        <h5 class="card-title">${item.name}</h5>
-        <div class="badges-container d-flex justify-content-center gap-2 mb-3">
-            ${typeBadgeHtml}
-            ${badgeHtml}
+    <div class="card items-card shadow-sm ${
+      item.is_limited ? "limited-item" : ""
+    }" 
+         onclick="handleCardClick('${
+           item.name
+         }', '${item.type.toLowerCase()}', event)" 
+         onmousedown="handleCardClick('${
+           item.name
+         }', '${item.type.toLowerCase()}', event)"
+         style="cursor: pointer;">
+        ${mediaElement}
+        <div class="item-card-body text-center">
+            <div class="badges-container d-flex justify-content-center gap-2">
+                ${typeBadgeHtml}
+                ${badgeHtml}
+            </div>
+            <h5 class="card-title">${item.name}</h5>
+            <div class="value-container">
+                <div class="d-flex justify-content-between align-items-center mb-2 value-row">
+                    <span>Cash Value:</span>
+                    <span class="cash-value" data-value="${
+                      cashValue.numeric
+                    }">${cashValue.display}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2 value-row">
+                    <span>Duped Value:</span>
+                    <span class="duped-value" data-value="${
+                      dupedValue.numeric
+                    }">${dupedValue.display}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center value-row">
+                    <span>Demand:</span>
+                    <span class="demand-value">${
+                      item.demand === "N/A" ? "-" : item.demand || "-"
+                    }</span>
+                </div>
+            </div>
         </div>
-        <div class="value-container">
-            <div class="d-flex justify-content-between align-items-center mb-2 value-row">
-                <span>Cash Value:</span>
-                <span class="cash-value" data-value="${cashValue.numeric}">${
-      cashValue.display
-    }</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-2 value-row">
-                <span>Duped Value:</span>
-                <span class="duped-value" data-value="${dupedValue.numeric}">${
-      dupedValue.display
-    }</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center value-row">
-                <span>Demand:</span>
-                <span class="demand-value">${
-                  item.demand === "N/A" ? "-" : item.demand || "-"
-                }</span>
-            </div>
-        </div>
-    </div>
-</div>`;
+    </div>`;
 
     // Add hover event listeners for drift videos
     if (item.type === "Drift") {

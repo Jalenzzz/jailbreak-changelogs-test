@@ -880,6 +880,11 @@ body {
   max-width: 1400px; /* Add a max-width to prevent stretching too wide */
   margin: 0 auto; /* Center the container */
 }
+.badges-container {
+  margin-top: -20px; /* Creates upward offset */
+  margin-bottom: 10px;
+  z-index: 2;
+}
 
 .item-type-badge {
   font-size: 0.95rem; /* Increased from default size */
@@ -902,6 +907,10 @@ body {
   .media-container {
     aspect-ratio: 16/9;
     margin-bottom: 0;
+  }
+
+  .badges-container {
+    margin-top: -15px;
   }
 
   /* Badge positioning for mobile */
@@ -1136,6 +1145,10 @@ body {
     justify-content: center;
   }
 
+  .badges-container {
+    margin-top: -18px;
+  }
+
   .item-type-badge {
     font-size: 0.69rem;
     padding: 0.15rem 0.35rem;
@@ -1178,6 +1191,10 @@ body {
     padding: 2px 4px; /* Minimal padding */
   }
 
+  .badges-container {
+    margin-top: -12px;
+  }
+
   /* Adjust badge sizes further */
   .item-type-badge {
     font-size: 0.65rem;
@@ -1213,6 +1230,9 @@ body {
     right: 4px;
     font-size: 0.6rem;
     padding: 0.15rem 0.35rem;
+  }
+  .badges-container {
+    margin-top: -12px;
   }
   .intro-container {
     padding: 4px !important;
