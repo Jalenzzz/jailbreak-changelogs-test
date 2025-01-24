@@ -839,7 +839,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Convert string values like "7.5m" or "75k" to numbers
     let numericValue = value;
     if (typeof value === "string") {
-      value = value.toLowerCase();
+      // Normalize the string: replace comma with period for decimal numbers
+      value = value.toLowerCase().replace(",", ".");
       if (value.endsWith("m")) {
         numericValue = parseFloat(value) * 1000000;
       } else if (value.endsWith("k")) {

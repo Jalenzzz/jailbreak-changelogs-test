@@ -107,7 +107,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Convert string values like "7.5m" or "75k" to numbers
     let numericValue = value;
     if (typeof value === "string") {
-      value = value.toLowerCase();
+      // Normalize the string: replace comma with period for decimal numbers
+      value = value.toLowerCase().replace(",", ".");
       if (value.endsWith("m")) {
         numericValue = parseFloat(value) * 1000000;
       } else if (value.endsWith("k")) {
@@ -122,8 +123,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       return "-";
     }
 
-    // Return the number with commas
-    return numericValue.toLocaleString("en-US");
+    // Use fixed precision to avoid rounding errors
+    return Math.round(numericValue).toLocaleString("en-US");
   }
 
   function formatValueForDisplay(value, isMobile = false) {
@@ -737,7 +738,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           item.last_updated
             ? `
             <div class="col-12">
-              <div class="d-flex align-items-center justify-content-end">
+              <div class="d-flex align-items-center">
                 <small class="text-muted">
                   <i class="bi bi-clock-history me-1"></i>
                   Last updated: ${formatTimeAgo(item.last_updated)}
@@ -747,7 +748,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           `
             : `
             <div class="col-12">
-              <div class="d-flex align-items-center justify-content-end">
+              <div class="d-flex align-items-center">
                 <small class="text-muted">
                   <i class="bi bi-clock-history me-1"></i>
                   Last updated: N/A
@@ -756,6 +757,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
           `
         }
+        
           <!-- Cash Value Card - Always Show -->
           <div class="col-md-6">
             <div class="value-card p-4 rounded-3" style="background-color: rgba(24, 101, 131, 0.1); border: 1px solid rgba(24, 101, 131, 0.2);">
