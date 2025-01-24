@@ -664,16 +664,25 @@ document.addEventListener("DOMContentLoaded", async () => {
                       ? '<span class="badge limited-badge"><i class="bi bi-star-fill me-1"></i>Limited</span>'
                       : ""
                   }
-                  ${
-                    item.demand && item.demand !== "N/A"
-                      ? `<div class="mt-2">
-                          <small class="text-muted demand-tag">
-                            <i class="bi bi-graph-up-arrow me-1"></i>
-                            ${item.demand}
-                          </small>
-                        </div>`
-                      : ""
-                  }
+                  <div class="mt-2">
+                    <small class="text-muted demand-tag">
+                      <i class="bi bi-graph-up-arrow me-1"></i>
+                      ${
+                        item.demand && item.demand !== "N/A"
+                          ? item.demand
+                          : "No Demand"
+                      } 
+                      <span class="demand-separator mx-2">|</span>
+                      <span class="last-updated">
+                        Last updated: ${
+                          item.last_updated
+                            ? formatTimeAgo(item.last_updated)
+                            : "N/A"
+                        }
+                      </span>
+                    </small>
+                  </div>
+
                 </div>
               </div>
             </a>

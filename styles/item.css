@@ -461,6 +461,15 @@ body {
   color: #76abae !important;
 }
 
+.demand-separator {
+  color: #748d92;
+  opacity: 0.5;
+}
+
+.last-updated {
+  color: #76abae !important;
+}
+
 /* Value Display Responsive Behavior */
 .value-display .desktop-value {
   display: block;
@@ -495,6 +504,18 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .demand-tag {
+    font-size: 0.65rem !important;
+  }
+
+  .demand-tag * {
+    font-size: inherit !important; /* This ensures all children inherit the same size */
+  }
+
+  .demand-separator {
+    margin: 0 0.3rem !important;
+  }
+
   .similar-items-section {
     padding: 0.5rem 0;
   }
