@@ -473,6 +473,25 @@ body {
 .text-warning {
   color: #ffc107 !important;
 }
+.not-tradable-card {
+  position: relative;
+  opacity: 0.8;
+}
+
+.not-tradable-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(220, 53, 69, 0.1);
+  pointer-events: none;
+}
+
+.badge.bg-danger {
+  background-color: #dc3545 !important;
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

@@ -7,6 +7,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     $("#loading-overlay").removeClass("show");
   }
 
+  function formatTimeAgo(timestamp) {
+    if (!timestamp) return null;
+
+    const now = Math.floor(Date.now() / 1000); // Current time in seconds
+    const diff = now - timestamp;
+
+    // Time intervals in seconds
+    const intervals = {
+      year: 31536000,
+      month: 2592000,
+      week: 604800,
+      day: 86400,
+      hour: 3600,
+      minute: 60,
+    };
+
+    if (diff < 60) return "just now";
+
+    for (const [unit, seconds] of Object.entries(intervals)) {
+      const interval = Math.floor(diff / seconds);
+      if (interval >= 1) {
+        return `${interval} ${unit}${interval === 1 ? "" : "s"} ago`;
+      }
+    }
+  }
+
   const rawItemName = window.location.pathname.split("/").pop();
   const itemName = decodeURIComponent(rawItemName).trim().replace(/\s+/g, " "); // Get the item name from the URL
 
@@ -147,6 +173,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       valueRange: 25, // Value similarity is important
       demand: 15, // Demand similarity has medium importance
       notes: 5, // Notes similarity has low importance
+      tradable: 15, // New weight for tradable status
     };
 
     // 1. Type Matching (35 points)
@@ -159,7 +186,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       score += weights.limited;
     }
 
-    // 3. Value Range Comparison (25 points)
+    // 3. Tradable Status (15 points) - New!
+    if (currentItem.tradable === comparisonItem.tradable) {
+      score += weights.tradable;
+    }
+
+    // 4. Value Range Comparison (25 points)
     const currentValue = parseNumericValue(currentItem.cash_value);
     const comparisonValue = parseNumericValue(comparisonItem.cash_value);
 
@@ -177,7 +209,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       else if (valueRatio > 0.1) score += weights.valueRange * 0.2;
     }
 
-    // 4. Demand Similarity (15 points)
+    // 5. Demand Similarity (15 points)
     const currentDemand =
       DEMAND_WEIGHTS[currentItem.demand?.toLowerCase() || "n/a"];
     const comparisonDemand =
@@ -190,7 +222,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       else if (demandDifference === 2) score += weights.demand * 0.4;
     }
 
-    // 5. Notes Analysis (5 points)
+    // 6. Notes Analysis (5 points)
     if (
       currentItem.notes &&
       comparisonItem.notes &&
@@ -585,7 +617,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           card.innerHTML = `
             <a href="/item/${item.type}/${encodeURIComponent(item.name)}" 
               class="text-decoration-none similar-item-card">
-              <div class="card h-100">
+             <div class="card h-100 ${
+               item.tradable === 0 ? "not-tradable-card" : ""
+             }">
                 <div class="card-img-wrapper position-relative" style="aspect-ratio: 16/9;">
                   <img src="/assets/images/items/480p/${item.type.toLowerCase()}s/${
             item.name
@@ -690,6 +724,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     
       <div class="values-section border-top border-bottom py-4 my-4">
         <div class="row g-4">
+        ${
+          item.last_updated
+            ? `
+            <div class="col-12">
+              <div class="d-flex align-items-center justify-content-end">
+                <small class="text-muted">
+                  <i class="bi bi-clock-history me-1"></i>
+                  Last updated: ${formatTimeAgo(item.last_updated)}
+                </small>
+              </div>
+            </div>
+          `
+            : `
+            <div class="col-12">
+              <div class="d-flex align-items-center justify-content-end">
+                <small class="text-muted">
+                  <i class="bi bi-clock-history me-1"></i>
+                  Last updated: N/A
+                </small>
+              </div>
+            </div>
+          `
+        }
           <!-- Cash Value Card - Always Show -->
           <div class="col-md-6">
             <div class="value-card p-4 rounded-3" style="background-color: rgba(24, 101, 131, 0.1); border: 1px solid rgba(24, 101, 131, 0.2);">
@@ -832,12 +889,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                       <!-- Right Side - Item Details -->
                       <div class="col-md-7 p-3">
                           <!-- Item Title and Type Badge -->
-                          <div class="d-flex align-items-center mb-4">
-                              <h1 class="mb-0 me-3 h2" style="font-weight: 600;">${
-                                item.name
-                              }</h1>
-                              ${typeBadgeHtml}
-                          </div>
+                        <div class="d-flex align-items-center mb-4">
+                            <h1 class="mb-0 me-3 h2" style="font-weight: 600;">${
+                              item.name
+                            }</h1>
+                            ${typeBadgeHtml}
+                            ${
+                              item.tradable === 0
+                                ? `
+                              <span class="badge bg-danger ms-2" style="font-size: 0.9rem;">
+                               Not Tradable
+                              </span>
+                            `
+                                : ""
+                            }
+                        </div>
                            ${
                              item.description && item.description !== "N/A"
                                ? `<p class="text-muted mb-0">${item.description}</p>`

@@ -10,6 +10,32 @@ const VALID_SORTS = [
   "furnitures",
   "limited-items",
 ];
+function formatTimeAgo(timestamp) {
+  if (!timestamp) return null;
+
+  const now = Math.floor(Date.now() / 1000); // Current time in seconds
+  const diff = now - timestamp;
+
+  // Time intervals in seconds
+  const intervals = {
+    year: 31536000,
+    month: 2592000,
+    week: 604800,
+    day: 86400,
+    hour: 3600,
+    minute: 60,
+  };
+
+  if (diff < 60) return "just now";
+
+  for (const [unit, seconds] of Object.entries(intervals)) {
+    const interval = Math.floor(diff / seconds);
+    if (interval >= 1) {
+      return `${interval} ${unit}${interval === 1 ? "" : "s"} ago`;
+    }
+  }
+}
+
 // Global debounce function
 function debounce(func, wait) {
   let timeout;
@@ -109,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const sortDropdown = document.getElementById("sort-dropdown");
       if (sortDropdown) {
         sortDropdown.value = sortValue;
-        window.sortItems(); // Trigger sorting
+        window.sortItems();
 
         // Add smooth scroll to items container with offset
         const itemsContainer = document.getElementById("items-container");
@@ -139,6 +165,124 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  window.filterItems = debounce(function () {
+    const searchTerm = document
+      .getElementById("search-bar")
+      .value.toLowerCase();
+    const searchBar = document.getElementById("search-bar");
+    const sortValue = document.getElementById("sort-dropdown").value;
+
+    const itemsContainer = document.querySelector("#items-container");
+    const searchMessages = document.getElementById("search-messages");
+
+    // Save search term
+    if (searchTerm) {
+      localStorage.setItem("searchTerm", searchTerm);
+    } else {
+      localStorage.removeItem("searchTerm");
+    }
+
+    // Remove any existing feedback messages
+    if (searchMessages) {
+      searchMessages.innerHTML = "";
+    }
+
+    // First, apply category filter
+    let categoryFilteredItems = [...allItems];
+    if (sortValue !== "name-all-items") {
+      const parts = sortValue.split("-");
+      const itemType = parts.slice(1).join("-");
+      categoryFilteredItems = allItems.filter((item) => {
+        // Special handling for limited items
+        if (itemType === "limited-items") {
+          return item.is_limited;
+        }
+        // Regular category filtering
+        const normalizedItemType = item.type.toLowerCase().replace(" ", "-");
+        const normalizedFilterType = itemType.slice(0, -1);
+        return normalizedItemType === normalizedFilterType;
+      });
+    }
+
+    if (searchTerm.length === 0) {
+      filteredItems = categoryFilteredItems;
+      searchBar.classList.remove("is-invalid");
+
+      let itemsRow = itemsContainer.querySelector(".row");
+      if (!itemsRow) {
+        itemsRow = document.createElement("div");
+        itemsRow.classList.add("row");
+        itemsContainer.appendChild(itemsRow);
+      }
+      const itemType = sortValue.split("-").slice(1).join("-");
+      updateTotalItemsLabel(itemType);
+
+      currentPage = 1;
+      displayItems();
+      updateTotalItemsCount(); // Make sure count is updated
+      return;
+    }
+
+    // Check if current category is Rims
+    const isRimsCategory = sortValue === "name-rims";
+    const minCharacters = isRimsCategory ? 1 : 1;
+
+    if (searchTerm.length < minCharacters) {
+      if (searchMessages) {
+        searchMessages.innerHTML = `
+                <div class="search-feedback">
+                    Please enter at least ${minCharacters} character${
+          minCharacters > 1 ? "s" : ""
+        } to search
+                </div>
+            `;
+      }
+      return;
+    }
+
+    searchBar.classList.remove("is-invalid");
+    filteredItems = categoryFilteredItems.filter((item) =>
+      item.name.toLowerCase().includes(searchTerm)
+    );
+
+    // Important: Update the total items count and label AFTER filtering
+    const itemType = sortValue.split("-").slice(1).join("-");
+    updateTotalItemsLabel(itemType);
+    updateTotalItemsCount();
+
+    // No results message if no items found
+    if (filteredItems.length === 0) {
+      let itemsRow = itemsContainer.querySelector(".row");
+      if (!itemsRow) {
+        itemsRow = document.createElement("div");
+        itemsRow.classList.add("row");
+        itemsContainer.appendChild(itemsRow);
+      }
+
+      const sortValue = document.getElementById("sort-dropdown").value;
+      const categoryParts = sortValue.split("-");
+      const categoryName = categoryParts.slice(1).join(" ");
+      const categoryMessage =
+        sortValue !== "name-all-items"
+          ? ` under category "${categoryName.replace(/-/g, " ")}"`
+          : "";
+
+      itemsRow.innerHTML = `
+            <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
+                <div class="no-results">
+                    <h4>No items found for "${searchTerm}"${categoryMessage}</h4>
+                    <p class="text-muted">Try different keywords or check the spelling</p>
+                </div>
+            </div>
+        `;
+      return;
+    }
+
+    currentPage = 1;
+    displayItems();
+    // updateTotalItemsCount();
+  }, 300);
+
   const itemsContainer = document.querySelector("#items-container");
   if (!itemsContainer) return;
 
@@ -151,19 +295,124 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Define sortItems first before using it
   window.sortItems = function () {
+    if (isLoading) {
+      return;
+    }
+    if (!allItems || allItems.length === 0) {
+      return;
+    }
+
     const sortDropdown = document.getElementById("sort-dropdown");
     const valueSortDropdown = document.getElementById("value-sort-dropdown");
-    const sortValue = sortDropdown?.value || "name-all-items"; // Provide default value and handle null
+    const sortValue = sortDropdown?.value || "name-all-items";
     const valueSortType = valueSortDropdown?.value || "cash-desc";
 
     const currentSort = sortValue.split("-").slice(1).join("-");
 
-    // Save current filter states before updating anything else
+    // Save current filter states
     sessionStorage.setItem("sortDropdown", sortValue);
     sessionStorage.setItem("valueSortDropdown", valueSortType);
-    sort = sortValue; // Update global sort variable
+    sort = sortValue;
 
-    // Update breadcrumb after setting state
+    // IMPORTANT: Do filtering BEFORE updating UI
+    const parts = sortValue.split("-");
+    const sortType = parts[0];
+    const itemType = parts.slice(1).join("-");
+
+    // First filter by category
+    if (itemType === "all-items") {
+      filteredItems = [...allItems];
+      localStorage.removeItem("lastSort");
+    } else if (itemType === "limited-items") {
+      filteredItems = allItems.filter((item) => item.is_limited);
+    } else if (sortType === "name" && itemType === "hyperchromes") {
+      filteredItems = allItems.filter((item) => item.type === "HyperChrome");
+    } else {
+      filteredItems = allItems.filter((item) => {
+        const normalizedItemType = item.type.toLowerCase().replace(" ", "-");
+        const normalizedFilterType = itemType.slice(0, -1);
+        return normalizedItemType === normalizedFilterType;
+      });
+      localStorage.setItem("lastSort", sortValue);
+    }
+
+    // Apply value sorting
+    if (valueSortType === "random") {
+      filteredItems = shuffleArray([...filteredItems]);
+    } else if (valueSortType !== "none") {
+      const [valueType, direction] = valueSortType.split("-");
+      filteredItems.sort((a, b) => {
+        const valueA =
+          valueType === "cash"
+            ? formatValue(a.cash_value).numeric
+            : formatValue(a.duped_value).numeric;
+        const valueB =
+          valueType === "cash"
+            ? formatValue(b.cash_value).numeric
+            : formatValue(b.duped_value).numeric;
+
+        return direction === "asc" ? valueA - valueB : valueB - valueA;
+      });
+    }
+
+    // Apply alphabetical sorting
+    if (valueSortType === "alpha-asc" || valueSortType === "alpha-desc") {
+      filteredItems.sort((a, b) => {
+        return valueSortType === "alpha-asc"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      });
+    }
+
+    // Apply demand sorting
+    if (valueSortType === "demand-asc" || valueSortType === "demand-desc") {
+      const demandOrder = [
+        "Close to none",
+        "Very Low",
+        "Low",
+        "Decent",
+        "Medium",
+        "High",
+        "Very High",
+      ];
+
+      filteredItems.sort((a, b) => {
+        let demandA = a.demand === "N/A" ? "-" : a.demand || "-";
+        let demandB = b.demand === "N/A" ? "-" : b.demand || "-";
+
+        if (demandA === "-" && demandB === "-") return 0;
+        if (demandA === "-") return 1;
+        if (demandB === "-") return -1;
+
+        const indexA = demandOrder.findIndex(
+          (d) => d.toLowerCase() === demandA.toLowerCase()
+        );
+        const indexB = demandOrder.findIndex(
+          (d) => d.toLowerCase() === demandB.toLowerCase()
+        );
+
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+
+        return valueSortType === "demand-asc"
+          ? indexA - indexB
+          : indexB - indexA;
+      });
+    }
+
+    // Now update UI after all filtering and sorting is done
+    updateSearchPlaceholder();
+    updateTotalItemsLabel(itemType);
+
+    // Apply current search if exists
+    if (searchBar && searchBar.value.trim()) {
+      filterItems();
+    } else {
+      currentPage = 1;
+      displayItems();
+    }
+
+    // Update breadcrumb
     const categoryNameElement = document.querySelector(".category-name");
     const valuesBreadcrumb = document.getElementById("values-breadcrumb");
 
@@ -183,118 +432,15 @@ document.addEventListener("DOMContentLoaded", () => {
           .join(" ");
       }
 
-      // Make the category name a clickable link that preserves the filter
       categoryNameElement.innerHTML = `<a href="/values?sort=name-${currentSort}" onclick="handleCategoryClick(event, '${currentSort}')">${categoryName}</a>`;
       categoryNameElement.style.display = "list-item";
       categoryNameElement.classList.add("active");
       categoryNameElement.setAttribute("aria-current", "page");
 
-      // Make Values a normal link
       valuesBreadcrumb.classList.remove("active");
       valuesBreadcrumb.removeAttribute("aria-current");
       valuesBreadcrumb.innerHTML = '<a href="/values">Values</a>';
     }
-
-    updateSearchPlaceholder();
-    const parts = sortValue.split("-");
-    const sortType = parts[0];
-    const itemType = parts.slice(1).join("-");
-
-    // Clear search bar when switching categories
-    if (searchBar) {
-      searchBar.value = "";
-    }
-
-    // First filter by category
-    if (itemType === "all-items") {
-      filteredItems = [...allItems];
-      localStorage.removeItem("lastSort");
-    } else if (itemType === "limited-items") {
-      // Filter limited items
-      filteredItems = allItems.filter((item) => item.is_limited);
-    } else if (sortType === "name" && itemType === "hyperchromes") {
-      filteredItems = allItems.filter((item) => item.type === "HyperChrome");
-    } else {
-      filteredItems = allItems.filter((item) => {
-        const normalizedItemType = item.type.toLowerCase().replace(" ", "-");
-        const normalizedFilterType = itemType.slice(0, -1);
-        return normalizedItemType === normalizedFilterType;
-      });
-      localStorage.setItem("lastSort", sortValue);
-    }
-
-    // handling for random sort
-    if (valueSortType === "random") {
-      filteredItems = shuffleArray([...filteredItems]);
-    } else if (valueSortType !== "none") {
-      // Then sort by value if a value sort is selected
-      const [valueType, direction] = valueSortType.split("-");
-      filteredItems.sort((a, b) => {
-        const valueA =
-          valueType === "cash"
-            ? formatValue(a.cash_value).numeric
-            : formatValue(a.duped_value).numeric;
-        const valueB =
-          valueType === "cash"
-            ? formatValue(b.cash_value).numeric
-            : formatValue(b.duped_value).numeric;
-
-        return direction === "asc" ? valueA - valueB : valueB - valueA;
-      });
-    }
-
-    // alphabetical sorting logic
-    if (valueSortType === "alpha-asc" || valueSortType === "alpha-desc") {
-      filteredItems.sort((a, b) => {
-        return valueSortType === "alpha-asc"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      });
-    }
-    if (valueSortType === "demand-asc" || valueSortType === "demand-desc") {
-      // Demand order from lowest to highest
-      const demandOrder = [
-        "Close to none",
-        "Very Low",
-        "Low",
-        "Decent",
-        "Medium",
-        "High",
-        "Very High",
-      ];
-
-      filteredItems.sort((a, b) => {
-        // Normalize demand values without changing case
-        let demandA = a.demand === "N/A" ? "-" : a.demand || "-";
-        let demandB = b.demand === "N/A" ? "-" : b.demand || "-";
-
-        if (demandA === "-" && demandB === "-") return 0;
-        if (demandA === "-") return 1;
-        if (demandB === "-") return -1;
-
-        // Get the index of each demand in our ordered array (case-insensitive)
-        const indexA = demandOrder.findIndex(
-          (d) => d.toLowerCase() === demandA.toLowerCase()
-        );
-        const indexB = demandOrder.findIndex(
-          (d) => d.toLowerCase() === demandB.toLowerCase()
-        );
-
-        // If demand value isn't in the order array, treat it as "-"
-        if (indexA === -1) return 1;
-        if (indexB === -1) return -1;
-
-        // Sort based on the index
-        return valueSortType === "demand-asc"
-          ? indexA - indexB
-          : indexB - indexA;
-      });
-    }
-
-    updateTotalItemsLabel(itemType);
-    currentPage = 1;
-
-    displayItems();
   };
 
   // Now check for saved sort and value sort
@@ -324,6 +470,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   showSkeletonCards();
+  document.getElementById("sort-dropdown").addEventListener("change", () => {
+    window.sortItems();
+  });
+
+  document
+    .getElementById("value-sort-dropdown")
+    .addEventListener("change", () => {
+      window.sortItems();
+    });
 
   // Create and append spinner
   const spinner = document.createElement("div");
@@ -487,53 +642,48 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       allItems = await response.json();
 
-      // Start preloading images immediately
-      preloadItemImages();
+      // Initialize filteredItems immediately
 
-      // Preload drift thumbnails
-      const driftItems = allItems.filter((item) => item.type === "Drift");
-      preloadDriftThumbnails(driftItems);
-
-      // Get saved sort and value sort from sessionStorage
-      const savedSort = sessionStorage.getItem("sortDropdown");
-      const savedValueSort = sessionStorage.getItem("valueSortDropdown");
-
-      // Set initial filtered items
       filteredItems = [...allItems];
 
-      // Apply sorting based on saved preferences
-      if (savedSort || savedValueSort) {
-        const sortDropdown = document.getElementById("sort-dropdown");
-        const valueSortDropdown = document.getElementById(
-          "value-sort-dropdown"
-        );
+      // Check for saved preferences
+      const savedSort = sessionStorage.getItem("sortDropdown");
+      const savedValueSort = sessionStorage.getItem("valueSortDropdown");
+      const searchValue = searchBar?.value?.trim() || "";
 
-        if (sortDropdown && valueSortDropdown) {
-          if (savedSort) {
-            sortDropdown.value = savedSort;
-            // Extract itemType from savedSort
-            const itemType = savedSort.split("-").slice(1).join("-");
-            updateTotalItemsLabel(itemType);
-          } else {
-            updateTotalItemsLabel("all-items");
-          }
+      // Set dropdown values first
+      const sortDropdown = document.getElementById("sort-dropdown");
+      const valueSortDropdown = document.getElementById("value-sort-dropdown");
 
-          if (savedValueSort) valueSortDropdown.value = savedValueSort;
-          sort = savedSort;
-          window.sortItems(); // This will apply both sorts
-        }
+      if (sortDropdown && savedSort) {
+        sortDropdown.value = savedSort;
+      }
+      if (valueSortDropdown && savedValueSort) {
+        valueSortDropdown.value = savedValueSort;
+      }
+
+      // Now apply filtering and sorting once
+      if (searchValue) {
+        window.filterItems();
+      } else if (savedSort || savedValueSort) {
+        window.sortItems();
       } else {
-        // If no saved sorts, shuffle items and show all items label
-        filteredItems = shuffleArray(filteredItems);
+        filteredItems = shuffleArray([...allItems]);
         updateTotalItemsLabel("all-items");
         displayItems();
       }
 
+      // Start preloading images in background
+      setTimeout(() => {
+        preloadItemImages();
+        const driftItems = allItems.filter((item) => item.type === "Drift");
+        preloadDriftThumbnails(driftItems);
+      }, 0);
+
       updateTotalItemsCount();
-      preloadItemImages();
       hideLoadingOverlay();
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error in loadItems:", error);
       hideLoadingOverlay();
     }
   }
@@ -600,26 +750,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function displayItems() {
     const itemsContainer = document.querySelector("#items-container");
-    if (!itemsContainer) return;
+    if (!itemsContainer) {
+      console.warn("Items container not found");
+      return;
+    }
 
     let itemsRow = itemsContainer.querySelector(".row");
     const spinner = itemsContainer.querySelector(".loading-spinner");
 
     if (!itemsRow || currentPage === 1) {
-      // Save spinner if it exists
       if (spinner) {
         spinner.remove();
       }
 
-      // Clear container but preserve structure
       itemsContainer.innerHTML = `
-        <div class="row g-3" id="items-list"></div>
-        <div class="loading-spinner">
-          <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      `;
+            <div class="row g-3" id="items-list"></div>
+            <div class="loading-spinner">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        `;
 
       itemsRow = itemsContainer.querySelector(".row");
     }
@@ -628,24 +779,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const endIndex = startIndex + itemsPerPage;
     const itemsToDisplay = filteredItems.slice(startIndex, endIndex);
 
-    // Create a document fragment to batch DOM updates
     const fragment = document.createDocumentFragment();
-
     for (let i = 0; i < itemsToDisplay.length; i++) {
       const cardDiv = createItemCard(itemsToDisplay[i]);
-      fragment.appendChild(cardDiv); // Append to fragment
+      fragment.appendChild(cardDiv);
     }
 
-    // Append fragment to the row (single DOM update)
     itemsRow.appendChild(fragment);
 
-    // Remove old sentinel if exists
     const oldSentinel = itemsContainer.querySelector(".sentinel");
     if (oldSentinel) {
       oldSentinel.remove();
     }
 
-    // Add new sentinel if there are more items to load
     if (endIndex < filteredItems.length) {
       const sentinel = addSentinel();
       observer.observe(sentinel);
@@ -829,6 +975,16 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
       }
     }
+    const lastUpdatedHtml = `
+    <div class="mt-2 d-flex align-items-center">
+        <small class="text-muted" style="font-size: 0.8rem;">
+            <i class="bi bi-clock-history me-1"></i>
+            Last Updated: ${
+              item.last_updated ? formatTimeAgo(item.last_updated) : "N/A"
+            }
+        </small>
+    </div>
+    `;
 
     // Create card with conditional badges
     cardDiv.innerHTML = `
@@ -868,6 +1024,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       item.demand === "N/A" ? "-" : item.demand || "-"
                     }</span>
                 </div>
+                 ${lastUpdatedHtml}
             </div>
         </div>
     </div>`;
@@ -895,118 +1052,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Return the created element
     return cardDiv;
   }
-
-  window.filterItems = debounce(function () {
-    const searchTerm = document
-      .getElementById("search-bar")
-      .value.toLowerCase();
-    const searchBar = document.getElementById("search-bar");
-    const sortValue = document.getElementById("sort-dropdown").value;
-
-    const itemsContainer = document.querySelector("#items-container");
-    const searchMessages = document.getElementById("search-messages");
-
-    // Save search term
-    if (searchTerm) {
-      localStorage.setItem("searchTerm", searchTerm);
-    } else {
-      localStorage.removeItem("searchTerm");
-    }
-
-    // Remove any existing feedback messages
-    if (searchMessages) {
-      searchMessages.innerHTML = "";
-    }
-
-    // First, apply category filter
-    let categoryFilteredItems = [...allItems];
-    if (sortValue !== "name-all-items") {
-      const parts = sortValue.split("-");
-      const itemType = parts.slice(1).join("-");
-      categoryFilteredItems = allItems.filter((item) => {
-        // Special handling for limited items
-        if (itemType === "limited-items") {
-          return item.is_limited;
-        }
-        // Regular category filtering
-        const normalizedItemType = item.type.toLowerCase().replace(" ", "-");
-        const normalizedFilterType = itemType.slice(0, -1);
-        return normalizedItemType === normalizedFilterType;
-      });
-    }
-
-    if (searchTerm.length === 0) {
-      filteredItems = categoryFilteredItems;
-      searchBar.classList.remove("is-invalid");
-
-      let itemsRow = itemsContainer.querySelector(".row");
-      if (!itemsRow) {
-        itemsRow = document.createElement("div");
-        itemsRow.classList.add("row");
-        itemsContainer.appendChild(itemsRow);
-      }
-      const itemType = sortValue.split("-").slice(1).join("-");
-      updateTotalItemsLabel(itemType);
-      currentPage = 1;
-      displayItems();
-      updateTotalItemsCount();
-      return;
-    }
-
-    // Check if current category is Rims
-    const isRimsCategory = sortValue === "name-rims";
-    const minCharacters = isRimsCategory ? 1 : 1;
-
-    if (searchTerm.length < minCharacters) {
-      if (searchMessages) {
-        searchMessages.innerHTML = `
-                <div class="search-feedback">
-                    Please enter at least ${minCharacters} character${
-          minCharacters > 1 ? "s" : ""
-        } to search
-                </div>
-            `;
-      }
-      return;
-    }
-
-    searchBar.classList.remove("is-invalid");
-    filteredItems = categoryFilteredItems.filter((item) =>
-      item.name.toLowerCase().includes(searchTerm)
-    );
-
-    // No results message if no items found
-    if (filteredItems.length === 0) {
-      let itemsRow = itemsContainer.querySelector(".row");
-      if (!itemsRow) {
-        itemsRow = document.createElement("div");
-        itemsRow.classList.add("row");
-        itemsContainer.appendChild(itemsRow);
-      }
-
-      const sortValue = document.getElementById("sort-dropdown").value;
-      const categoryParts = sortValue.split("-");
-      const categoryName = categoryParts.slice(1).join(" ");
-      const categoryMessage =
-        sortValue !== "name-all-items"
-          ? ` under category "${categoryName.replace(/-/g, " ")}"`
-          : "";
-
-      itemsRow.innerHTML = `
-            <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
-                <div class="no-results">
-                    <h4>No items found for "${searchTerm}"${categoryMessage}</h4>
-                    <p class="text-muted">Try different keywords or check the spelling</p>
-                </div>
-            </div>
-        `;
-      return;
-    }
-
-    currentPage = 1;
-    displayItems();
-    updateTotalItemsCount();
-  }, 300);
 
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
