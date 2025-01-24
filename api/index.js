@@ -534,8 +534,6 @@ app.get("/roblox", (req, res) => {
     title: "Roblox Authentication / Changelogs",
     logoUrl: "/assets/logos/JB Changelogs Banner.webp",
     logoAlt: "Roblox Auth Page Logo",
-    MIN_TITLE_LENGTH,
-    MIN_DESCRIPTION_LENGTH,
   });
 });
 
@@ -544,8 +542,6 @@ app.get("/login", (req, res) => {
     title: "Discord Authentication / Changelogs",
     logoUrl: "/assets/logos/JB Changelogs Banner.webp",
     logoAlt: "Login Page Logo",
-    MIN_TITLE_LENGTH,
-    MIN_DESCRIPTION_LENGTH,
   });
 });
 

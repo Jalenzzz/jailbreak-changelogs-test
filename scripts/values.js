@@ -208,6 +208,23 @@ document.addEventListener("DOMContentLoaded", () => {
       filteredItems = categoryFilteredItems;
       searchBar.classList.remove("is-invalid");
 
+      // Get current value sort type
+      const valueSortDropdown = document.getElementById("value-sort-dropdown");
+      const valueSortType = valueSortDropdown?.value || "cash-desc";
+
+      // Apply the current sort
+      if (valueSortType === "random") {
+        filteredItems = shuffleArray([...filteredItems]);
+      } else if (valueSortType === "cash-desc") {
+        filteredItems.sort((a, b) => {
+          const valueA = formatValue(a.cash_value).numeric;
+          const valueB = formatValue(b.cash_value).numeric;
+          return valueB - valueA;
+        });
+      } else if (valueSortType === "alpha-desc") {
+        filteredItems.sort((a, b) => b.name.localeCompare(a.name));
+      }
+
       let itemsRow = itemsContainer.querySelector(".row");
       if (!itemsRow) {
         itemsRow = document.createElement("div");
@@ -658,17 +675,20 @@ document.addEventListener("DOMContentLoaded", () => {
       if (sortDropdown && savedSort) {
         sortDropdown.value = savedSort;
       }
-      if (valueSortDropdown && savedValueSort) {
-        valueSortDropdown.value = savedValueSort;
+      if (valueSortDropdown) {
+        valueSortDropdown.value = savedValueSort || "cash-desc"; // Default to cash-desc
       }
 
       // Now apply filtering and sorting once
       if (searchValue) {
         window.filterItems();
-      } else if (savedSort || savedValueSort) {
-        window.sortItems();
       } else {
-        filteredItems = shuffleArray([...allItems]);
+        // Always sort by cash-desc by default if no saved preferences
+        filteredItems = [...allItems].sort((a, b) => {
+          const valueA = formatValue(a.cash_value).numeric;
+          const valueB = formatValue(b.cash_value).numeric;
+          return valueB - valueA;
+        });
         updateTotalItemsLabel("all-items");
         displayItems();
       }
@@ -1104,21 +1124,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Reset dropdowns
     document.getElementById("sort-dropdown").value = "name-all-items";
-    document.getElementById("value-sort-dropdown").value = "random"; // Match initial load state
-
-    // Update breadcrumb state
-    const categoryNameElement = document.querySelector(".category-name");
-    const valuesBreadcrumb = document.getElementById("values-breadcrumb");
-
-    categoryNameElement.style.display = "none";
-    valuesBreadcrumb.classList.add("active");
-    valuesBreadcrumb.setAttribute("aria-current", "page");
-    valuesBreadcrumb.innerHTML = "Values";
+    document.getElementById("value-sort-dropdown").value = "cash-desc"; // Match initial load state
 
     // Reset items display
     currentPage = 1;
     filteredItems = [...allItems];
-    filteredItems = shuffleArray(filteredItems); // Shuffle items to match 'random' sort
+    // Sort by cash value descending to match the dropdown value
+    filteredItems.sort((a, b) => {
+      const valueA = formatValue(a.cash_value).numeric;
+      const valueB = formatValue(b.cash_value).numeric;
+      return valueB - valueA;
+    });
 
     // If there's a search term, perform the search
     const searchValue = searchBar?.value?.trim() || "";
@@ -1157,7 +1173,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Check sessionStorage first, fallback to random
     const savedValueSort = sessionStorage.getItem("valueSortDropdown");
 
-    valueSortDropdown.value = savedValueSort || "random";
+    valueSortDropdown.value = savedValueSort || "cash-desc";
     sortItems(); // Apply initial sort
   }
 
