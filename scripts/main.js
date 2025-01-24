@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return fallbackAvatar;
     }
   };
+
   function toggleMenu() {
     mobileAvatarToggle.classList.toggle("opened");
     sideMenu.classList.toggle("show");

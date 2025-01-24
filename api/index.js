@@ -530,11 +530,23 @@ app.get("/botinvite", (req, res) => {
 });
 
 app.get("/roblox", (req, res) => {
-  res.render("roblox");
+  res.render("roblox", {
+    title: "Roblox Authentication / Changelogs",
+    logoUrl: "/assets/logos/JB Changelogs Banner.webp",
+    logoAlt: "Roblox Auth Page Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
+  });
 });
 
 app.get("/login", (req, res) => {
-  res.render("login");
+  res.render("login", {
+    title: "Discord Authentication / Changelogs",
+    logoUrl: "/assets/logos/JB Changelogs Banner.webp",
+    logoAlt: "Login Page Logo",
+    MIN_TITLE_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
+  });
 });
 
 app.get("/users/:user/followers", async (req, res) => {
