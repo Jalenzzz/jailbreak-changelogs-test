@@ -4,7 +4,7 @@
 [![Better Stack Badge](https://uptime.betterstack.com/status-badges/v3/monitor/1ofdv.svg)](https://uptime.betterstack.com/?utm_source=status_badge)
 
 > [!IMPORTANT]
-> As of January 25, 2025, this repository has been archived. The testing environment has been moved to the `test` branch in the [main repository](https://github.com/JBChangelogs/JailbreakChangelogs). All future testing deployments will be built from that branch.
+> As of January 25, 2025, this repository has been archived. The testing environment has been moved to the `testing` branch in the [main repository](https://github.com/JBChangelogs/JailbreakChangelogs/tree/testing). All future testing deployments will be built from that branch.
 
 > [!CAUTION]
 > The only websites associated with this repository are the [main website](https://jailbreakchangelogs.xyz/) and the [testing website](https://testing.jailbreakchangelogs.xyz/). We have no other affiliated websites or domains. Any other websites or platforms claiming to represent or provide content for this repo are not controlled by us.
